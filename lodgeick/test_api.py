@@ -138,13 +138,13 @@ def test_create_rfi(request_name):
     # Add some questions
     rfi.append("questions", {
         "question_number": "1",
-        "category": "Plans",
+        "category": "Site Plans",
         "question_text": "Please provide detailed site plan showing all boundaries and setbacks"
     })
 
     rfi.append("questions", {
         "question_number": "2",
-        "category": "Engineering",
+        "category": "Specialist Reports",
         "question_text": "Provide engineering calculations for foundation design"
     })
 
