@@ -1,0 +1,174 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "field:type_name",
+ "creation": "2025-11-05 19:30:00",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "type_name",
+  "type_code",
+  "category",
+  "description",
+  "section_break_processing",
+  "processing_sla_days",
+  "workflow_template",
+  "section_break_fees",
+  "base_fee",
+  "fee_calculation_method",
+  "hourly_rate",
+  "section_break_form",
+  "form_template",
+  "required_documents",
+  "help_text",
+  "section_break_notifications",
+  "notification_template",
+  "section_break_status",
+  "is_active",
+  "icon"
+ ],
+ "fields": [
+  {
+   "fieldname": "type_name",
+   "fieldtype": "Data",
+   "label": "Type Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "type_code",
+   "fieldtype": "Data",
+   "label": "Type Code",
+   "reqd": 1
+  },
+  {
+   "fieldname": "category",
+   "fieldtype": "Select",
+   "label": "Category",
+   "options": "Resource Consent\nBuilding Consent\nService Request\nLicense\nComplaint",
+   "reqd": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "label": "Description",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_processing",
+   "fieldtype": "Section Break",
+   "label": "Processing"
+  },
+  {
+   "fieldname": "processing_sla_days",
+   "fieldtype": "Int",
+   "label": "Statutory Timeframe (days)",
+   "reqd": 1,
+   "default": "20"
+  },
+  {
+   "fieldname": "workflow_template",
+   "fieldtype": "Link",
+   "label": "Workflow",
+   "options": "Workflow"
+  },
+  {
+   "fieldname": "section_break_fees",
+   "fieldtype": "Section Break",
+   "label": "Fees"
+  },
+  {
+   "fieldname": "base_fee",
+   "fieldtype": "Currency",
+   "label": "Base Fee"
+  },
+  {
+   "fieldname": "fee_calculation_method",
+   "fieldtype": "Select",
+   "label": "Fee Method",
+   "options": "Fixed\nHourly\nValue-Based\nDeposit"
+  },
+  {
+   "fieldname": "hourly_rate",
+   "fieldtype": "Currency",
+   "label": "Hourly Rate"
+  },
+  {
+   "fieldname": "section_break_form",
+   "fieldtype": "Section Break",
+   "label": "Form"
+  },
+  {
+   "fieldname": "form_template",
+   "fieldtype": "JSON",
+   "label": "Form Template"
+  },
+  {
+   "fieldname": "required_documents",
+   "fieldtype": "Text",
+   "label": "Required Documents"
+  },
+  {
+   "fieldname": "help_text",
+   "fieldtype": "Text Editor",
+   "label": "Help Text"
+  },
+  {
+   "fieldname": "section_break_notifications",
+   "fieldtype": "Section Break",
+   "label": "Notifications"
+  },
+  {
+   "fieldname": "notification_template",
+   "fieldtype": "Link",
+   "label": "Notification Template",
+   "options": "Notification Template"
+  },
+  {
+   "fieldname": "section_break_status",
+   "fieldtype": "Section Break",
+   "label": "Status"
+  },
+  {
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "label": "Active",
+   "default": "1"
+  },
+  {
+   "fieldname": "icon",
+   "fieldtype": "Data",
+   "label": "Icon Name"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 0,
+ "links": [],
+ "modified": "2025-11-05 19:30:00",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Request Type",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "type_name",
+ "track_changes": 1
+}

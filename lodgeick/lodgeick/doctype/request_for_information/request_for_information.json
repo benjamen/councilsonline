@@ -1,0 +1,203 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "format:RFI-{request}-{####}",
+ "creation": "2025-11-05 20:00:00",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "request",
+  "rfi_number",
+  "section_break_details",
+  "subject",
+  "description",
+  "urgency",
+  "column_break_details",
+  "issued_by",
+  "issued_date",
+  "due_date",
+  "section_break_questions",
+  "questions",
+  "section_break_response",
+  "response_received",
+  "response_date",
+  "responded_by",
+  "response_notes",
+  "section_break_clock",
+  "stops_statutory_clock",
+  "clock_stopped_date",
+  "clock_restarted_date"
+ ],
+ "fields": [
+  {
+   "fieldname": "request",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Request",
+   "options": "Request",
+   "reqd": 1
+  },
+  {
+   "fieldname": "rfi_number",
+   "fieldtype": "Data",
+   "label": "RFI Number",
+   "read_only": 1,
+   "unique": 1
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "section_break_details",
+   "fieldtype": "Section Break",
+   "label": "RFI Details"
+  },
+  {
+   "fieldname": "subject",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Subject",
+   "reqd": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "label": "Description",
+   "reqd": 1
+  },
+  {
+   "default": "Medium",
+   "fieldname": "urgency",
+   "fieldtype": "Select",
+   "label": "Urgency",
+   "options": "Low\nMedium\nHigh\nCritical"
+  },
+  {
+   "fieldname": "column_break_details",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "issued_by",
+   "fieldtype": "Link",
+   "label": "Issued By",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "issued_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Issued Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "due_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Due Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_questions",
+   "fieldtype": "Section Break",
+   "label": "Questions"
+  },
+  {
+   "fieldname": "questions",
+   "fieldtype": "Table",
+   "label": "Questions",
+   "options": "Rfi Question"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_response",
+   "fieldtype": "Section Break",
+   "label": "Response"
+  },
+  {
+   "default": "0",
+   "fieldname": "response_received",
+   "fieldtype": "Check",
+   "label": "Response Received"
+  },
+  {
+   "depends_on": "response_received",
+   "fieldname": "response_date",
+   "fieldtype": "Date",
+   "label": "Response Date"
+  },
+  {
+   "depends_on": "response_received",
+   "fieldname": "responded_by",
+   "fieldtype": "Link",
+   "label": "Responded By",
+   "options": "User"
+  },
+  {
+   "depends_on": "response_received",
+   "fieldname": "response_notes",
+   "fieldtype": "Text Editor",
+   "label": "Response Notes"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_clock",
+   "fieldtype": "Section Break",
+   "label": "Statutory Clock"
+  },
+  {
+   "default": "1",
+   "description": "If checked, statutory clock will be stopped when RFI is issued",
+   "fieldname": "stops_statutory_clock",
+   "fieldtype": "Check",
+   "label": "Stops Statutory Clock"
+  },
+  {
+   "fieldname": "clock_stopped_date",
+   "fieldtype": "Datetime",
+   "label": "Clock Stopped Date",
+   "read_only": 1
+  },
+  {
+   "depends_on": "response_received",
+   "fieldname": "clock_restarted_date",
+   "fieldtype": "Datetime",
+   "label": "Clock Restarted Date",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [
+  {
+   "link_doctype": "Request",
+   "link_fieldname": "name"
+  }
+ ],
+ "modified": "2025-11-05 20:00:00",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Request For Information",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "subject",
+ "track_changes": 1
+}

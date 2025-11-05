@@ -1,0 +1,505 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "field:request_number",
+ "creation": "2025-11-05 19:00:00",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "request_number",
+  "request_type",
+  "request_category",
+  "status",
+  "priority",
+  "column_break_1",
+  "workflow_state",
+  "is_overdue",
+  "section_break_applicant",
+  "applicant",
+  "applicant_name",
+  "applicant_email",
+  "applicant_phone",
+  "applicant_type",
+  "column_break_2",
+  "agent",
+  "agent_name",
+  "agent_email",
+  "agent_phone",
+  "organization",
+  "section_break_property",
+  "property",
+  "property_address",
+  "legal_description",
+  "ct_reference",
+  "zoning",
+  "column_break_3",
+  "site_area",
+  "property_coordinates",
+  "section_break_proposal",
+  "brief_description",
+  "detailed_description",
+  "section_break_dates",
+  "submitted_date",
+  "acknowledged_date",
+  "target_completion_date",
+  "actual_completion_date",
+  "column_break_4",
+  "statutory_clock_started",
+  "statutory_clock_stopped",
+  "working_days_elapsed",
+  "working_days_remaining",
+  "section_break_assignment",
+  "assigned_to",
+  "assigned_team",
+  "processing_notes",
+  "section_break_attachments",
+  "attachments",
+  "section_break_fees",
+  "total_fees_excl_gst",
+  "gst_amount",
+  "total_fees_incl_gst",
+  "column_break_5",
+  "payment_status",
+  "fees",
+  "section_break_history",
+  "status_history",
+  "section_break_related",
+  "related_requests",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "request_number",
+   "fieldtype": "Data",
+   "label": "Request Number",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "request_type",
+   "fieldtype": "Link",
+   "label": "Request Type",
+   "options": "Request Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "request_category",
+   "fieldtype": "Select",
+   "label": "Category",
+   "options": "Resource Consent\nBuilding Consent\nService Request\nLicense\nComplaint",
+   "reqd": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nSubmitted\nAcknowledged\nProcessing\nRFI Issued\nRFI Received\nPending Decision\nApproved\nApproved with Conditions\nDeclined\nWithdrawn\nUnder Appeal",
+   "reqd": 1
+  },
+  {
+   "fieldname": "priority",
+   "fieldtype": "Select",
+   "label": "Priority",
+   "options": "Low\nStandard\nHigh\nUrgent"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "workflow_state",
+   "fieldtype": "Data",
+   "label": "Workflow State",
+   "read_only": 1
+  },
+  {
+   "fieldname": "is_overdue",
+   "fieldtype": "Check",
+   "label": "Is Overdue",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_applicant",
+   "fieldtype": "Section Break",
+   "label": "Applicant Information"
+  },
+  {
+   "fieldname": "applicant",
+   "fieldtype": "Link",
+   "label": "Applicant",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "applicant.full_name",
+   "fieldname": "applicant_name",
+   "fieldtype": "Data",
+   "label": "Applicant Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "applicant.email",
+   "fieldname": "applicant_email",
+   "fieldtype": "Data",
+   "label": "Email",
+   "read_only": 1
+  },
+  {
+   "fieldname": "applicant_phone",
+   "fieldtype": "Data",
+   "label": "Phone",
+   "reqd": 1
+  },
+  {
+   "fieldname": "applicant_type",
+   "fieldtype": "Select",
+   "label": "Applicant Type",
+   "options": "Individual\nCompany\nTrust\nPartnership",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "agent",
+   "fieldtype": "Link",
+   "label": "Agent/Consultant",
+   "options": "User"
+  },
+  {
+   "fetch_from": "agent.full_name",
+   "fieldname": "agent_name",
+   "fieldtype": "Data",
+   "label": "Agent Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "agent.email",
+   "fieldname": "agent_email",
+   "fieldtype": "Data",
+   "label": "Agent Email",
+   "read_only": 1
+  },
+  {
+   "fieldname": "agent_phone",
+   "fieldtype": "Data",
+   "label": "Agent Phone"
+  },
+  {
+   "fieldname": "organization",
+   "fieldtype": "Link",
+   "label": "Organization",
+   "options": "Organization"
+  },
+  {
+   "fieldname": "section_break_property",
+   "fieldtype": "Section Break",
+   "label": "Property Information"
+  },
+  {
+   "fieldname": "property",
+   "fieldtype": "Link",
+   "label": "Property",
+   "options": "Property",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "property.street_address",
+   "fieldname": "property_address",
+   "fieldtype": "Small Text",
+   "label": "Address",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "property.legal_description",
+   "fieldname": "legal_description",
+   "fieldtype": "Small Text",
+   "label": "Legal Description",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "property.certificate_of_title",
+   "fieldname": "ct_reference",
+   "fieldtype": "Data",
+   "label": "Certificate of Title",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "property.zoning",
+   "fieldname": "zoning",
+   "fieldtype": "Data",
+   "label": "Zoning",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "property.site_area",
+   "fieldname": "site_area",
+   "fieldtype": "Float",
+   "label": "Site Area (m²)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "property_coordinates",
+   "fieldtype": "Small Text",
+   "label": "Coordinates",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_proposal",
+   "fieldtype": "Section Break",
+   "label": "Proposal Details"
+  },
+  {
+   "fieldname": "brief_description",
+   "fieldtype": "Small Text",
+   "label": "Brief Description",
+   "max_length": 200,
+   "reqd": 1
+  },
+  {
+   "fieldname": "detailed_description",
+   "fieldtype": "Text Editor",
+   "label": "Detailed Description",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_dates",
+   "fieldtype": "Section Break",
+   "label": "Dates & Timeframes"
+  },
+  {
+   "fieldname": "submitted_date",
+   "fieldtype": "Date",
+   "label": "Submitted Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "acknowledged_date",
+   "fieldtype": "Date",
+   "label": "Acknowledged Date"
+  },
+  {
+   "fieldname": "target_completion_date",
+   "fieldtype": "Date",
+   "label": "Target Completion Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "actual_completion_date",
+   "fieldtype": "Date",
+   "label": "Actual Completion Date"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "statutory_clock_started",
+   "fieldtype": "Datetime",
+   "label": "Clock Started"
+  },
+  {
+   "fieldname": "statutory_clock_stopped",
+   "fieldtype": "Datetime",
+   "label": "Clock Stopped"
+  },
+  {
+   "fieldname": "working_days_elapsed",
+   "fieldtype": "Int",
+   "label": "Working Days Elapsed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "working_days_remaining",
+   "fieldtype": "Int",
+   "label": "Days Remaining",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_assignment",
+   "fieldtype": "Section Break",
+   "label": "Assignment"
+  },
+  {
+   "fieldname": "assigned_to",
+   "fieldtype": "Link",
+   "label": "Assigned To",
+   "options": "User"
+  },
+  {
+   "fieldname": "assigned_team",
+   "fieldtype": "Data",
+   "label": "Assigned Team"
+  },
+  {
+   "fieldname": "processing_notes",
+   "fieldtype": "Text Editor",
+   "label": "Processing Notes"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_attachments",
+   "fieldtype": "Section Break",
+   "label": "Attachments"
+  },
+  {
+   "fieldname": "attachments",
+   "fieldtype": "Table",
+   "label": "Documents",
+   "options": "Request Attachment"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_fees",
+   "fieldtype": "Section Break",
+   "label": "Fees & Payments"
+  },
+  {
+   "fieldname": "total_fees_excl_gst",
+   "fieldtype": "Currency",
+   "label": "Total Fees (excl GST)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "gst_amount",
+   "fieldtype": "Currency",
+   "label": "GST Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_fees_incl_gst",
+   "fieldtype": "Currency",
+   "label": "Total Fees (incl GST)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "payment_status",
+   "fieldtype": "Select",
+   "label": "Payment Status",
+   "options": "Pending\nPartially Paid\nPaid\nRefunded\nWaived",
+   "read_only": 1
+  },
+  {
+   "fieldname": "fees",
+   "fieldtype": "Table",
+   "label": "Fee Breakdown",
+   "options": "Request Fee"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_history",
+   "fieldtype": "Section Break",
+   "label": "Status History"
+  },
+  {
+   "fieldname": "status_history",
+   "fieldtype": "Table",
+   "label": "Status Changes",
+   "options": "Request Status History",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_related",
+   "fieldtype": "Section Break",
+   "label": "Related Applications"
+  },
+  {
+   "fieldname": "related_requests",
+   "fieldtype": "Small Text",
+   "label": "Related Request Numbers"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Request",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-11-05 19:00:00",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Request",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "if_owner": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Applicant",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Agent",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 0,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Planner",
+   "share": 1,
+   "submit": 0,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "request_number,property_address,applicant_name",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "request_number",
+ "track_changes": 1,
+ "track_seen": 1
+}

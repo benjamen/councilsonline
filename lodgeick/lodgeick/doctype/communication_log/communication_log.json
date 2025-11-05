@@ -1,0 +1,236 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "format:COMM-{request}-{####}",
+ "creation": "2025-11-05 20:00:00",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "request",
+  "communication_number",
+  "section_break_details",
+  "communication_type",
+  "communication_method",
+  "direction",
+  "column_break_details",
+  "communication_date",
+  "sender",
+  "recipient",
+  "section_break_content",
+  "subject",
+  "content",
+  "section_break_email",
+  "email_message_id",
+  "email_status",
+  "column_break_email",
+  "email_sent_at",
+  "email_opened_at",
+  "section_break_attachments",
+  "attachments",
+  "section_break_meta",
+  "is_internal",
+  "requires_response",
+  "column_break_meta",
+  "response_due_date",
+  "responded_at"
+ ],
+ "fields": [
+  {
+   "fieldname": "request",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Request",
+   "options": "Request",
+   "reqd": 1
+  },
+  {
+   "fieldname": "communication_number",
+   "fieldtype": "Data",
+   "label": "Communication Number",
+   "read_only": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "section_break_details",
+   "fieldtype": "Section Break",
+   "label": "Communication Details"
+  },
+  {
+   "default": "Email",
+   "fieldname": "communication_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Type",
+   "options": "Email\nPhone\nMeeting\nSMS\nLetter\nInternal Note\nPublic Notification\nOther",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.communication_type=='Email'",
+   "fieldname": "communication_method",
+   "fieldtype": "Select",
+   "label": "Method",
+   "options": "Manual\nAutomatic\nTemplate"
+  },
+  {
+   "default": "Outgoing",
+   "fieldname": "direction",
+   "fieldtype": "Select",
+   "label": "Direction",
+   "options": "Incoming\nOutgoing",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_details",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Now",
+   "fieldname": "communication_date",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Date & Time",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sender",
+   "fieldtype": "Data",
+   "label": "From"
+  },
+  {
+   "fieldname": "recipient",
+   "fieldtype": "Data",
+   "label": "To"
+  },
+  {
+   "fieldname": "section_break_content",
+   "fieldtype": "Section Break",
+   "label": "Content"
+  },
+  {
+   "fieldname": "subject",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Subject",
+   "reqd": 1
+  },
+  {
+   "fieldname": "content",
+   "fieldtype": "Text Editor",
+   "label": "Message",
+   "reqd": 1
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "eval:doc.communication_type=='Email'",
+   "fieldname": "section_break_email",
+   "fieldtype": "Section Break",
+   "label": "Email Details"
+  },
+  {
+   "fieldname": "email_message_id",
+   "fieldtype": "Data",
+   "label": "Message ID"
+  },
+  {
+   "default": "Sent",
+   "fieldname": "email_status",
+   "fieldtype": "Select",
+   "label": "Email Status",
+   "options": "Draft\nQueued\nSent\nDelivered\nOpened\nBounced\nFailed"
+  },
+  {
+   "fieldname": "column_break_email",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "email_sent_at",
+   "fieldtype": "Datetime",
+   "label": "Sent At"
+  },
+  {
+   "fieldname": "email_opened_at",
+   "fieldtype": "Datetime",
+   "label": "Opened At"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_attachments",
+   "fieldtype": "Section Break",
+   "label": "Attachments"
+  },
+  {
+   "fieldname": "attachments",
+   "fieldtype": "Table",
+   "label": "Attachments",
+   "options": "Request Attachment"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_meta",
+   "fieldtype": "Section Break",
+   "label": "Additional Information"
+  },
+  {
+   "default": "0",
+   "description": "Internal communications not visible to applicants",
+   "fieldname": "is_internal",
+   "fieldtype": "Check",
+   "label": "Internal Only"
+  },
+  {
+   "default": "0",
+   "fieldname": "requires_response",
+   "fieldtype": "Check",
+   "label": "Requires Response"
+  },
+  {
+   "fieldname": "column_break_meta",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "requires_response",
+   "fieldname": "response_due_date",
+   "fieldtype": "Date",
+   "label": "Response Due Date"
+  },
+  {
+   "depends_on": "requires_response",
+   "fieldname": "responded_at",
+   "fieldtype": "Datetime",
+   "label": "Responded At"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [
+  {
+   "link_doctype": "Request",
+   "link_fieldname": "name"
+  }
+ ],
+ "modified": "2025-11-05 20:00:00",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Communication Log",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "communication_date",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "subject",
+ "track_changes": 1
+}

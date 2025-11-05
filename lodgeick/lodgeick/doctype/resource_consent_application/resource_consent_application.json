@@ -1,0 +1,373 @@
+{
+ "actions": [],
+ "autoname": "field:request",
+ "creation": "2025-11-05 20:00:00",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "request",
+  "section_break_consent",
+  "consent_types",
+  "activity_status",
+  "section_break_notification",
+  "notification_level",
+  "notification_determined_date",
+  "notification_reason",
+  "column_break_notification",
+  "submission_period_start",
+  "submission_period_end",
+  "submissions_received",
+  "section_break_hearing",
+  "hearing_required",
+  "hearing_date",
+  "hearing_venue",
+  "hearing_commissioners",
+  "section_break_assessment",
+  "assessment_of_effects",
+  "effects_on_people",
+  "physical_effects",
+  "ecosystem_effects",
+  "cultural_effects",
+  "section_break_planning",
+  "planning_assessment",
+  "rma_part2_assessment",
+  "alternatives_considered",
+  "mitigation_proposed",
+  "section_break_parties",
+  "affected_parties",
+  "written_approvals_obtained",
+  "section_break_iwi",
+  "iwi_consultation_undertaken",
+  "iwi_consulted",
+  "cultural_impact_assessment",
+  "iwi_response_summary",
+  "section_break_reports",
+  "specialist_reports",
+  "section_break_conditions",
+  "proposed_conditions",
+  "section_break_decision",
+  "decision_type",
+  "decision_date",
+  "decision_notes",
+  "conditions",
+  "column_break_decision",
+  "lapse_date",
+  "review_date",
+  "consent_duration",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "request",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Request",
+   "options": "Request",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "section_break_consent",
+   "fieldtype": "Section Break",
+   "label": "Consent Details"
+  },
+  {
+   "fieldname": "consent_types",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Consent Types",
+   "options": "Land Use\nSubdivision\nDischarge Permit\nWater Permit\nCoastal Permit",
+   "reqd": 1
+  },
+  {
+   "fieldname": "activity_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Activity Status",
+   "options": "Permitted\nControlled\nRestricted Discretionary\nDiscretionary\nNon-Complying\nProhibited",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_notification",
+   "fieldtype": "Section Break",
+   "label": "Notification"
+  },
+  {
+   "fieldname": "notification_level",
+   "fieldtype": "Select",
+   "label": "Notification Level",
+   "options": "Not Determined\nNon-Notified\nLimited Notified\nFully Notified"
+  },
+  {
+   "fieldname": "notification_determined_date",
+   "fieldtype": "Date",
+   "label": "Determination Date"
+  },
+  {
+   "fieldname": "notification_reason",
+   "fieldtype": "Text",
+   "label": "Notification Reason"
+  },
+  {
+   "fieldname": "column_break_notification",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.notification_level!='Non-Notified'",
+   "fieldname": "submission_period_start",
+   "fieldtype": "Date",
+   "label": "Submission Period Start"
+  },
+  {
+   "depends_on": "eval:doc.notification_level!='Non-Notified'",
+   "fieldname": "submission_period_end",
+   "fieldtype": "Date",
+   "label": "Submission Period End"
+  },
+  {
+   "fieldname": "submissions_received",
+   "fieldtype": "Int",
+   "label": "Submissions Received"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_hearing",
+   "fieldtype": "Section Break",
+   "label": "Hearing"
+  },
+  {
+   "default": "0",
+   "fieldname": "hearing_required",
+   "fieldtype": "Check",
+   "label": "Hearing Required"
+  },
+  {
+   "depends_on": "hearing_required",
+   "fieldname": "hearing_date",
+   "fieldtype": "Datetime",
+   "label": "Hearing Date"
+  },
+  {
+   "depends_on": "hearing_required",
+   "fieldname": "hearing_venue",
+   "fieldtype": "Small Text",
+   "label": "Hearing Venue"
+  },
+  {
+   "depends_on": "hearing_required",
+   "fieldname": "hearing_commissioners",
+   "fieldtype": "Small Text",
+   "label": "Commissioners"
+  },
+  {
+   "fieldname": "section_break_assessment",
+   "fieldtype": "Section Break",
+   "label": "Assessment of Effects"
+  },
+  {
+   "fieldname": "assessment_of_effects",
+   "fieldtype": "Text Editor",
+   "in_list_view": 1,
+   "label": "AEE (Schedule 4 RMA)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "effects_on_people",
+   "fieldtype": "Text Editor",
+   "label": "Effects on People"
+  },
+  {
+   "fieldname": "physical_effects",
+   "fieldtype": "Text Editor",
+   "label": "Physical Effects"
+  },
+  {
+   "fieldname": "ecosystem_effects",
+   "fieldtype": "Text Editor",
+   "label": "Ecosystem Effects"
+  },
+  {
+   "fieldname": "cultural_effects",
+   "fieldtype": "Text Editor",
+   "label": "Cultural/Heritage"
+  },
+  {
+   "fieldname": "section_break_planning",
+   "fieldtype": "Section Break",
+   "label": "Planning Assessment"
+  },
+  {
+   "fieldname": "planning_assessment",
+   "fieldtype": "Text Editor",
+   "label": "Planning Assessment",
+   "reqd": 1
+  },
+  {
+   "fieldname": "rma_part2_assessment",
+   "fieldtype": "Text Editor",
+   "label": "RMA Part 2 Assessment"
+  },
+  {
+   "fieldname": "alternatives_considered",
+   "fieldtype": "Text Editor",
+   "label": "Alternatives Considered"
+  },
+  {
+   "fieldname": "mitigation_proposed",
+   "fieldtype": "Text Editor",
+   "label": "Mitigation Measures"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_parties",
+   "fieldtype": "Section Break",
+   "label": "Affected Parties"
+  },
+  {
+   "fieldname": "affected_parties",
+   "fieldtype": "Table",
+   "label": "Affected Parties",
+   "options": "Affected Party"
+  },
+  {
+   "fieldname": "written_approvals_obtained",
+   "fieldtype": "Int",
+   "label": "Approvals Obtained"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_iwi",
+   "fieldtype": "Section Break",
+   "label": "Iwi Consultation"
+  },
+  {
+   "default": "0",
+   "fieldname": "iwi_consultation_undertaken",
+   "fieldtype": "Check",
+   "label": "Consultation Undertaken"
+  },
+  {
+   "fieldname": "iwi_consulted",
+   "fieldtype": "Small Text",
+   "label": "Iwi/Hap\u016b Consulted"
+  },
+  {
+   "fieldname": "cultural_impact_assessment",
+   "fieldtype": "Attach",
+   "label": "CIA Document"
+  },
+  {
+   "fieldname": "iwi_response_summary",
+   "fieldtype": "Text",
+   "label": "Response Summary"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_reports",
+   "fieldtype": "Section Break",
+   "label": "Specialist Reports"
+  },
+  {
+   "fieldname": "specialist_reports",
+   "fieldtype": "Table",
+   "label": "Specialist Reports",
+   "options": "Specialist Report"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_conditions",
+   "fieldtype": "Section Break",
+   "label": "Proposed Conditions"
+  },
+  {
+   "fieldname": "proposed_conditions",
+   "fieldtype": "Text Editor",
+   "label": "Proposed Conditions"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_decision",
+   "fieldtype": "Section Break",
+   "label": "Decision"
+  },
+  {
+   "fieldname": "decision_type",
+   "fieldtype": "Select",
+   "label": "Decision",
+   "options": "Approve without conditions\nApprove with conditions\nDecline"
+  },
+  {
+   "fieldname": "decision_date",
+   "fieldtype": "Date",
+   "label": "Decision Date"
+  },
+  {
+   "fieldname": "decision_notes",
+   "fieldtype": "Text Editor",
+   "label": "Decision Reasoning"
+  },
+  {
+   "fieldname": "conditions",
+   "fieldtype": "Text Editor",
+   "label": "Consent Conditions"
+  },
+  {
+   "fieldname": "column_break_decision",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "lapse_date",
+   "fieldtype": "Date",
+   "label": "Lapse Date"
+  },
+  {
+   "fieldname": "review_date",
+   "fieldtype": "Date",
+   "label": "Review Date"
+  },
+  {
+   "fieldname": "consent_duration",
+   "fieldtype": "Data",
+   "label": "Consent Duration"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Resource Consent Application",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-11-05 19:56:46.881173",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Resource Consent Application",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

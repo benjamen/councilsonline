@@ -1,0 +1,350 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "field:request",
+ "creation": "2025-11-05 20:00:00",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "request",
+  "section_break_building",
+  "building_work_type",
+  "building_category",
+  "building_value",
+  "column_break_building",
+  "floor_area",
+  "site_coverage",
+  "number_of_storeys",
+  "height_meters",
+  "section_break_construction",
+  "construction_type",
+  "foundations_type",
+  "roof_type",
+  "cladding_type",
+  "column_break_construction",
+  "num_dwellings",
+  "num_bedrooms",
+  "num_bathrooms",
+  "num_car_parks",
+  "section_break_features",
+  "has_swimming_pool",
+  "has_fireplace",
+  "has_solar_panels",
+  "energy_efficiency_rating",
+  "section_break_approvals",
+  "resource_consent_required",
+  "resource_consent_reference",
+  "section_37_applied",
+  "column_break_approvals",
+  "multiproof_approval",
+  "multiproof_number",
+  "builtready_approval",
+  "builtready_number",
+  "section_break_inspections",
+  "inspections",
+  "section_break_ccc",
+  "ccc_issued",
+  "ccc_issue_date",
+  "ccc_number",
+  "practical_completion_date",
+  "section_break_producer",
+  "ps_design",
+  "ps_construction",
+  "ps_construction_monitoring",
+  "ps_certification"
+ ],
+ "fields": [
+  {
+   "fieldname": "request",
+   "fieldtype": "Link",
+   "label": "Request",
+   "options": "Request",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "section_break_building",
+   "fieldtype": "Section Break",
+   "label": "Building Details"
+  },
+  {
+   "fieldname": "building_work_type",
+   "fieldtype": "Select",
+   "label": "Building Work Type",
+   "options": "New Build\nAlteration\nAddition\nRelocation\nDemolition\nRepairs",
+   "reqd": 1
+  },
+  {
+   "fieldname": "building_category",
+   "fieldtype": "Select",
+   "label": "Building Category",
+   "options": "Residential\nCommercial\nIndustrial\nPublic\nAgricultural",
+   "reqd": 1
+  },
+  {
+   "fieldname": "building_value",
+   "fieldtype": "Currency",
+   "label": "Estimated Value",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_building",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "floor_area",
+   "fieldtype": "Float",
+   "label": "Total Floor Area (m²)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "site_coverage",
+   "fieldtype": "Float",
+   "label": "Site Coverage (m²)"
+  },
+  {
+   "fieldname": "number_of_storeys",
+   "fieldtype": "Int",
+   "label": "Number of Storeys",
+   "reqd": 1
+  },
+  {
+   "fieldname": "height_meters",
+   "fieldtype": "Float",
+   "label": "Maximum Height (m)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_construction",
+   "fieldtype": "Section Break",
+   "label": "Construction Details"
+  },
+  {
+   "fieldname": "construction_type",
+   "fieldtype": "Select",
+   "label": "Construction Type",
+   "options": "Timber Frame\nSteel Frame\nConcrete\nMasonry\nMixed",
+   "reqd": 1
+  },
+  {
+   "fieldname": "foundations_type",
+   "fieldtype": "Select",
+   "label": "Foundations",
+   "options": "Concrete Slab\nPiles\nStrip Footings\nRaft\nOther",
+   "reqd": 1
+  },
+  {
+   "fieldname": "roof_type",
+   "fieldtype": "Select",
+   "label": "Roof Type",
+   "options": "Pitched\nFlat\nSkillion\nMixed"
+  },
+  {
+   "fieldname": "cladding_type",
+   "fieldtype": "Data",
+   "label": "Cladding"
+  },
+  {
+   "fieldname": "column_break_construction",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "num_dwellings",
+   "fieldtype": "Int",
+   "label": "Number of Dwellings"
+  },
+  {
+   "fieldname": "num_bedrooms",
+   "fieldtype": "Int",
+   "label": "Number of Bedrooms"
+  },
+  {
+   "fieldname": "num_bathrooms",
+   "fieldtype": "Int",
+   "label": "Number of Bathrooms"
+  },
+  {
+   "fieldname": "num_car_parks",
+   "fieldtype": "Int",
+   "label": "Number of Car Parks"
+  },
+  {
+   "fieldname": "section_break_features",
+   "fieldtype": "Section Break",
+   "label": "Features"
+  },
+  {
+   "default": "0",
+   "fieldname": "has_swimming_pool",
+   "fieldtype": "Check",
+   "label": "Swimming Pool"
+  },
+  {
+   "default": "0",
+   "fieldname": "has_fireplace",
+   "fieldtype": "Check",
+   "label": "Fireplace"
+  },
+  {
+   "default": "0",
+   "fieldname": "has_solar_panels",
+   "fieldtype": "Check",
+   "label": "Solar Panels"
+  },
+  {
+   "fieldname": "energy_efficiency_rating",
+   "fieldtype": "Select",
+   "label": "Energy Efficiency",
+   "options": "Not Assessed\n1 Star\n2 Stars\n3 Stars\n4 Stars\n5 Stars\n6 Stars"
+  },
+  {
+   "fieldname": "section_break_approvals",
+   "fieldtype": "Section Break",
+   "label": "Approvals & Fast Track"
+  },
+  {
+   "default": "0",
+   "fieldname": "resource_consent_required",
+   "fieldtype": "Check",
+   "label": "Resource Consent Required"
+  },
+  {
+   "depends_on": "resource_consent_required",
+   "fieldname": "resource_consent_reference",
+   "fieldtype": "Link",
+   "label": "Resource Consent",
+   "options": "Request"
+  },
+  {
+   "default": "0",
+   "depends_on": "resource_consent_required",
+   "fieldname": "section_37_applied",
+   "fieldtype": "Check",
+   "label": "Section 37 Applied"
+  },
+  {
+   "fieldname": "column_break_approvals",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "multiproof_approval",
+   "fieldtype": "Check",
+   "label": "MultiProof Approval"
+  },
+  {
+   "depends_on": "multiproof_approval",
+   "fieldname": "multiproof_number",
+   "fieldtype": "Data",
+   "label": "MultiProof Number"
+  },
+  {
+   "default": "0",
+   "fieldname": "builtready_approval",
+   "fieldtype": "Check",
+   "label": "BuiltReady Approval"
+  },
+  {
+   "depends_on": "builtready_approval",
+   "fieldname": "builtready_number",
+   "fieldtype": "Data",
+   "label": "BuiltReady Number"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_inspections",
+   "fieldtype": "Section Break",
+   "label": "Inspections"
+  },
+  {
+   "fieldname": "inspections",
+   "fieldtype": "Table",
+   "label": "Inspection Schedule",
+   "options": "Inspection"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_ccc",
+   "fieldtype": "Section Break",
+   "label": "Code Compliance Certificate"
+  },
+  {
+   "default": "0",
+   "fieldname": "ccc_issued",
+   "fieldtype": "Check",
+   "label": "CCC Issued"
+  },
+  {
+   "depends_on": "ccc_issued",
+   "fieldname": "ccc_issue_date",
+   "fieldtype": "Date",
+   "label": "CCC Issue Date"
+  },
+  {
+   "depends_on": "ccc_issued",
+   "fieldname": "ccc_number",
+   "fieldtype": "Data",
+   "label": "CCC Number"
+  },
+  {
+   "fieldname": "practical_completion_date",
+   "fieldtype": "Date",
+   "label": "Practical Completion Date"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_producer",
+   "fieldtype": "Section Break",
+   "label": "Producer Statements"
+  },
+  {
+   "fieldname": "ps_design",
+   "fieldtype": "Attach",
+   "label": "PS1 - Design"
+  },
+  {
+   "fieldname": "ps_construction",
+   "fieldtype": "Attach",
+   "label": "PS2 - Construction"
+  },
+  {
+   "fieldname": "ps_construction_monitoring",
+   "fieldtype": "Attach",
+   "label": "PS3 - Monitoring"
+  },
+  {
+   "fieldname": "ps_certification",
+   "fieldtype": "Attach",
+   "label": "PS4 - Certification"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-11-05 20:00:00",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Building Consent Application",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

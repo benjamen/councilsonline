@@ -1,0 +1,69 @@
+{
+ "actions": [],
+ "creation": "2025-11-05 19:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "party_name",
+  "property_address",
+  "relationship",
+  "approval_obtained",
+  "approval_date",
+  "approval_document",
+  "comments"
+ ],
+ "fields": [
+  {
+   "fieldname": "party_name",
+   "fieldtype": "Data",
+   "label": "Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "property_address",
+   "fieldtype": "Small Text",
+   "label": "Address",
+   "reqd": 1
+  },
+  {
+   "fieldname": "relationship",
+   "fieldtype": "Select",
+   "label": "Relationship",
+   "options": "Adjacent Property Owner\nNeighbor\nIwi\nInfrastructure Provider\nOther",
+   "reqd": 1
+  },
+  {
+   "fieldname": "approval_obtained",
+   "fieldtype": "Check",
+   "label": "Approval Obtained"
+  },
+  {
+   "fieldname": "approval_date",
+   "fieldtype": "Date",
+   "label": "Approval Date"
+  },
+  {
+   "fieldname": "approval_document",
+   "fieldtype": "Attach",
+   "label": "Approval Document"
+  },
+  {
+   "fieldname": "comments",
+   "fieldtype": "Small Text",
+   "label": "Comments"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-11-05 19:00:00",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Affected Party",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

@@ -1,0 +1,78 @@
+{
+ "actions": [],
+ "creation": "2025-11-05 19:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "inspection_type",
+  "scheduled_date",
+  "inspector",
+  "inspection_status",
+  "actual_date",
+  "result",
+  "comments",
+  "follow_up_required"
+ ],
+ "fields": [
+  {
+   "fieldname": "inspection_type",
+   "fieldtype": "Select",
+   "label": "Inspection Type",
+   "options": "Foundation/Piles\nPre-concrete Pour\nPre-line\nDrainage\nFinal Inspection\nOther",
+   "reqd": 1
+  },
+  {
+   "fieldname": "scheduled_date",
+   "fieldtype": "Datetime",
+   "label": "Scheduled Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "inspector",
+   "fieldtype": "Link",
+   "label": "Inspector",
+   "options": "User"
+  },
+  {
+   "fieldname": "inspection_status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Scheduled\nCompleted\nPassed\nFailed\nCancelled",
+   "reqd": 1
+  },
+  {
+   "fieldname": "actual_date",
+   "fieldtype": "Datetime",
+   "label": "Actual Date"
+  },
+  {
+   "fieldname": "result",
+   "fieldtype": "Select",
+   "label": "Result",
+   "options": "Pass\nFail\nConditional Pass"
+  },
+  {
+   "fieldname": "comments",
+   "fieldtype": "Text",
+   "label": "Comments"
+  },
+  {
+   "fieldname": "follow_up_required",
+   "fieldtype": "Check",
+   "label": "Follow-up Required"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-11-05 19:00:00",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Inspection",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
