@@ -282,8 +282,8 @@
         <div class="border-t border-gray-800 mt-12 pt-8 text-center text-sm text-gray-500">
           <p>&copy; 2025 Lodgeick. All rights reserved. Built with ❤️ in Aotearoa.</p>
         </div>
-      </footer>
-    </section>
+      </div>
+    </footer>
   </div>
 </template>
 
