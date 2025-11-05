@@ -1,14 +1,14 @@
-# Frappe UI Starter
+# Lodgeick Frontend
 
-This template should help get you started developing custom frontend for Frappe
-apps with Vue 3 and the Frappe UI package.
+Modern Vue 3 + Vite frontend for the Lodgeick council consent management system.
 
-![Auth](https://user-images.githubusercontent.com/34810212/236846289-ac31c292-81ea-4456-be65-95773a4049be.png)
+## Features
 
-![Home](https://user-images.githubusercontent.com/34810212/236846299-fd534e2b-1c06-4f01-a4f2-91a27547cd55.png)
-
-This boilerplate sets up Vue 3, Vue Router, TailwindCSS, and Frappe UI out of
-the box. It also has basic authentication frontend.
+- 🎨 Beautiful landing page inspired by ERCS
+- 🔐 Authentication with Frappe backend
+- 📱 Responsive design with Tailwind CSS
+- ⚡ Fast development with Vite HMR
+- 🎯 frappe-ui components
 
 ## Docs
 

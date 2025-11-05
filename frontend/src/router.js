@@ -5,6 +5,12 @@ import { session } from "./data/session"
 const routes = [
 	{
 		path: "/",
+		name: "Landing",
+		component: () => import("@/pages/Landing.vue"),
+		meta: { public: true }
+	},
+	{
+		path: "/home",
 		name: "Home",
 		component: () => import("@/pages/Home.vue"),
 	},
@@ -12,6 +18,7 @@ const routes = [
 		name: "Login",
 		path: "/account/login",
 		component: () => import("@/pages/Login.vue"),
+		meta: { public: true }
 	},
 ]
 
@@ -21,6 +28,12 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
+	// Allow public pages without authentication
+	if (to.meta.public) {
+		next()
+		return
+	}
+
 	let isLoggedIn = session.isLoggedIn
 	try {
 		await userResource.promise
