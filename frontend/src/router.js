@@ -10,6 +10,11 @@ const routes = [
 		meta: { public: true }
 	},
 	{
+		path: "/dashboard",
+		name: "Dashboard",
+		component: () => import("@/pages/Dashboard.vue"),
+	},
+	{
 		path: "/home",
 		name: "Home",
 		component: () => import("@/pages/Home.vue"),
@@ -42,7 +47,7 @@ router.beforeEach(async (to, from, next) => {
 	}
 
 	if (to.name === "Login" && isLoggedIn) {
-		next({ name: "Home" })
+		next({ name: "Dashboard" })
 	} else if (to.name !== "Login" && !isLoggedIn) {
 		next({ name: "Login" })
 	} else {

@@ -12,5 +12,7 @@ declare module 'vue' {
     ProcessStep: typeof import('./src/components/ProcessStep.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    StatCard: typeof import('./src/components/StatCard.vue')['default']
+    StatusBadge: typeof import('./src/components/StatusBadge.vue')['default']
   }
 }
