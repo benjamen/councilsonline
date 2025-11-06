@@ -116,7 +116,7 @@
               >
                 <option value="">-- Select a property or enter new --</option>
                 <option v-for="prop in properties.data" :key="prop.name" :value="prop.name">
-                  {{ prop.property_id }} - {{ prop.address }}
+                  {{ prop.property_id }} - {{ prop.street_address }}, {{ prop.suburb }}
                 </option>
               </select>
             </div>
@@ -465,7 +465,7 @@ const properties = createResource({
   url: 'frappe.client.get_list',
   params: {
     doctype: 'Property',
-    fields: ['name', 'property_id', 'address'],
+    fields: ['name', 'property_id', 'street_address', 'suburb', 'city'],
     limit_page_length: 100,
   },
   auto: true,
@@ -496,7 +496,7 @@ const onPropertySelect = () => {
   if (formData.value.property) {
     const selected = properties.data.find(p => p.name === formData.value.property)
     if (selected) {
-      formData.value.property_address = selected.address
+      formData.value.property_address = `${selected.street_address}, ${selected.suburb}, ${selected.city}`
     }
   }
 }
