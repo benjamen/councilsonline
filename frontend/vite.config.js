@@ -36,5 +36,16 @@ export default defineConfig({
 	},
 	server: {
 		allowedHosts: true,
+		port: 8080,
+		proxy: {
+			'^/(app|api|assets|files)': {
+				target: 'http://localhost:8000',
+				ws: true,
+				router: function (req) {
+					const site_name = req.headers.host.split(':')[0];
+					return `http://${site_name}:8000`;
+				},
+			},
+		},
 	},
 })
