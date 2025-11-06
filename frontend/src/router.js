@@ -30,6 +30,16 @@ const routes = [
 		component: () => import("@/pages/RequestDetail.vue"),
 	},
 	{
+		path: "/internal",
+		name: "InternalRequestManagement",
+		component: () => import("@/pages/InternalRequestManagement.vue"),
+	},
+	{
+		path: "/internal/request/:id",
+		name: "InternalRequestDetail",
+		component: () => import("@/pages/InternalRequestDetail.vue"),
+	},
+	{
 		name: "Login",
 		path: "/account/login",
 		component: () => import("@/pages/Login.vue"),
