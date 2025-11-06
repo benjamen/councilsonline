@@ -289,8 +289,7 @@ const formatDate = (dateStr) => {
 
 // Navigation
 const goToNewRequest = () => {
-  // TODO: Navigate to new request page
-  console.log('Navigate to new request')
+  router.push({ name: 'NewRequest' })
 }
 
 const viewRequest = (requestId) => {
