@@ -12,7 +12,7 @@
             </div>
             <div>
               <h1 class="text-xl font-bold text-gray-900">Lodgeick</h1>
-              <p class="text-xs text-gray-500">Council Consent Management</p>
+              <p class="text-xs text-gray-500">Council Request Management</p>
             </div>
           </div>
           <nav class="hidden md:flex items-center space-x-6">
@@ -32,16 +32,16 @@
       <div class="grid md:grid-cols-2 gap-12 items-center">
         <div>
           <div class="inline-block mb-4 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
-            Modern Resource Consent Management
+            Modern Council Request Management
           </div>
           <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-            Process Council Consents
+            Request Council Services
             <span class="text-blue-600">Online</span>
           </h2>
           <p class="text-xl text-gray-600 mb-8 leading-relaxed">
-            Lodgeick is a comprehensive platform for managing resource consents, building consents,
-            and all council application processes digitally. Submit, track, and manage your applications
-            with ease.
+            Lodgeick is a comprehensive platform for ratepayers, civilians, and suppliers to request
+            council services digitally. Submit consents, service requests, and applications online.
+            Track progress and manage all your council interactions in one place.
           </p>
           <div class="flex flex-col sm:flex-row gap-4">
             <Button @click="goToRegister" size="lg" variant="solid" theme="blue">
@@ -147,43 +147,43 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
           <h3 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Everything You Need for Consent Management
+            Everything You Need for Council Requests
           </h3>
           <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-            Streamline your council application process with powerful tools designed for efficiency
+            Streamline your council interactions with powerful tools for ratepayers, civilians, and suppliers
           </p>
         </div>
 
         <div class="grid md:grid-cols-3 gap-8">
           <FeatureCard
             icon="file-text"
-            title="Digital Applications"
-            description="Submit resource and building consent applications online with guided forms and instant validation"
+            title="Digital Requests"
+            description="Submit consents, service requests, and applications online with guided forms and instant validation"
           />
           <FeatureCard
             icon="clock"
             title="Real-time Tracking"
-            description="Monitor your application status, statutory clock, and receive instant notifications"
+            description="Monitor your request status, processing timeline, and receive instant notifications"
           />
           <FeatureCard
             icon="credit-card"
             title="Secure Payments"
-            description="Pay fees online with credit card or bank transfer, with instant receipt generation"
+            description="Pay fees and invoices online with credit card or bank transfer, with instant receipt generation"
           />
           <FeatureCard
             icon="message-circle"
             title="Direct Communication"
-            description="Chat directly with council planners, respond to RFIs, and manage all correspondence"
+            description="Communicate directly with council staff, respond to information requests, and manage all correspondence"
           />
           <FeatureCard
             icon="upload-cloud"
             title="Document Management"
-            description="Upload plans, reports, and supporting documents with version control"
+            description="Upload plans, quotes, reports, and supporting documents with version control and secure storage"
           />
           <FeatureCard
             icon="shield-check"
-            title="Compliance Built-in"
-            description="RMA and Building Act compliance checks, with automated validation"
+            title="Transparent Process"
+            description="Clear status updates, statutory timeframes, and automated compliance checks for your requests"
           />
         </div>
       </div>
@@ -196,29 +196,29 @@
           <h3 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             Simple Process, Powerful Results
           </h3>
-          <p class="text-xl text-gray-600">Get your consent approved in 4 easy steps</p>
+          <p class="text-xl text-gray-600">Submit your council request in 4 easy steps</p>
         </div>
 
         <div class="grid md:grid-cols-4 gap-8">
           <ProcessStep
             number="1"
             title="Create Account"
-            description="Register for free and set up your applicant profile"
+            description="Register for free and set up your profile as a ratepayer, civilian, or supplier"
           />
           <ProcessStep
             number="2"
-            title="Submit Application"
-            description="Complete the guided form and upload your documents"
+            title="Submit Request"
+            description="Complete the guided form and upload any required documents or quotes"
           />
           <ProcessStep
             number="3"
             title="Track Progress"
-            description="Monitor status updates and respond to any RFIs"
+            description="Monitor status updates and respond to any council information requests"
           />
           <ProcessStep
             number="4"
-            title="Get Approved"
-            description="Receive your consent decision and documentation"
+            title="Get Result"
+            description="Receive your decision, approval, or service completion notification"
           />
         </div>
       </div>
@@ -231,7 +231,7 @@
           Ready to Get Started?
         </h3>
         <p class="text-xl text-blue-100 mb-8">
-          Join thousands of applicants using Lodgeick for faster, easier consent processing
+          Join thousands of ratepayers and suppliers using Lodgeick for faster, easier council service requests
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
           <Button @click="goToRegister" size="lg" variant="solid" class="bg-white text-blue-600 hover:bg-gray-100">
@@ -251,7 +251,7 @@
           <div>
             <h4 class="text-white font-bold mb-4">Lodgeick</h4>
             <p class="text-sm text-gray-400">
-              Modern consent management platform for New Zealand councils
+              Modern request management platform connecting ratepayers, civilians, and suppliers with their councils
             </p>
           </div>
           <div>

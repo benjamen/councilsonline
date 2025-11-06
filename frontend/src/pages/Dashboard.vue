@@ -12,7 +12,7 @@
             </div>
             <div>
               <h1 class="text-xl font-bold text-gray-900">Lodgeick</h1>
-              <p class="text-xs text-gray-500">Council Consent Management</p>
+              <p class="text-xs text-gray-500">Council Request Management</p>
             </div>
           </div>
 
@@ -23,7 +23,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
               </template>
-              New Application
+              New Request
             </Button>
 
             <Dropdown :options="userMenuOptions">
@@ -49,13 +49,13 @@
       <!-- Welcome Section -->
       <div class="mb-8">
         <h2 class="text-2xl font-bold text-gray-900 mb-2">Welcome back, {{ userName }}!</h2>
-        <p class="text-gray-600">Manage your applications and track their progress</p>
+        <p class="text-gray-600">Manage your council requests and track their progress</p>
       </div>
 
       <!-- Stats Cards -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <StatCard
-          title="Total Applications"
+          title="Total Requests"
           :value="stats.total"
           icon="file-text"
           color="blue"
@@ -73,7 +73,7 @@
           color="green"
         />
         <StatCard
-          title="RFI Pending"
+          title="Info Requested"
           :value="stats.rfiPending"
           icon="alert-circle"
           color="orange"
