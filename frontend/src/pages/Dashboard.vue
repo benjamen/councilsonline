@@ -294,13 +294,11 @@ const goToNewRequest = () => {
 }
 
 const viewRequest = (requestId) => {
-  // TODO: Navigate to request detail
-  console.log('View request:', requestId)
+  router.push({ name: 'RequestDetail', params: { id: requestId } })
 }
 
 const editRequest = (requestId) => {
-  // TODO: Navigate to edit request
-  console.log('Edit request:', requestId)
+  router.push({ name: 'RequestDetail', params: { id: requestId } })
 }
 
 // User menu
