@@ -25,7 +25,11 @@
 </template>
 
 <script lang="ts" setup>
+import { watch } from "vue"
+import { useRouter } from "vue-router"
 import { session } from "../data/session"
+
+const router = useRouter()
 
 function submit(e) {
 	const formData = new FormData(e.target)
@@ -34,4 +38,11 @@ function submit(e) {
 		password: formData.get("password"),
 	})
 }
+
+// Watch for successful login and redirect
+watch(() => session.isLoggedIn, (isLoggedIn) => {
+	if (isLoggedIn) {
+		router.push({ name: "Dashboard" })
+	}
+})
 </script>
