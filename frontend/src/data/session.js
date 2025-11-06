@@ -22,11 +22,11 @@ export const session = reactive({
 				pwd: password,
 			}
 		},
-		onSuccess(data) {
+		onSuccess() {
 			userResource.reload()
 			session.user = sessionUser()
 			session.login.reset()
-			router.replace(data.default_route || "/")
+			router.replace({ name: "Dashboard" })
 		},
 	}),
 	logout: createResource({
