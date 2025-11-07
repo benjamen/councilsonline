@@ -301,8 +301,17 @@ const assignRequest = (requestId) => {
   console.log('Assign request:', requestId)
 }
 
+// Navigation back to public view
+const goToPublicDashboard = () => {
+  router.push({ name: 'Dashboard' })
+}
+
 // User menu
 const userMenuOptions = [
+  {
+    label: 'Public Dashboard',
+    onClick: goToPublicDashboard,
+  },
   {
     label: 'My Profile',
     onClick: () => console.log('Profile'),

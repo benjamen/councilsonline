@@ -35,6 +35,7 @@ export default defineConfig({
 		include: ["feather-icons", "showdown", "highlight.js/lib/core", "interactjs"],
 	},
 	server: {
+		host: '0.0.0.0',
 		allowedHosts: true,
 		port: 8080,
 		proxy: {

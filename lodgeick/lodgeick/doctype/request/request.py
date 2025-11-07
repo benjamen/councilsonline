@@ -47,6 +47,9 @@ class Request(Document):
         # 6. Calculate total fees
         self.calculate_total_fees()
 
+        # 7. Calculate costing (task costs + disbursements)
+        self.calculate_costing()
+
     def before_submit(self):
         """Actions before document is submitted"""
         # Set submitted date
@@ -122,6 +125,31 @@ class Request(Document):
         self.total_fees_excl_gst = total
         self.gst_amount = total * 0.15  # 15% GST
         self.total_fees_incl_gst = total + self.gst_amount
+
+    def calculate_costing(self):
+        """Calculate total costing from tasks and disbursements"""
+        # Calculate total task cost from linked WB Tasks
+        task_cost = frappe.db.sql("""
+            SELECT SUM(IFNULL(total_cost, 0))
+            FROM `tabWB Task`
+            WHERE request = %s
+        """, self.name)[0][0] or 0
+
+        self.total_task_cost = task_cost
+
+        # Calculate total disbursements
+        disbursement_total = 0
+        if self.disbursements:
+            for item in self.disbursements:
+                disbursement_total += item.amount or 0
+
+        self.total_disbursements = disbursement_total
+
+        # Get application fee from total_fees_excl_gst
+        self.application_fee = self.total_fees_excl_gst or 0
+
+        # Calculate total amount due
+        self.total_amount_due = self.application_fee + self.total_task_cost + self.total_disbursements
 
     def add_status_history(self, from_status, to_status, reason=None):
         """Add entry to status history"""
@@ -332,3 +360,29 @@ def calculate_fees(request_type, building_value=None):
         "gst": gst,
         "total": total_incl_gst
     }
+
+
+@frappe.whitelist()
+def get_all_requests_for_staff():
+    """Get all requests for internal staff view"""
+    return frappe.get_all(
+        "Request",
+        fields=[
+            "name",
+            "request_number",
+            "request_type",
+            "brief_description",
+            "property_address",
+            "status",
+            "submitted_date",
+            "target_completion_date",
+            "statutory_clock_started",
+            "working_days_elapsed",
+            "assigned_to",
+            "priority",
+            "owner",
+            "creation",
+            "modified"
+        ],
+        order_by="creation desc"
+    )

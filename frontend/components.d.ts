@@ -14,5 +14,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     StatCard: typeof import('./src/components/StatCard.vue')['default']
     StatusBadge: typeof import('./src/components/StatusBadge.vue')['default']
+    TaskDialog: typeof import('./src/components/TaskDialog.vue')['default']
+    TaskManagement: typeof import('./src/components/TaskManagement.vue')['default']
   }
 }

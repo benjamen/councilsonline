@@ -289,6 +289,9 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
+import { Button } from 'frappe-ui'
+import FeatureCard from '../components/FeatureCard.vue'
+import ProcessStep from '../components/ProcessStep.vue'
 
 const router = useRouter()
 
@@ -297,8 +300,7 @@ const goToLogin = () => {
 }
 
 const goToRegister = () => {
-  // TODO: Create registration page
-  router.push({ name: 'Login' })
+  router.push({ name: 'Register' })
 }
 </script>
 

@@ -205,7 +205,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { createResource, Dropdown, Input } from 'frappe-ui'
+import { createResource, Dropdown, Input, Button } from 'frappe-ui'
 import { session } from '../data/session'
 import StatusBadge from '../components/StatusBadge.vue'
 import StatCard from '../components/StatCard.vue'
@@ -300,19 +300,28 @@ const editRequest = (requestId) => {
   router.push({ name: 'RequestDetail', params: { id: requestId } })
 }
 
+// Navigation to internal view
+const goToInternal = () => {
+  router.push({ name: 'InternalRequestManagement' })
+}
+
 // User menu
 const userMenuOptions = [
   {
+    label: 'Staff Portal',
+    onClick: goToInternal,
+  },
+  {
     label: 'My Profile',
-    handler: () => console.log('Profile'),
+    onClick: () => console.log('Profile'),
   },
   {
     label: 'Settings',
-    handler: () => console.log('Settings'),
+    onClick: () => console.log('Settings'),
   },
   {
     label: 'Sign Out',
-    handler: () => session.logout.submit(),
+    onClick: () => session.logout.submit(),
   },
 ]
 </script>

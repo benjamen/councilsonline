@@ -137,13 +137,12 @@ home_page = "frontend"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+	"WB Task": {
+		"validate": "lodgeick.wb_task_hooks.wb_task_validate",
+		"on_update": "lodgeick.wb_task_hooks.wb_task_on_update"
+	}
+}
 
 # Scheduled Tasks
 # ---------------

@@ -419,7 +419,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { createResource, Input } from 'frappe-ui'
+import { createResource, Input, Button } from 'frappe-ui'
 
 const router = useRouter()
 

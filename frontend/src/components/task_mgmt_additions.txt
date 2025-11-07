@@ -1,0 +1,18 @@
+import TaskDialog from './TaskDialog.vue'
+
+const showTaskDialog = ref(false)
+const selectedTask = ref(null)
+
+const openNewTaskDialog = () => {
+  selectedTask.value = null
+  showTaskDialog.value = true
+}
+
+const openEditTaskDialog = (task) => {
+  selectedTask.value = task
+  showTaskDialog.value = true
+}
+
+const handleTaskSaved = () => {
+  tasks.reload()
+}

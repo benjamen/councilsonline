@@ -45,6 +45,12 @@ const routes = [
 		component: () => import("@/pages/Login.vue"),
 		meta: { public: true }
 	},
+	{
+		name: "Register",
+		path: "/account/register",
+		component: () => import("@/pages/Register.vue"),
+		meta: { public: true }
+	},
 ]
 
 const router = createRouter({
