@@ -80,10 +80,11 @@
               <div class="flex items-start justify-between">
                 <div class="flex-1">
                   <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ type.type_name }}</h3>
-                  <p class="text-sm text-gray-600">{{ type.description || 'No description available' }}</p>
+                  <p class="text-sm text-gray-600" v-html="type.description || 'No description available'"></p>
                   <div class="mt-4 flex items-center space-x-4 text-xs text-gray-500">
-                    <span v-if="type.application_fee">Fee: ${{ type.application_fee }}</span>
-                    <span v-if="type.statutory_timeframe">{{ type.statutory_timeframe }} days</span>
+                    <span v-if="type.base_fee">Fee: ${{ type.base_fee }}</span>
+                    <span v-if="type.processing_sla_days">{{ type.processing_sla_days }} days</span>
+                    <span v-if="type.category" class="px-2 py-1 bg-gray-100 rounded">{{ type.category }}</span>
                   </div>
                 </div>
                 <div v-if="formData.request_type === type.name" class="ml-4">
@@ -570,7 +571,7 @@ const getRequestTypeName = () => {
 
 const getApplicationFee = () => {
   const type = requestTypes.data?.find(t => t.name === formData.value.request_type)
-  return type?.application_fee ? `$${type.application_fee}` : 'TBD'
+  return type?.base_fee ? `$${type.base_fee}` : 'TBD'
 }
 
 const submitApplication = async () => {
