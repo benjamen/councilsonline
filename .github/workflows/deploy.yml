@@ -13,7 +13,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup SSH Key
+      - name: Setup SSH Key on Runner
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -29,39 +29,38 @@ jobs:
             set -e
             echo '🚀 Starting Lodgeick deployment...'
 
-            # Fix git ownership issue for the app folder
+            # Start SSH agent and add the key on the server
+            eval \$(ssh-agent -s)
+            ssh-add ~/.ssh/id_ed25519
+
+            # Ensure Git sees this directory as safe
             git config --global --add safe.directory /home/frappe-user/frappe-bench/apps/lodgeick
 
+            # Go to app directory
             cd /home/frappe-user/frappe-bench/apps/lodgeick
 
-            # Pull latest code from the GitHub repo
-            echo '📥 Pulling latest code...'
-            # Fixed (uses SSH)
+            # Ensure remote is set to SSH
             git remote remove origin 2>/dev/null || true
             git remote add origin git@github.com:benjamen/lodgeick.git
+
+            # Pull latest code from private repo
             git fetch origin main
             git reset --hard origin/main
             git clean -fd
 
             # Install/update frontend dependencies
-            echo '📦 Installing frontend dependencies...'
             cd frontend
             yarn install --frozen-lockfile || yarn install
 
             # Build frontend
-            echo '🔨 Building frontend...'
             yarn build
 
             # Build assets, migrate, clear cache, restart services
             cd /home/frappe-user/frappe-bench
-            echo '🔨 Building assets...'
             bench build --app lodgeick
-            echo '🗄️ Migrating database...'
             bench --site lodgeick.com migrate || echo 'Migration skipped or failed'
-            echo '🧹 Clearing cache...'
             bench --site lodgeick.com clear-cache
             bench --site lodgeick.com clear-website-cache
-            echo '🔄 Restarting services...'
             bench restart
 
             echo '✅ Lodgeick deployment completed successfully!'
