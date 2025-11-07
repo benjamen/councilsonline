@@ -36,8 +36,9 @@ jobs:
 
             # Pull latest code from the GitHub repo
             echo '📥 Pulling latest code...'
+            # Fixed (uses SSH)
             git remote remove origin 2>/dev/null || true
-            git remote add origin https://github.com/benjamen/lodgeick.git
+            git remote add origin git@github.com:benjamen/lodgeick.git
             git fetch origin main
             git reset --hard origin/main
             git clean -fd
