@@ -191,6 +191,60 @@
         <TaskManagement />
       </div>
 
+      <!-- GIS Maps Tab -->
+      <div v-if="currentTab === 'maps'">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden" style="height: calc(100vh - 250px);">
+          <div class="p-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">GIS Property Maps</h3>
+              <p class="text-sm text-gray-600">Hutt City Council GIS Viewer</p>
+            </div>
+            <a
+              href="https://eplan.huttcity.govt.nz/review/property/1998600/0/48?_t=property"
+              target="_blank"
+              class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
+            >
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              Open in New Tab
+            </a>
+          </div>
+          <iframe
+            src="https://eplan.huttcity.govt.nz/review/property/1998600/0/48?_t=property"
+            class="w-full h-full border-0"
+            title="GIS Property Maps"
+          ></iframe>
+        </div>
+      </div>
+
+      <!-- District Plan Tab -->
+      <div v-if="currentTab === 'districtplan'">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden" style="height: calc(100vh - 250px);">
+          <div class="p-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">District Plan</h3>
+              <p class="text-sm text-gray-600">Hutt City Council District Plan</p>
+            </div>
+            <a
+              href="https://eplan.huttcity.govt.nz/eplan"
+              target="_blank"
+              class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
+            >
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              Open in New Tab
+            </a>
+          </div>
+          <iframe
+            src="https://eplan.huttcity.govt.nz/eplan"
+            class="w-full h-full border-0"
+            title="District Plan"
+          ></iframe>
+        </div>
+      </div>
+
       <!-- Analytics Tab -->
       <div v-if="currentTab === 'analytics'">
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
@@ -269,6 +323,8 @@ const currentTab = ref('requests')
 const tabs = [
   { id: 'requests', label: 'All Requests' },
   { id: 'tasks', label: 'My Tasks' },
+  { id: 'maps', label: 'GIS Maps' },
+  { id: 'districtplan', label: 'District Plan' },
   { id: 'analytics', label: 'Analytics' },
 ]
 
