@@ -120,7 +120,7 @@
       <div class="text-center mt-6">
         <p class="text-sm text-gray-600">
           Don't have an account?
-          <router-link to="/register" class="font-medium text-blue-600 hover:text-blue-700">
+          <router-link :to="{ name: 'Register' }" class="font-medium text-blue-600 hover:text-blue-700">
             Create one now
           </router-link>
         </p>

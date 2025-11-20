@@ -532,12 +532,29 @@ const previousStep = () => {
 const saveDraft = async () => {
   savingDraft.value = true
   try {
-    // TODO: Implement save draft functionality
-    console.log('Saving draft...', formData.value)
-    alert('Draft saved successfully!')
+    const response = await fetch('/api/method/lodgeick.api.create_draft_request', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Frappe-CSRF-Token': window.csrf_token
+      },
+      body: JSON.stringify({
+        data: formData.value
+      })
+    })
+
+    const result = await response.json()
+
+    if (result.message && result.message.success) {
+      alert(`Draft saved successfully! Request ID: ${result.message.request_number}`)
+      // Optionally redirect to dashboard
+      // router.push({ name: 'Dashboard' })
+    } else {
+      throw new Error(result.message || 'Failed to save draft')
+    }
   } catch (error) {
     console.error('Error saving draft:', error)
-    alert('Failed to save draft')
+    alert('Failed to save draft. Please try again.')
   } finally {
     savingDraft.value = false
   }
@@ -582,15 +599,65 @@ const submitApplication = async () => {
 
   submitting.value = true
   try {
-    // TODO: Implement actual submission
-    console.log('Submitting application...', formData.value)
-    console.log('Files:', uploadedFiles.value)
+    // Step 1: Create draft request
+    const createResponse = await fetch('/api/method/lodgeick.api.create_draft_request', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Frappe-CSRF-Token': window.csrf_token
+      },
+      body: JSON.stringify({
+        data: formData.value
+      })
+    })
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    const createResult = await createResponse.json()
 
-    alert('Application submitted successfully!')
-    router.push({ name: 'Dashboard' })
+    if (!createResult.message || !createResult.message.success) {
+      throw new Error('Failed to create request')
+    }
+
+    const requestId = createResult.message.request_id
+
+    // Step 2: Upload files if any
+    if (uploadedFiles.value.length > 0) {
+      for (const file of uploadedFiles.value) {
+        const fileFormData = new FormData()
+        fileFormData.append('file', file)
+        fileFormData.append('doctype', 'Request')
+        fileFormData.append('docname', requestId)
+        fileFormData.append('is_private', 0)
+
+        await fetch('/api/method/upload_file', {
+          method: 'POST',
+          headers: {
+            'X-Frappe-CSRF-Token': window.csrf_token
+          },
+          body: fileFormData
+        })
+      }
+    }
+
+    // Step 3: Submit the request
+    const submitResponse = await fetch('/api/method/lodgeick.lodgeick.doctype.request.request.submit_application', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Frappe-CSRF-Token': window.csrf_token
+      },
+      body: JSON.stringify({
+        request_id: requestId
+      })
+    })
+
+    const submitResult = await submitResponse.json()
+
+    if (submitResult.message && submitResult.message.success) {
+      alert(`Application submitted successfully! Request Number: ${submitResult.message.request_number}`)
+      router.push({ name: 'Dashboard' })
+    } else {
+      throw new Error('Failed to submit application')
+    }
   } catch (error) {
     console.error('Error submitting application:', error)
     alert('Failed to submit application')

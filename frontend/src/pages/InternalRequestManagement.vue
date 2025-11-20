@@ -172,7 +172,7 @@
                     </div>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button @click.stop="assignRequest(request.name)" class="text-green-600 hover:text-green-900 mr-3">
+                    <button @click.stop="assignRequest(request)" class="text-green-600 hover:text-green-900 mr-3">
                       Assign
                     </button>
                     <button @click.stop="viewRequest(request.name)" class="text-blue-600 hover:text-blue-900">
@@ -202,13 +202,53 @@
         </div>
       </div>
     </main>
+
+    <!-- Assignment Dialog -->
+    <Dialog v-model="showAssignDialog" :options="{ title: 'Assign Request', size: 'md' }">
+      <template #body-content>
+        <div v-if="assigningRequest" class="space-y-4">
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="text-sm font-medium text-gray-900">{{ assigningRequest.request_number }}</div>
+            <div class="text-sm text-gray-500">{{ assigningRequest.brief_description }}</div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Assign To <span class="text-red-500">*</span></label>
+            <Input
+              v-model="assignedTo"
+              type="text"
+              placeholder="Enter email address"
+              class="w-full"
+            />
+            <p class="mt-1 text-sm text-gray-500">Enter the email address of the staff member</p>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Notes (Optional)</label>
+            <textarea
+              v-model="assignmentNotes"
+              rows="3"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Add any notes about this assignment..."
+            ></textarea>
+          </div>
+        </div>
+      </template>
+
+      <template #actions>
+        <Button @click="cancelAssignment" variant="outline">Cancel</Button>
+        <Button @click="confirmAssignment" :loading="isAssigning" variant="solid" theme="blue">
+          Assign Request
+        </Button>
+      </template>
+    </Dialog>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { createResource, Input, Dropdown } from 'frappe-ui'
+import { createResource, Input, Dropdown, Dialog, Button } from 'frappe-ui'
 import { session } from '../data/session'
 import StatusBadge from '../components/StatusBadge.vue'
 import StatCard from '../components/StatCard.vue'
@@ -230,6 +270,13 @@ const searchQuery = ref('')
 const filterStatus = ref('')
 const filterAssignee = ref('')
 const filterType = ref('')
+
+// Assignment dialog
+const showAssignDialog = ref(false)
+const assigningRequest = ref(null)
+const assignedTo = ref('')
+const assignmentNotes = ref('')
+const isAssigning = ref(false)
 
 // Fetch all requests for council staff
 const requests = createResource({
@@ -296,9 +343,60 @@ const viewRequest = (requestId) => {
   router.push({ name: 'InternalRequestDetail', params: { id: requestId } })
 }
 
-const assignRequest = (requestId) => {
-  // TODO: Implement assignment dialog
-  console.log('Assign request:', requestId)
+const assignRequest = (request) => {
+  assigningRequest.value = request
+  assignedTo.value = request.assigned_to || ''
+  assignmentNotes.value = ''
+  showAssignDialog.value = true
+}
+
+const confirmAssignment = async () => {
+  if (!assignedTo.value) {
+    alert('Please select a user to assign')
+    return
+  }
+
+  isAssigning.value = true
+  try {
+    const response = await fetch('/api/method/lodgeick.api.assign_request', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Frappe-CSRF-Token': window.csrf_token
+      },
+      body: JSON.stringify({
+        request_id: assigningRequest.value.name,
+        assigned_to: assignedTo.value,
+        notes: assignmentNotes.value
+      })
+    })
+
+    const result = await response.json()
+
+    if (result.message && result.message.success) {
+      showAssignDialog.value = false
+      assigningRequest.value = null
+      assignedTo.value = ''
+      assignmentNotes.value = ''
+      // Reload requests
+      requests.reload()
+      alert('Request assigned successfully!')
+    } else {
+      throw new Error('Failed to assign request')
+    }
+  } catch (error) {
+    console.error('Error assigning request:', error)
+    alert('Failed to assign request. Please try again.')
+  } finally {
+    isAssigning.value = false
+  }
+}
+
+const cancelAssignment = () => {
+  showAssignDialog.value = false
+  assigningRequest.value = null
+  assignedTo.value = ''
+  assignmentNotes.value = ''
 }
 
 // Navigation back to public view

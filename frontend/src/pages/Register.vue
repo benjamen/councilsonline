@@ -284,7 +284,7 @@
       <div class="text-center mt-6">
         <p class="text-sm text-gray-600">
           Already have an account?
-          <router-link to="/login" class="font-medium text-blue-600 hover:text-blue-700">
+          <router-link :to="{ name: 'Login' }" class="font-medium text-blue-600 hover:text-blue-700">
             Sign in
           </router-link>
         </p>
@@ -344,14 +344,35 @@ function submit(e) {
     userData.company_number = formData.get('company_number')
   }
 
-  // TODO: Implement actual registration API call
-  console.log('Registration data:', userData)
-
-  // Simulate API call
-  setTimeout(() => {
+  // Call registration API
+  fetch('/api/method/lodgeick.api.register_user', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Frappe-CSRF-Token': window.csrf_token
+    },
+    body: JSON.stringify(userData)
+  })
+  .then(response => response.json())
+  .then(data => {
     isLoading.value = false
-    // For now, redirect to login
-    router.push({ name: 'Login' })
-  }, 1500)
+
+    if (data.message && data.message.success) {
+      // Success - redirect to login with success message
+      router.push({
+        name: 'Login',
+        query: { registered: 'true' }
+      })
+    } else if (data.exc) {
+      // Server error
+      errorMessage.value = 'Registration failed. Please try again.'
+      console.error('Registration error:', data.exc)
+    }
+  })
+  .catch(error => {
+    isLoading.value = false
+    errorMessage.value = 'Network error. Please check your connection and try again.'
+    console.error('Registration error:', error)
+  })
 }
 </script>
