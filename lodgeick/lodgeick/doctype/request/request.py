@@ -142,8 +142,9 @@ class Request(Document):
         self.total_task_cost = task_cost
 
         # Calculate total disbursements
+        # Note: disbursements child table may not exist in all Request Types
         disbursement_total = 0
-        if self.disbursements:
+        if hasattr(self, 'disbursements') and self.disbursements:
             for item in self.disbursements:
                 disbursement_total += item.amount or 0
 
