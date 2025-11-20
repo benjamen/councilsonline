@@ -1,19 +1,28 @@
-name: Deploy to Server
+name: Deploy to Production
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:  # Allow manual deployment
+
+env:
+  SERVER_HOST: 77.37.87.141
+  SERVER_USER: root
+  BENCH_PATH: /home/frappe-user/frappe-bench
+  SITE_NAME: lodgeick.com
+  APP_NAME: lodgeick
 
 jobs:
   deploy:
     runs-on: ubuntu-22.04
+    environment: production
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup SSH Key on Runner
+      - name: Setup SSH Key
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -21,58 +30,78 @@ jobs:
       - name: Add Server to Known Hosts
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan -H 77.37.87.141 >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Deploy to Frappe Server
+      - name: Deploy to Production Server
         run: |
-          ssh -o StrictHostKeyChecking=no frappe-user@77.37.87.141 "
+          ssh -o StrictHostKeyChecking=no ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} << 'ENDSSH'
             set -e
-            echo '🚀 Starting Lodgeick deployment...'
+            echo "🚀 Starting Lodgeick deployment..."
 
-            # Start SSH agent and add the key on the server
-            eval \$(ssh-agent -s)
-            ssh-add ~/.ssh/id_ed25519
+            # Switch to frappe user and run deployment commands
+            sudo -u frappe-user bash << 'EOF'
+              set -e
 
-            # Ensure Git sees this directory as safe
-            git config --global --add safe.directory /home/frappe-user/frappe-bench/apps/lodgeick
+              # Navigate to bench directory
+              cd ${{ env.BENCH_PATH }}
 
-            # Go to app directory
-            cd /home/frappe-user/frappe-bench/apps/lodgeick
+              # Navigate to app directory
+              cd apps/${{ env.APP_NAME }}
 
-            # Ensure remote is set to SSH
-            git remote remove origin 2>/dev/null || true
-            git remote add origin git@github.com:benjamen/lodgeick.git
+              echo "📦 Pulling latest code..."
+              git fetch origin main
+              git reset --hard origin/main
+              git clean -fd
 
-            # Pull latest code from private repo
-            git fetch origin main
-            git reset --hard origin/main
-            git clean -fd
+              echo "📦 Installing frontend dependencies..."
+              cd frontend
+              yarn install --frozen-lockfile || yarn install
 
-            # Install/update frontend dependencies
-            cd frontend
-            yarn install --frozen-lockfile || yarn install
+              echo "🔨 Building frontend..."
+              yarn build
 
-            # Build frontend
-            yarn build
+              echo "🔨 Building backend assets..."
+              cd ${{ env.BENCH_PATH }}
+              bench build --app ${{ env.APP_NAME }}
 
-            # Build assets, migrate, clear cache, restart services
-            cd /home/frappe-user/frappe-bench
-            bench build --app lodgeick
-            bench --site lodgeick.com migrate || echo 'Migration skipped or failed'
-            bench --site lodgeick.com clear-cache
-            bench --site lodgeick.com clear-website-cache
-            bench restart
+              echo "🗃️ Running migrations..."
+              bench --site ${{ env.SITE_NAME }} migrate || echo "⚠️ Migration failed or not needed"
 
-            echo '✅ Lodgeick deployment completed successfully!'
-            echo '🌐 Dashboard available at: https://lodgeick.com'
-          "
+              echo "🧹 Clearing cache..."
+              bench --site ${{ env.SITE_NAME }} clear-cache
+              bench --site ${{ env.SITE_NAME }} clear-website-cache
+
+              echo "🔄 Restarting services..."
+              bench restart
+
+              echo "✅ Deployment completed successfully!"
+              echo "🌐 Site: https://${{ env.SITE_NAME }}"
+          EOF
+          ENDSSH
 
       - name: Verify Deployment
         run: |
-          echo '🔍 Verifying deployment...'
-          sleep 10
-          curl -f -s -o /dev/null https://lodgeick.com || {
-            echo '❌ Site not accessible'
+          echo "🔍 Verifying deployment..."
+          sleep 15
+
+          # Check if site is accessible
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://${{ env.SITE_NAME }} || echo "000")
+
+          if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "302" ]; then
+            echo "✅ Site is accessible (HTTP $HTTP_CODE)"
+            echo "🌐 URL: https://${{ env.SITE_NAME }}"
+          else
+            echo "❌ Site returned HTTP $HTTP_CODE"
             exit 1
-          }
-          echo '✅ Site is accessible at https://lodgeick.com'
+          fi
+
+      - name: Deployment Summary
+        if: always()
+        run: |
+          echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Server:** ${{ env.SERVER_HOST }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Site:** https://${{ env.SITE_NAME }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **App:** ${{ env.APP_NAME }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** main" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
