@@ -157,8 +157,10 @@ def create_draft_request(data):
             request_doc.building_value = data.get("building_value")
 
         # Save as draft (docstatus = 0)
+        # Ignore mandatory field validation for drafts
         request_doc.flags.ignore_permissions = False
-        request_doc.insert()
+        request_doc.flags.ignore_mandatory = True
+        request_doc.insert(ignore_mandatory=True)
 
         frappe.db.commit()
 
