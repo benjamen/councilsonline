@@ -34,19 +34,19 @@ jobs:
 
       - name: Deploy to Production Server
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "
+          ssh -o StrictHostKeyChecking=no root@77.37.87.141 "
             set -e
             echo '🚀 Starting Lodgeick deployment...'
 
             # Fix git ownership issue
-            git config --global --add safe.directory ${{ env.BENCH_PATH }}/apps/${{ env.APP_NAME }}
+            git config --global --add safe.directory /home/frappe-user/frappe-bench/apps/lodgeick
 
-            cd ${{ env.BENCH_PATH }}
+            cd /home/frappe-user/frappe-bench
 
             # Pull latest changes as frappe-user
             echo '📥 Pulling latest code...'
             sudo -u frappe-user bash -c '
-              cd ${{ env.BENCH_PATH }}/apps/${{ env.APP_NAME }} &&
+              cd /home/frappe-user/frappe-bench/apps/lodgeick &&
               git fetch origin main &&
               git reset --hard origin/main &&
               git clean -fd
@@ -55,24 +55,24 @@ jobs:
             # Install/update frontend dependencies
             echo '📦 Installing frontend dependencies...'
             sudo -u frappe-user bash -c '
-              cd ${{ env.BENCH_PATH }}/apps/${{ env.APP_NAME }}/frontend &&
+              cd /home/frappe-user/frappe-bench/apps/lodgeick/frontend &&
               yarn install --frozen-lockfile || yarn install
             '
 
             # Build, migrate, and manage services
             sudo -u frappe-user bash -c '
-              cd ${{ env.BENCH_PATH }} &&
+              cd /home/frappe-user/frappe-bench &&
               echo \"🔨 Building frontend...\" &&
-              cd apps/${{ env.APP_NAME }}/frontend &&
+              cd apps/lodgeick/frontend &&
               yarn build &&
-              cd ${{ env.BENCH_PATH }} &&
+              cd /home/frappe-user/frappe-bench &&
               echo \"🔨 Building backend assets...\" &&
-              bench build --app ${{ env.APP_NAME }} &&
+              bench build --app lodgeick &&
               echo \"🗄️ Migrating database...\" &&
-              bench --site ${{ env.SITE_NAME }} migrate || echo \"Migration skipped or failed\" &&
+              bench --site lodgeick.com migrate || echo \"Migration skipped or failed\" &&
               echo \"🧹 Clearing cache...\" &&
-              bench --site ${{ env.SITE_NAME }} clear-cache &&
-              bench --site ${{ env.SITE_NAME }} clear-website-cache &&
+              bench --site lodgeick.com clear-cache &&
+              bench --site lodgeick.com clear-website-cache &&
               echo \"🔄 Restarting services...\" &&
               bench restart || echo \"Bench restart failed, continuing...\"
             '
@@ -81,18 +81,18 @@ jobs:
             sudo systemctl reload nginx
 
             echo '✅ Lodgeick deployment completed successfully!'
-            echo '🌐 Site: https://${{ env.SITE_NAME }}'
+            echo '🌐 Site: https://lodgeick.com'
           "
 
       - name: Verify Deployment
         run: |
           echo '🔍 Verifying deployment...'
           sleep 10
-          curl -f -s -o /dev/null https://${{ env.SITE_NAME }} || {
+          curl -f -s -o /dev/null https://lodgeick.com || {
             echo '❌ Site not accessible'
             exit 1
           }
-          echo '✅ Site is accessible at https://${{ env.SITE_NAME }}'
+          echo '✅ Site is accessible at https://lodgeick.com'
 
       - name: Deployment Summary
         if: always()
