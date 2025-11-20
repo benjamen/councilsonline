@@ -260,3 +260,42 @@ def assign_request(request_id, assigned_to, notes=None):
         frappe.db.rollback()
         frappe.log_error(f"Assign Request Error: {str(e)}")
         raise
+
+
+@frappe.whitelist()
+def get_staff_users():
+    """
+    Get list of staff users with their roles for assignment
+
+    Returns:
+        list: List of users with their full name, email, and roles
+    """
+    try:
+        users = frappe.get_all(
+            "User",
+            filters={
+                "enabled": 1,
+                "user_type": "System User"
+            },
+            fields=["name", "email", "full_name"],
+            order_by="full_name asc"
+        )
+
+        # Get roles for each user
+        for user in users:
+            user_roles = frappe.get_all(
+                "Has Role",
+                filters={"parent": user.name},
+                fields=["role"],
+                pluck="role"
+            )
+            user["roles"] = user_roles
+            # Create a display name with primary role
+            primary_role = user_roles[0] if user_roles else "User"
+            user["display_name"] = f"{user.full_name or user.email} ({primary_role})"
+
+        return users
+
+    except Exception as e:
+        frappe.log_error(f"Get Staff Users Error: {str(e)}")
+        raise

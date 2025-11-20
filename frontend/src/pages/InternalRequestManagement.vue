@@ -214,13 +214,20 @@
 
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Assign To <span class="text-red-500">*</span></label>
-            <Input
+            <select
               v-model="assignedTo"
-              type="text"
-              placeholder="Enter email address"
-              class="w-full"
-            />
-            <p class="mt-1 text-sm text-gray-500">Enter the email address of the staff member</p>
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">Select a staff member</option>
+              <option
+                v-for="user in staffUsers.data"
+                :key="user.name"
+                :value="user.name"
+              >
+                {{ user.display_name }}
+              </option>
+            </select>
+            <p class="mt-1 text-sm text-gray-500">Select the staff member to assign this request to (showing name and primary role)</p>
           </div>
 
           <div>
@@ -281,6 +288,12 @@ const isAssigning = ref(false)
 // Fetch all requests for council staff
 const requests = createResource({
   url: 'lodgeick.lodgeick.doctype.request.request.get_all_requests_for_staff',
+  auto: true,
+})
+
+// Fetch staff users for assignment with roles
+const staffUsers = createResource({
+  url: 'lodgeick.api.get_staff_users',
   auto: true,
 })
 
