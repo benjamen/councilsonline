@@ -128,12 +128,16 @@ class Request(Document):
 
     def calculate_costing(self):
         """Calculate total costing from tasks and disbursements"""
-        # Calculate total task cost from linked WB Tasks
-        task_cost = frappe.db.sql("""
-            SELECT SUM(IFNULL(total_cost, 0))
-            FROM `tabWB Task`
-            WHERE request = %s
-        """, self.name)[0][0] or 0
+        # WB Task integration disabled - Workboard app not installed
+        # Setting task cost to 0 until integration is configured
+        task_cost = 0
+
+        # Original code commented out - requires Workboard app installation:
+        # task_cost = frappe.db.sql("""
+        #     SELECT SUM(IFNULL(total_cost, 0))
+        #     FROM `tabWB Task`
+        #     WHERE request = %s
+        # """, self.name)[0][0] or 0
 
         self.total_task_cost = task_cost
 
