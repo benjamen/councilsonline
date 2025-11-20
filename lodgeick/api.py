@@ -149,7 +149,7 @@ def create_draft_request(data):
             "applicant_email": frappe.session.user,
             "applicant_phone": data.get("applicant_phone"),
             "status": "Draft",
-            "priority": data.get("priority", "Medium")
+            "priority": data.get("priority", "Standard")
         })
 
         # Add additional fields based on request type
@@ -271,6 +271,49 @@ def assign_request(request_id, assigned_to, notes=None):
     except Exception as e:
         frappe.db.rollback()
         frappe.log_error(f"Assign Request Error: {str(e)}")
+        raise
+
+
+@frappe.whitelist()
+def get_request_form_meta(request_type=None):
+    """
+    Get Request DocType metadata for dynamic form rendering
+
+    Args:
+        request_type: Optional request type to get specific fields
+
+    Returns:
+        dict: Field metadata including options, labels, required flags
+    """
+    try:
+        # Get Request DocType meta
+        meta = frappe.get_meta("Request")
+
+        # Build field metadata
+        fields = {}
+        for field in meta.fields:
+            if field.fieldtype in ["Select", "Link", "Data", "Text", "Int", "Currency", "Check"]:
+                fields[field.fieldname] = {
+                    "label": field.label,
+                    "fieldtype": field.fieldtype,
+                    "required": field.reqd,
+                    "options": field.options.split("\n") if field.fieldtype == "Select" and field.options else None,
+                    "description": field.description,
+                    "default": field.default
+                }
+
+        # Get priority options specifically
+        priority_field = meta.get_field("priority")
+        priority_options = priority_field.options.split("\n") if priority_field and priority_field.options else ["Low", "Standard", "High", "Urgent"]
+
+        return {
+            "success": True,
+            "fields": fields,
+            "priority_options": priority_options
+        }
+
+    except Exception as e:
+        frappe.log_error(f"Get Request Form Meta Error: {str(e)}")
         raise
 
 
