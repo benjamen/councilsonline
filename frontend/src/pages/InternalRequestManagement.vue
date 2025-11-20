@@ -193,55 +193,51 @@
 
       <!-- GIS Maps Tab -->
       <div v-if="currentTab === 'maps'">
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden" style="height: calc(100vh - 250px);">
-          <div class="p-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
-            <div>
-              <h3 class="text-lg font-semibold text-gray-900">GIS Property Maps</h3>
-              <p class="text-sm text-gray-600">Hutt City Council GIS Viewer</p>
-            </div>
-            <a
-              href="https://eplan.huttcity.govt.nz/review/property/1998600/0/48?_t=property"
-              target="_blank"
-              class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
-            >
-              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-              Open in New Tab
-            </a>
-          </div>
-          <iframe
-            src="https://eplan.huttcity.govt.nz/review/property/1998600/0/48?_t=property"
-            class="w-full h-full border-0"
-            title="GIS Property Maps"
-          ></iframe>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+          <svg class="w-20 h-20 text-blue-600 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+          </svg>
+          <h3 class="text-2xl font-bold text-gray-900 mb-4">GIS Property Maps</h3>
+          <p class="text-gray-600 mb-8 max-w-2xl mx-auto">
+            Access Hutt City Council's GIS property viewer for detailed maps, zoning information,
+            and property boundaries. The external site opens in a new tab due to security restrictions.
+          </p>
+          <a
+            href="https://eplan.huttcity.govt.nz/review/property/1998600/0/48?_t=property"
+            target="_blank"
+            class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-base font-semibold shadow-lg hover:shadow-xl"
+          >
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+            Open GIS Property Maps
+          </a>
+          <p class="text-sm text-gray-500 mt-4">Opens in new browser tab</p>
         </div>
       </div>
 
       <!-- District Plan Tab -->
       <div v-if="currentTab === 'districtplan'">
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden" style="height: calc(100vh - 250px);">
-          <div class="p-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
-            <div>
-              <h3 class="text-lg font-semibold text-gray-900">District Plan</h3>
-              <p class="text-sm text-gray-600">Hutt City Council District Plan</p>
-            </div>
-            <a
-              href="https://eplan.huttcity.govt.nz/eplan"
-              target="_blank"
-              class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
-            >
-              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-              Open in New Tab
-            </a>
-          </div>
-          <iframe
-            src="https://eplan.huttcity.govt.nz/eplan"
-            class="w-full h-full border-0"
-            title="District Plan"
-          ></iframe>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+          <svg class="w-20 h-20 text-green-600 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <h3 class="text-2xl font-bold text-gray-900 mb-4">District Plan</h3>
+          <p class="text-gray-600 mb-8 max-w-2xl mx-auto">
+            Access Hutt City Council's District Plan including rules, zones, overlays, and planning provisions.
+            The external ePlan site opens in a new tab due to security restrictions.
+          </p>
+          <a
+            href="https://eplan.huttcity.govt.nz/eplan"
+            target="_blank"
+            class="inline-flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-base font-semibold shadow-lg hover:shadow-xl"
+          >
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+            Open District Plan
+          </a>
+          <p class="text-sm text-gray-500 mt-4">Opens in new browser tab</p>
         </div>
       </div>
 

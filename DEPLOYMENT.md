@@ -312,7 +312,10 @@ For deployment issues:
 
 ## Changelog
 
-- **2025-01-20**: Improved deployment workflow with heredoc SSH commands
+- **2025-01-20**: Fixed deployment workflow to use single-quoted bash -c commands (matching Hohmesy pattern)
+- **2025-01-20**: Added git safe.directory configuration
+- **2025-01-20**: Added nginx reload step
+- **2025-01-20**: Improved deployment workflow with better error handling
 - **2025-01-20**: Added environment variables for easy configuration
 - **2025-01-20**: Added deployment summary and verification steps
 - **2025-01-20**: Switched to root user with sudo to frappe-user

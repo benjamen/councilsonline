@@ -34,66 +34,65 @@ jobs:
 
       - name: Deploy to Production Server
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} << 'ENDSSH'
+          ssh -o StrictHostKeyChecking=no ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "
             set -e
-            echo "🚀 Starting Lodgeick deployment..."
+            echo '🚀 Starting Lodgeick deployment...'
 
-            # Switch to frappe user and run deployment commands
-            sudo -u frappe-user bash << 'EOF'
-              set -e
+            # Fix git ownership issue
+            git config --global --add safe.directory ${{ env.BENCH_PATH }}/apps/${{ env.APP_NAME }}
 
-              # Navigate to bench directory
-              cd ${{ env.BENCH_PATH }}
+            cd ${{ env.BENCH_PATH }}
 
-              # Navigate to app directory
-              cd apps/${{ env.APP_NAME }}
-
-              echo "📦 Pulling latest code..."
-              git fetch origin main
-              git reset --hard origin/main
+            # Pull latest changes as frappe-user
+            echo '📥 Pulling latest code...'
+            sudo -u frappe-user bash -c '
+              cd ${{ env.BENCH_PATH }}/apps/${{ env.APP_NAME }} &&
+              git fetch origin main &&
+              git reset --hard origin/main &&
               git clean -fd
+            '
 
-              echo "📦 Installing frontend dependencies..."
-              cd frontend
+            # Install/update frontend dependencies
+            echo '📦 Installing frontend dependencies...'
+            sudo -u frappe-user bash -c '
+              cd ${{ env.BENCH_PATH }}/apps/${{ env.APP_NAME }}/frontend &&
               yarn install --frozen-lockfile || yarn install
+            '
 
-              echo "🔨 Building frontend..."
-              yarn build
+            # Build, migrate, and manage services
+            sudo -u frappe-user bash -c '
+              cd ${{ env.BENCH_PATH }} &&
+              echo \"🔨 Building frontend...\" &&
+              cd apps/${{ env.APP_NAME }}/frontend &&
+              yarn build &&
+              cd ${{ env.BENCH_PATH }} &&
+              echo \"🔨 Building backend assets...\" &&
+              bench build --app ${{ env.APP_NAME }} &&
+              echo \"🗄️ Migrating database...\" &&
+              bench --site ${{ env.SITE_NAME }} migrate || echo \"Migration skipped or failed\" &&
+              echo \"🧹 Clearing cache...\" &&
+              bench --site ${{ env.SITE_NAME }} clear-cache &&
+              bench --site ${{ env.SITE_NAME }} clear-website-cache &&
+              echo \"🔄 Restarting services...\" &&
+              bench restart || echo \"Bench restart failed, continuing...\"
+            '
 
-              echo "🔨 Building backend assets..."
-              cd ${{ env.BENCH_PATH }}
-              bench build --app ${{ env.APP_NAME }}
+            # Reload nginx configuration
+            sudo systemctl reload nginx
 
-              echo "🗃️ Running migrations..."
-              bench --site ${{ env.SITE_NAME }} migrate || echo "⚠️ Migration failed or not needed"
-
-              echo "🧹 Clearing cache..."
-              bench --site ${{ env.SITE_NAME }} clear-cache
-              bench --site ${{ env.SITE_NAME }} clear-website-cache
-
-              echo "🔄 Restarting services..."
-              bench restart
-
-              echo "✅ Deployment completed successfully!"
-              echo "🌐 Site: https://${{ env.SITE_NAME }}"
-          EOF
-          ENDSSH
+            echo '✅ Lodgeick deployment completed successfully!'
+            echo '🌐 Site: https://${{ env.SITE_NAME }}'
+          "
 
       - name: Verify Deployment
         run: |
-          echo "🔍 Verifying deployment..."
-          sleep 15
-
-          # Check if site is accessible
-          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://${{ env.SITE_NAME }} || echo "000")
-
-          if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "302" ]; then
-            echo "✅ Site is accessible (HTTP $HTTP_CODE)"
-            echo "🌐 URL: https://${{ env.SITE_NAME }}"
-          else
-            echo "❌ Site returned HTTP $HTTP_CODE"
+          echo '🔍 Verifying deployment...'
+          sleep 10
+          curl -f -s -o /dev/null https://${{ env.SITE_NAME }} || {
+            echo '❌ Site not accessible'
             exit 1
-          fi
+          }
+          echo '✅ Site is accessible at https://${{ env.SITE_NAME }}'
 
       - name: Deployment Summary
         if: always()

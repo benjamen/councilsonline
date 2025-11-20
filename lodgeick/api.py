@@ -126,10 +126,20 @@ def create_draft_request(data):
             import json
             data = json.loads(data)
 
+        # Get request type to determine category
+        request_type = data.get("request_type")
+        if not request_type:
+            frappe.throw(_("Request Type is required"))
+
+        # Get category from request type
+        request_type_doc = frappe.get_doc("Request Type", request_type)
+        category = request_type_doc.category or "Service Request"
+
         # Create request document
         request_doc = frappe.get_doc({
             "doctype": "Request",
-            "request_type": data.get("request_type"),
+            "request_type": request_type,
+            "request_category": category,
             "brief_description": data.get("brief_description"),
             "detailed_description": data.get("detailed_description"),
             "property_address": data.get("property_address"),
