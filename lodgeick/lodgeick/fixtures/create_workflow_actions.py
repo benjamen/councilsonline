@@ -31,7 +31,11 @@ def create_actions():
         "Assign",
         "Resolve",
         "Close",
-        "Escalate"
+        "Escalate",
+        "Ready for Inspection",
+        "Complete Inspections",
+        "Issue CCC",
+        "Close Request"
     ]
 
     print("\n" + "="*80)

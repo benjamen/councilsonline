@@ -77,7 +77,12 @@ class Request(Document):
             old_status = self.get_doc_before_save().status if self.get_doc_before_save() else None
             self.add_status_history(old_status, self.status, "Status updated")
 
-        # If status changed to Acknowledged, start statutory clock
+        # Handle workflow state changes
+        if self.has_value_changed("workflow_state"):
+            old_state = self.get_doc_before_save().workflow_state if self.get_doc_before_save() else None
+            self.handle_workflow_state_change(old_state, self.workflow_state)
+
+        # Legacy: If status changed to Acknowledged, start statutory clock (for non-workflow requests)
         if self.status == "Acknowledged" and not self.statutory_clock_started:
             self.statutory_clock_started = now()
             self.acknowledged_date = getdate()
@@ -205,6 +210,92 @@ class Request(Document):
             )
         except Exception as e:
             frappe.log_error(f"Failed to send acknowledgment email: {str(e)}")
+
+    def handle_workflow_state_change(self, old_state, new_state):
+        """Handle business logic for workflow state transitions"""
+
+        # Add status history tracking
+        self.add_status_history(old_state, new_state, "Workflow state changed")
+
+        # State: Acknowledged - Start statutory clock and create assessment
+        if new_state == "Acknowledged":
+            if not self.statutory_clock_started:
+                self.statutory_clock_started = now()
+                self.acknowledged_date = getdate()
+                self.calculate_target_completion_date()
+                # Note: Changes will be saved by the parent save() call
+
+            # Auto-create assessment project
+            self.auto_create_assessment_project()
+
+            frappe.msgprint(
+                f"Request acknowledged. Statutory clock started. Assessment project will be created.",
+                alert=True,
+                indicator="green"
+            )
+
+        # State: RFI Issued - Stop statutory clock
+        elif new_state == "RFI Issued":
+            if not self.statutory_clock_stopped:
+                self.statutory_clock_stopped = now()
+
+            frappe.msgprint(
+                f"RFI issued. Statutory clock stopped.",
+                alert=True,
+                indicator="orange"
+            )
+
+        # State: RFI Received - Restart statutory clock
+        elif new_state == "RFI Received" and old_state == "RFI Issued":
+            # Clear the stop time to restart clock
+            self.statutory_clock_stopped = None
+
+            frappe.msgprint(
+                f"RFI received. Statutory clock restarted.",
+                alert=True,
+                indicator="green"
+            )
+
+        # States: Approved/Approved with Conditions/Declined - Stop clock and set completion
+        elif new_state in ["Approved", "Approved with Conditions", "Declined"]:
+            if not self.statutory_clock_stopped:
+                self.statutory_clock_stopped = now()
+
+            if not self.actual_completion_date:
+                self.actual_completion_date = getdate()
+
+            # Update status field for backward compatibility
+            self.status = new_state
+
+            indicator = "green" if new_state.startswith("Approved") else "red"
+            frappe.msgprint(
+                f"Request {new_state.lower()}. Statutory clock stopped.",
+                alert=True,
+                indicator=indicator
+            )
+
+        # State: Withdrawn - Stop clock
+        elif new_state == "Withdrawn":
+            if not self.statutory_clock_stopped:
+                self.statutory_clock_stopped = now()
+
+            # Update status field for backward compatibility
+            self.status = "Withdrawn"
+
+            frappe.msgprint(
+                f"Request withdrawn. Statutory clock stopped.",
+                alert=True,
+                indicator="red"
+            )
+
+        # State: Processing - Ensure clock is running
+        elif new_state == "Processing":
+            if not self.statutory_clock_started:
+                self.statutory_clock_started = now()
+
+            # Ensure clock is not stopped
+            if self.statutory_clock_stopped:
+                self.statutory_clock_stopped = None
 
     def auto_create_assessment_project(self):
         """Auto-create assessment project when request is acknowledged"""
