@@ -1,0 +1,107 @@
+[
+  {
+    "doctype": "Workflow State",
+    "workflow_state_name": "Draft",
+    "style": "Default"
+  },
+  {
+    "doctype": "Workflow State",
+    "workflow_state_name": "Submitted",
+    "style": "Primary"
+  },
+  {
+    "doctype": "Workflow State",
+    "workflow_state_name": "Acknowledged",
+    "style": "Info"
+  },
+  {
+    "doctype": "Workflow State",
+    "workflow_state_name": "Processing",
+    "style": "Warning"
+  },
+  {
+    "doctype": "Workflow State",
+    "workflow_state_name": "RFI Issued",
+    "style": "Warning"
+  },
+  {
+    "doctype": "Workflow State",
+    "workflow_state_name": "RFI Received",
+    "style": "Info"
+  },
+  {
+    "doctype": "Workflow State",
+    "workflow_state_name": "Pending Decision",
+    "style": "Warning"
+  },
+  {
+    "doctype": "Workflow State",
+    "workflow_state_name": "Approved",
+    "style": "Success"
+  },
+  {
+    "doctype": "Workflow State",
+    "workflow_state_name": "Approved with Conditions",
+    "style": "Success"
+  },
+  {
+    "doctype": "Workflow State",
+    "workflow_state_name": "Declined",
+    "style": "Danger"
+  },
+  {
+    "doctype": "Workflow State",
+    "workflow_state_name": "Withdrawn",
+    "style": "Inverse"
+  },
+  {
+    "doctype": "Workflow State",
+    "workflow_state_name": "Under Appeal",
+    "style": "Warning"
+  },
+  {
+    "doctype": "Workflow State",
+    "workflow_state_name": "Awaiting Inspection",
+    "style": "Warning"
+  },
+  {
+    "doctype": "Workflow State",
+    "workflow_state_name": "Inspections Complete",
+    "style": "Info"
+  },
+  {
+    "doctype": "Workflow State",
+    "workflow_state_name": "CCC Issued",
+    "style": "Success"
+  },
+  {
+    "doctype": "Workflow State",
+    "workflow_state_name": "Completed",
+    "style": "Success"
+  },
+  {
+    "doctype": "Workflow State",
+    "workflow_state_name": "Assigned",
+    "style": "Info"
+  },
+  {
+    "doctype": "Workflow State",
+    "workflow_state_name": "In Progress",
+    "style": "Warning"
+  },
+  {
+    "doctype": "Workflow State",
+    "workflow_state_name": "Resolved",
+    "style": "Success"
+  },
+  {
+    "doctype": "Workflow State",
+    "workflow_state_name": "Closed",
+    "style": "Inverse"
+  },
+  {
+    "doctype": "Workflow State",
+    "workflow_state_name": "Escalated",
+    "style": "Danger"
+  }
+]
