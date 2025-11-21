@@ -237,7 +237,7 @@
           <Button @click="goToRegister" size="lg" variant="solid" class="bg-white text-blue-600 hover:bg-gray-100">
             Create Free Account
           </Button>
-          <Button @click="goToLogin" size="lg" variant="outline" class="border-white text-white hover:bg-blue-800">
+          <Button @click="goToLogin" size="lg" variant="outline" class="border-white text-white hover:bg-white/10 hover:border-white">
             Sign In to Existing Account
           </Button>
         </div>

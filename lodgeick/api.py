@@ -376,10 +376,10 @@ def book_council_meeting(request_id, meeting_type="Pre-Application Meeting"):
         # Get the request document
         request_doc = frappe.get_doc("Request", request_id)
 
-        # Create a Task for the council team
+        # Create a WB Task for the council team
         task_doc = frappe.get_doc({
-            "doctype": "Task",
-            "subject": f"{meeting_type} - {request_doc.request_number}",
+            "doctype": "WB Task",
+            "title": f"{meeting_type} - {request_doc.request_number}",
             "description": f"""
                 <p><strong>Meeting Type:</strong> {meeting_type}</p>
                 <p><strong>Request Number:</strong> {request_doc.request_number}</p>
@@ -392,15 +392,12 @@ def book_council_meeting(request_id, meeting_type="Pre-Application Meeting"):
             """,
             "status": "Open",
             "priority": "High",
-            "type": "Meeting",
-            # Link to the request using a custom field or reference field
-            # Note: This assumes there's a reference field on Task for Request
-            # You may need to add a custom field to Task DocType
+            "task_type": "Manual",
+            "due_date": frappe.utils.add_days(frappe.utils.today(), 2),
+            "assign_from": frappe.session.user,
+            "assign_to": frappe.session.user,
+            "request": request_id
         })
-
-        # Add custom field linking to request if available
-        if hasattr(task_doc, 'request'):
-            task_doc.request = request_id
 
         task_doc.insert(ignore_permissions=True)
 
@@ -415,7 +412,7 @@ def book_council_meeting(request_id, meeting_type="Pre-Application Meeting"):
         return {
             "success": True,
             "task_id": task_doc.name,
-            "task_subject": task_doc.subject,
+            "task_title": task_doc.title,
             "message": f"{meeting_type} booking request created successfully"
         }
 
