@@ -1,0 +1,113 @@
+{
+ "actions": [],
+ "creation": "2025-11-21 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "exclusion_type",
+  "description",
+  "reference_document_type",
+  "reference_document",
+  "column_break_5",
+  "started_date",
+  "ended_date",
+  "working_days_excluded",
+  "section_break_9",
+  "reason",
+  "stopped_by",
+  "restarted_by",
+  "auto_created"
+ ],
+ "fields": [
+  {
+   "fieldname": "exclusion_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Exclusion Type",
+   "options": "RFI Issued\nSection 37\nSection 91\nSection 92\nNotification Period\nHearing Period\nApplicant Delay\nCustom",
+   "reqd": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Description"
+  },
+  {
+   "fieldname": "reference_document_type",
+   "fieldtype": "Link",
+   "label": "Reference Document Type",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "reference_document",
+   "fieldtype": "Dynamic Link",
+   "label": "Reference Document",
+   "options": "reference_document_type"
+  },
+  {
+   "fieldname": "started_date",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Started Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "ended_date",
+   "fieldtype": "Datetime",
+   "label": "Ended Date"
+  },
+  {
+   "fieldname": "working_days_excluded",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Working Days Excluded",
+   "read_only": 1
+  },
+  {
+   "fieldname": "reason",
+   "fieldtype": "Small Text",
+   "label": "Reason"
+  },
+  {
+   "fieldname": "stopped_by",
+   "fieldtype": "Link",
+   "label": "Stopped By",
+   "options": "User"
+  },
+  {
+   "fieldname": "restarted_by",
+   "fieldtype": "Link",
+   "label": "Restarted By",
+   "options": "User"
+  },
+  {
+   "default": "0",
+   "fieldname": "auto_created",
+   "fieldtype": "Check",
+   "label": "Auto Created"
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_9",
+   "fieldtype": "Section Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-11-21 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Clock Exclusion Period",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

@@ -1,0 +1,88 @@
+{
+ "actions": [],
+ "creation": "2025-11-21 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "stage_number",
+  "stage_name",
+  "stage_type",
+  "column_break_4",
+  "required",
+  "estimated_hours",
+  "section_break_7",
+  "checklist_template",
+  "auto_create_tasks"
+ ],
+ "fields": [
+  {
+   "fieldname": "stage_number",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Stage Number",
+   "reqd": 1
+  },
+  {
+   "fieldname": "stage_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Stage Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "stage_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Stage Type",
+   "options": "Assessment Stage Type",
+   "reqd": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "required",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Required"
+  },
+  {
+   "fieldname": "estimated_hours",
+   "fieldtype": "Int",
+   "label": "Estimated Hours"
+  },
+  {
+   "fieldname": "checklist_template",
+   "fieldtype": "Link",
+   "label": "Checklist Template",
+   "options": "WB Task Checklist Template"
+  },
+  {
+   "default": "0",
+   "fieldname": "auto_create_tasks",
+   "fieldtype": "Check",
+   "label": "Auto Create Tasks"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_7",
+   "fieldtype": "Section Break",
+   "label": "Automation"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-11-21 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Assessment Template Stage",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
