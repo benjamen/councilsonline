@@ -234,10 +234,10 @@
           Join thousands of ratepayers and suppliers using Lodgeick for faster, easier council service requests
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button @click="goToRegister" size="lg" variant="solid" class="bg-white text-blue-600 hover:bg-gray-100">
+          <Button @click="goToRegister" size="lg" variant="solid" class="!bg-white !text-blue-600 hover:!bg-gray-100">
             Create Free Account
           </Button>
-          <Button @click="goToLogin" size="lg" variant="outline" class="border-white text-white hover:bg-white/10 hover:border-white">
+          <Button @click="goToLogin" size="lg" variant="outline" class="!border-white !text-white hover:!bg-white/10 hover:!border-white">
             Sign In to Existing Account
           </Button>
         </div>
