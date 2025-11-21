@@ -470,6 +470,7 @@ const steps = [
 // Form data
 const formData = ref({
   request_type: '',
+  request_category: '', // Store the category of the selected request type
   property: '',
   property_address: '',
   legal_description: '',
@@ -486,15 +487,23 @@ const formData = ref({
 const initialFormData = ref(JSON.parse(JSON.stringify(formData.value)))
 
 // Computed property to check if form has changes
+// Exclude terms_accepted from change detection since it's not actual application data
 const hasFormChanges = computed(() => {
-  const current = JSON.stringify(formData.value)
-  const initial = JSON.stringify(initialFormData.value)
+  const currentCopy = { ...formData.value }
+  const initialCopy = { ...initialFormData.value }
+
+  // Remove terms_accepted from comparison
+  delete currentCopy.terms_accepted
+  delete initialCopy.terms_accepted
+
+  const current = JSON.stringify(currentCopy)
+  const initial = JSON.stringify(initialCopy)
   return current !== initial
 })
 
 // Computed property to check if Resource Consent request
 const isResourceConsent = computed(() => {
-  return formData.value.request_type === 'Resource Consent'
+  return formData.value.request_category === 'Resource Consent'
 })
 
 // Show submit button only if there are changes or files uploaded
@@ -538,6 +547,7 @@ const getStepClass = (stepNumber) => {
 
 const selectRequestType = (type) => {
   formData.value.request_type = type.name
+  formData.value.request_category = type.category || ''
 }
 
 const onPropertySelect = () => {
