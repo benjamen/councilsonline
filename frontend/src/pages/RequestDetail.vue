@@ -18,13 +18,28 @@
 
           <div class="flex items-center space-x-3">
             <StatusBadge v-if="request.data" :status="request.data.status" />
-            <Button v-if="request.data?.status === 'Draft'" variant="solid" theme="blue">
+            <Button
+              v-if="request.data?.status === 'Draft'"
+              @click="handleSubmitApplication"
+              variant="solid"
+              theme="blue"
+              :loading="submitting"
+            >
               Submit Application
             </Button>
           </div>
         </div>
       </div>
     </header>
+
+    <!-- Hidden file input -->
+    <input
+      ref="fileInput"
+      type="file"
+      multiple
+      class="hidden"
+      @change="handleFileUpload"
+    />
 
     <!-- Loading State -->
     <div v-if="request.loading" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -139,7 +154,13 @@
               </div>
             </div>
 
-            <Button v-if="(request.data.total_fees || 0) > (request.data.total_paid || 0)" variant="solid" theme="blue" class="w-full mt-4">
+            <Button
+              v-if="(request.data.total_fees || 0) > (request.data.total_paid || 0)"
+              @click="handleMakePayment"
+              variant="solid"
+              theme="blue"
+              class="w-full mt-4"
+            >
               Make Payment
             </Button>
           </div>
@@ -148,7 +169,12 @@
           <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div class="flex justify-between items-center mb-4">
               <h2 class="text-lg font-semibold text-gray-900">Documents</h2>
-              <Button variant="outline" size="sm">
+              <Button
+                @click="handleUploadDocument"
+                variant="outline"
+                size="sm"
+                :loading="uploading"
+              >
                 <template #prefix>
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -223,7 +249,11 @@
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
 
             <div class="space-y-3">
-              <Button variant="outline" class="w-full justify-start">
+              <Button
+                @click="handleSendMessage"
+                variant="outline"
+                class="w-full justify-start"
+              >
                 <template #prefix>
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
@@ -232,7 +262,11 @@
                 Send Message
               </Button>
 
-              <Button variant="outline" class="w-full justify-start">
+              <Button
+                @click="handlePrintApplication"
+                variant="outline"
+                class="w-full justify-start"
+              >
                 <template #prefix>
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
@@ -241,13 +275,35 @@
                 Print Application
               </Button>
 
-              <Button v-if="request.data.status === 'Draft'" variant="outline" class="w-full justify-start text-red-600 hover:text-red-700">
+              <Button
+                v-if="request.data.status === 'Draft'"
+                @click="handleDeleteDraft"
+                variant="outline"
+                class="w-full justify-start text-red-600 hover:text-red-700"
+                :loading="deleting"
+              >
                 <template #prefix>
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
                 </template>
                 Delete Draft
+              </Button>
+
+              <Button
+                v-if="request.data.request_category === 'Resource Consent'"
+                @click="handleBookMeeting"
+                variant="outline"
+                class="w-full justify-start text-green-600 hover:text-green-700"
+                :loading="bookingMeeting"
+              >
+                <template #prefix>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </template>
+                Book Pre-Application Meeting
               </Button>
             </div>
           </div>
@@ -278,12 +334,20 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { createResource } from 'frappe-ui'
+import { createResource, Button } from 'frappe-ui'
 import StatusBadge from '../components/StatusBadge.vue'
 
 const route = useRoute()
 const router = useRouter()
+
+// State
+const fileInput = ref(null)
+const uploading = ref(false)
+const submitting = ref(false)
+const deleting = ref(false)
+const bookingMeeting = ref(false)
 
 // Get request details
 const request = createResource({
@@ -309,5 +373,150 @@ const formatDate = (dateStr) => {
     hour: '2-digit',
     minute: '2-digit'
   })
+}
+
+// Quick Actions
+const handleUploadDocument = () => {
+  fileInput.value.click()
+}
+
+const handleFileUpload = async (event) => {
+  const files = Array.from(event.target.files)
+  if (files.length === 0) return
+
+  uploading.value = true
+  try {
+    for (const file of files) {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('doctype', 'Request')
+      formData.append('docname', request.data.name)
+      formData.append('is_private', 0)
+
+      await fetch('/api/method/upload_file', {
+        method: 'POST',
+        headers: {
+          'X-Frappe-CSRF-Token': window.csrf_token
+        },
+        body: formData
+      })
+    }
+
+    alert(`${files.length} document(s) uploaded successfully!`)
+    request.reload()
+    event.target.value = '' // Reset file input
+  } catch (error) {
+    console.error('Error uploading file:', error)
+    alert('Failed to upload document. Please try again.')
+  } finally {
+    uploading.value = false
+  }
+}
+
+const handleSendMessage = () => {
+  // TODO: Implement message modal/dialog
+  alert('Send Message feature - Coming soon!\n\nFor now, please contact us at:\nconsents@council.govt.nz\n0800 LODGEICK')
+}
+
+const handlePrintApplication = () => {
+  window.print()
+}
+
+const handleDeleteDraft = async () => {
+  if (!confirm('Are you sure you want to delete this draft application? This action cannot be undone.')) {
+    return
+  }
+
+  deleting.value = true
+  try {
+    await fetch('/api/method/frappe.client.delete', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Frappe-CSRF-Token': window.csrf_token
+      },
+      body: JSON.stringify({
+        doctype: 'Request',
+        name: request.data.name
+      })
+    })
+
+    alert('Draft deleted successfully')
+    router.push({ name: 'Dashboard' })
+  } catch (error) {
+    console.error('Error deleting draft:', error)
+    alert('Failed to delete draft. Please try again.')
+  } finally {
+    deleting.value = false
+  }
+}
+
+const handleSubmitApplication = async () => {
+  if (!confirm('Are you sure you want to submit this application? Once submitted, it cannot be edited.')) {
+    return
+  }
+
+  submitting.value = true
+  try {
+    const response = await fetch('/api/method/lodgeick.lodgeick.doctype.request.request.submit_application', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Frappe-CSRF-Token': window.csrf_token
+      },
+      body: JSON.stringify({
+        request_id: request.data.name
+      })
+    })
+
+    const result = await response.json()
+
+    if (result.message && result.message.success) {
+      alert(`Application submitted successfully! Request Number: ${result.message.request_number}`)
+      request.reload()
+    } else {
+      throw new Error('Failed to submit application')
+    }
+  } catch (error) {
+    console.error('Error submitting application:', error)
+    alert('Failed to submit application. Please try again.')
+  } finally {
+    submitting.value = false
+  }
+}
+
+const handleMakePayment = () => {
+  // TODO: Implement payment integration
+  alert('Payment feature - Coming soon!\n\nYou will receive an invoice via email.')
+}
+
+const handleBookMeeting = async () => {
+  bookingMeeting.value = true
+  try {
+    const response = await fetch('/api/method/lodgeick.api.book_council_meeting', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Frappe-CSRF-Token': window.csrf_token
+      },
+      body: JSON.stringify({
+        request_id: request.data.name,
+        meeting_type: 'Pre-Application Meeting'
+      })
+    })
+
+    const result = await response.json()
+
+    if (result.message && result.message.success) {
+      alert(`Pre-Application Meeting request has been submitted! A council officer will contact you within 2 business days to schedule the meeting. Task ID: ${result.message.task_id}`)
+    } else {
+      throw new Error(result.message || 'Failed to book meeting')
+    }
+  } catch (error) {
+    console.error('Error booking meeting:', error)
+    alert('Failed to book pre-application meeting. Please try again.')
+  } finally {
+    bookingMeeting.value = false
+  }
 }
 </script>
