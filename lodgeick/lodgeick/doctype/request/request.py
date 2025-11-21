@@ -83,6 +83,9 @@ class Request(Document):
             self.acknowledged_date = getdate()
             self.calculate_target_completion_date()
 
+            # Auto-create assessment project if enabled
+            self.auto_create_assessment_project()
+
     def calculate_target_completion_date(self):
         """Calculate target completion date based on SLA"""
         if not self.request_type or not self.submitted_date:
@@ -202,6 +205,63 @@ class Request(Document):
             )
         except Exception as e:
             frappe.log_error(f"Failed to send acknowledgment email: {str(e)}")
+
+    def auto_create_assessment_project(self):
+        """Auto-create assessment project when request is acknowledged"""
+        # Check if assessment project already exists
+        if self.assessment_project:
+            return
+
+        # Check if request type has default assessment template
+        request_type_doc = frappe.get_doc("Request Type", self.request_type)
+
+        # Try to find a suitable assessment template
+        template = None
+        if hasattr(request_type_doc, 'default_assessment_template') and request_type_doc.default_assessment_template:
+            template = request_type_doc.default_assessment_template
+        else:
+            # Find first active template for this request type
+            templates = frappe.get_all(
+                "Assessment Template",
+                filters={
+                    "request_type": self.request_type,
+                    "is_active": 1
+                },
+                limit=1
+            )
+            if templates:
+                template = templates[0].name
+
+        if not template:
+            # No template found, skip auto-creation
+            frappe.msgprint(f"No assessment template found for {self.request_type}. Assessment project not created.", alert=True)
+            return
+
+        # Create assessment project
+        try:
+            assessment_project = frappe.get_doc({
+                "doctype": "Assessment Project",
+                "request": self.name,
+                "assessment_template": template,
+                "project_owner": self.assigned_to or frappe.session.user,
+                "statutory_clock_days": request_type_doc.processing_sla_days or 20,
+                "started_date": self.statutory_clock_started,
+                "overall_status": "In Progress"
+            })
+            assessment_project.insert()
+
+            # Create stages from template
+            assessment_project.create_stages_from_template()
+            assessment_project.save()
+
+            # Link back to request
+            self.db_set("assessment_project", assessment_project.name, update_modified=False)
+
+            frappe.msgprint(f"Assessment Project {assessment_project.name} created successfully", alert=True, indicator="green")
+
+        except Exception as e:
+            frappe.log_error(f"Failed to auto-create assessment project: {str(e)}")
+            frappe.msgprint(f"Failed to create assessment project: {str(e)}", alert=True, indicator="red")
 
 
 def add_working_days(start_date, days):

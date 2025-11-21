@@ -53,6 +53,13 @@
   "assigned_to",
   "assigned_team",
   "processing_notes",
+  "section_break_assessment",
+  "assessment_project",
+  "assessment_status",
+  "current_stage",
+  "column_break_assessment",
+  "assessment_template",
+  "assessment_owner",
   "section_break_attachments",
   "attachments",
   "section_break_fees",
@@ -341,6 +348,53 @@
    "fieldname": "processing_notes",
    "fieldtype": "Text Editor",
    "label": "Processing Notes"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_assessment",
+   "fieldtype": "Section Break",
+   "label": "Assessment Project"
+  },
+  {
+   "fieldname": "assessment_project",
+   "fieldtype": "Link",
+   "label": "Assessment Project",
+   "options": "Assessment Project",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "assessment_project.overall_status",
+   "fieldname": "assessment_status",
+   "fieldtype": "Data",
+   "label": "Assessment Status",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "assessment_project.current_stage",
+   "fieldname": "current_stage",
+   "fieldtype": "Data",
+   "label": "Current Stage",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_assessment",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "assessment_project.assessment_template",
+   "fieldname": "assessment_template",
+   "fieldtype": "Link",
+   "label": "Assessment Template",
+   "options": "Assessment Template",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "assessment_project.project_owner",
+   "fieldname": "assessment_owner",
+   "fieldtype": "Link",
+   "label": "Assessment Owner",
+   "options": "User",
+   "read_only": 1
   },
   {
    "collapsible": 1,

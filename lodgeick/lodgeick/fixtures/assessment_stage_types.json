@@ -1,0 +1,74 @@
+[
+ {
+  "doctype": "Assessment Stage Type",
+  "name": "Vetting",
+  "stage_type_name": "Vetting",
+  "description": "<p>Initial vetting stage to ensure application completeness and compliance with minimum standards (RMA S88). Reviews application form, required documents, fees, property details, and determines notification requirements.</p>",
+  "icon": "check-circle",
+  "color": "#3498db",
+  "is_active": 1
+ },
+ {
+  "doctype": "Assessment Stage Type",
+  "name": "Technical Assessment",
+  "stage_type_name": "Technical Assessment",
+  "description": "<p>Comprehensive technical assessment of the proposal against relevant planning instruments and RMA criteria. Includes analysis of environmental effects, expert reports, and stakeholder submissions.</p>",
+  "icon": "file-text",
+  "color": "#f39c12",
+  "is_active": 1
+ },
+ {
+  "doctype": "Assessment Stage Type",
+  "name": "Decision",
+  "stage_type_name": "Decision",
+  "description": "<p>Final decision-making stage including preparation of decision report, conditions drafting (S108AA), and notification of decision to applicant and submitters.</p>",
+  "icon": "award",
+  "color": "#27ae60",
+  "is_active": 1
+ },
+ {
+  "doctype": "Assessment Stage Type",
+  "name": "Implementation",
+  "stage_type_name": "Implementation",
+  "description": "<p>Post-decision implementation including consent issuance, bond processing, compliance monitoring setup, and handover to monitoring team.</p>",
+  "icon": "settings",
+  "color": "#9b59b6",
+  "is_active": 1
+ },
+ {
+  "doctype": "Assessment Stage Type",
+  "name": "RFI Processing",
+  "stage_type_name": "RFI Processing",
+  "description": "<p>Request for Information processing stage. Handles preparation, issuing, tracking, and assessment of RFI responses. Clock is suspended during this stage.</p>",
+  "icon": "help-circle",
+  "color": "#e74c3c",
+  "is_active": 1
+ },
+ {
+  "doctype": "Assessment Stage Type",
+  "name": "Notification",
+  "stage_type_name": "Notification",
+  "description": "<p>Public notification stage for notified consents. Manages public notice preparation, submission period, and submission processing.</p>",
+  "icon": "bell",
+  "color": "#16a085",
+  "is_active": 1
+ },
+ {
+  "doctype": "Assessment Stage Type",
+  "name": "Hearing",
+  "stage_type_name": "Hearing",
+  "description": "<p>Hearing preparation and conduct for consents requiring a hearing. Includes commissioner appointment, hearing scheduling, and hearing report preparation.</p>",
+  "icon": "users",
+  "color": "#d35400",
+  "is_active": 1
+ },
+ {
+  "doctype": "Assessment Stage Type",
+  "name": "S92 Response Review",
+  "stage_type_name": "S92 Response Review",
+  "description": "<p>Review and assessment of responses to S92 requests for further information. Determines if sufficient information has been provided to proceed with assessment.</p>",
+  "icon": "refresh-cw",
+  "color": "#c0392b",
+  "is_active": 1
+ }
+]
