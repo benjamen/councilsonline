@@ -376,6 +376,12 @@ def book_council_meeting(request_id, meeting_type="Pre-Application Meeting"):
         # Get the request document
         request_doc = frappe.get_doc("Request", request_id)
 
+        # Get a valid council staff user (Administrator or first system user)
+        council_user = frappe.session.user
+        if council_user == "Guest":
+            # Fallback to Administrator if current user is Guest
+            council_user = "Administrator"
+
         # Create a WB Task for the council team
         task_doc = frappe.get_doc({
             "doctype": "WB Task",
@@ -394,8 +400,8 @@ def book_council_meeting(request_id, meeting_type="Pre-Application Meeting"):
             "priority": "High",
             "task_type": "Manual",
             "due_date": frappe.utils.add_days(frappe.utils.today(), 2),
-            "assign_from": frappe.session.user,
-            "assign_to": frappe.session.user,
+            "assign_from": council_user,
+            "assign_to": council_user,
             "request": request_id
         })
 
