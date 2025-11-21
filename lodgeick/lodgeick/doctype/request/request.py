@@ -3,7 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
-from frappe.utils import now, add_days, getdate, date_diff
+from frappe.utils import now, add_days, getdate, date_diff, format_date
 from datetime import datetime, timedelta
 
 
@@ -183,7 +183,7 @@ class Request(Document):
         <p><strong>Application Details:</strong></p>
         <ul>
             <li>Application Number: {self.request_number}</li>
-            <li>Submitted: {frappe.format_date(self.submitted_date)}</li>
+            <li>Submitted: {format_date(self.submitted_date)}</li>
             <li>Type: {self.request_type}</li>
         </ul>
 
@@ -310,18 +310,9 @@ def calculate_working_days_between(start_date, end_date):
 
 def is_public_holiday(date):
     """Check if a date is a NZ public holiday"""
-    # TODO: This should check against a Holiday List doctype
-    # For now, return False (no holidays)
-    # In production, check Frappe's Holiday List
-
-    from frappe.utils import get_holidays
-
-    try:
-        holidays = get_holidays("New Zealand")
-        return date in holidays
-    except:
-        # If Holiday List not found, return False
-        return False
+    # TODO: Implement proper holiday checking against Holiday List DocType
+    # For now, return False (no holidays considered)
+    return False
 
 
 @frappe.whitelist()
