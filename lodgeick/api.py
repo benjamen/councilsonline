@@ -354,3 +354,71 @@ def get_staff_users():
     except Exception as e:
         frappe.log_error(f"Get Staff Users Error: {str(e)}")
         raise
+
+
+@frappe.whitelist()
+def book_council_meeting(request_id, meeting_type="Pre-Application Meeting"):
+    """
+    Book a council meeting for a request and create a task for the council team
+
+    Args:
+        request_id: The Request document ID
+        meeting_type: Type of meeting (default: Pre-Application Meeting)
+
+    Returns:
+        dict: Success message with task details
+    """
+    try:
+        # Verify the request exists
+        if not frappe.db.exists("Request", request_id):
+            frappe.throw(_("Request not found"))
+
+        # Get the request document
+        request_doc = frappe.get_doc("Request", request_id)
+
+        # Create a Task for the council team
+        task_doc = frappe.get_doc({
+            "doctype": "Task",
+            "subject": f"{meeting_type} - {request_doc.request_number}",
+            "description": f"""
+                <p><strong>Meeting Type:</strong> {meeting_type}</p>
+                <p><strong>Request Number:</strong> {request_doc.request_number}</p>
+                <p><strong>Request Type:</strong> {request_doc.request_type}</p>
+                <p><strong>Applicant:</strong> {request_doc.applicant_name or 'N/A'}</p>
+                <p><strong>Property:</strong> {request_doc.property_address or 'N/A'}</p>
+                <p><strong>Brief Description:</strong> {request_doc.brief_description or 'N/A'}</p>
+                <br>
+                <p>The applicant has requested a {meeting_type.lower()}. Please contact them within 2 business days to schedule.</p>
+            """,
+            "status": "Open",
+            "priority": "High",
+            "type": "Meeting",
+            # Link to the request using a custom field or reference field
+            # Note: This assumes there's a reference field on Task for Request
+            # You may need to add a custom field to Task DocType
+        })
+
+        # Add custom field linking to request if available
+        if hasattr(task_doc, 'request'):
+            task_doc.request = request_id
+
+        task_doc.insert(ignore_permissions=True)
+
+        # Add a comment to the request about the meeting booking
+        request_doc.add_comment(
+            "Comment",
+            f"{meeting_type} booking requested. Task {task_doc.name} created for council team."
+        )
+
+        frappe.db.commit()
+
+        return {
+            "success": True,
+            "task_id": task_doc.name,
+            "task_subject": task_doc.subject,
+            "message": f"{meeting_type} booking request created successfully"
+        }
+
+    except Exception as e:
+        frappe.log_error(f"Book Council Meeting Error: {str(e)}", "Meeting Booking Error")
+        frappe.throw(_("Failed to book meeting: {0}").format(str(e)))

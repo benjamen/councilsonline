@@ -365,6 +365,29 @@
                 Payment will be processed after submission. You will receive an invoice via email.
               </p>
             </div>
+
+            <!-- Pre-Application Meeting (Resource Consent Only) -->
+            <div v-if="isResourceConsent" class="bg-green-50 border border-green-200 rounded-lg p-6">
+              <h4 class="font-medium text-green-900 mb-2">Pre-Application Meeting</h4>
+              <p class="text-sm text-green-700 mb-4">
+                For Resource Consent applications, we strongly recommend booking a pre-application meeting with our planning team.
+                This helps ensure your application meets all requirements and can speed up the approval process.
+              </p>
+              <Button
+                @click="bookPreApplicationMeeting"
+                variant="solid"
+                theme="green"
+                :loading="bookingMeeting"
+              >
+                <template #prefix>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </template>
+                Book Pre-Application Meeting
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -401,7 +424,7 @@
               </template>
             </Button>
             <Button
-              v-else
+              v-else-if="canSubmit"
               @click="submitApplication"
               variant="solid"
               theme="blue"
@@ -410,6 +433,9 @@
             >
               Submit Application
             </Button>
+            <div v-else class="text-sm text-gray-500">
+              Make changes to your application to enable submission
+            </div>
           </div>
         </div>
       </div>
@@ -431,6 +457,7 @@ const savingDraft = ref(false)
 const submitting = ref(false)
 const uploadedFiles = ref([])
 const fileInput = ref(null)
+const bookingMeeting = ref(false)
 
 const steps = [
   { title: 'Type', number: 1 },
@@ -453,6 +480,26 @@ const formData = ref({
   estimated_value: null,
   proposed_start_date: '',
   terms_accepted: false,
+})
+
+// Track initial form state to detect changes
+const initialFormData = ref(JSON.parse(JSON.stringify(formData.value)))
+
+// Computed property to check if form has changes
+const hasFormChanges = computed(() => {
+  const current = JSON.stringify(formData.value)
+  const initial = JSON.stringify(initialFormData.value)
+  return current !== initial
+})
+
+// Computed property to check if Resource Consent request
+const isResourceConsent = computed(() => {
+  return formData.value.request_type === 'Resource Consent'
+})
+
+// Show submit button only if there are changes or files uploaded
+const canSubmit = computed(() => {
+  return hasFormChanges.value || uploadedFiles.value.length > 0
 })
 
 // Get request types
@@ -663,6 +710,62 @@ const submitApplication = async () => {
     alert('Failed to submit application')
   } finally {
     submitting.value = false
+  }
+}
+
+const bookPreApplicationMeeting = async () => {
+  if (!formData.value.request_type) {
+    alert('Please complete your application details first')
+    return
+  }
+
+  bookingMeeting.value = true
+  try {
+    // First, save as draft if not already saved
+    const draftResponse = await fetch('/api/method/lodgeick.api.create_draft_request', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Frappe-CSRF-Token': window.csrf_token
+      },
+      body: JSON.stringify({
+        data: formData.value
+      })
+    })
+
+    const draftResult = await draftResponse.json()
+
+    if (!draftResult.message || !draftResult.message.success) {
+      throw new Error('Failed to save application')
+    }
+
+    const requestId = draftResult.message.request_id
+
+    // Book the meeting via backend API
+    const meetingResponse = await fetch('/api/method/lodgeick.api.book_council_meeting', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Frappe-CSRF-Token': window.csrf_token
+      },
+      body: JSON.stringify({
+        request_id: requestId,
+        meeting_type: 'Pre-Application Meeting'
+      })
+    })
+
+    const meetingResult = await meetingResponse.json()
+
+    if (meetingResult.message && meetingResult.message.success) {
+      alert(`Pre-Application Meeting request has been submitted! A council officer will contact you within 2 business days to schedule the meeting. Task ID: ${meetingResult.message.task_id}`)
+    } else {
+      throw new Error(meetingResult.message || 'Failed to book meeting')
+    }
+  } catch (error) {
+    console.error('Error booking meeting:', error)
+    alert('Failed to book pre-application meeting. Please try again.')
+  } finally {
+    bookingMeeting.value = false
   }
 }
 </script>
