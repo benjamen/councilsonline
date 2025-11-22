@@ -470,7 +470,7 @@ def is_public_holiday(date):
 
 @frappe.whitelist()
 def get_my_applications(status=None):
-    """Get applications for current user"""
+    """Get applications for current user with statutory clock data from appropriate child DocType"""
     user = frappe.session.user
 
     filters = {"applicant": user}
@@ -483,10 +483,36 @@ def get_my_applications(status=None):
         fields=[
             "name", "request_number", "status", "property_address",
             "brief_description", "submitted_date", "target_completion_date",
-            "working_days_remaining", "is_overdue", "request_type"
+            "is_overdue", "request_type", "request_category", "creation"
         ],
         order_by="modified desc"
     )
+
+    # Enrich with statutory clock data from child DocTypes
+    for app in applications:
+        if app.get("request_category") == "Resource Consent":
+            # Get clock data from Resource Consent Application
+            rc_app = frappe.db.get_value(
+                "Resource Consent Application",
+                {"request": app["name"]},
+                ["working_days_elapsed", "working_days_remaining", "statutory_clock_started"],
+                as_dict=True
+            )
+            if rc_app:
+                app["working_days_elapsed"] = rc_app.get("working_days_elapsed") or 0
+                app["working_days_remaining"] = rc_app.get("working_days_remaining") or 0
+                app["statutory_clock_started"] = rc_app.get("statutory_clock_started")
+            else:
+                # Fallback to deprecated Request fields during migration
+                app["working_days_elapsed"] = 0
+                app["working_days_remaining"] = 0
+                app["statutory_clock_started"] = None
+        # TODO: Add Building Consent Application handling here when implemented
+        else:
+            # For non-RC requests, set defaults
+            app["working_days_elapsed"] = 0
+            app["working_days_remaining"] = 0
+            app["statutory_clock_started"] = None
 
     return applications
 
@@ -573,20 +599,19 @@ def calculate_fees(request_type, building_value=None):
 
 @frappe.whitelist()
 def get_all_requests_for_staff():
-    """Get all requests for internal staff view"""
-    return frappe.get_all(
+    """Get all requests for internal staff view with statutory clock data from child DocTypes"""
+    requests = frappe.get_all(
         "Request",
         fields=[
             "name",
             "request_number",
             "request_type",
+            "request_category",
             "brief_description",
             "property_address",
             "status",
             "submitted_date",
             "target_completion_date",
-            "statutory_clock_started",
-            "working_days_elapsed",
             "assigned_to",
             "priority",
             "owner",
@@ -595,3 +620,30 @@ def get_all_requests_for_staff():
         ],
         order_by="creation desc"
     )
+
+    # Enrich with statutory clock data from child DocTypes
+    for req in requests:
+        if req.get("request_category") == "Resource Consent":
+            # Get clock data from Resource Consent Application
+            rc_app = frappe.db.get_value(
+                "Resource Consent Application",
+                {"request": req["name"]},
+                ["working_days_elapsed", "working_days_remaining", "statutory_clock_started"],
+                as_dict=True
+            )
+            if rc_app:
+                req["working_days_elapsed"] = rc_app.get("working_days_elapsed") or 0
+                req["working_days_remaining"] = rc_app.get("working_days_remaining") or 0
+                req["statutory_clock_started"] = rc_app.get("statutory_clock_started")
+            else:
+                req["working_days_elapsed"] = 0
+                req["working_days_remaining"] = 0
+                req["statutory_clock_started"] = None
+        # TODO: Add Building Consent Application handling here when implemented
+        else:
+            # For non-RC requests, set defaults
+            req["working_days_elapsed"] = 0
+            req["working_days_remaining"] = 0
+            req["statutory_clock_started"] = None
+
+    return requests
