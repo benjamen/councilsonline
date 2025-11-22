@@ -130,6 +130,7 @@
    "read_only": 1
   },
   {
+   "description": "Details about the person or entity submitting this application. If using an agent or consultant, provide their details in the right column.",
    "fieldname": "section_break_applicant",
    "fieldtype": "Section Break",
    "label": "Applicant Information"
@@ -204,6 +205,7 @@
    "options": "Organization"
   },
   {
+   "description": "The property where the proposed work will take place. Select an existing property or create a new one with the address and legal description.",
    "fieldname": "section_break_property",
    "fieldtype": "Section Break",
    "label": "Property Information"
@@ -261,11 +263,13 @@
    "read_only": 1
   },
   {
+   "description": "Describe what is being proposed. Brief description (50-100 words) is shown in listings and reports. Detailed description is used for assessment and should include all relevant information about the proposed work.",
    "fieldname": "section_break_proposal",
    "fieldtype": "Section Break",
    "label": "Proposal Details"
   },
   {
+   "description": "Short summary (50-100 words) visible in request listings, reports, and public notices. Keep it concise and focused on the main proposal.",
    "fieldname": "brief_description",
    "fieldtype": "Small Text",
    "label": "Brief Description",
@@ -273,12 +277,14 @@
    "reqd": 1
   },
   {
+   "description": "Full description of the proposed work for planner assessment. Include all relevant details about scope, materials, dimensions, environmental considerations, and any other information needed for processing.",
    "fieldname": "detailed_description",
    "fieldtype": "Text Editor",
    "label": "Detailed Description",
    "reqd": 1
   },
   {
+   "description": "Tracks statutory timeframes required under the Resource Management Act (RMA). The statutory clock starts when the request is acknowledged and stops during RFI (Request for Information) periods. Working days are calculated excluding weekends and public holidays.",
    "fieldname": "section_break_dates",
    "fieldtype": "Section Break",
    "label": "Dates & Timeframes"
@@ -314,17 +320,20 @@
   },
   {
    "allow_on_submit": 1,
+   "description": "Date and time when the statutory timeframe clock begins. Automatically set when the request is acknowledged by council staff.",
    "fieldname": "statutory_clock_started",
    "fieldtype": "Datetime",
    "label": "Clock Started"
   },
   {
    "allow_on_submit": 1,
+   "description": "Date and time when the clock was paused (e.g., when an RFI was issued). The clock restarts when the RFI response is received. This field is cleared when the clock resumes.",
    "fieldname": "statutory_clock_stopped",
    "fieldtype": "Datetime",
    "label": "Clock Stopped"
   },
   {
+   "description": "Number of working days that have elapsed on the statutory clock, excluding weekends, public holidays, and periods when the clock was stopped for RFIs.",
    "fieldname": "working_days_elapsed",
    "fieldtype": "Int",
    "label": "Working Days Elapsed",
@@ -360,12 +369,14 @@
   },
   {
    "collapsible": 1,
+   "description": "Links to the internal assessment workflow project. An Assessment Project is automatically created when the request is acknowledged, containing tasks, stages, and team assignments for processing this application.",
    "fieldname": "section_break_assessment",
    "fieldtype": "Section Break",
    "label": "Assessment Project"
   },
   {
    "allow_on_submit": 1,
+   "description": "Link to the internal assessment workflow. Automatically created when this request is acknowledged. Click to view tasks, stages, and team assignments.",
    "fieldname": "assessment_project",
    "fieldtype": "Link",
    "label": "Assessment Project",
@@ -420,6 +431,7 @@
   },
   {
    "collapsible": 1,
+   "description": "Fee breakdown and payment tracking for this application. Fees are calculated based on the request type and work scope. GST is added automatically. Payment status is updated when payments are received.",
    "fieldname": "section_break_fees",
    "fieldtype": "Section Break",
    "label": "Fees & Payments"
@@ -447,6 +459,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "description": "Current payment status for this application. Updated automatically when payments are received or processed.",
    "fieldname": "payment_status",
    "fieldtype": "Select",
    "label": "Payment Status",
@@ -454,6 +467,7 @@
    "read_only": 1
   },
   {
+   "description": "Itemized breakdown of all fees for this application. Add fee line items based on the request type and scope of work.",
    "fieldname": "fees",
    "fieldtype": "Table",
    "label": "Fee Breakdown",
@@ -493,7 +507,28 @@
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "links": [],
+ "links": [
+  {
+   "group": "Related Documents",
+   "link_doctype": "Assessment Project",
+   "link_fieldname": "request"
+  },
+  {
+   "group": "Related Documents",
+   "link_doctype": "Request For Information",
+   "link_fieldname": "request"
+  },
+  {
+   "group": "Property",
+   "link_doctype": "Property",
+   "link_fieldname": "property"
+  },
+  {
+   "group": "Communication",
+   "link_doctype": "Communication",
+   "link_fieldname": "reference_name"
+  }
+ ],
  "modified": "2025-11-05 19:00:00",
  "modified_by": "Administrator",
  "module": "Lodgeick",
