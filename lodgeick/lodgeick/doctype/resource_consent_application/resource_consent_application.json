@@ -55,6 +55,12 @@
   "lapse_date",
   "review_date",
   "consent_duration",
+  "section_break_statutory_clock",
+  "statutory_clock_started",
+  "statutory_clock_stopped",
+  "column_break_statutory",
+  "working_days_elapsed",
+  "working_days_remaining",
   "amended_from"
  ],
  "fields": [
@@ -330,6 +336,46 @@
    "fieldname": "consent_duration",
    "fieldtype": "Data",
    "label": "Consent Duration"
+  },
+  {
+   "fieldname": "section_break_statutory_clock",
+   "fieldtype": "Section Break",
+   "label": "RMA Statutory Clock",
+   "description": "Statutory timeframes under RMA Sections 91-115. Clock starts when request is acknowledged and stops during RFI periods."
+  },
+  {
+   "fieldname": "statutory_clock_started",
+   "fieldtype": "Datetime",
+   "label": "Clock Started",
+   "description": "Date and time when the RMA statutory timeframe clock begins",
+   "no_copy": 1
+  },
+  {
+   "fieldname": "statutory_clock_stopped",
+   "fieldtype": "Datetime",
+   "label": "Clock Stopped",
+   "description": "Date and time when the clock was paused (e.g., RFI issued). Cleared when clock resumes.",
+   "no_copy": 1
+  },
+  {
+   "fieldname": "column_break_statutory",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "working_days_elapsed",
+   "fieldtype": "Int",
+   "label": "Working Days Elapsed",
+   "read_only": 1,
+   "description": "Working days elapsed on statutory clock, excluding weekends, public holidays, and RFI periods",
+   "no_copy": 1
+  },
+  {
+   "fieldname": "working_days_remaining",
+   "fieldtype": "Int",
+   "label": "Days Remaining",
+   "read_only": 1,
+   "description": "Working days remaining before statutory deadline",
+   "no_copy": 1
   },
   {
    "fieldname": "amended_from",

@@ -69,7 +69,10 @@ class RequestForInformation(Document):
         """Stop the statutory clock on parent Request"""
         request = frappe.get_doc("Request", self.request)
         if request.status not in ["Closed", "Withdrawn", "Declined"]:
-            request.statutory_clock_stopped = now()
+            # Delegate to child DocType
+            request.stop_statutory_clock()
+
+            # Update parent status
             request.status = "RFI Issued"
             request.save(ignore_permissions=True)
 
@@ -104,7 +107,10 @@ class RequestForInformation(Document):
 
             # Only restart if no other outstanding RFIs
             if outstanding_rfis == 0:
-                request.statutory_clock_stopped = None
+                # Delegate to child DocType
+                request.restart_statutory_clock()
+
+                # Update parent status
                 request.status = "Under Review"
                 request.save(ignore_permissions=True)
 

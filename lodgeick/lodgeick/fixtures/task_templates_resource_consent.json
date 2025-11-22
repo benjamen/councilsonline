@@ -1,6 +1,7 @@
 [
   {
     "doctype": "Task Template",
+    "name": "RC-VET-001: Initial Completeness Check",
     "task_template_name": "RC-VET-001: Initial Completeness Check",
     "stage_type": "Vetting",
     "task_sequence": 1,
@@ -30,7 +31,8 @@
     "task_type": "Sequential",
     "depends_on_task": "RC-VET-001: Initial Completeness Check",
     "priority": "High",
-    "auto_assign": 1
+    "auto_assign": 1,
+    "name": "RC-VET-002: Fee Verification"
   },
   {
     "doctype": "Task Template",
@@ -46,7 +48,8 @@
     "is_mandatory": 1,
     "task_type": "Sequential",
     "priority": "High",
-    "auto_assign": 1
+    "auto_assign": 1,
+    "name": "RC-VET-003: Assign to Planner"
   },
   {
     "doctype": "Task Template",
@@ -62,7 +65,8 @@
     "is_mandatory": 1,
     "task_type": "Sequential",
     "priority": "High",
-    "auto_assign": 1
+    "auto_assign": 1,
+    "name": "RC-VET-004: Acknowledge to Applicant"
   },
   {
     "doctype": "Task Template",
@@ -78,7 +82,8 @@
     "is_mandatory": 1,
     "task_type": "Sequential",
     "priority": "High",
-    "auto_assign": 1
+    "auto_assign": 1,
+    "name": "RC-TECH-001: District Plan Rules Review"
   },
   {
     "doctype": "Task Template",
@@ -86,7 +91,7 @@
     "stage_type": "Technical Assessment",
     "task_sequence": 2,
     "task_title": "Check overlay compliance (heritage, flood, ecological, cultural)",
-    "task_description": "<h4>Overlay Assessment</h4>\n<p>If the property has overlays, assess compliance with overlay-specific requirements:</p>\n<ul>\n<li><strong>Heritage Overlay:</strong> Heritage NZ consent required? Heritage assessment report provided?</li>\n<li><strong>Natural Hazard Overlays:</strong> Flood zone, liquefaction, slope instability - geotechnical assessment required?</li>\n<li><strong>Ecological Overlays:</strong> Significant Natural Areas - ecological impact assessment required?</li>\n<li><strong>Sites of Significance to Māori:</strong> Cultural impact assessment? Iwi consultation undertaken?</li>\n<li><strong>Notable Trees:</strong> Arborist report if works near protected trees?</li>\n</ul>\n<p><strong>Action:</strong> If additional specialist reports are required, issue RFI or confirm reports are already included in application.</p>",
+    "task_description": "<h4>Overlay Assessment</h4>\n<p>If the property has overlays, assess compliance with overlay-specific requirements:</p>\n<ul>\n<li><strong>Heritage Overlay:</strong> Heritage NZ consent required? Heritage assessment report provided?</li>\n<li><strong>Natural Hazard Overlays:</strong> Flood zone, liquefaction, slope instability - geotechnical assessment required?</li>\n<li><strong>Ecological Overlays:</strong> Significant Natural Areas - ecological impact assessment required?</li>\n<li><strong>Sites of Significance to M\u0101ori:</strong> Cultural impact assessment? Iwi consultation undertaken?</li>\n<li><strong>Notable Trees:</strong> Arborist report if works near protected trees?</li>\n</ul>\n<p><strong>Action:</strong> If additional specialist reports are required, issue RFI or confirm reports are already included in application.</p>",
     "estimated_hours": 2.0,
     "required_role": "Planner",
     "required_team": "Planning Team",
@@ -94,7 +99,8 @@
     "is_mandatory": 0,
     "task_type": "Parallel",
     "priority": "Medium",
-    "auto_assign": 1
+    "auto_assign": 1,
+    "name": "RC-TECH-002: Overlay Assessment"
   },
   {
     "doctype": "Task Template",
@@ -102,7 +108,7 @@
     "stage_type": "Technical Assessment",
     "task_sequence": 3,
     "task_title": "Assess actual and potential environmental effects",
-    "task_description": "<h4>Section 104(1)(a) Effects Assessment</h4>\n<p>Assess the actual and potential effects on the environment:</p>\n<ol>\n<li><strong>Adjoining Properties:</strong>\n<ul>\n<li>Privacy (overlooking)</li>\n<li>Sunlight access and shading</li>\n<li>Visual amenity and character</li>\n<li>Noise during construction and operation</li>\n</ul>\n</li>\n<li><strong>Infrastructure Effects:</strong>\n<ul>\n<li>Traffic generation and parking adequacy</li>\n<li>Stormwater management and runoff</li>\n<li>Water supply and wastewater capacity</li>\n<li>Network utility impacts</li>\n</ul>\n</li>\n<li><strong>Natural Environment:</strong>\n<ul>\n<li>Ecological values (flora/fauna)</li>\n<li>Watercourses and wetlands</li>\n<li>Soil stability and erosion</li>\n</ul>\n</li>\n<li><strong>Cultural/Heritage:</strong>\n<ul>\n<li>Heritage values</li>\n<li>Sites of significance to Māori</li>\n<li>Archaeological sites</li>\n</ul>\n</li>\n</ol>\n<p><strong>Determine:</strong> Are effects less than minor, minor, or more than minor? This informs notification decision under s95.</p>",
+    "task_description": "<h4>Section 104(1)(a) Effects Assessment</h4>\n<p>Assess the actual and potential effects on the environment:</p>\n<ol>\n<li><strong>Adjoining Properties:</strong>\n<ul>\n<li>Privacy (overlooking)</li>\n<li>Sunlight access and shading</li>\n<li>Visual amenity and character</li>\n<li>Noise during construction and operation</li>\n</ul>\n</li>\n<li><strong>Infrastructure Effects:</strong>\n<ul>\n<li>Traffic generation and parking adequacy</li>\n<li>Stormwater management and runoff</li>\n<li>Water supply and wastewater capacity</li>\n<li>Network utility impacts</li>\n</ul>\n</li>\n<li><strong>Natural Environment:</strong>\n<ul>\n<li>Ecological values (flora/fauna)</li>\n<li>Watercourses and wetlands</li>\n<li>Soil stability and erosion</li>\n</ul>\n</li>\n<li><strong>Cultural/Heritage:</strong>\n<ul>\n<li>Heritage values</li>\n<li>Sites of significance to M\u0101ori</li>\n<li>Archaeological sites</li>\n</ul>\n</li>\n</ol>\n<p><strong>Determine:</strong> Are effects less than minor, minor, or more than minor? This informs notification decision under s95.</p>",
     "estimated_hours": 6.0,
     "required_role": "Planner",
     "required_team": "Planning Team",
@@ -110,7 +116,8 @@
     "is_mandatory": 1,
     "task_type": "Sequential",
     "priority": "High",
-    "auto_assign": 1
+    "auto_assign": 1,
+    "name": "RC-TECH-003: Effects Assessment (s104)"
   },
   {
     "doctype": "Task Template",
@@ -126,7 +133,8 @@
     "is_mandatory": 1,
     "task_type": "Sequential",
     "priority": "High",
-    "auto_assign": 1
+    "auto_assign": 1,
+    "name": "RC-TECH-004: Affected Parties Assessment"
   },
   {
     "doctype": "Task Template",
@@ -142,7 +150,8 @@
     "is_mandatory": 0,
     "task_type": "Parallel",
     "priority": "Medium",
-    "auto_assign": 1
+    "auto_assign": 1,
+    "name": "RC-TECH-005: Specialist Report Review"
   },
   {
     "doctype": "Task Template",
@@ -158,7 +167,8 @@
     "is_mandatory": 0,
     "task_type": "Parallel",
     "priority": "Medium",
-    "auto_assign": 1
+    "auto_assign": 1,
+    "name": "RC-TECH-006: Site Visit (if required)"
   },
   {
     "doctype": "Task Template",
@@ -175,7 +185,8 @@
     "task_type": "Sequential",
     "depends_on_task": "RC-TECH-003: Effects Assessment (s104)",
     "priority": "High",
-    "auto_assign": 1
+    "auto_assign": 1,
+    "name": "RC-TECH-007: Draft Assessment Notes"
   },
   {
     "doctype": "Task Template",
@@ -191,7 +202,8 @@
     "is_mandatory": 1,
     "task_type": "Sequential",
     "priority": "High",
-    "auto_assign": 1
+    "auto_assign": 1,
+    "name": "RC-DEC-001: Draft Recommended Conditions"
   },
   {
     "doctype": "Task Template",
@@ -208,7 +220,8 @@
     "task_type": "Sequential",
     "depends_on_task": "RC-DEC-001: Draft Recommended Conditions",
     "priority": "High",
-    "auto_assign": 1
+    "auto_assign": 1,
+    "name": "RC-DEC-002: Senior Planner Peer Review"
   },
   {
     "doctype": "Task Template",
@@ -225,7 +238,8 @@
     "task_type": "Sequential",
     "depends_on_task": "RC-DEC-002: Senior Planner Peer Review",
     "priority": "High",
-    "auto_assign": 1
+    "auto_assign": 1,
+    "name": "RC-DEC-003: Manager Sign-Off"
   },
   {
     "doctype": "Task Template",
@@ -242,6 +256,7 @@
     "task_type": "Sequential",
     "depends_on_task": "RC-DEC-003: Manager Sign-Off",
     "priority": "High",
-    "auto_assign": 1
+    "auto_assign": 1,
+    "name": "RC-DEC-004: Issue Notice of Decision"
   }
 ]

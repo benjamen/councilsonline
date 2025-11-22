@@ -519,11 +519,6 @@
    "link_fieldname": "request"
   },
   {
-   "group": "Property",
-   "link_doctype": "Property",
-   "link_fieldname": "property"
-  },
-  {
    "group": "Communication",
    "link_doctype": "Communication",
    "link_fieldname": "reference_name"

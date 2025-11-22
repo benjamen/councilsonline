@@ -219,20 +219,15 @@ class Request(Document):
 
         # State: Acknowledged - Start statutory clock and create assessment
         if new_state == "Acknowledged":
-            if not self.statutory_clock_started:
-                clock_start = now()
+            # Delegate clock start to child DocType (RC Application)
+            self.start_statutory_clock()
+
+            # Set acknowledged date on parent Request
+            if not self.acknowledged_date:
                 ack_date = getdate()
-
-                # Use db_set to persist immediately
-                self.db_set("statutory_clock_started", clock_start, update_modified=False)
                 self.db_set("acknowledged_date", ack_date, update_modified=False)
-
-                # Update self for target date calculation
-                self.statutory_clock_started = clock_start
                 self.acknowledged_date = ack_date
                 self.calculate_target_completion_date()
-
-                # Save target completion date
                 if self.target_completion_date:
                     self.db_set("target_completion_date", self.target_completion_date, update_modified=False)
 
@@ -240,42 +235,32 @@ class Request(Document):
             self.auto_create_assessment_project()
 
             frappe.msgprint(
-                f"Request acknowledged. Statutory clock started. Assessment project will be created.",
+                f"Request acknowledged. Assessment project will be created.",
                 alert=True,
                 indicator="green"
             )
 
         # State: RFI Issued - Stop statutory clock
         elif new_state == "RFI Issued":
-            if not self.statutory_clock_stopped:
-                clock_stop = now()
-                self.db_set("statutory_clock_stopped", clock_stop, update_modified=False)
-                self.statutory_clock_stopped = clock_stop
-
+            self.stop_statutory_clock()
             frappe.msgprint(
-                f"RFI issued. Statutory clock stopped.",
+                f"RFI issued. Statutory clock stopped (if applicable).",
                 alert=True,
                 indicator="orange"
             )
 
         # State: RFI Received - Restart statutory clock
         elif new_state == "RFI Received" and old_state == "RFI Issued":
-            # Clear the stop time to restart clock
-            self.db_set("statutory_clock_stopped", None, update_modified=False)
-            self.statutory_clock_stopped = None
-
+            self.restart_statutory_clock()
             frappe.msgprint(
-                f"RFI received. Statutory clock restarted.",
+                f"RFI received. Statutory clock restarted (if applicable).",
                 alert=True,
                 indicator="green"
             )
 
         # States: Approved/Approved with Conditions/Declined - Stop clock and set completion
         elif new_state in ["Approved", "Approved with Conditions", "Declined"]:
-            if not self.statutory_clock_stopped:
-                clock_stop = now()
-                self.db_set("statutory_clock_stopped", clock_stop, update_modified=False)
-                self.statutory_clock_stopped = clock_stop
+            self.stop_statutory_clock()
 
             if not self.actual_completion_date:
                 completion_date = getdate()
@@ -288,39 +273,30 @@ class Request(Document):
 
             indicator = "green" if new_state.startswith("Approved") else "red"
             frappe.msgprint(
-                f"Request {new_state.lower()}. Statutory clock stopped.",
+                f"Request {new_state.lower()}.",
                 alert=True,
                 indicator=indicator
             )
 
         # State: Withdrawn - Stop clock
         elif new_state == "Withdrawn":
-            if not self.statutory_clock_stopped:
-                clock_stop = now()
-                self.db_set("statutory_clock_stopped", clock_stop, update_modified=False)
-                self.statutory_clock_stopped = clock_stop
+            self.stop_statutory_clock()
 
             # Update status field for backward compatibility
             self.db_set("status", "Withdrawn", update_modified=False)
             self.status = "Withdrawn"
 
             frappe.msgprint(
-                f"Request withdrawn. Statutory clock stopped.",
+                f"Request withdrawn.",
                 alert=True,
                 indicator="red"
             )
 
         # State: Processing - Ensure clock is running
         elif new_state == "Processing":
-            if not self.statutory_clock_started:
-                clock_start = now()
-                self.db_set("statutory_clock_started", clock_start, update_modified=False)
-                self.statutory_clock_started = clock_start
-
+            self.start_statutory_clock()
             # Ensure clock is not stopped (restart if coming from RFI Received)
-            if self.statutory_clock_stopped:
-                self.db_set("statutory_clock_stopped", None, update_modified=False)
-                self.statutory_clock_stopped = None
+            self.restart_statutory_clock()
 
     def auto_create_assessment_project(self):
         """Auto-create assessment project when request is acknowledged"""
@@ -387,6 +363,58 @@ class Request(Document):
         except Exception as e:
             frappe.log_error(f"Failed to auto-create assessment project: {str(e)}")
             frappe.msgprint(f"Failed to create assessment project: {str(e)}", alert=True, indicator="red")
+
+    def get_consent_application(self):
+        """Get the appropriate consent application child document"""
+        if self.request_category == "Resource Consent":
+            rc_app = frappe.db.get_value(
+                "Resource Consent Application",
+                {"request": self.name},
+                "name"
+            )
+            if rc_app:
+                return frappe.get_doc("Resource Consent Application", rc_app)
+        elif self.request_category == "Building Consent":
+            bc_app = frappe.db.get_value(
+                "Building Consent Application",
+                {"request": self.name},
+                "name"
+            )
+            if bc_app:
+                return frappe.get_doc("Building Consent Application", bc_app)
+        return None
+
+    def start_statutory_clock(self):
+        """Delegate to child DocType"""
+        consent_app = self.get_consent_application()
+        if consent_app and hasattr(consent_app, 'start_statutory_clock'):
+            consent_app.start_statutory_clock()
+
+    def stop_statutory_clock(self):
+        """Delegate to child DocType"""
+        consent_app = self.get_consent_application()
+        if consent_app and hasattr(consent_app, 'stop_statutory_clock'):
+            consent_app.stop_statutory_clock()
+
+    def restart_statutory_clock(self):
+        """Delegate to child DocType"""
+        consent_app = self.get_consent_application()
+        if consent_app and hasattr(consent_app, 'restart_statutory_clock'):
+            consent_app.restart_statutory_clock()
+
+    def get_working_days_elapsed(self):
+        """Get working days from child DocType"""
+        consent_app = self.get_consent_application()
+        if consent_app and hasattr(consent_app, 'working_days_elapsed'):
+            return consent_app.working_days_elapsed
+        return 0
+
+    def get_working_days_remaining(self):
+        """Get working days remaining from child DocType"""
+        consent_app = self.get_consent_application()
+        if consent_app and hasattr(consent_app, 'working_days_remaining'):
+            return consent_app.working_days_remaining
+        return 0
 
 
 def add_working_days(start_date, days):
