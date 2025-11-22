@@ -200,19 +200,19 @@
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Processing Timeline</h2>
 
             <!-- Statutory Clock -->
-            <div v-if="request.data.statutory_clock_started" class="mb-6 p-4 bg-blue-50 rounded-lg">
+            <div v-if="clockData.statutory_clock_started" class="mb-6 p-4 bg-blue-50 rounded-lg">
               <div class="flex items-center justify-between mb-2">
                 <span class="text-sm font-medium text-blue-900">Statutory Clock</span>
-                <span class="text-xs text-blue-700">{{ request.data.working_days_elapsed || 0 }} of 20 days</span>
+                <span class="text-xs text-blue-700">{{ clockData.working_days_elapsed }} of 20 days</span>
               </div>
               <div class="w-full bg-blue-200 rounded-full h-2">
                 <div
                   class="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                  :style="{ width: `${Math.min(((request.data.working_days_elapsed || 0) / 20) * 100, 100)}%` }"
+                  :style="{ width: `${progressPercent}%` }"
                 ></div>
               </div>
               <p class="mt-2 text-xs text-blue-700">
-                {{ request.data.statutory_clock_stopped ? 'Clock stopped (RFI issued)' : `${20 - (request.data.working_days_elapsed || 0)} days remaining` }}
+                {{ clockData.statutory_clock_stopped ? 'Clock stopped (RFI issued)' : `${clockData.working_days_remaining} days remaining` }}
               </p>
             </div>
 
@@ -338,6 +338,7 @@ import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { createResource, Button } from 'frappe-ui'
 import StatusBadge from '../components/StatusBadge.vue'
+import { useStatutoryClock } from '../composables/useStatutoryClock'
 
 const route = useRoute()
 const router = useRouter()
@@ -358,6 +359,9 @@ const request = createResource({
   },
   auto: true,
 })
+
+// Get statutory clock data from appropriate source (RC Application or Request)
+const { clockData, progressPercent } = useStatutoryClock(request)
 
 const goBack = () => {
   router.push({ name: 'Dashboard' })

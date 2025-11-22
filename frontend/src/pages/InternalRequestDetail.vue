@@ -63,8 +63,8 @@
               </div>
               <div>
                 <dt class="text-sm text-gray-600">Days Elapsed</dt>
-                <dd class="mt-1 text-sm font-medium" :class="request.data.is_overdue ? 'text-red-600' : 'text-gray-900'">
-                  {{ request.data.working_days_elapsed || 0 }} days
+                <dd class="mt-1 text-sm font-medium" :class="isOverdue ? 'text-red-600' : 'text-gray-900'">
+                  {{ clockData.working_days_elapsed }} days
                 </dd>
               </div>
             </dl>
@@ -165,23 +165,23 @@
             <h3 class="text-sm font-semibold text-gray-900 mb-4">Timeline</h3>
 
             <!-- Statutory Clock -->
-            <div v-if="request.data.statutory_clock_started" class="mb-6">
+            <div v-if="clockData.statutory_clock_started" class="mb-6">
               <div class="flex items-center justify-between mb-2">
                 <span class="text-xs font-medium text-gray-700">Statutory Clock</span>
                 <span class="text-xs text-gray-600">
-                  {{ request.data.working_days_elapsed || 0 }} / {{ request.data.statutory_timeframe || 20 }} days
+                  {{ clockData.working_days_elapsed }} / {{ request.data.statutory_timeframe || 20 }} days
                 </span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-2">
                 <div
                   class="h-2 rounded-full transition-all"
-                  :class="request.data.is_overdue ? 'bg-red-600' : 'bg-green-600'"
-                  :style="{ width: `${getProgressPercent()}%` }"
+                  :class="isOverdue ? 'bg-red-600' : 'bg-green-600'"
+                  :style="{ width: `${progressPercent}%` }"
                 ></div>
               </div>
               <p class="mt-2 text-xs text-gray-500">
-                {{ request.data.working_days_remaining || 0 }} days remaining
-                {{ request.data.statutory_clock_stopped ? '(Clock stopped)' : '' }}
+                {{ clockData.working_days_remaining }} days remaining
+                {{ clockData.statutory_clock_stopped ? '(Clock stopped)' : '' }}
               </p>
             </div>
 
@@ -225,6 +225,7 @@ import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { createResource, Button, Dropdown } from 'frappe-ui'
 import StatusBadge from '../components/StatusBadge.vue'
+import { useStatutoryClock } from '../composables/useStatutoryClock'
 
 const router = useRouter()
 const route = useRoute()
@@ -238,6 +239,9 @@ const request = createResource({
   },
   auto: true,
 })
+
+// Get statutory clock data from appropriate source (RC Application or Request)
+const { clockData, progressPercent, isOverdue } = useStatutoryClock(request)
 
 // Mock data (replace with real data)
 const mockTasks = ref([
@@ -260,12 +264,6 @@ const totalCost = computed(() => {
   const addCharges = parseFloat(request.data?.additional_charges || 0)
   return appFee + addCharges + totalStaffCost.value
 })
-
-const getProgressPercent = () => {
-  const elapsed = request.data?.working_days_elapsed || 0
-  const total = request.data?.statutory_timeframe || 20
-  return Math.min((elapsed / total) * 100, 100)
-}
 
 // Methods
 const goBack = () => {
