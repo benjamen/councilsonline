@@ -320,29 +320,34 @@
   },
   {
    "allow_on_submit": 1,
-   "description": "Date and time when the statutory timeframe clock begins. Automatically set when the request is acknowledged by council staff.",
+   "description": "DEPRECATED: Moved to Resource Consent Application. Date and time when the statutory timeframe clock begins. Automatically set when the request is acknowledged by council staff.",
    "fieldname": "statutory_clock_started",
    "fieldtype": "Datetime",
-   "label": "Clock Started"
+   "hidden": 1,
+   "label": "Clock Started (Deprecated)"
   },
   {
    "allow_on_submit": 1,
-   "description": "Date and time when the clock was paused (e.g., when an RFI was issued). The clock restarts when the RFI response is received. This field is cleared when the clock resumes.",
+   "description": "DEPRECATED: Moved to Resource Consent Application. Date and time when the clock was paused (e.g., when an RFI was issued). The clock restarts when the RFI response is received. This field is cleared when the clock resumes.",
    "fieldname": "statutory_clock_stopped",
    "fieldtype": "Datetime",
-   "label": "Clock Stopped"
+   "hidden": 1,
+   "label": "Clock Stopped (Deprecated)"
   },
   {
-   "description": "Number of working days that have elapsed on the statutory clock, excluding weekends, public holidays, and periods when the clock was stopped for RFIs.",
+   "description": "DEPRECATED: Moved to Resource Consent Application. Number of working days that have elapsed on the statutory clock, excluding weekends, public holidays, and periods when the clock was stopped for RFIs.",
    "fieldname": "working_days_elapsed",
    "fieldtype": "Int",
-   "label": "Working Days Elapsed",
+   "hidden": 1,
+   "label": "Working Days Elapsed (Deprecated)",
    "read_only": 1
   },
   {
+   "description": "DEPRECATED: Moved to Resource Consent Application.",
    "fieldname": "working_days_remaining",
    "fieldtype": "Int",
-   "label": "Days Remaining",
+   "hidden": 1,
+   "label": "Days Remaining (Deprecated)",
    "read_only": 1
   },
   {
