@@ -368,12 +368,21 @@ class Request(Document):
 
             # Create stages from template
             assessment_project.create_stages_from_template()
+
+            # NEW: Auto-create tasks from task templates
+            tasks_created = assessment_project.create_tasks_from_template()
+
             assessment_project.save()
 
             # Link back to request
             self.db_set("assessment_project", assessment_project.name, update_modified=False)
 
-            frappe.msgprint(f"Assessment Project {assessment_project.name} created successfully", alert=True, indicator="green")
+            frappe.msgprint(
+                f"✅ Assessment Project {assessment_project.name} created with {tasks_created} tasks",
+                alert=True,
+                indicator="green",
+                title="Project Plan Created"
+            )
 
         except Exception as e:
             frappe.log_error(f"Failed to auto-create assessment project: {str(e)}")

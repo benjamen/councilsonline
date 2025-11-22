@@ -14,6 +14,7 @@
   "section_break_processing",
   "processing_sla_days",
   "workflow_template",
+  "default_assessment_template",
   "section_break_fees",
   "base_fee",
   "fee_calculation_method",
@@ -72,6 +73,13 @@
    "fieldtype": "Link",
    "label": "Workflow",
    "options": "Workflow"
+  },
+  {
+   "fieldname": "default_assessment_template",
+   "fieldtype": "Link",
+   "label": "Default Assessment Template",
+   "options": "Assessment Template",
+   "description": "Auto-assigned when request is acknowledged. Determines which stages and tasks are created."
   },
   {
    "fieldname": "section_break_fees",
