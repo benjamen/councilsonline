@@ -220,10 +220,21 @@ class Request(Document):
         # State: Acknowledged - Start statutory clock and create assessment
         if new_state == "Acknowledged":
             if not self.statutory_clock_started:
-                self.statutory_clock_started = now()
-                self.acknowledged_date = getdate()
+                clock_start = now()
+                ack_date = getdate()
+
+                # Use db_set to persist immediately
+                self.db_set("statutory_clock_started", clock_start, update_modified=False)
+                self.db_set("acknowledged_date", ack_date, update_modified=False)
+
+                # Update self for target date calculation
+                self.statutory_clock_started = clock_start
+                self.acknowledged_date = ack_date
                 self.calculate_target_completion_date()
-                # Note: Changes will be saved by the parent save() call
+
+                # Save target completion date
+                if self.target_completion_date:
+                    self.db_set("target_completion_date", self.target_completion_date, update_modified=False)
 
             # Auto-create assessment project
             self.auto_create_assessment_project()
@@ -237,7 +248,9 @@ class Request(Document):
         # State: RFI Issued - Stop statutory clock
         elif new_state == "RFI Issued":
             if not self.statutory_clock_stopped:
-                self.statutory_clock_stopped = now()
+                clock_stop = now()
+                self.db_set("statutory_clock_stopped", clock_stop, update_modified=False)
+                self.statutory_clock_stopped = clock_stop
 
             frappe.msgprint(
                 f"RFI issued. Statutory clock stopped.",
@@ -248,6 +261,7 @@ class Request(Document):
         # State: RFI Received - Restart statutory clock
         elif new_state == "RFI Received" and old_state == "RFI Issued":
             # Clear the stop time to restart clock
+            self.db_set("statutory_clock_stopped", None, update_modified=False)
             self.statutory_clock_stopped = None
 
             frappe.msgprint(
@@ -259,12 +273,17 @@ class Request(Document):
         # States: Approved/Approved with Conditions/Declined - Stop clock and set completion
         elif new_state in ["Approved", "Approved with Conditions", "Declined"]:
             if not self.statutory_clock_stopped:
-                self.statutory_clock_stopped = now()
+                clock_stop = now()
+                self.db_set("statutory_clock_stopped", clock_stop, update_modified=False)
+                self.statutory_clock_stopped = clock_stop
 
             if not self.actual_completion_date:
-                self.actual_completion_date = getdate()
+                completion_date = getdate()
+                self.db_set("actual_completion_date", completion_date, update_modified=False)
+                self.actual_completion_date = completion_date
 
             # Update status field for backward compatibility
+            self.db_set("status", new_state, update_modified=False)
             self.status = new_state
 
             indicator = "green" if new_state.startswith("Approved") else "red"
@@ -277,9 +296,12 @@ class Request(Document):
         # State: Withdrawn - Stop clock
         elif new_state == "Withdrawn":
             if not self.statutory_clock_stopped:
-                self.statutory_clock_stopped = now()
+                clock_stop = now()
+                self.db_set("statutory_clock_stopped", clock_stop, update_modified=False)
+                self.statutory_clock_stopped = clock_stop
 
             # Update status field for backward compatibility
+            self.db_set("status", "Withdrawn", update_modified=False)
             self.status = "Withdrawn"
 
             frappe.msgprint(
@@ -291,10 +313,13 @@ class Request(Document):
         # State: Processing - Ensure clock is running
         elif new_state == "Processing":
             if not self.statutory_clock_started:
-                self.statutory_clock_started = now()
+                clock_start = now()
+                self.db_set("statutory_clock_started", clock_start, update_modified=False)
+                self.statutory_clock_started = clock_start
 
-            # Ensure clock is not stopped
+            # Ensure clock is not stopped (restart if coming from RFI Received)
             if self.statutory_clock_stopped:
+                self.db_set("statutory_clock_stopped", None, update_modified=False)
                 self.statutory_clock_stopped = None
 
     def auto_create_assessment_project(self):
