@@ -249,21 +249,47 @@
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">
                   Activity Status *
+                  <button
+                    type="button"
+                    @click="showActivityStatusHelp = !showActivityStatusHelp"
+                    class="ml-1 text-blue-600 hover:text-blue-800"
+                    title="Click for help"
+                  >
+                    <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </button>
                 </label>
+
+                <div v-if="showActivityStatusHelp" class="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg text-xs text-blue-900">
+                  <p class="font-semibold mb-2">RMA Activity Status Guide:</p>
+                  <ul class="space-y-1 ml-4 list-disc">
+                    <li><strong>Permitted:</strong> Allowed without consent (no application needed)</li>
+                    <li><strong>Controlled:</strong> Consent must be granted; council sets conditions</li>
+                    <li><strong>Restricted Discretionary:</strong> Council has limited grounds to decline</li>
+                    <li><strong>Discretionary:</strong> Council has full discretion to grant or decline</li>
+                    <li><strong>Non-Complying:</strong> Does not comply with plan; requires special justification</li>
+                    <li><strong>Prohibited:</strong> Cannot be consented under any circumstances</li>
+                  </ul>
+                  <p class="mt-2 text-xs text-blue-700">Check your district plan zone rules to determine status</p>
+                </div>
+
                 <select
                   v-model="formData.activity_status"
                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   required
                 >
                   <option value="">Select activity status</option>
-                  <option value="Permitted">Permitted</option>
                   <option value="Controlled">Controlled</option>
                   <option value="Restricted Discretionary">Restricted Discretionary</option>
                   <option value="Discretionary">Discretionary</option>
                   <option value="Non-Complying">Non-Complying</option>
-                  <option value="Prohibited">Prohibited</option>
                 </select>
                 <p class="mt-1 text-xs text-gray-500">Activity classification under district plan</p>
+
+                <div v-if="activityStatusWarning" class="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-800">
+                  {{ activityStatusWarning }}
+                </div>
               </div>
             </div>
 
@@ -371,9 +397,98 @@
               </div>
             </div>
 
+            <!-- Affected Parties -->
+            <div class="border-t border-gray-200 pt-4">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-sm font-semibold text-gray-900">Affected Parties</h3>
+                <Button @click="addAffectedParty" variant="outline" theme="blue" size="sm">
+                  <template #prefix>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                  </template>
+                  Add Party
+                </Button>
+              </div>
+
+              <p class="text-xs text-gray-500 mb-3">
+                List any parties (neighbors, landowners, etc.) who may be adversely affected by the proposal
+              </p>
+
+              <div v-if="formData.affected_parties.length > 0" class="space-y-2 mb-3">
+                <div
+                  v-for="(party, index) in formData.affected_parties"
+                  :key="index"
+                  class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200"
+                >
+                  <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-900">{{ party.party_name }}</p>
+                    <p class="text-xs text-gray-500">{{ party.address }}</p>
+                    <p v-if="party.written_approval_obtained" class="text-xs text-green-600 mt-1">
+                      ✓ Written approval obtained
+                    </p>
+                  </div>
+                  <button @click="removeAffectedParty(index)" class="text-red-600 hover:text-red-800">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div v-else class="text-center py-6 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                <p class="text-sm text-gray-500">No affected parties added yet</p>
+              </div>
+            </div>
+
+            <!-- Specialist Reports -->
+            <div class="border-t border-gray-200 pt-4">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-sm font-semibold text-gray-900">Specialist Reports</h3>
+                <Button @click="addSpecialistReport" variant="outline" theme="blue" size="sm">
+                  <template #prefix>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                  </template>
+                  Add Report
+                </Button>
+              </div>
+
+              <p class="text-xs text-gray-500 mb-3">
+                Add any specialist technical reports (traffic, geotechnical, acoustic, ecological, etc.)
+              </p>
+
+              <div v-if="formData.specialist_reports.length > 0" class="space-y-2 mb-3">
+                <div
+                  v-for="(report, index) in formData.specialist_reports"
+                  :key="index"
+                  class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200"
+                >
+                  <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-900">{{ report.report_type }}</p>
+                    <p class="text-xs text-gray-500">{{ report.specialist_name }} | {{ report.date_prepared }}</p>
+                  </div>
+                  <button @click="removeSpecialistReport(index)" class="text-red-600 hover:text-red-800">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div v-else class="text-center py-6 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                <p class="text-sm text-gray-500">No specialist reports added yet</p>
+                <p class="text-xs text-gray-400 mt-1">Upload report files in the Documents step</p>
+              </div>
+            </div>
+
             <!-- Iwi Consultation -->
             <div class="bg-green-50 border border-green-200 rounded-lg p-4">
-              <h3 class="text-sm font-semibold text-green-900 mb-3">Iwi Consultation</h3>
+              <h3 class="text-sm font-semibold text-green-900 mb-3">
+                Iwi Consultation
+                <span class="ml-2 text-xs font-normal text-green-700">(Treaty of Waitangi obligations)</span>
+              </h3>
 
               <div class="space-y-3">
                 <div class="flex items-start">
@@ -397,6 +512,20 @@
                     class="w-full px-3 py-2 border border-green-300 rounded-lg text-sm bg-white"
                     placeholder="List the iwi/hapū that were consulted and summarize their response..."
                   ></textarea>
+
+                  <label class="block text-xs font-medium text-green-700 mb-1 mt-3">
+                    Cultural Impact Assessment (CIA) Document
+                  </label>
+                  <input
+                    type="file"
+                    ref="ciaFileInput"
+                    @change="handleCIAUpload"
+                    accept=".pdf,.doc,.docx"
+                    class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-green-100 file:text-green-700 hover:file:bg-green-200"
+                  />
+                  <p v-if="formData.cultural_impact_assessment" class="text-xs text-green-600 mt-1">
+                    ✓ {{ formData.cultural_impact_assessment.name }} uploaded
+                  </p>
                 </div>
               </div>
             </div>
@@ -656,6 +785,7 @@ const submitting = ref(false)
 const uploadedFiles = ref([])
 const fileInput = ref(null)
 const bookingMeeting = ref(false)
+const showActivityStatusHelp = ref(false)
 
 const steps = computed(() => {
   const baseSteps = [
@@ -705,7 +835,10 @@ const formData = ref({
   mitigation_proposed: '',
   iwi_consultation_undertaken: false,
   iwi_consulted: '',
+  cultural_impact_assessment: null, // CIA file upload
   proposed_conditions: '',
+  affected_parties: [], // Array of affected parties
+  specialist_reports: [], // Array of specialist reports
 })
 
 // Track initial form state to detect changes
@@ -729,6 +862,22 @@ const hasFormChanges = computed(() => {
 // Computed property to check if Resource Consent request
 const isResourceConsent = computed(() => {
   return formData.value.request_category === 'Resource Consent'
+})
+
+// Activity status validation warning
+const activityStatusWarning = computed(() => {
+  if (!formData.value.activity_status) return null
+
+  switch (formData.value.activity_status) {
+    case 'Non-Complying':
+      return '⚠️ Non-complying activities face higher scrutiny and longer processing times. Consider pre-application meeting.'
+    case 'Discretionary':
+      return 'ℹ️ Discretionary activities may require public notification depending on effects assessment.'
+    case 'Controlled':
+      return '✓ Controlled activities must be granted consent. Council will focus on appropriate conditions.'
+    default:
+      return null
+  }
 })
 
 // Show submit button only if there are changes or files uploaded
@@ -1015,6 +1164,89 @@ const bookPreApplicationMeeting = async () => {
     alert('Failed to book pre-application meeting. Please try again.')
   } finally {
     bookingMeeting.value = false
+  }
+}
+
+// Resource Consent specific methods
+const ciaFileInput = ref(null)
+
+const addAffectedParty = () => {
+  const partyName = prompt('Enter affected party name:')
+  if (!partyName) return
+
+  const address = prompt('Enter address:')
+  if (!address) return
+
+  const writtenApproval = confirm('Has written approval been obtained from this party?')
+
+  formData.value.affected_parties.push({
+    party_name: partyName,
+    address: address,
+    written_approval_obtained: writtenApproval
+  })
+}
+
+const removeAffectedParty = (index) => {
+  if (confirm('Remove this affected party?')) {
+    formData.value.affected_parties.splice(index, 1)
+  }
+}
+
+const addSpecialistReport = () => {
+  const reportTypes = [
+    'Traffic Assessment',
+    'Geotechnical Report',
+    'Acoustic Assessment',
+    'Stormwater Design',
+    'Ecological Assessment',
+    'Heritage Impact Assessment',
+    'Archaeological Assessment',
+    'Landscape Assessment',
+    'Other'
+  ]
+
+  const reportType = prompt(`Select report type:\n${reportTypes.map((t, i) => `${i + 1}. ${t}`).join('\n')}\n\nEnter number or type custom:`)
+  if (!reportType) return
+
+  const reportTypeValue = reportTypes[parseInt(reportType) - 1] || reportType
+
+  const specialistName = prompt('Enter specialist/consultant name:')
+  if (!specialistName) return
+
+  const datePrepared = prompt('Enter date prepared (YYYY-MM-DD):')
+
+  formData.value.specialist_reports.push({
+    report_type: reportTypeValue,
+    specialist_name: specialistName,
+    date_prepared: datePrepared || new Date().toISOString().split('T')[0]
+  })
+}
+
+const removeSpecialistReport = (index) => {
+  if (confirm('Remove this specialist report?')) {
+    formData.value.specialist_reports.splice(index, 1)
+  }
+}
+
+const handleCIAUpload = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('File size must be less than 10MB')
+      event.target.value = ''
+      return
+    }
+
+    // Validate file type
+    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
+    if (!allowedTypes.includes(file.type)) {
+      alert('Only PDF and Word documents are allowed')
+      event.target.value = ''
+      return
+    }
+
+    formData.value.cultural_impact_assessment = file
   }
 }
 </script>

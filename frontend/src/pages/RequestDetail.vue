@@ -106,6 +106,12 @@
             </div>
           </div>
 
+          <!-- Resource Consent Details (if applicable) -->
+          <ResourceConsentDetails
+            v-if="request.data?.request_category === 'Resource Consent'"
+            :request-id="request.data.name"
+          />
+
           <!-- Applicant Information -->
           <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Applicant Information</h2>
@@ -338,6 +344,7 @@ import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { createResource, Button } from 'frappe-ui'
 import StatusBadge from '../components/StatusBadge.vue'
+import ResourceConsentDetails from '../components/ResourceConsentDetails.vue'
 import { useStatutoryClock } from '../composables/useStatutoryClock'
 
 const route = useRoute()
