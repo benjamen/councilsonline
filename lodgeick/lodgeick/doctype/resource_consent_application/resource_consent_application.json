@@ -74,6 +74,7 @@
    "unique": 1
   },
   {
+   "description": "Core consent information provided by the applicant",
    "fieldname": "section_break_consent",
    "fieldtype": "Section Break",
    "label": "Consent Details"
@@ -95,9 +96,10 @@
    "reqd": 1
   },
   {
+   "description": "Council determination of notification requirements and public submissions",
    "fieldname": "section_break_notification",
    "fieldtype": "Section Break",
-   "label": "Notification"
+   "label": "Notification & Submissions"
   },
   {
    "fieldname": "notification_level",
@@ -137,7 +139,6 @@
    "label": "Submissions Received"
   },
   {
-   "collapsible": 1,
    "fieldname": "section_break_hearing",
    "fieldtype": "Section Break",
    "label": "Hearing"
@@ -167,9 +168,10 @@
    "label": "Commissioners"
   },
   {
+   "description": "Assessment of Environmental Effects as per Schedule 4 of the RMA",
    "fieldname": "section_break_assessment",
    "fieldtype": "Section Break",
-   "label": "Assessment of Effects"
+   "label": "Assessment of Effects (AEE)"
   },
   {
    "fieldname": "assessment_of_effects",
@@ -199,6 +201,7 @@
    "label": "Cultural/Heritage"
   },
   {
+   "description": "Planning assessment and mitigation measures proposed by applicant",
    "fieldname": "section_break_planning",
    "fieldtype": "Section Break",
    "label": "Planning Assessment"
@@ -225,7 +228,7 @@
    "label": "Mitigation Measures"
   },
   {
-   "collapsible": 1,
+   "description": "List of affected parties and written approvals obtained",
    "fieldname": "section_break_parties",
    "fieldtype": "Section Break",
    "label": "Affected Parties"
@@ -242,7 +245,7 @@
    "label": "Approvals Obtained"
   },
   {
-   "collapsible": 1,
+   "description": "Details of consultation with iwi and hap\u016b",
    "fieldname": "section_break_iwi",
    "fieldtype": "Section Break",
    "label": "Iwi Consultation"
@@ -269,7 +272,7 @@
    "label": "Response Summary"
   },
   {
-   "collapsible": 1,
+   "description": "Specialist reports and technical assessments provided by the applicant",
    "fieldname": "section_break_reports",
    "fieldtype": "Section Break",
    "label": "Specialist Reports"
@@ -281,7 +284,7 @@
    "options": "Specialist Report"
   },
   {
-   "collapsible": 1,
+   "description": "Conditions proposed by the applicant",
    "fieldname": "section_break_conditions",
    "fieldtype": "Section Break",
    "label": "Proposed Conditions"
@@ -292,10 +295,10 @@
    "label": "Proposed Conditions"
   },
   {
-   "collapsible": 1,
+   "description": "Final decision and conditions imposed by the council",
    "fieldname": "section_break_decision",
    "fieldtype": "Section Break",
-   "label": "Decision"
+   "label": "Decision & Consent Conditions"
   },
   {
    "fieldname": "decision_type",
@@ -338,23 +341,23 @@
    "label": "Consent Duration"
   },
   {
+   "description": "Statutory timeframes under RMA Sections 91-115. Clock starts when request is acknowledged and stops during RFI periods.",
    "fieldname": "section_break_statutory_clock",
    "fieldtype": "Section Break",
-   "label": "RMA Statutory Clock",
-   "description": "Statutory timeframes under RMA Sections 91-115. Clock starts when request is acknowledged and stops during RFI periods."
+   "label": "RMA Statutory Clock"
   },
   {
+   "description": "Date and time when the RMA statutory timeframe clock begins",
    "fieldname": "statutory_clock_started",
    "fieldtype": "Datetime",
    "label": "Clock Started",
-   "description": "Date and time when the RMA statutory timeframe clock begins",
    "no_copy": 1
   },
   {
+   "description": "Date and time when the clock was paused (e.g., RFI issued). Cleared when clock resumes.",
    "fieldname": "statutory_clock_stopped",
    "fieldtype": "Datetime",
    "label": "Clock Stopped",
-   "description": "Date and time when the clock was paused (e.g., RFI issued). Cleared when clock resumes.",
    "no_copy": 1
   },
   {
@@ -362,20 +365,20 @@
    "fieldtype": "Column Break"
   },
   {
+   "description": "Working days elapsed on statutory clock, excluding weekends, public holidays, and RFI periods",
    "fieldname": "working_days_elapsed",
    "fieldtype": "Int",
    "label": "Working Days Elapsed",
-   "read_only": 1,
-   "description": "Working days elapsed on statutory clock, excluding weekends, public holidays, and RFI periods",
-   "no_copy": 1
+   "no_copy": 1,
+   "read_only": 1
   },
   {
+   "description": "Working days remaining before statutory deadline",
    "fieldname": "working_days_remaining",
    "fieldtype": "Int",
    "label": "Days Remaining",
-   "read_only": 1,
-   "description": "Working days remaining before statutory deadline",
-   "no_copy": 1
+   "no_copy": 1,
+   "read_only": 1
   },
   {
    "fieldname": "amended_from",
@@ -391,7 +394,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-11-05 19:56:46.881173",
+ "modified": "2025-11-23 15:17:01.777207",
  "modified_by": "Administrator",
  "module": "Lodgeick",
  "name": "Resource Consent Application",
