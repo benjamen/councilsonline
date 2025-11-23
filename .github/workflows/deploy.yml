@@ -1,4 +1,4 @@
-name: Deploy to Production
+name: Deploy Lodgeick to Production
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 env:
   SERVER_HOST: 77.37.87.141
-  SERVER_USER: root
+  SERVER_USER: frappe-user
   BENCH_PATH: /home/frappe-user/frappe-bench
   SITE_NAME: lodgeick.com
   APP_NAME: lodgeick
@@ -34,47 +34,59 @@ jobs:
 
       - name: Deploy to Production Server
         run: |
-          ssh -o StrictHostKeyChecking=no root@${{ env.SERVER_HOST }} "
+          ssh -o StrictHostKeyChecking=no ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "
             set -e
             echo '🚀 Starting Lodgeick deployment...'
 
+            # Mark repo as safe
             git config --global --add safe.directory ${{ env.BENCH_PATH }}/apps/${{ env.APP_NAME }}
 
-            sudo -u frappe-user GIT_SSH_COMMAND=\"ssh -i ~/.ssh/id_ed25519_benja_repo -F /dev/null\" bash -c '
-              cd ${{ env.BENCH_PATH }}/apps/${{ env.APP_NAME }}
-
-              echo \"📥 Pulling latest code...\"
-              git fetch origin main
-              git reset --hard origin/main
+            # Pull latest code
+            echo '📥 Pulling latest code...'
+            GIT_SSH_COMMAND=\"ssh -i ~/.ssh/id_ed25519_benja_repo -F /dev/null\" bash -c '
+              cd ${{ env.BENCH_PATH }}/apps/${{ env.APP_NAME }} &&
+              git fetch origin main &&
+              git reset --hard origin/main &&
               git clean -fd
-
-              echo \"📦 Installing frontend dependencies...\"
-              cd frontend
-              yarn install --frozen-lockfile || yarn install
-
-              echo \"🔨 Building frontend...\"
-              yarn build
-
-              echo \"🔨 Building backend assets...\"
-              cd ${{ env.BENCH_PATH }}
-              bench build --app ${{ env.APP_NAME }}
-
-              echo \"🗄️ Migrating database...\"
-              bench --site ${{ env.SITE_NAME }} migrate
-
-              echo \"🧹 Clearing cache...\"
-              bench --site ${{ env.SITE_NAME }} clear-cache
-              bench --site ${{ env.SITE_NAME }} clear-website-cache
-
-              echo \"🔄 Restarting bench services...\"
-              bench restart
             '
 
-            echo \"🔁 Reloading nginx and supervisor...\"
-            systemctl reload nginx
-            supervisorctl reread
-            supervisorctl update
-            supervisorctl restart all || echo 'Supervisor restart failed, check manually.'
+            # Install frontend dependencies
+            echo '📦 Installing frontend dependencies...'
+            bash -c '
+              cd ${{ env.BENCH_PATH }}/apps/${{ env.APP_NAME }}/frontend &&
+              yarn install --frozen-lockfile || yarn install
+            '
+
+            # Build frontend and backend
+            echo '🔨 Building frontend...'
+            bash -c '
+              cd ${{ env.BENCH_PATH }}/apps/${{ env.APP_NAME }}/frontend &&
+              yarn build
+            '
+
+            echo '🔨 Building backend assets...'
+            cd ${{ env.BENCH_PATH }}
+            bench build --app ${{ env.APP_NAME }}
+
+            # Database migrations
+            echo '🗄️ Migrating database...'
+            bench --site ${{ env.SITE_NAME }} migrate
+
+            # Clear cache
+            echo '🧹 Clearing cache...'
+            bench --site ${{ env.SITE_NAME }} clear-cache
+            bench --site ${{ env.SITE_NAME }} clear-website-cache
+
+            # Restart bench services
+            echo '🔄 Restarting bench services...'
+            bench restart
+
+            # Reload nginx and supervisor via sudo
+            echo '🔁 Reloading nginx and supervisor...'
+            sudo systemctl reload nginx
+            sudo supervisorctl reread
+            sudo supervisorctl update
+            sudo supervisorctl restart all
 
             echo '✅ Lodgeick deployment completed successfully!'
             echo '🌐 Site: https://${{ env.SITE_NAME }}'
