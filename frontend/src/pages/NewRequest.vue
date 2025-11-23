@@ -219,8 +219,206 @@
           </div>
         </div>
 
-        <!-- Step 4: Documents -->
-        <div v-if="currentStep === 4">
+        <!-- Step 4: Resource Consent Details (conditional) -->
+        <div v-if="isResourceConsent && currentStep === 4">
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">Resource Consent Details</h2>
+          <p class="text-gray-600 mb-8">Provide Resource Management Act (RMA) specific information</p>
+
+          <div class="space-y-6">
+            <!-- Consent Type and Activity Status -->
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Consent Type *
+                </label>
+                <select
+                  v-model="formData.consent_types"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  required
+                >
+                  <option value="">Select consent type</option>
+                  <option value="Land Use">Land Use</option>
+                  <option value="Subdivision">Subdivision</option>
+                  <option value="Discharge Permit">Discharge Permit</option>
+                  <option value="Water Permit">Water Permit</option>
+                  <option value="Coastal Permit">Coastal Permit</option>
+                </select>
+                <p class="mt-1 text-xs text-gray-500">Type of resource consent under the RMA</p>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Activity Status *
+                </label>
+                <select
+                  v-model="formData.activity_status"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  required
+                >
+                  <option value="">Select activity status</option>
+                  <option value="Permitted">Permitted</option>
+                  <option value="Controlled">Controlled</option>
+                  <option value="Restricted Discretionary">Restricted Discretionary</option>
+                  <option value="Discretionary">Discretionary</option>
+                  <option value="Non-Complying">Non-Complying</option>
+                  <option value="Prohibited">Prohibited</option>
+                </select>
+                <p class="mt-1 text-xs text-gray-500">Activity classification under district plan</p>
+              </div>
+            </div>
+
+            <!-- Assessment of Environmental Effects -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Assessment of Environmental Effects (AEE) *
+              </label>
+              <textarea
+                v-model="formData.assessment_of_effects"
+                rows="8"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Describe the actual and potential effects on the environment as per Schedule 4 of the RMA. Include effects on people, physical environment, ecosystems, and cultural/heritage values..."
+                required
+              ></textarea>
+              <p class="mt-1 text-xs text-gray-500">Required under Schedule 4 of the Resource Management Act</p>
+            </div>
+
+            <!-- Effects Breakdown (Optional) -->
+            <div class="border-t border-gray-200 pt-4">
+              <h3 class="text-sm font-semibold text-gray-900 mb-3">Detailed Effects Assessment (Optional)</h3>
+
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">Effects on People</label>
+                  <textarea
+                    v-model="formData.effects_on_people"
+                    rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    placeholder="Privacy, sunlight access, visual amenity, noise impacts..."
+                  ></textarea>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">Physical Effects</label>
+                  <textarea
+                    v-model="formData.physical_effects"
+                    rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    placeholder="Traffic, parking, stormwater, infrastructure impacts..."
+                  ></textarea>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">Ecosystem Effects</label>
+                  <textarea
+                    v-model="formData.ecosystem_effects"
+                    rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    placeholder="Indigenous vegetation, habitat values, watercourses..."
+                  ></textarea>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">Cultural/Heritage Effects</label>
+                  <textarea
+                    v-model="formData.cultural_effects"
+                    rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    placeholder="Heritage values, sites of significance to Māori, archaeological sites..."
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Planning Assessment -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Planning Assessment *
+              </label>
+              <textarea
+                v-model="formData.planning_assessment"
+                rows="6"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Assess the proposal against relevant district plan provisions, objectives and policies. Address how the proposal aligns with planning framework..."
+                required
+              ></textarea>
+              <p class="mt-1 text-xs text-gray-500">Assessment against district plan objectives and policies</p>
+            </div>
+
+            <!-- Alternatives and Mitigation -->
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Alternatives Considered
+                </label>
+                <textarea
+                  v-model="formData.alternatives_considered"
+                  rows="4"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  placeholder="What alternative designs, locations, or methods were considered?..."
+                ></textarea>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Mitigation Measures
+                </label>
+                <textarea
+                  v-model="formData.mitigation_proposed"
+                  rows="4"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  placeholder="What measures will be implemented to avoid, remedy or mitigate adverse effects?..."
+                ></textarea>
+              </div>
+            </div>
+
+            <!-- Iwi Consultation -->
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+              <h3 class="text-sm font-semibold text-green-900 mb-3">Iwi Consultation</h3>
+
+              <div class="space-y-3">
+                <div class="flex items-start">
+                  <input
+                    type="checkbox"
+                    v-model="formData.iwi_consultation_undertaken"
+                    class="mt-1 h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                  />
+                  <label class="ml-3 text-sm text-green-800">
+                    Consultation with iwi/hapū has been undertaken
+                  </label>
+                </div>
+
+                <div v-if="formData.iwi_consultation_undertaken">
+                  <label class="block text-xs font-medium text-green-700 mb-1">
+                    Iwi/Hapū Consulted
+                  </label>
+                  <textarea
+                    v-model="formData.iwi_consulted"
+                    rows="2"
+                    class="w-full px-3 py-2 border border-green-300 rounded-lg text-sm bg-white"
+                    placeholder="List the iwi/hapū that were consulted and summarize their response..."
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Proposed Conditions -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Proposed Conditions (Optional)
+              </label>
+              <textarea
+                v-model="formData.proposed_conditions"
+                rows="4"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                placeholder="If you wish to propose specific conditions of consent, list them here..."
+              ></textarea>
+              <p class="mt-1 text-xs text-gray-500">The council will determine final consent conditions</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4/5: Documents -->
+        <div v-if="currentStep === (isResourceConsent ? 5 : 4)">
           <h2 class="text-2xl font-bold text-gray-900 mb-2">Upload Documents</h2>
           <p class="text-gray-600 mb-8">Attach all required supporting documents</p>
 
@@ -295,8 +493,8 @@
           </div>
         </div>
 
-        <!-- Step 5: Review & Submit -->
-        <div v-if="currentStep === 5">
+        <!-- Step 5/6: Review & Submit -->
+        <div v-if="currentStep === (isResourceConsent ? 6 : 5)">
           <h2 class="text-2xl font-bold text-gray-900 mb-2">Review & Submit</h2>
           <p class="text-gray-600 mb-8">Please review your application before submission</p>
 
@@ -452,20 +650,32 @@ const router = useRouter()
 
 // Form state
 const currentStep = ref(1)
-const totalSteps = 5
+const totalSteps = computed(() => steps.value.length)
 const savingDraft = ref(false)
 const submitting = ref(false)
 const uploadedFiles = ref([])
 const fileInput = ref(null)
 const bookingMeeting = ref(false)
 
-const steps = [
-  { title: 'Type', number: 1 },
-  { title: 'Property', number: 2 },
-  { title: 'Details', number: 3 },
-  { title: 'Documents', number: 4 },
-  { title: 'Review', number: 5 },
-]
+const steps = computed(() => {
+  const baseSteps = [
+    { title: 'Type', number: 1 },
+    { title: 'Property', number: 2 },
+    { title: 'Details', number: 3 }
+  ]
+
+  // Add RC-specific step if Resource Consent selected
+  if (isResourceConsent.value) {
+    baseSteps.push({ title: 'RC Details', number: 4 })
+  }
+
+  baseSteps.push(
+    { title: 'Documents', number: baseSteps.length + 1 },
+    { title: 'Review', number: baseSteps.length + 2 }
+  )
+
+  return baseSteps
+})
 
 // Form data
 const formData = ref({
@@ -481,6 +691,21 @@ const formData = ref({
   estimated_value: null,
   proposed_start_date: '',
   terms_accepted: false,
+
+  // Resource Consent specific fields
+  consent_types: '',
+  activity_status: '',
+  assessment_of_effects: '',
+  effects_on_people: '',
+  physical_effects: '',
+  ecosystem_effects: '',
+  cultural_effects: '',
+  planning_assessment: '',
+  alternatives_considered: '',
+  mitigation_proposed: '',
+  iwi_consultation_undertaken: false,
+  iwi_consulted: '',
+  proposed_conditions: '',
 })
 
 // Track initial form state to detect changes
@@ -568,7 +793,21 @@ const canProceed = () => {
     case 3:
       return !!formData.value.brief_description && !!formData.value.detailed_description
     case 4:
-      return true // Documents are optional, but recommended
+      // If RC, this is RC Details step - validate required fields
+      if (isResourceConsent.value) {
+        return !!(
+          formData.value.consent_types &&
+          formData.value.activity_status &&
+          formData.value.assessment_of_effects &&
+          formData.value.planning_assessment
+        )
+      }
+      // Otherwise, this is Documents step (optional)
+      return true
+    case 5:
+      // If RC, this is Documents step (optional)
+      // Otherwise, this is Review step
+      return true
     default:
       return true
   }

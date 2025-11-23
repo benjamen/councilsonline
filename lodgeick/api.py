@@ -162,6 +162,29 @@ def create_draft_request(data):
         request_doc.flags.ignore_mandatory = True
         request_doc.insert(ignore_mandatory=True)
 
+        # If Resource Consent, create Resource Consent Application child document
+        if category == "Resource Consent":
+            rc_app = frappe.get_doc({
+                "doctype": "Resource Consent Application",
+                "request": request_doc.name,
+                "consent_types": data.get("consent_types"),
+                "activity_status": data.get("activity_status"),
+                "assessment_of_effects": data.get("assessment_of_effects"),
+                "effects_on_people": data.get("effects_on_people"),
+                "physical_effects": data.get("physical_effects"),
+                "ecosystem_effects": data.get("ecosystem_effects"),
+                "cultural_effects": data.get("cultural_effects"),
+                "planning_assessment": data.get("planning_assessment"),
+                "alternatives_considered": data.get("alternatives_considered"),
+                "mitigation_proposed": data.get("mitigation_proposed"),
+                "iwi_consultation_undertaken": cint(data.get("iwi_consultation_undertaken")),
+                "iwi_consulted": data.get("iwi_consulted"),
+                "proposed_conditions": data.get("proposed_conditions")
+            })
+            rc_app.flags.ignore_permissions = False
+            rc_app.flags.ignore_mandatory = True
+            rc_app.insert(ignore_mandatory=True)
+
         frappe.db.commit()
 
         return {
