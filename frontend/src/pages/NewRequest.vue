@@ -122,6 +122,38 @@
               </select>
             </div>
 
+            <!-- Applicant Contact Details (Required) -->
+            <div class="border-t border-gray-200 pt-6 mt-6">
+              <h3 class="text-sm font-semibold text-gray-900 mb-4">Applicant Contact Information *</h3>
+              <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Contact Phone *</label>
+                  <Input
+                    v-model="formData.applicant_phone"
+                    placeholder="021 123 4567"
+                    type="tel"
+                    required
+                  />
+                  <p class="mt-1 text-xs text-gray-500">Required for application processing</p>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Applicant Type *</label>
+                  <select
+                    v-model="formData.applicant_type"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  >
+                    <option value="">Select applicant type</option>
+                    <option value="Individual">Individual</option>
+                    <option value="Company">Company</option>
+                    <option value="Trust">Trust</option>
+                    <option value="Partnership">Partnership</option>
+                  </select>
+                  <p class="mt-1 text-xs text-gray-500">Type of entity making this application</p>
+                </div>
+              </div>
+            </div>
+
             <!-- Manual Property Entry -->
             <div v-if="!formData.property" class="space-y-4">
               <div>
@@ -867,6 +899,10 @@ const formData = ref({
   proposed_start_date: '',
   terms_accepted: false,
 
+  // Required applicant fields
+  applicant_phone: '',
+  applicant_type: '',
+
   // Resource Consent specific fields
   consent_types: '',
   activity_status: '',
@@ -983,7 +1019,10 @@ const canProceed = () => {
     case 1:
       return !!formData.value.request_type
     case 2:
-      return !!formData.value.property_address
+      // Require either property link OR property_address, plus applicant fields
+      const hasProperty = formData.value.property || formData.value.property_address
+      const hasApplicantInfo = formData.value.applicant_phone && formData.value.applicant_type
+      return !!(hasProperty && hasApplicantInfo)
     case 3:
       return !!formData.value.brief_description && !!formData.value.detailed_description
     case 4:

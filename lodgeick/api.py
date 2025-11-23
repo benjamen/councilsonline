@@ -135,6 +135,19 @@ def create_draft_request(data):
         request_type_doc = frappe.get_doc("Request Type", request_type)
         category = request_type_doc.category or "Service Request"
 
+        # If property_address is provided but no property link, create a property record
+        property_link = data.get("property")
+        if not property_link and data.get("property_address"):
+            # Create a new property record
+            property_doc = frappe.get_doc({
+                "doctype": "Property",
+                "street_address": data.get("property_address"),
+                "legal_description": data.get("legal_description"),
+                "zoning": data.get("zone")
+            })
+            property_doc.insert(ignore_permissions=True)
+            property_link = property_doc.name
+
         # Create request document
         request_doc = frappe.get_doc({
             "doctype": "Request",
@@ -142,12 +155,14 @@ def create_draft_request(data):
             "request_category": category,
             "brief_description": data.get("brief_description"),
             "detailed_description": data.get("detailed_description"),
+            "property": property_link,  # Link to Property DocType
             "property_address": data.get("property_address"),
             "legal_description": data.get("legal_description"),
             "applicant": frappe.session.user,
             "applicant_name": frappe.get_value("User", frappe.session.user, "full_name"),
             "applicant_email": frappe.session.user,
             "applicant_phone": data.get("applicant_phone"),
+            "applicant_type": data.get("applicant_type"),
             "status": "Draft",
             "priority": data.get("priority", "Standard")
         })
