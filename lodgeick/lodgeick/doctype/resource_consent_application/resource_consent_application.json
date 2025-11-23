@@ -17,12 +17,39 @@
   "working_days_elapsed",
   "working_days_remaining",
   "amended_from",
+  "proposal_details_tab",
+  "section_break_proposal",
+  "building_height",
+  "building_floor_area",
+  "column_break_proposal_1",
+  "earthworks_volume",
+  "earthworks_vertical_alteration",
+  "section_break_traffic",
+  "vehicle_movements_daily",
+  "parking_spaces_provided",
+  "column_break_operations",
+  "hours_of_operation",
+  "consent_term_requested",
+  "site_environment_tab",
+  "section_break_site",
+  "site_topography",
+  "existing_vegetation_description",
+  "section_break_features",
+  "watercourses_present",
+  "watercourse_description",
+  "natural_hazards_identified",
+  "column_break_infrastructure",
+  "existing_infrastructure",
+  "contamination_status_hail",
   "assessment_of_effects_tab",
   "section_break_assessment",
   "assessment_of_effects",
   "effects_on_people",
   "physical_effects",
+  "earthworks_effects",
+  "discharge_contaminants_effects",
   "ecosystem_effects",
+  "hazard_risk_assessment",
   "cultural_effects",
   "section_break_parties_tab",
   "section_break_parties",
@@ -400,6 +427,149 @@
    "search_index": 1
   },
   {
+   "fieldname": "proposal_details_tab",
+   "fieldtype": "Tab Break",
+   "label": "Proposal Details"
+  },
+  {
+   "description": "Physical dimensions and characteristics of the proposal",
+   "fieldname": "section_break_proposal",
+   "fieldtype": "Section Break",
+   "label": "Building/Structure Details"
+  },
+  {
+   "fieldname": "building_height",
+   "fieldtype": "Float",
+   "label": "Building/Structure Height (m)",
+   "precision": "2"
+  },
+  {
+   "fieldname": "building_floor_area",
+   "fieldtype": "Float",
+   "label": "Total Floor Area (m²)",
+   "precision": "2"
+  },
+  {
+   "fieldname": "column_break_proposal_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "earthworks_volume",
+   "fieldtype": "Float",
+   "label": "Earthworks Volume (m³)",
+   "precision": "2"
+  },
+  {
+   "fieldname": "earthworks_vertical_alteration",
+   "fieldtype": "Float",
+   "label": "Max Vertical Alteration (m)",
+   "precision": "2"
+  },
+  {
+   "description": "Traffic generation and parking provision",
+   "fieldname": "section_break_traffic",
+   "fieldtype": "Section Break",
+   "label": "Traffic & Parking"
+  },
+  {
+   "fieldname": "vehicle_movements_daily",
+   "fieldtype": "Int",
+   "label": "Additional Vehicle Movements (per day)"
+  },
+  {
+   "fieldname": "parking_spaces_provided",
+   "fieldtype": "Int",
+   "label": "Parking Spaces Provided"
+  },
+  {
+   "fieldname": "column_break_operations",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "hours_of_operation",
+   "fieldtype": "Data",
+   "label": "Hours of Operation"
+  },
+  {
+   "fieldname": "consent_term_requested",
+   "fieldtype": "Data",
+   "label": "Consent Term Requested"
+  },
+  {
+   "fieldname": "site_environment_tab",
+   "fieldtype": "Tab Break",
+   "label": "Site & Environment"
+  },
+  {
+   "description": "Existing site characteristics and environmental features",
+   "fieldname": "section_break_site",
+   "fieldtype": "Section Break",
+   "label": "Site Characteristics"
+  },
+  {
+   "fieldname": "site_topography",
+   "fieldtype": "Small Text",
+   "label": "Site Topography"
+  },
+  {
+   "fieldname": "existing_vegetation_description",
+   "fieldtype": "Text",
+   "label": "Existing Vegetation Description"
+  },
+  {
+   "description": "Environmental features and hazards",
+   "fieldname": "section_break_features",
+   "fieldtype": "Section Break",
+   "label": "Environmental Features"
+  },
+  {
+   "default": "0",
+   "fieldname": "watercourses_present",
+   "fieldtype": "Check",
+   "label": "Watercourses/Wetlands Present"
+  },
+  {
+   "depends_on": "watercourses_present",
+   "fieldname": "watercourse_description",
+   "fieldtype": "Small Text",
+   "label": "Watercourse Description"
+  },
+  {
+   "fieldname": "natural_hazards_identified",
+   "fieldtype": "Small Text",
+   "label": "Natural Hazards Identified"
+  },
+  {
+   "fieldname": "column_break_infrastructure",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "existing_infrastructure",
+   "fieldtype": "Small Text",
+   "label": "Existing Infrastructure"
+  },
+  {
+   "fieldname": "contamination_status_hail",
+   "fieldtype": "Select",
+   "label": "HAIL Contamination Status",
+   "options": "Not Assessed\nNot HAIL\nHAIL - Not Investigated\nHAIL - Investigated (Clean)\nHAIL - Contaminated"
+  },
+  {
+   "fieldname": "earthworks_effects",
+   "fieldtype": "Text Editor",
+   "label": "Earthworks Effects"
+  },
+  {
+   "fieldname": "discharge_contaminants_effects",
+   "fieldtype": "Text Editor",
+   "label": "Discharge/Contaminants Effects"
+  },
+  {
+   "fieldname": "hazard_risk_assessment",
+   "fieldtype": "Text Editor",
+   "label": "Hazard Risk Assessment"
+  },
+  {
    "fieldname": "assessment_of_effects_tab",
    "fieldtype": "Tab Break",
    "label": "Assessment of Effects"
@@ -448,7 +618,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-11-23 19:02:55.474907",
+ "modified": "2025-11-23 20:30:00.000000",
  "modified_by": "Administrator",
  "module": "Lodgeick",
  "name": "Resource Consent Application",

@@ -184,11 +184,37 @@ def create_draft_request(data):
                 "request": request_doc.name,
                 "consent_types": data.get("consent_types"),
                 "activity_status": data.get("activity_status"),
+
+                # Proposal Details
+                "building_height": data.get("building_height"),
+                "building_floor_area": data.get("building_floor_area"),
+                "earthworks_volume": data.get("earthworks_volume"),
+                "earthworks_vertical_alteration": data.get("earthworks_vertical_alteration"),
+                "vehicle_movements_daily": data.get("vehicle_movements_daily"),
+                "parking_spaces_provided": data.get("parking_spaces_provided"),
+                "hours_of_operation": data.get("hours_of_operation"),
+                "consent_term_requested": data.get("consent_term_requested"),
+
+                # Site & Environment
+                "site_topography": data.get("site_topography"),
+                "existing_vegetation_description": data.get("existing_vegetation_description"),
+                "watercourses_present": cint(data.get("watercourses_present")),
+                "watercourse_description": data.get("watercourse_description"),
+                "natural_hazards_identified": data.get("natural_hazards_identified"),
+                "existing_infrastructure": data.get("existing_infrastructure"),
+                "contamination_status_hail": data.get("contamination_status_hail"),
+
+                # Assessment of Environmental Effects
                 "assessment_of_effects": data.get("assessment_of_effects"),
                 "effects_on_people": data.get("effects_on_people"),
                 "physical_effects": data.get("physical_effects"),
+                "earthworks_effects": data.get("earthworks_effects"),
+                "discharge_contaminants_effects": data.get("discharge_contaminants_effects"),
                 "ecosystem_effects": data.get("ecosystem_effects"),
+                "hazard_risk_assessment": data.get("hazard_risk_assessment"),
                 "cultural_effects": data.get("cultural_effects"),
+
+                # Planning and Other
                 "planning_assessment": data.get("planning_assessment"),
                 "alternatives_considered": data.get("alternatives_considered"),
                 "mitigation_proposed": data.get("mitigation_proposed"),

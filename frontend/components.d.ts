@@ -10,6 +10,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     FeatureCard: typeof import('./src/components/FeatureCard.vue')['default']
     ProcessStep: typeof import('./src/components/ProcessStep.vue')['default']
+    ResourceConsentDetails: typeof import('./src/components/ResourceConsentDetails.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     StatCard: typeof import('./src/components/StatCard.vue')['default']

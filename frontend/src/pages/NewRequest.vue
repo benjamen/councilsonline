@@ -325,8 +325,198 @@
               </div>
             </div>
 
+            <!-- Proposal Details -->
+            <div class="border-t border-gray-200 pt-6 mt-6">
+              <h3 class="text-sm font-semibold text-gray-900 mb-4">Proposal Details</h3>
+              <p class="text-xs text-gray-500 mb-4">Provide details about your proposed development (all fields optional)</p>
+
+              <!-- Building/Structure Details -->
+              <div class="mb-4">
+                <h4 class="text-xs font-medium text-gray-700 mb-3">Building/Structure Dimensions</h4>
+                <div class="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Building Height (metres)</label>
+                    <Input
+                      v-model="formData.building_height"
+                      type="number"
+                      step="0.1"
+                      placeholder="e.g., 8.5"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Total Floor Area (m²)</label>
+                    <Input
+                      v-model="formData.building_floor_area"
+                      type="number"
+                      step="0.1"
+                      placeholder="e.g., 250"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Earthworks -->
+              <div class="mb-4">
+                <h4 class="text-xs font-medium text-gray-700 mb-3">Earthworks</h4>
+                <div class="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Earthworks Volume (m³)</label>
+                    <Input
+                      v-model="formData.earthworks_volume"
+                      type="number"
+                      step="0.1"
+                      placeholder="e.g., 150"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Maximum Vertical Alteration (metres)</label>
+                    <Input
+                      v-model="formData.earthworks_vertical_alteration"
+                      type="number"
+                      step="0.1"
+                      placeholder="e.g., 2.5"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Traffic & Operations -->
+              <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                  <h4 class="text-xs font-medium text-gray-700 mb-3">Traffic & Parking</h4>
+                  <div class="space-y-3">
+                    <div>
+                      <label class="block text-xs font-medium text-gray-600 mb-1">Additional Vehicle Movements/Day</label>
+                      <Input
+                        v-model="formData.vehicle_movements_daily"
+                        type="number"
+                        placeholder="e.g., 20"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-xs font-medium text-gray-600 mb-1">Parking Spaces Provided</label>
+                      <Input
+                        v-model="formData.parking_spaces_provided"
+                        type="number"
+                        placeholder="e.g., 4"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h4 class="text-xs font-medium text-gray-700 mb-3">Operations</h4>
+                  <div class="space-y-3">
+                    <div>
+                      <label class="block text-xs font-medium text-gray-600 mb-1">Hours of Operation</label>
+                      <Input
+                        v-model="formData.hours_of_operation"
+                        type="text"
+                        placeholder="e.g., Mon-Fri 8am-6pm"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-xs font-medium text-gray-600 mb-1">Consent Term Requested</label>
+                      <Input
+                        v-model="formData.consent_term_requested"
+                        type="text"
+                        placeholder="e.g., 5 years, Unlimited"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Site & Environment -->
+            <div class="border-t border-gray-200 pt-6 mt-6">
+              <h3 class="text-sm font-semibold text-gray-900 mb-4">Site & Environment</h3>
+              <p class="text-xs text-gray-500 mb-4">Describe existing site conditions and environmental features (all fields optional)</p>
+
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">Site Topography</label>
+                  <textarea
+                    v-model="formData.site_topography"
+                    rows="2"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    placeholder="e.g., Generally flat with gentle slope to north, approximately 10m elevation..."
+                  ></textarea>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">Existing Vegetation</label>
+                  <textarea
+                    v-model="formData.existing_vegetation_description"
+                    rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    placeholder="Describe existing trees, shrubs, native vegetation, notable specimens..."
+                  ></textarea>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <div class="flex items-start mb-2">
+                      <input
+                        type="checkbox"
+                        v-model="formData.watercourses_present"
+                        class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      />
+                      <label class="ml-3 text-xs font-medium text-gray-700">
+                        Watercourses/Wetlands Present on Site
+                      </label>
+                    </div>
+                    <div v-if="formData.watercourses_present">
+                      <textarea
+                        v-model="formData.watercourse_description"
+                        rows="2"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="Describe watercourses, streams, wetlands..."
+                      ></textarea>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">HAIL Contamination Status</label>
+                    <select
+                      v-model="formData.contamination_status_hail"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    >
+                      <option value="">Select contamination status</option>
+                      <option value="Not Assessed">Not Assessed</option>
+                      <option value="Not HAIL">Not HAIL (Hazardous Activities and Industries List)</option>
+                      <option value="HAIL - Not Investigated">HAIL - Not Investigated</option>
+                      <option value="HAIL - Investigated (Clean)">HAIL - Investigated (Clean)</option>
+                      <option value="HAIL - Contaminated">HAIL - Contaminated</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Natural Hazards</label>
+                    <textarea
+                      v-model="formData.natural_hazards_identified"
+                      rows="2"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                      placeholder="e.g., Flood zone, liquefaction risk, slope instability..."
+                    ></textarea>
+                  </div>
+
+                  <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Existing Infrastructure</label>
+                    <textarea
+                      v-model="formData.existing_infrastructure"
+                      rows="2"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                      placeholder="e.g., Wastewater, stormwater, electricity connections..."
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- Assessment of Environmental Effects -->
-            <div>
+            <div class="border-t border-gray-200 pt-6 mt-6">
               <label class="block text-sm font-medium text-gray-700 mb-2">
                 Assessment of Environmental Effects (AEE) *
               </label>
@@ -343,6 +533,7 @@
             <!-- Effects Breakdown (Optional) -->
             <div class="border-t border-gray-200 pt-4">
               <h3 class="text-sm font-semibold text-gray-900 mb-3">Detailed Effects Assessment (Optional)</h3>
+              <p class="text-xs text-gray-500 mb-4">Break down your AEE into specific effect categories for a more comprehensive assessment</p>
 
               <div class="space-y-4">
                 <div>
@@ -366,12 +557,42 @@
                 </div>
 
                 <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">Earthworks Effects</label>
+                  <textarea
+                    v-model="formData.earthworks_effects"
+                    rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    placeholder="Soil disturbance, erosion, sediment control, slope stability, construction impacts..."
+                  ></textarea>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">Discharge/Contaminants Effects</label>
+                  <textarea
+                    v-model="formData.discharge_contaminants_effects"
+                    rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    placeholder="Stormwater discharge, wastewater, air quality, dust, odour, contaminant management..."
+                  ></textarea>
+                </div>
+
+                <div>
                   <label class="block text-xs font-medium text-gray-600 mb-1">Ecosystem Effects</label>
                   <textarea
                     v-model="formData.ecosystem_effects"
                     rows="3"
                     class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                    placeholder="Indigenous vegetation, habitat values, watercourses..."
+                    placeholder="Indigenous vegetation, habitat values, watercourses, biodiversity..."
+                  ></textarea>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">Hazard Risk Assessment</label>
+                  <textarea
+                    v-model="formData.hazard_risk_assessment"
+                    rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    placeholder="Flood risk, liquefaction, slope instability, coastal hazards, seismic risk..."
                   ></textarea>
                 </div>
 
@@ -906,11 +1127,36 @@ const formData = ref({
   // Resource Consent specific fields
   consent_types: '',
   activity_status: '',
+
+  // Proposal Details
+  building_height: null,
+  building_floor_area: null,
+  earthworks_volume: null,
+  earthworks_vertical_alteration: null,
+  vehicle_movements_daily: null,
+  parking_spaces_provided: null,
+  hours_of_operation: '',
+  consent_term_requested: '',
+
+  // Site & Environment
+  site_topography: '',
+  existing_vegetation_description: '',
+  watercourses_present: false,
+  watercourse_description: '',
+  natural_hazards_identified: '',
+  existing_infrastructure: '',
+  contamination_status_hail: '',
+
+  // AEE Fields
   assessment_of_effects: '',
   effects_on_people: '',
   physical_effects: '',
+  earthworks_effects: '',
+  discharge_contaminants_effects: '',
   ecosystem_effects: '',
+  hazard_risk_assessment: '',
   cultural_effects: '',
+
   planning_assessment: '',
   alternatives_considered: '',
   mitigation_proposed: '',

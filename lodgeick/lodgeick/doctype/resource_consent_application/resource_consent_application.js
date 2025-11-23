@@ -1,8 +1,433 @@
-// Copyright (c) 2025, Optified and contributors
+// Copyright (c) 2025, Lodgeick and contributors
 // For license information, please see license.txt
 
-// frappe.ui.form.on("Resource Consent Application", {
-// 	refresh(frm) {
+frappe.ui.form.on('Resource Consent Application', {
+	refresh: function(frm) {
+		// Add custom styling and UI enhancements
+		add_statutory_clock_indicator(frm);
+		add_summary_dashboard(frm);
+		style_applicant_fields(frm);
+		make_applicant_fields_readonly(frm);
+		add_custom_buttons(frm);
+	},
 
-// 	},
-// });
+	onload: function(frm) {
+		// Set up field dependencies
+		setup_field_visibility(frm);
+	}
+});
+
+/**
+ * Add statutory clock indicator to the top of the form
+ */
+function add_statutory_clock_indicator(frm) {
+	if (!frm.doc.working_days_elapsed && !frm.doc.working_days_remaining) {
+		return;
+	}
+
+	const days_elapsed = frm.doc.working_days_elapsed || 0;
+	const days_remaining = frm.doc.working_days_remaining || 0;
+	const total_days = days_elapsed + days_remaining;
+	const percentage = total_days > 0 ? (days_elapsed / total_days) * 100 : 0;
+
+	// Determine status color
+	let status_color = 'green';
+	let status_text = 'On Track';
+	if (percentage > 80) {
+		status_color = 'red';
+		status_text = 'Urgent';
+	} else if (percentage > 60) {
+		status_color = 'orange';
+		status_text = 'Monitor';
+	}
+
+	// Check if clock is stopped
+	const clock_stopped = frm.doc.statutory_clock_stopped;
+	if (clock_stopped) {
+		status_color = 'gray';
+		status_text = 'Stopped (RFI)';
+	}
+
+	// Create clock indicator HTML
+	const clock_html = `
+		<div class="statutory-clock-indicator" style="
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			color: white;
+			padding: 15px 20px;
+			margin: -15px -15px 20px -15px;
+			border-radius: 8px 8px 0 0;
+			box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+		">
+			<div style="display: flex; justify-content: space-between; align-items: center;">
+				<div style="flex: 1;">
+					<div style="font-size: 11px; text-transform: uppercase; opacity: 0.8; margin-bottom: 5px;">
+						RMA Statutory Clock
+					</div>
+					<div style="font-size: 24px; font-weight: bold;">
+						${days_elapsed} / ${total_days} days
+					</div>
+					<div style="font-size: 12px; opacity: 0.9; margin-top: 3px;">
+						${days_remaining} working days remaining
+					</div>
+				</div>
+				<div style="text-align: right;">
+					<div style="
+						background: ${status_color === 'green' ? '#10b981' : status_color === 'orange' ? '#f59e0b' : status_color === 'red' ? '#ef4444' : '#6b7280'};
+						padding: 8px 16px;
+						border-radius: 20px;
+						font-size: 13px;
+						font-weight: 600;
+						display: inline-block;
+						box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+					">
+						${status_text}
+					</div>
+					<div style="margin-top: 8px; font-size: 11px; opacity: 0.8;">
+						${Math.round(percentage)}% elapsed
+					</div>
+				</div>
+			</div>
+			<div style="margin-top: 12px; background: rgba(255,255,255,0.2); border-radius: 10px; height: 8px; overflow: hidden;">
+				<div style="
+					width: ${percentage}%;
+					height: 100%;
+					background: ${status_color === 'red' ? '#ef4444' : status_color === 'orange' ? '#f59e0b' : '#10b981'};
+					transition: width 0.3s ease;
+				"></div>
+			</div>
+		</div>
+	`;
+
+	// Insert at the top of the form
+	frm.layout.wrapper.find('.statutory-clock-indicator').remove();
+	$(clock_html).prependTo(frm.layout.wrapper.find('.form-layout'));
+}
+
+/**
+ * Add summary dashboard at the top of the form
+ */
+function add_summary_dashboard(frm) {
+	// Only show on saved documents
+	if (frm.is_new()) return;
+
+	// Get request details
+	let request_link = frm.doc.request ? `<a href="/app/request/${frm.doc.request}">${frm.doc.request}</a>` : 'N/A';
+
+	// Count affected parties and specialist reports
+	const affected_parties_count = frm.doc.affected_parties ? frm.doc.affected_parties.length : 0;
+	const approvals_count = frm.doc.written_approvals_obtained || 0;
+	const specialist_reports_count = frm.doc.specialist_reports ? frm.doc.specialist_reports.length : 0;
+
+	// Build proposal snapshot
+	let proposal_items = [];
+	if (frm.doc.building_height) proposal_items.push(`Height: ${frm.doc.building_height}m`);
+	if (frm.doc.building_floor_area) proposal_items.push(`Floor Area: ${frm.doc.building_floor_area}m²`);
+	if (frm.doc.earthworks_volume) proposal_items.push(`Earthworks: ${frm.doc.earthworks_volume}m³`);
+
+	const proposal_summary = proposal_items.length > 0
+		? proposal_items.join(' • ')
+		: 'No dimensional data provided';
+
+	const summary_html = `
+		<div class="rc-summary-dashboard" style="
+			background: #f8fafc;
+			border: 1px solid #e2e8f0;
+			border-radius: 8px;
+			padding: 20px;
+			margin-bottom: 20px;
+			box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+		">
+			<div style="font-size: 16px; font-weight: 600; color: #1e293b; margin-bottom: 15px;">
+				📊 Application Summary
+			</div>
+
+			<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+				<!-- Request Details -->
+				<div style="background: white; padding: 12px; border-radius: 6px; border-left: 3px solid #3b82f6;">
+					<div style="font-size: 11px; color: #64748b; text-transform: uppercase; margin-bottom: 5px;">Request</div>
+					<div style="font-size: 14px; font-weight: 500; color: #1e293b;">${request_link}</div>
+				</div>
+
+				<!-- Consent Type -->
+				<div style="background: white; padding: 12px; border-radius: 6px; border-left: 3px solid #8b5cf6;">
+					<div style="font-size: 11px; color: #64748b; text-transform: uppercase; margin-bottom: 5px;">Consent Type</div>
+					<div style="font-size: 14px; font-weight: 500; color: #1e293b;">${frm.doc.consent_types || 'Not specified'}</div>
+				</div>
+
+				<!-- Activity Status -->
+				<div style="background: white; padding: 12px; border-radius: 6px; border-left: 3px solid #ec4899;">
+					<div style="font-size: 11px; color: #64748b; text-transform: uppercase; margin-bottom: 5px;">Activity Status</div>
+					<div style="font-size: 14px; font-weight: 500; color: #1e293b;">${frm.doc.activity_status || 'Not specified'}</div>
+				</div>
+
+				<!-- Notification Level -->
+				<div style="background: white; padding: 12px; border-radius: 6px; border-left: 3px solid #f59e0b;">
+					<div style="font-size: 11px; color: #64748b; text-transform: uppercase; margin-bottom: 5px;">Notification</div>
+					<div style="font-size: 14px; font-weight: 500; color: #1e293b;">${frm.doc.notification_level || 'Not Determined'}</div>
+				</div>
+			</div>
+
+			<!-- Proposal Summary -->
+			<div style="margin-top: 15px; padding: 12px; background: white; border-radius: 6px;">
+				<div style="font-size: 11px; color: #64748b; text-transform: uppercase; margin-bottom: 5px;">Proposal Details</div>
+				<div style="font-size: 13px; color: #475569;">${proposal_summary}</div>
+			</div>
+
+			<!-- Metrics Row -->
+			<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 15px;">
+				<div style="background: white; padding: 10px; border-radius: 6px; text-align: center;">
+					<div style="font-size: 24px; font-weight: 700; color: #3b82f6;">${affected_parties_count}</div>
+					<div style="font-size: 11px; color: #64748b; margin-top: 3px;">Affected Parties</div>
+				</div>
+				<div style="background: white; padding: 10px; border-radius: 6px; text-align: center;">
+					<div style="font-size: 24px; font-weight: 700; color: #10b981;">${approvals_count}</div>
+					<div style="font-size: 11px; color: #64748b; margin-top: 3px;">Written Approvals</div>
+				</div>
+				<div style="background: white; padding: 10px; border-radius: 6px; text-align: center;">
+					<div style="font-size: 24px; font-weight: 700; color: #8b5cf6;">${specialist_reports_count}</div>
+					<div style="font-size: 11px; color: #64748b; margin-top: 3px;">Specialist Reports</div>
+				</div>
+				<div style="background: white; padding: 10px; border-radius: 6px; text-align: center;">
+					<div style="font-size: 24px; font-weight: 700; color: ${frm.doc.iwi_consultation_undertaken ? '#10b981' : '#94a3b8'};">
+						${frm.doc.iwi_consultation_undertaken ? '✓' : '—'}
+					</div>
+					<div style="font-size: 11px; color: #64748b; margin-top: 3px;">Iwi Consultation</div>
+				</div>
+			</div>
+		</div>
+	`;
+
+	// Insert after clock indicator or at top
+	frm.layout.wrapper.find('.rc-summary-dashboard').remove();
+	const clock_indicator = frm.layout.wrapper.find('.statutory-clock-indicator');
+	if (clock_indicator.length) {
+		$(summary_html).insertAfter(clock_indicator);
+	} else {
+		$(summary_html).prependTo(frm.layout.wrapper.find('.form-layout'));
+	}
+}
+
+/**
+ * Style applicant-provided fields with visual distinction
+ */
+function style_applicant_fields(frm) {
+	// List of applicant-provided fields
+	const applicant_fields = [
+		'consent_types', 'activity_status', 'assessment_of_effects', 'planning_assessment',
+		'effects_on_people', 'physical_effects', 'ecosystem_effects', 'cultural_effects',
+		'alternatives_considered', 'mitigation_proposed', 'affected_parties',
+		'iwi_consultation_undertaken', 'iwi_consulted', 'cultural_impact_assessment',
+		'specialist_reports', 'proposed_conditions', 'building_height', 'building_floor_area',
+		'earthworks_volume', 'earthworks_vertical_alteration', 'vehicle_movements_daily',
+		'parking_spaces_provided', 'hours_of_operation', 'consent_term_requested',
+		'site_topography', 'existing_vegetation_description', 'watercourses_present',
+		'watercourse_description', 'natural_hazards_identified', 'existing_infrastructure',
+		'contamination_status_hail', 'earthworks_effects', 'discharge_contaminants_effects',
+		'hazard_risk_assessment'
+	];
+
+	// Add subtle background color to applicant fields
+	applicant_fields.forEach(fieldname => {
+		const field = frm.fields_dict[fieldname];
+		if (field && field.wrapper) {
+			$(field.wrapper).css({
+				'background-color': '#f0f9ff',
+				'padding': '10px',
+				'border-radius': '4px',
+				'border-left': '3px solid #3b82f6'
+			});
+
+			// Add tooltip/label to indicate this is applicant-provided
+			if (!$(field.wrapper).find('.applicant-field-label').length) {
+				$(field.wrapper).prepend(`
+					<div class="applicant-field-label" style="
+						font-size: 10px;
+						color: #3b82f6;
+						text-transform: uppercase;
+						margin-bottom: 5px;
+						font-weight: 600;
+					">📝 Applicant-Provided</div>
+				`);
+			}
+		}
+	});
+
+	// Style council-only sections
+	const council_sections = [
+		'section_break_notification', 'section_break_hearing', 'section_break_decision',
+		'section_break_statutory_clock'
+	];
+
+	council_sections.forEach(section_name => {
+		const section = frm.fields_dict[section_name];
+		if (section && section.wrapper) {
+			$(section.wrapper).css({
+				'background-color': '#fef3c7',
+				'padding': '10px',
+				'border-radius': '4px',
+				'margin-top': '15px',
+				'border-left': '3px solid #f59e0b'
+			});
+
+			if (!$(section.wrapper).find('.council-section-label').length) {
+				$(section.wrapper).prepend(`
+					<div class="council-section-label" style="
+						font-size: 10px;
+						color: #d97706;
+						text-transform: uppercase;
+						margin-bottom: 5px;
+						font-weight: 600;
+					">🏛️ Council-Only Section</div>
+				`);
+			}
+		}
+	});
+}
+
+/**
+ * Make applicant fields read-only after request is submitted
+ */
+function make_applicant_fields_readonly(frm) {
+	// Only make read-only if the linked request is submitted
+	if (!frm.doc.request) return;
+
+	frappe.db.get_value('Request', frm.doc.request, 'docstatus', (r) => {
+		if (r && r.docstatus === 1) {
+			// Request is submitted, lock applicant fields
+			const applicant_fields = [
+				'consent_types', 'activity_status', 'assessment_of_effects', 'planning_assessment',
+				'effects_on_people', 'physical_effects', 'ecosystem_effects', 'cultural_effects',
+				'alternatives_considered', 'mitigation_proposed', 'affected_parties',
+				'iwi_consultation_undertaken', 'iwi_consulted', 'cultural_impact_assessment',
+				'specialist_reports', 'proposed_conditions', 'building_height', 'building_floor_area',
+				'earthworks_volume', 'earthworks_vertical_alteration', 'vehicle_movements_daily',
+				'parking_spaces_provided', 'hours_of_operation', 'consent_term_requested',
+				'site_topography', 'existing_vegetation_description', 'watercourses_present',
+				'watercourse_description', 'natural_hazards_identified', 'existing_infrastructure',
+				'contamination_status_hail', 'earthworks_effects', 'discharge_contaminants_effects',
+				'hazard_risk_assessment'
+			];
+
+			applicant_fields.forEach(fieldname => {
+				frm.set_df_property(fieldname, 'read_only', 1);
+			});
+
+			// Add a notice at the top
+			if (!frm.layout.wrapper.find('.applicant-locked-notice').length) {
+				const notice = $(`
+					<div class="applicant-locked-notice" style="
+						background: #fef3c7;
+						border: 1px solid #fbbf24;
+						border-radius: 6px;
+						padding: 12px;
+						margin-bottom: 15px;
+						font-size: 13px;
+						color: #92400e;
+					">
+						<strong>🔒 Applicant Fields Locked:</strong> The application has been submitted and applicant-provided fields are now read-only to prevent accidental modification.
+					</div>
+				`);
+				notice.insertAfter(frm.layout.wrapper.find('.rc-summary-dashboard'));
+			}
+		}
+	});
+}
+
+/**
+ * Add custom action buttons
+ */
+function add_custom_buttons(frm) {
+	if (frm.is_new()) return;
+
+	// Button to view linked request
+	if (frm.doc.request) {
+		frm.add_custom_button(__('View Request'), function() {
+			frappe.set_route('Form', 'Request', frm.doc.request);
+		}, __('Actions'));
+	}
+
+	// Button to start statutory clock
+	if (!frm.doc.statutory_clock_started && !frm.is_new()) {
+		frm.add_custom_button(__('Start Statutory Clock'), function() {
+			frappe.confirm(
+				'Start the RMA statutory timeframe clock for this application?',
+				() => {
+					frm.set_value('statutory_clock_started', frappe.datetime.now_datetime());
+					frm.save();
+				}
+			);
+		}, __('RMA Process'));
+	}
+
+	// Button to stop/resume clock
+	if (frm.doc.statutory_clock_started) {
+		if (frm.doc.statutory_clock_stopped) {
+			frm.add_custom_button(__('Resume Clock'), function() {
+				frappe.confirm(
+					'Resume the statutory clock? (Information received from applicant)',
+					() => {
+						frm.set_value('statutory_clock_stopped', null);
+						frm.save();
+					}
+				);
+			}, __('RMA Process'));
+		} else {
+			frm.add_custom_button(__('Stop Clock (RFI)'), function() {
+				frappe.confirm(
+					'Stop the statutory clock? (Requesting further information from applicant)',
+					() => {
+						frm.set_value('statutory_clock_stopped', frappe.datetime.now_datetime());
+						frm.save();
+					}
+				);
+			}, __('RMA Process'));
+		}
+	}
+
+	// Quick notification decision buttons
+	if (!frm.doc.notification_level || frm.doc.notification_level === 'Not Determined') {
+		frm.add_custom_button(__('Non-Notified'), function() {
+			frm.set_value('notification_level', 'Non-Notified');
+			frm.set_value('notification_determined_date', frappe.datetime.get_today());
+			frm.save();
+		}, __('Notification'));
+
+		frm.add_custom_button(__('Limited Notified'), function() {
+			frm.set_value('notification_level', 'Limited Notified');
+			frm.set_value('notification_determined_date', frappe.datetime.get_today());
+			frm.save();
+		}, __('Notification'));
+
+		frm.add_custom_button(__('Fully Notified'), function() {
+			frm.set_value('notification_level', 'Fully Notified');
+			frm.set_value('notification_determined_date', frappe.datetime.get_today());
+			frm.save();
+		}, __('Notification'));
+	}
+}
+
+/**
+ * Set up field visibility dependencies
+ */
+function setup_field_visibility(frm) {
+	// Show/hide watercourse description based on checkbox
+	frm.toggle_display('watercourse_description', frm.doc.watercourses_present);
+
+	// Show/hide hearing details based on hearing required
+	frm.toggle_display('hearing_date', frm.doc.hearing_required);
+	frm.toggle_display('hearing_venue', frm.doc.hearing_required);
+	frm.toggle_display('hearing_commissioners', frm.doc.hearing_required);
+}
+
+// Field-level events
+frappe.ui.form.on('Resource Consent Application', {
+	watercourses_present: function(frm) {
+		frm.toggle_display('watercourse_description', frm.doc.watercourses_present);
+	},
+
+	hearing_required: function(frm) {
+		frm.toggle_display('hearing_date', frm.doc.hearing_required);
+		frm.toggle_display('hearing_venue', frm.doc.hearing_required);
+		frm.toggle_display('hearing_commissioners', frm.doc.hearing_required);
+	}
+});
