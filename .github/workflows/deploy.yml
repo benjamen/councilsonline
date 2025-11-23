@@ -1,40 +1,102 @@
-- name: Deploy to Production Server
-  run: |
-    ssh -o StrictHostKeyChecking=no root@${{ env.SERVER_HOST }} "
-      set -e
-      echo '🚀 Starting Lodgeick deployment...'
+name: Deploy to Production
 
-      git config --global --add safe.directory /home/frappe-user/frappe-bench/apps/lodgeick
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
-      sudo -u frappe-user GIT_SSH_COMMAND=\"ssh -i ~/.ssh/id_ed25519_benja_repo -F /dev/null\" bash -c '
-        cd /home/frappe-user/frappe-bench/apps/lodgeick &&
-        echo \"📥 Pulling latest code...\" &&
-        git fetch origin main &&
-        git reset --hard origin/main &&
-        git clean -fd
+env:
+  SERVER_HOST: 77.37.87.141
+  SERVER_USER: root
+  BENCH_PATH: /home/frappe-user/frappe-bench
+  SITE_NAME: lodgeick.com
+  APP_NAME: lodgeick
 
-        echo \"📦 Installing frontend dependencies...\"
-        cd frontend &&
-        yarn install --frozen-lockfile || yarn install
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
+    environment: production
 
-        echo \"🔨 Building frontend...\"
-        yarn build
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-        echo \"🔨 Building backend assets...\"
-        cd /home/frappe-user/frappe-bench &&
-        bench build --app lodgeick
+      - name: Setup SSH Key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-        echo \"🗄️ Migrating database...\"
-        bench --site lodgeick.com migrate
+      - name: Add Server to Known Hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts
 
-        echo \"🧹 Clearing cache...\"
-        bench --site lodgeick.com clear-cache &&
-        bench --site lodgeick.com clear-website-cache
+      - name: Deploy to Production Server
+        run: |
+          ssh -o StrictHostKeyChecking=no root@${{ env.SERVER_HOST }} "
+            set -e
+            echo '🚀 Starting Lodgeick deployment...'
 
-        echo \"🔄 Restarting services...\"
-        bench restart
-      '
+            git config --global --add safe.directory ${{ env.BENCH_PATH }}/apps/${{ env.APP_NAME }}
 
-      echo '✅ Lodgeick deployment completed successfully!'
-      echo '🌐 Site: https://lodgeick.com'
-    "
+            sudo -u frappe-user GIT_SSH_COMMAND=\"ssh -i ~/.ssh/id_ed25519_benja_repo -F /dev/null\" bash -c '
+              cd ${{ env.BENCH_PATH }}/apps/${{ env.APP_NAME }}
+
+              echo \"📥 Pulling latest code...\"
+              git fetch origin main
+              git reset --hard origin/main
+              git clean -fd
+
+              echo \"📦 Installing frontend dependencies...\"
+              cd frontend
+              yarn install --frozen-lockfile || yarn install
+
+              echo \"🔨 Building frontend...\"
+              yarn build
+
+              echo \"🔨 Building backend assets...\"
+              cd ${{ env.BENCH_PATH }}
+              bench build --app ${{ env.APP_NAME }}
+
+              echo \"🗄️ Migrating database...\"
+              bench --site ${{ env.SITE_NAME }} migrate
+
+              echo \"🧹 Clearing cache...\"
+              bench --site ${{ env.SITE_NAME }} clear-cache
+              bench --site ${{ env.SITE_NAME }} clear-website-cache
+
+              echo \"🔄 Restarting bench services...\"
+              bench restart
+            '
+
+            echo \"🔁 Reloading nginx and supervisor...\"
+            systemctl reload nginx
+            supervisorctl reread
+            supervisorctl update
+            supervisorctl restart all || echo 'Supervisor restart failed, check manually.'
+
+            echo '✅ Lodgeick deployment completed successfully!'
+            echo '🌐 Site: https://${{ env.SITE_NAME }}'
+          "
+
+      - name: Verify Deployment
+        run: |
+          echo '🔍 Verifying deployment...'
+          sleep 10
+          curl -f -s -o /dev/null https://${{ env.SITE_NAME }} || {
+            echo '❌ Site not accessible'
+            exit 1
+          }
+          echo '✅ Site is accessible at https://${{ env.SITE_NAME }}'
+
+      - name: Deployment Summary
+        if: always()
+        run: |
+          echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Server:** ${{ env.SERVER_HOST }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Site:** https://${{ env.SITE_NAME }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **App:** ${{ env.APP_NAME }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** main" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
