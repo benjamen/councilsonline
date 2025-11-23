@@ -38,12 +38,12 @@ jobs:
             set -e
             echo '🚀 Starting Lodgeick deployment...'
 
-            # Mark repo as safe
+            # Mark repo as safe for git
             git config --global --add safe.directory ${{ env.BENCH_PATH }}/apps/${{ env.APP_NAME }}
 
-            # Pull latest code
+            # Pull latest code as frappe-user
             echo '📥 Pulling latest code...'
-            GIT_SSH_COMMAND=\"ssh -i ~/.ssh/id_ed25519_benja_repo -F /dev/null\" bash -c '
+            sudo -i -u ${{ env.SERVER_USER }} bash -c '
               cd ${{ env.BENCH_PATH }}/apps/${{ env.APP_NAME }} &&
               git fetch origin main &&
               git reset --hard origin/main &&
@@ -52,23 +52,24 @@ jobs:
 
             # Install frontend dependencies
             echo '📦 Installing frontend dependencies...'
-            bash -c '
+            sudo -i -u ${{ env.SERVER_USER }} bash -c '
               cd ${{ env.BENCH_PATH }}/apps/${{ env.APP_NAME }}/frontend &&
               yarn install --frozen-lockfile || yarn install
             '
 
-            # Build frontend and backend
+            # Build frontend
             echo '🔨 Building frontend...'
-            bash -c '
+            sudo -i -u ${{ env.SERVER_USER }} bash -c '
               cd ${{ env.BENCH_PATH }}/apps/${{ env.APP_NAME }}/frontend &&
               yarn build
             '
 
+            # Build backend assets
             echo '🔨 Building backend assets...'
             cd ${{ env.BENCH_PATH }}
             bench build --app ${{ env.APP_NAME }}
 
-            # Database migrations
+            # Run database migrations
             echo '🗄️ Migrating database...'
             bench --site ${{ env.SITE_NAME }} migrate
 
@@ -81,7 +82,7 @@ jobs:
             echo '🔄 Restarting bench services...'
             bench restart
 
-            # Reload nginx and supervisor via sudo
+            # Reload nginx and supervisor
             echo '🔁 Reloading nginx and supervisor...'
             sudo systemctl reload nginx
             sudo supervisorctl reread
