@@ -543,6 +543,50 @@
               ></textarea>
               <p class="mt-1 text-xs text-gray-500">The council will determine final consent conditions</p>
             </div>
+
+            <!-- Pre-Application Meeting -->
+            <div class="border-t border-gray-200 pt-6 mt-6">
+              <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                <div class="flex items-start">
+                  <div class="flex-shrink-0">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <div class="ml-3 flex-1">
+                    <h3 class="text-sm font-semibold text-blue-900 mb-2">
+                      Need Help with Your Application?
+                    </h3>
+                    <p class="text-sm text-blue-800 mb-3">
+                      For <strong>discretionary</strong> or <strong>non-complying</strong> activities, we recommend booking a pre-application meeting with our planning team. This can help:
+                    </p>
+                    <ul class="text-sm text-blue-800 space-y-1 ml-4 list-disc mb-4">
+                      <li>Clarify district plan requirements</li>
+                      <li>Identify potential issues early</li>
+                      <li>Understand what information you'll need</li>
+                      <li>Get preliminary feedback on your proposal</li>
+                    </ul>
+                    <Button
+                      @click="requestPreAppMeeting"
+                      variant="solid"
+                      theme="blue"
+                      size="sm"
+                      :loading="requestingMeeting"
+                    >
+                      <template #prefix>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </template>
+                      Request Pre-Application Meeting
+                    </Button>
+                    <p class="text-xs text-blue-700 mt-2">
+                      A planning officer will contact you within 2 business days to schedule.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -785,6 +829,7 @@ const submitting = ref(false)
 const uploadedFiles = ref([])
 const fileInput = ref(null)
 const bookingMeeting = ref(false)
+const requestingMeeting = ref(false)
 const showActivityStatusHelp = ref(false)
 
 const steps = computed(() => {
@@ -1247,6 +1292,59 @@ const handleCIAUpload = (event) => {
     }
 
     formData.value.cultural_impact_assessment = file
+  }
+}
+
+// Pre-Application Meeting Request
+const meetingResource = createResource({
+  url: 'lodgeick.api.book_council_meeting',
+  makeParams: (values) => values,
+  onSuccess: (data) => {
+    if (data && data.success) {
+      alert(`✅ Pre-Application Meeting Request Sent!\n\nTask #${data.task_id} has been created for the planning team.\n\nThey will contact you within 2 business days to schedule.`)
+    } else {
+      alert('Meeting request sent successfully! The planning team will contact you soon.')
+    }
+    requestingMeeting.value = false
+  },
+  onError: (error) => {
+    console.error('Error requesting meeting:', error)
+    alert('Failed to request pre-application meeting. Please try again or contact the planning team directly.')
+    requestingMeeting.value = false
+  }
+})
+
+const requestPreAppMeeting = async () => {
+  if (!formData.value.request_type || !formData.value.property_address) {
+    alert('Please complete the Request Type and Property Details first.')
+    return
+  }
+
+  if (!confirm('Request a pre-application meeting? A planning officer will contact you within 2 business days to schedule.\n\nNote: You should save your application as a draft first.')) {
+    return
+  }
+
+  try {
+    requestingMeeting.value = true
+
+    // First, save the draft
+    const draftResult = await saveDraft()
+
+    if (!draftResult || !draftResult.request_id) {
+      alert('Please save your draft application first.')
+      requestingMeeting.value = false
+      return
+    }
+
+    // Then request the meeting
+    meetingResource.submit({
+      request_id: draftResult.request_id,
+      meeting_type: 'Pre-Application Meeting'
+    })
+  } catch (error) {
+    console.error('Error in meeting request:', error)
+    alert('Failed to request pre-application meeting. Please try again.')
+    requestingMeeting.value = false
   }
 }
 </script>
