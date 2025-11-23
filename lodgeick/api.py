@@ -181,6 +181,25 @@ def create_draft_request(data):
                 "iwi_consulted": data.get("iwi_consulted"),
                 "proposed_conditions": data.get("proposed_conditions")
             })
+
+            # Add affected parties (child table)
+            if data.get("affected_parties"):
+                for party in data.get("affected_parties"):
+                    rc_app.append("affected_parties", {
+                        "party_name": party.get("party_name"),
+                        "address": party.get("address"),
+                        "written_approval_obtained": cint(party.get("written_approval_obtained", 0))
+                    })
+
+            # Add specialist reports (child table)
+            if data.get("specialist_reports"):
+                for report in data.get("specialist_reports"):
+                    rc_app.append("specialist_reports", {
+                        "report_type": report.get("report_type"),
+                        "specialist_name": report.get("specialist_name"),
+                        "date_prepared": report.get("date_prepared")
+                    })
+
             rc_app.flags.ignore_permissions = False
             rc_app.flags.ignore_mandatory = True
             rc_app.insert(ignore_mandatory=True)

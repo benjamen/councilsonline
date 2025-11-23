@@ -172,37 +172,15 @@ const props = defineProps({
   }
 })
 
-// Fetch RC Application data
+// Fetch RC Application data with child tables
+// Note: We use the request ID as the name since RC Application uses "By fieldname" naming with "request" field
 const rcApplication = createResource({
-  url: 'frappe.client.get_list',
+  url: 'frappe.client.get',
   params: {
     doctype: 'Resource Consent Application',
-    filters: { request: props.requestId },
-    fields: [
-      'name',
-      'consent_types',
-      'activity_status',
-      'assessment_of_effects',
-      'effects_on_people',
-      'physical_effects',
-      'ecosystem_effects',
-      'cultural_effects',
-      'planning_assessment',
-      'alternatives_considered',
-      'mitigation_proposed',
-      'affected_parties',
-      'written_approvals_obtained',
-      'iwi_consultation_undertaken',
-      'iwi_consulted',
-      'iwi_response_summary',
-      'cultural_impact_assessment',
-      'specialist_reports',
-      'proposed_conditions'
-    ],
-    limit: 1
+    name: props.requestId
   },
-  auto: true,
-  transform: (data) => data && data.length > 0 ? data[0] : null
+  auto: true
 })
 
 const hasDetailedEffects = computed(() => {
