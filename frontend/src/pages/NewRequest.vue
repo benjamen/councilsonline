@@ -159,23 +159,32 @@
             <div v-if="!formData.property" class="space-y-4">
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Property Address *</label>
-                <inputv-model="formData.property_address"
-                  placeholder="123 Main Street, Wellington"
-                  type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                <input
+                    v-model="formData.property_address"
+                    type="text"
+                    placeholder="123 Main Street, Wellington"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
               </div>
 
               <div class="grid md:grid-cols-2 gap-4">
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">Legal Description</label>
-                  <inputv-model="formData.legal_description"
+                  <input
+                    v-model="formData.legal_description"
+                    type="text"
                     placeholder="Lot 1 DP 12345"
-                    type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
                 </div>
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">Valuation Reference</label>
-                  <inputv-model="formData.valuation_reference"
+                  <input
+                    v-model="formData.valuation_reference"
+                    type="text"
                     placeholder="1234567"
-                    type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
                 </div>
               </div>
 
@@ -205,9 +214,12 @@
           <div class="space-y-6">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Brief Description *</label>
-              <inputv-model="formData.brief_description"
-                placeholder="e.g., Two-storey residential dwelling"
-                type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+              <input
+                    v-model="formData.brief_description"
+                    type="text"
+                    placeholder="e.g., Two-storey residential dwelling"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
             </div>
 
             <div>
@@ -235,8 +247,11 @@
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Proposed Start Date</label>
-                <inputv-model="formData.proposed_start_date"
-                  type="date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                <input
+                    v-model="formData.proposed_start_date"
+                    type="date"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
               </div>
             </div>
           </div>
@@ -327,17 +342,21 @@
                 <div class="grid md:grid-cols-2 gap-4">
                   <div>
                     <label class="block text-xs font-medium text-gray-600 mb-1">Building Height (metres)</label>
-                    <inputv-model="formData.building_height"
-                      type="number"
-                      step="0.1"
-                      placeholder="e.g., 8.5" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                    <input
+                    v-model="formData.building_height"
+                    type="number"
+                    placeholder="e.g., 8.5"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
                   </div>
                   <div>
                     <label class="block text-xs font-medium text-gray-600 mb-1">Total Floor Area (m²)</label>
-                    <inputv-model="formData.building_floor_area"
-                      type="number"
-                      step="0.1"
-                      placeholder="e.g., 250" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                    <input
+                    v-model="formData.building_floor_area"
+                    type="number"
+                    placeholder="e.g., 250"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
                   </div>
                 </div>
               </div>
@@ -348,17 +367,21 @@
                 <div class="grid md:grid-cols-2 gap-4">
                   <div>
                     <label class="block text-xs font-medium text-gray-600 mb-1">Earthworks Volume (m³)</label>
-                    <inputv-model="formData.earthworks_volume"
-                      type="number"
-                      step="0.1"
-                      placeholder="e.g., 150" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                    <input
+                    v-model="formData.earthworks_volume"
+                    type="number"
+                    placeholder="e.g., 150"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
                   </div>
                   <div>
                     <label class="block text-xs font-medium text-gray-600 mb-1">Maximum Vertical Alteration (metres)</label>
-                    <inputv-model="formData.earthworks_vertical_alteration"
-                      type="number"
-                      step="0.1"
-                      placeholder="e.g., 2.5" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                    <input
+                    v-model="formData.earthworks_vertical_alteration"
+                    type="number"
+                    placeholder="e.g., 2.5"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
                   </div>
                 </div>
               </div>
@@ -370,15 +393,21 @@
                   <div class="space-y-3">
                     <div>
                       <label class="block text-xs font-medium text-gray-600 mb-1">Additional Vehicle Movements/Day</label>
-                      <inputv-model="formData.vehicle_movements_daily"
-                        type="number"
-                        placeholder="e.g., 20" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                      <input
+                    v-model="formData.vehicle_movements_daily"
+                    type="number"
+                    placeholder="e.g., 20"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
                     </div>
                     <div>
                       <label class="block text-xs font-medium text-gray-600 mb-1">Parking Spaces Provided</label>
-                      <inputv-model="formData.parking_spaces_provided"
-                        type="number"
-                        placeholder="e.g., 4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                      <input
+                    v-model="formData.parking_spaces_provided"
+                    type="number"
+                    placeholder="e.g., 4"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
                     </div>
                   </div>
                 </div>
@@ -387,15 +416,21 @@
                   <div class="space-y-3">
                     <div>
                       <label class="block text-xs font-medium text-gray-600 mb-1">Hours of Operation</label>
-                      <inputv-model="formData.hours_of_operation"
-                        type="text"
-                        placeholder="e.g., Mon-Fri 8am-6pm" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                      <input
+                    v-model="formData.hours_of_operation"
+                    type="text"
+                    placeholder="e.g., Mon-Fri 8am-6pm"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
                     </div>
                     <div>
                       <label class="block text-xs font-medium text-gray-600 mb-1">Consent Term Requested</label>
-                      <inputv-model="formData.consent_term_requested"
-                        type="text"
-                        placeholder="e.g., 5 years, Unlimited" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                      <input
+                    v-model="formData.consent_term_requested"
+                    type="text"
+                    placeholder="e.g., 5 years, Unlimited"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
                     </div>
                   </div>
                 </div>
