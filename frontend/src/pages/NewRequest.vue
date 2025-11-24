@@ -1216,6 +1216,13 @@ const canSubmit = computed(() => {
 const requestTypes = createResource({
   url: 'lodgeick.lodgeick.doctype.request_type.request_type.get_active_request_types',
   auto: true,
+  onError(error) {
+    console.error('[NewRequest] Failed to load Request Types:', error)
+    alert(`Error loading Request Types: ${error.messages?.[0] || error.message || 'Unknown error'}. Please refresh the page or contact support.`)
+  },
+  onSuccess(data) {
+    console.log('[NewRequest] Loaded Request Types:', data?.length || 0, 'types')
+  }
 })
 
 // Get user's properties
@@ -1247,8 +1254,10 @@ const getStepClass = (stepNumber) => {
 }
 
 const selectRequestType = (type) => {
+  console.log('[NewRequest] Selecting Request Type:', type.name, type.type_name)
   formData.value.request_type = type.name
   formData.value.request_category = type.category || ''
+  console.log('[NewRequest] Form data updated:', { request_type: formData.value.request_type, request_category: formData.value.request_category })
 }
 
 const onPropertySelect = () => {
@@ -1263,7 +1272,9 @@ const onPropertySelect = () => {
 const canProceed = () => {
   switch (currentStep.value) {
     case 1:
-      return !!formData.value.request_type
+      const canProceedStep1 = !!formData.value.request_type
+      console.log('[NewRequest] canProceed Step 1:', canProceedStep1, 'request_type:', formData.value.request_type)
+      return canProceedStep1
     case 2:
       // Require either property link OR property_address, plus applicant fields
       const hasProperty = formData.value.property || formData.value.property_address
