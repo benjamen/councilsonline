@@ -9,7 +9,7 @@ class RequestType(Document):
     pass
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_active_request_types():
     """Get all active request types for public application form"""
     return frappe.get_all(
