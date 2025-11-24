@@ -5,8 +5,11 @@
  "engine": "InnoDB",
  "field_order": [
   "party_name",
-  "property_address",
   "relationship",
+  "property_address",
+  "email",
+  "phone",
+  "postal_address",
   "approval_obtained",
   "approval_date",
   "approval_document",
@@ -20,17 +23,33 @@
    "reqd": 1
   },
   {
-   "fieldname": "property_address",
-   "fieldtype": "Small Text",
-   "label": "Address",
-   "reqd": 1
-  },
-  {
    "fieldname": "relationship",
    "fieldtype": "Select",
    "label": "Relationship",
    "options": "Adjacent Property Owner\nNeighbor\nIwi\nInfrastructure Provider\nOther",
    "reqd": 1
+  },
+  {
+   "fieldname": "property_address",
+   "fieldtype": "Small Text",
+   "label": "Property Address"
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "Email Address",
+   "options": "Email"
+  },
+  {
+   "fieldname": "phone",
+   "fieldtype": "Data",
+   "label": "Phone Number",
+   "options": "Phone"
+  },
+  {
+   "fieldname": "postal_address",
+   "fieldtype": "Small Text",
+   "label": "Postal Address"
   },
   {
    "fieldname": "approval_obtained",

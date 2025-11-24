@@ -7,8 +7,11 @@
  "engine": "InnoDB",
  "field_order": [
   "request",
+  "applicant_reference_number",
+  "delivery_preference",
   "section_break_consent",
   "consent_types",
+  "pim_reference",
   "activity_status",
   "section_break_permitted_boundary",
   "permitted_boundary_activity",
@@ -127,6 +130,19 @@
    "unique": 1
   },
   {
+   "fieldname": "applicant_reference_number",
+   "fieldtype": "Data",
+   "label": "Applicant Reference Number",
+   "description": "Your own reference number for tracking this application"
+  },
+  {
+   "fieldname": "delivery_preference",
+   "fieldtype": "Select",
+   "label": "Delivery Preference",
+   "options": "\nEmail\nPostal Mail\nBoth Email and Postal",
+   "description": "How you would like to receive correspondence from council"
+  },
+  {
    "description": "Core consent information provided by the applicant",
    "fieldname": "section_break_consent",
    "fieldtype": "Section Break",
@@ -134,11 +150,17 @@
   },
   {
    "fieldname": "consent_types",
-   "fieldtype": "Select",
+   "fieldtype": "Small Text",
    "in_list_view": 1,
    "label": "Consent Types",
-   "options": "Land Use\nSubdivision\nDischarge Permit\nWater Permit\nCoastal Permit",
+   "description": "Multiple consent types can be combined (e.g., Land Use, Subdivision)",
    "reqd": 1
+  },
+  {
+   "fieldname": "pim_reference",
+   "fieldtype": "Data",
+   "label": "PIM Reference",
+   "description": "Property Information Memorandum reference number if applicable"
   },
   {
    "fieldname": "activity_status",
