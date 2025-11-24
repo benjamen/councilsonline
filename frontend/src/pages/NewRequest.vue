@@ -322,11 +322,77 @@
                   <option value="Restricted Discretionary">Restricted Discretionary</option>
                   <option value="Discretionary">Discretionary</option>
                   <option value="Non-Complying">Non-Complying</option>
+                  <option value="Permitted Boundary Activity">Permitted Boundary Activity</option>
                 </select>
                 <p class="mt-1 text-xs text-gray-500">Activity classification under district plan</p>
 
                 <div v-if="activityStatusWarning" class="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-800">
                   {{ activityStatusWarning }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Permitted Boundary Activity (RMA s87BA) -->
+            <div v-if="formData.activity_status === 'Permitted Boundary Activity'" class="border-t border-gray-200 pt-6 mt-6">
+              <h3 class="text-sm font-semibold text-gray-900 mb-2">Permitted Boundary Activity (RMA s87BA)</h3>
+              <p class="text-xs text-gray-500 mb-4">This is a special consent type for boundary infringements under section 87BA of the Resource Management Act</p>
+
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Boundary Description</label>
+                  <input
+                    v-model="formData.boundary_description"
+                    type="text"
+                    placeholder="e.g., Side boundary with 123 Main Street"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Description of Boundary Activity</label>
+                  <textarea
+                    v-model="formData.boundary_activity_description"
+                    rows="3"
+                    placeholder="Describe how the activity infringes the boundary setback requirements..."
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                  ></textarea>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <div class="flex items-start mb-2">
+                      <input
+                        type="checkbox"
+                        v-model="formData.boundary_owner_approval_obtained"
+                        class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      />
+                      <label class="ml-3 text-xs font-medium text-gray-700">
+                        Affected boundary owner approval obtained
+                      </label>
+                    </div>
+                  </div>
+
+                  <div v-if="formData.boundary_owner_approval_obtained">
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Approval Date</label>
+                    <input
+                      v-model="formData.boundary_approval_date"
+                      type="date"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    />
+                  </div>
+                </div>
+
+                <div v-if="formData.boundary_owner_approval_obtained">
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Approval Documentation</label>
+                  <input
+                    type="file"
+                    @change="handleBoundaryApprovalUpload"
+                    accept=".pdf,.doc,.docx,.jpg,.png"
+                    class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200"
+                  />
+                  <p v-if="formData.boundary_approval_document" class="text-xs text-blue-600 mt-1">
+                    ✓ Document uploaded
+                  </p>
                 </div>
               </div>
             </div>
@@ -501,27 +567,245 @@
                   </div>
                 </div>
 
-                <div class="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Natural Hazards</label>
-                    <textarea
-                      v-model="formData.natural_hazards_identified"
-                      rows="2"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                      placeholder="e.g., Flood zone, liquefaction risk, slope instability..."
-                    ></textarea>
+                <!-- Natural Hazards Assessment (RMA s104) -->
+                <div class="border border-blue-200 rounded-lg p-4 bg-blue-50">
+                  <h4 class="text-sm font-semibold text-blue-900 mb-3">Natural Hazards Assessment (RMA s104)</h4>
+                  <p class="text-xs text-blue-700 mb-3">Indicate which natural hazards are present on or near the site</p>
+
+                  <div class="space-y-2 mb-3">
+                    <div v-for="hazard in naturalHazardTypes" :key="hazard" class="flex items-center">
+                      <input
+                        type="checkbox"
+                        :id="'hazard-' + hazard"
+                        :value="hazard"
+                        v-model="selectedHazards"
+                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      />
+                      <label :for="'hazard-' + hazard" class="ml-2 text-sm text-gray-700">{{ hazard }}</label>
+                    </div>
                   </div>
 
-                  <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Existing Infrastructure</label>
-                    <textarea
-                      v-model="formData.existing_infrastructure"
-                      rows="2"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                      placeholder="e.g., Wastewater, stormwater, electricity connections..."
-                    ></textarea>
+                  <div v-if="selectedHazards.length > 0" class="border-t border-blue-300 pt-3 mt-3">
+                    <div v-for="hazard in selectedHazards" :key="hazard" class="mb-4 last:mb-0">
+                      <h5 class="text-xs font-semibold text-blue-900 mb-2">{{ hazard }}</h5>
+                      <div class="grid md:grid-cols-2 gap-3">
+                        <div>
+                          <label class="block text-xs font-medium text-gray-700 mb-1">Risk Level</label>
+                          <select
+                            v-model="getHazardData(hazard).risk_level"
+                            class="w-full px-2 py-1 border border-gray-300 rounded text-sm bg-white"
+                          >
+                            <option value="">Select risk level</option>
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                            <option value="Extreme">Extreme</option>
+                          </select>
+                        </div>
+                        <div class="flex items-end">
+                          <div class="flex items-center mb-1">
+                            <input
+                              type="checkbox"
+                              :id="'mitigation-' + hazard"
+                              v-model="getHazardData(hazard).mitigation_required"
+                              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                            />
+                            <label :for="'mitigation-' + hazard" class="ml-2 text-xs text-gray-700">Mitigation Required</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="mt-2">
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Assessment Notes</label>
+                        <textarea
+                          v-model="getHazardData(hazard).assessment_notes"
+                          rows="2"
+                          class="w-full px-2 py-1 border border-gray-300 rounded text-sm bg-white"
+                          placeholder="Describe the hazard and its potential impact..."
+                        ></textarea>
+                      </div>
+                    </div>
                   </div>
                 </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">Existing Infrastructure</label>
+                  <textarea
+                    v-model="formData.existing_infrastructure"
+                    rows="2"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    placeholder="e.g., Wastewater, stormwater, electricity connections..."
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- National Environmental Standards (NES) Assessment -->
+            <div class="border-t border-gray-200 pt-6 mt-6">
+              <h3 class="text-sm font-semibold text-gray-900 mb-2">National Environmental Standards (NES) Assessment</h3>
+              <p class="text-xs text-gray-500 mb-4">Indicate which National Environmental Standards apply to this proposal</p>
+
+              <div class="space-y-3">
+                <div v-for="nesType in nesTypes" :key="nesType.value" class="border border-gray-200 rounded-lg p-3 bg-gray-50">
+                  <div class="flex items-start mb-2">
+                    <input
+                      type="checkbox"
+                      :id="'nes-' + nesType.value"
+                      v-model="getNESData(nesType.value).applies"
+                      class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <label :for="'nes-' + nesType.value" class="ml-3 text-sm font-medium text-gray-900">
+                      {{ nesType.label }}
+                    </label>
+                  </div>
+
+                  <div v-if="getNESData(nesType.value).applies" class="ml-7 mt-3 space-y-3 border-l-2 border-blue-300 pl-3">
+                    <div>
+                      <label class="block text-xs font-medium text-gray-700 mb-1">Compliance Status</label>
+                      <select
+                        v-model="getNESData(nesType.value).compliance_status"
+                        class="w-full px-2 py-1 border border-gray-300 rounded text-sm bg-white"
+                      >
+                        <option value="">Select compliance status</option>
+                        <option value="Permitted Activity">Permitted Activity</option>
+                        <option value="Requires Consent">Requires Consent</option>
+                        <option value="Non-Complying Activity">Non-Complying Activity</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label class="block text-xs font-medium text-gray-700 mb-1">Assessment Notes</label>
+                      <textarea
+                        v-model="getNESData(nesType.value).assessment_notes"
+                        rows="2"
+                        class="w-full px-2 py-1 border border-gray-300 rounded text-sm bg-white"
+                        placeholder="Provide details on how the NES applies..."
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- HAIL Activities (Contaminated Land) -->
+            <div v-if="isNESSoilsSelected" class="border-t border-gray-200 pt-6 mt-6">
+              <h3 class="text-sm font-semibold text-gray-900 mb-2">HAIL Activities (Hazardous Activities and Industries List)</h3>
+              <p class="text-xs text-gray-500 mb-4">For sites with potential soil contamination under the NES for Assessing and Managing Contaminants in Soil</p>
+
+              <div class="flex items-center justify-between mb-3">
+                <p class="text-xs text-gray-600">List any HAIL activities on the site (past, current, or likely)</p>
+                <button
+                  @click="addHAILActivity"
+                  type="button"
+                  class="px-3 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-lg hover:bg-blue-200"
+                >
+                  + Add HAIL Activity
+                </button>
+              </div>
+
+              <div v-if="formData.hail_activities.length > 0" class="space-y-3">
+                <div
+                  v-for="(hail, index) in formData.hail_activities"
+                  :key="index"
+                  class="border border-gray-300 rounded-lg p-4 bg-white"
+                >
+                  <div class="flex items-start justify-between mb-3">
+                    <h4 class="text-sm font-medium text-gray-900">HAIL Activity #{{ index + 1 }}</h4>
+                    <button
+                      @click="removeHAILActivity(index)"
+                      type="button"
+                      class="text-red-600 hover:text-red-800"
+                    >
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <div class="space-y-3">
+                    <div>
+                      <label class="block text-xs font-medium text-gray-700 mb-1">Activity Description *</label>
+                      <textarea
+                        v-model="hail.activity_description"
+                        rows="2"
+                        required
+                        class="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                        placeholder="Describe the HAIL activity (e.g., Former service station, industrial site)..."
+                      ></textarea>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-3">
+                      <div class="flex items-center">
+                        <input
+                          type="checkbox"
+                          :id="'hail-current-' + index"
+                          v-model="hail.currently_undertaken"
+                          class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        />
+                        <label :for="'hail-current-' + index" class="ml-2 text-xs text-gray-700">Currently Being Undertaken</label>
+                      </div>
+
+                      <div class="flex items-center">
+                        <input
+                          type="checkbox"
+                          :id="'hail-previous-' + index"
+                          v-model="hail.previously_undertaken"
+                          class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        />
+                        <label :for="'hail-previous-' + index" class="ml-2 text-xs text-gray-700">Previously Undertaken</label>
+                      </div>
+
+                      <div class="flex items-center">
+                        <input
+                          type="checkbox"
+                          :id="'hail-likely-' + index"
+                          v-model="hail.likely_undertaken"
+                          class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        />
+                        <label :for="'hail-likely-' + index" class="ml-2 text-xs text-gray-700">Likely to Have Been Undertaken</label>
+                      </div>
+                    </div>
+
+                    <div class="flex items-center">
+                      <input
+                        type="checkbox"
+                        :id="'hail-investigated-' + index"
+                        v-model="hail.preliminary_investigation_done"
+                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      />
+                      <label :for="'hail-investigated-' + index" class="ml-2 text-xs text-gray-700">Preliminary Investigation Completed</label>
+                    </div>
+
+                    <div>
+                      <label class="block text-xs font-medium text-gray-700 mb-1">Proposed Activity</label>
+                      <select
+                        v-model="hail.proposed_activity"
+                        class="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                      >
+                        <option value="">Select proposed activity</option>
+                        <option value="Removing or replacing fuel storage system">Removing or replacing fuel storage system</option>
+                        <option value="Disturbing soil">Disturbing soil</option>
+                        <option value="Sampling soil">Sampling soil</option>
+                        <option value="Subdividing land">Subdividing land</option>
+                        <option value="Changing use of land">Changing use of land</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label class="block text-xs font-medium text-gray-700 mb-1">Notes</label>
+                      <textarea
+                        v-model="hail.notes"
+                        rows="2"
+                        class="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                        placeholder="Additional notes about the HAIL activity..."
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div v-else class="text-center py-6 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                <p class="text-sm text-gray-500">No HAIL activities added yet</p>
+                <p class="text-xs text-gray-400 mt-1">Click "Add HAIL Activity" to document contaminated land activities</p>
               </div>
             </div>
 
@@ -807,6 +1091,44 @@
               <p class="mt-1 text-xs text-gray-500">The council will determine final consent conditions</p>
             </div>
 
+            <!-- Confidential Information (RMA s42) -->
+            <div class="border-t border-gray-200 pt-6 mt-6">
+              <h3 class="text-sm font-semibold text-gray-900 mb-2">Confidential Information (RMA s42)</h3>
+              <p class="text-xs text-gray-500 mb-4">Under section 42 of the RMA, you may request that certain information be kept confidential if it contains trade secrets or is commercially sensitive</p>
+
+              <div class="space-y-4">
+                <div class="flex items-start">
+                  <input
+                    type="checkbox"
+                    v-model="formData.confidential_information_claimed"
+                    class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label class="ml-3 text-sm font-medium text-gray-700">
+                    This application contains confidential information that should be withheld from public notification
+                  </label>
+                </div>
+
+                <div v-if="formData.confidential_information_claimed" class="ml-7 border-l-2 border-yellow-300 pl-4 bg-yellow-50 p-4 rounded-r-lg">
+                  <label class="block text-sm font-medium text-gray-900 mb-2">
+                    Justification for Confidentiality *
+                  </label>
+                  <p class="text-xs text-gray-600 mb-3">
+                    Explain why this information should be withheld under s42 of the RMA. You must demonstrate that the information is a trade secret or that making it public would unreasonably prejudice your commercial position.
+                  </p>
+                  <textarea
+                    v-model="formData.confidential_information_reason"
+                    rows="4"
+                    required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
+                    placeholder="Provide detailed justification for why this information should be kept confidential. Include references to specific documents or sections that contain confidential material..."
+                  ></textarea>
+                  <p class="mt-2 text-xs text-yellow-700">
+                    ⚠ Note: The consent authority will determine whether your justification meets the requirements of s42. Confidentiality is not guaranteed.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <!-- Pre-Application Meeting -->
             <div class="border-t border-gray-200 pt-6 mt-6">
               <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
@@ -1078,7 +1400,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { createResource, Input, Button } from 'frappe-ui'
 
@@ -1153,9 +1475,28 @@ const formData = ref({
   existing_vegetation_description: '',
   watercourses_present: false,
   watercourse_description: '',
-  natural_hazards_identified: '',
   existing_infrastructure: '',
   contamination_status_hail: '',
+
+  // Permitted Boundary Activity (RMA s87BA)
+  boundary_description: '',
+  boundary_activity_description: '',
+  boundary_owner_approval_obtained: false,
+  boundary_approval_date: '',
+  boundary_approval_document: null,
+
+  // Natural Hazards (structured)
+  natural_hazards: [],
+
+  // NES Assessments
+  nes_assessments: [],
+
+  // HAIL Activities
+  hail_activities: [],
+
+  // Confidential Information (RMA s42)
+  confidential_information_claimed: false,
+  confidential_information_reason: '',
 
   // AEE Fields
   assessment_of_effects: '',
@@ -1177,6 +1518,112 @@ const formData = ref({
   affected_parties: [], // Array of affected parties
   specialist_reports: [], // Array of specialist reports
 })
+
+// Natural Hazards - RMA s104
+const naturalHazardTypes = [
+  'Earthquake',
+  'Fire',
+  'Tsunami',
+  'Erosion',
+  'Volcanic and Geothermal',
+  'Flood',
+  'Sedimentation',
+  'Subsidence',
+  'Wind',
+  'Landslip',
+  'Drought'
+]
+
+const selectedHazards = ref([])
+const hazardData = ref({})
+
+// Get or create hazard data object
+const getHazardData = (hazard) => {
+  if (!hazardData.value[hazard]) {
+    hazardData.value[hazard] = {
+      hazard_type: hazard,
+      present: true,
+      risk_level: '',
+      assessment_notes: '',
+      mitigation_required: false
+    }
+  }
+  return hazardData.value[hazard]
+}
+
+// Watch selectedHazards to update formData.natural_hazards
+watch(selectedHazards, (newHazards) => {
+  formData.value.natural_hazards = newHazards.map(hazard => getHazardData(hazard))
+}, { deep: true })
+
+// Watch hazardData to update formData.natural_hazards
+watch(hazardData, () => {
+  formData.value.natural_hazards = selectedHazards.value.map(hazard => getHazardData(hazard))
+}, { deep: true })
+
+// National Environmental Standards
+const nesTypes = [
+  { value: 'NES for Assessing and Managing Contaminants in Soil (HAIL)', label: 'NES for Assessing and Managing Contaminants in Soil (HAIL)' },
+  { value: 'NES for Air Quality', label: 'NES for Air Quality' },
+  { value: 'NES for Freshwater Management', label: 'NES for Freshwater Management' },
+  { value: 'NES for Plantation Forestry', label: 'NES for Plantation Forestry' },
+  { value: 'NES for Electricity Transmission Activities', label: 'NES for Electricity Transmission Activities' },
+  { value: 'NES for Telecommunication Facilities', label: 'NES for Telecommunication Facilities' }
+]
+
+const nesData = ref({})
+
+// Get or create NES data object
+const getNESData = (nesType) => {
+  if (!nesData.value[nesType]) {
+    nesData.value[nesType] = {
+      nes_type: nesType,
+      applies: false,
+      compliance_status: '',
+      assessment_notes: ''
+    }
+  }
+  return nesData.value[nesType]
+}
+
+// Watch nesData to update formData.nes_assessments
+watch(nesData, () => {
+  formData.value.nes_assessments = nesTypes
+    .filter(nes => getNESData(nes.value).applies)
+    .map(nes => getNESData(nes.value))
+}, { deep: true })
+
+// Computed: Check if NES Soils is selected (for conditional HAIL section)
+const isNESSoilsSelected = computed(() => {
+  return formData.value.nes_assessments.some(
+    nes => nes.nes_type && nes.nes_type.includes('HAIL')
+  )
+})
+
+// HAIL Activities Management
+const addHAILActivity = () => {
+  formData.value.hail_activities.push({
+    activity_description: '',
+    currently_undertaken: false,
+    previously_undertaken: false,
+    likely_undertaken: false,
+    preliminary_investigation_done: false,
+    proposed_activity: '',
+    notes: ''
+  })
+}
+
+const removeHAILActivity = (index) => {
+  formData.value.hail_activities.splice(index, 1)
+}
+
+// Boundary Approval Document Upload
+const handleBoundaryApprovalUpload = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    formData.value.boundary_approval_document = file
+  }
+}
 
 // Track initial form state to detect changes
 const initialFormData = ref(JSON.parse(JSON.stringify(formData.value)))
