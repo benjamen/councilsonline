@@ -1304,8 +1304,28 @@ const canProceed = () => {
 }
 
 const nextStep = () => {
-  if (canProceed() && currentStep.value < totalSteps) {
+  const totalStepsValue = totalSteps.value
+  const currentStepValue = currentStep.value
+  const canProceedValue = canProceed()
+
+  console.log('[NewRequest] nextStep called', {
+    canProceed: canProceedValue,
+    currentStep: currentStepValue,
+    totalSteps: totalStepsValue,
+    steps: steps.value,
+    willProceed: canProceedValue && currentStepValue < totalStepsValue
+  })
+
+  if (canProceedValue && currentStepValue < totalStepsValue) {
     currentStep.value++
+    console.log('[NewRequest] Moved to step:', currentStep.value)
+  } else {
+    console.warn('[NewRequest] Cannot proceed:', {
+      canProceed: canProceedValue,
+      currentStep: currentStepValue,
+      totalSteps: totalStepsValue,
+      reason: !canProceedValue ? 'canProceed returned false' : 'at last step'
+    })
   }
 }
 
