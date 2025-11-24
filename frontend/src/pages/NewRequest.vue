@@ -962,24 +962,86 @@
                 List any parties (neighbors, landowners, etc.) who may be adversely affected by the proposal
               </p>
 
-              <div v-if="formData.affected_parties.length > 0" class="space-y-2 mb-3">
+              <div v-if="formData.affected_parties.length > 0" class="space-y-3 mb-3">
                 <div
                   v-for="(party, index) in formData.affected_parties"
                   :key="index"
-                  class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200"
+                  class="p-4 bg-white rounded-lg border border-gray-300 hover:border-blue-400 transition-colors"
                 >
-                  <div class="flex-1">
-                    <p class="text-sm font-medium text-gray-900">{{ party.party_name }}</p>
-                    <p class="text-xs text-gray-500">{{ party.address }}</p>
-                    <p v-if="party.written_approval_obtained" class="text-xs text-green-600 mt-1">
-                      ✓ Written approval obtained
-                    </p>
+                  <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                      <div class="flex items-center gap-2 mb-2">
+                        <h4 class="text-sm font-semibold text-gray-900">{{ party.party_name }}</h4>
+                        <span class="px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-700 rounded">
+                          {{ party.relationship }}
+                        </span>
+                      </div>
+
+                      <div class="grid md:grid-cols-2 gap-x-6 gap-y-1 text-xs text-gray-600">
+                        <div v-if="party.property_address" class="flex items-start gap-1">
+                          <svg class="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                          <span>{{ party.property_address }}</span>
+                        </div>
+
+                        <div v-if="party.email" class="flex items-center gap-1">
+                          <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                          </svg>
+                          <a :href="'mailto:' + party.email" class="text-blue-600 hover:underline">{{ party.email }}</a>
+                        </div>
+
+                        <div v-if="party.phone" class="flex items-center gap-1">
+                          <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                          </svg>
+                          <a :href="'tel:' + party.phone" class="text-blue-600 hover:underline">{{ party.phone }}</a>
+                        </div>
+
+                        <div v-if="party.postal_address" class="flex items-start gap-1">
+                          <svg class="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76" />
+                          </svg>
+                          <span>Postal: {{ party.postal_address }}</span>
+                        </div>
+                      </div>
+
+                      <div v-if="party.approval_obtained" class="mt-2 flex items-center gap-2">
+                        <span class="inline-flex items-center gap-1 text-xs text-green-700 bg-green-50 px-2 py-1 rounded">
+                          <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                          </svg>
+                          Written approval obtained
+                        </span>
+                        <span v-if="party.approval_date" class="text-xs text-gray-500">{{ party.approval_date }}</span>
+                      </div>
+
+                      <p v-if="party.comments" class="mt-2 text-xs text-gray-600 italic">{{ party.comments }}</p>
+                    </div>
+
+                    <div class="flex gap-1 ml-3">
+                      <button
+                        @click="editAffectedParty(index)"
+                        class="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                        title="Edit party"
+                      >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                      <button
+                        @click="removeAffectedParty(index)"
+                        class="p-1 text-red-600 hover:bg-red-50 rounded"
+                        title="Remove party"
+                      >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
-                  <button @click="removeAffectedParty(index)" class="text-red-600 hover:text-red-800">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
                 </div>
               </div>
 
@@ -1396,6 +1458,175 @@
         </div>
       </div>
     </main>
+
+    <!-- Affected Party Modal -->
+    <div
+      v-if="showAffectedPartyModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      @click.self="cancelAffectedParty"
+    >
+      <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-gray-900">
+              {{ editingPartyIndex !== null ? 'Edit' : 'Add' }} Affected Party
+            </h3>
+            <button
+              @click="cancelAffectedParty"
+              class="text-gray-400 hover:text-gray-600"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="px-6 py-4 space-y-4">
+          <!-- Party Name * -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Party Name <span class="text-red-500">*</span>
+            </label>
+            <input
+              v-model="affectedPartyForm.party_name"
+              type="text"
+              required
+              placeholder="e.g., John Smith"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+
+          <!-- Relationship * -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Relationship <span class="text-red-500">*</span>
+            </label>
+            <select
+              v-model="affectedPartyForm.relationship"
+              required
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">Select relationship</option>
+              <option value="Adjacent Property Owner">Adjacent Property Owner</option>
+              <option value="Neighbor">Neighbor</option>
+              <option value="Iwi">Iwi</option>
+              <option value="Infrastructure Provider">Infrastructure Provider</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <!-- Contact Information -->
+          <div class="border-t border-gray-200 pt-4">
+            <h4 class="text-sm font-medium text-gray-900 mb-3">Contact Information</h4>
+
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Email</label>
+                <input
+                  v-model="affectedPartyForm.email"
+                  type="email"
+                  placeholder="email@example.com"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                />
+              </div>
+
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Phone</label>
+                <input
+                  v-model="affectedPartyForm.phone"
+                  type="tel"
+                  placeholder="021 123 4567"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Addresses -->
+          <div class="border-t border-gray-200 pt-4">
+            <h4 class="text-sm font-medium text-gray-900 mb-3">Addresses</h4>
+
+            <div class="space-y-3">
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Property Address</label>
+                <textarea
+                  v-model="affectedPartyForm.property_address"
+                  rows="2"
+                  placeholder="123 Main Street, Suburb, City"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                ></textarea>
+                <p class="mt-1 text-xs text-gray-500">The property address affected by this proposal</p>
+              </div>
+
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Postal Address</label>
+                <textarea
+                  v-model="affectedPartyForm.postal_address"
+                  rows="2"
+                  placeholder="PO Box 123, Suburb, City"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                ></textarea>
+                <p class="mt-1 text-xs text-gray-500">For correspondence (if different from property address)</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Approval -->
+          <div class="border-t border-gray-200 pt-4">
+            <h4 class="text-sm font-medium text-gray-900 mb-3">Written Approval</h4>
+
+            <div class="flex items-start mb-3">
+              <input
+                type="checkbox"
+                v-model="affectedPartyForm.approval_obtained"
+                class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <label class="ml-3 text-sm text-gray-700">
+                Written approval obtained from this party
+              </label>
+            </div>
+
+            <div v-if="affectedPartyForm.approval_obtained" class="ml-7">
+              <label class="block text-xs font-medium text-gray-700 mb-1">Approval Date</label>
+              <input
+                v-model="affectedPartyForm.approval_date"
+                type="date"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+              />
+            </div>
+          </div>
+
+          <!-- Comments -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Comments</label>
+            <textarea
+              v-model="affectedPartyForm.comments"
+              rows="3"
+              placeholder="Any additional notes about this party or their concerns..."
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex justify-end gap-3">
+          <button
+            @click="cancelAffectedParty"
+            type="button"
+            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+          >
+            Cancel
+          </button>
+          <button
+            @click="saveAffectedParty"
+            type="button"
+            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+          >
+            {{ editingPartyIndex !== null ? 'Update' : 'Add' }} Party
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -1988,20 +2219,63 @@ const bookPreApplicationMeeting = async () => {
 // Resource Consent specific methods
 const ciaFileInput = ref(null)
 
+// Affected Party Modal
+const showAffectedPartyModal = ref(false)
+const editingPartyIndex = ref(null)
+const affectedPartyForm = ref({
+  party_name: '',
+  relationship: '',
+  property_address: '',
+  email: '',
+  phone: '',
+  postal_address: '',
+  approval_obtained: false,
+  approval_date: '',
+  comments: ''
+})
+
 const addAffectedParty = () => {
-  const partyName = prompt('Enter affected party name:')
-  if (!partyName) return
+  // Reset form
+  affectedPartyForm.value = {
+    party_name: '',
+    relationship: '',
+    property_address: '',
+    email: '',
+    phone: '',
+    postal_address: '',
+    approval_obtained: false,
+    approval_date: '',
+    comments: ''
+  }
+  editingPartyIndex.value = null
+  showAffectedPartyModal.value = true
+}
 
-  const address = prompt('Enter address:')
-  if (!address) return
+const editAffectedParty = (index) => {
+  affectedPartyForm.value = { ...formData.value.affected_parties[index] }
+  editingPartyIndex.value = index
+  showAffectedPartyModal.value = true
+}
 
-  const writtenApproval = confirm('Has written approval been obtained from this party?')
+const saveAffectedParty = () => {
+  if (!affectedPartyForm.value.party_name || !affectedPartyForm.value.relationship) {
+    alert('Please enter party name and relationship')
+    return
+  }
 
-  formData.value.affected_parties.push({
-    party_name: partyName,
-    address: address,
-    written_approval_obtained: writtenApproval
-  })
+  if (editingPartyIndex.value !== null) {
+    // Edit existing
+    formData.value.affected_parties[editingPartyIndex.value] = { ...affectedPartyForm.value }
+  } else {
+    // Add new
+    formData.value.affected_parties.push({ ...affectedPartyForm.value })
+  }
+
+  showAffectedPartyModal.value = false
+}
+
+const cancelAffectedParty = () => {
+  showAffectedPartyModal.value = false
 }
 
 const removeAffectedParty = (index) => {
