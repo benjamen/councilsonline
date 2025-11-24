@@ -23,6 +23,7 @@ const routes = [
 		path: "/request/new",
 		name: "NewRequest",
 		component: () => import("@/pages/NewRequest.vue"),
+		meta: { public: true }
 	},
 	{
 		path: "/request/:id",
