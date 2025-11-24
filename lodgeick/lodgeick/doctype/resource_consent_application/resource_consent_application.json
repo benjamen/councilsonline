@@ -10,6 +10,14 @@
   "section_break_consent",
   "consent_types",
   "activity_status",
+  "section_break_permitted_boundary",
+  "permitted_boundary_activity",
+  "boundary_description",
+  "column_break_pba",
+  "boundary_activity_description",
+  "boundary_owner_approval_obtained",
+  "boundary_approval_date",
+  "boundary_approval_document",
   "section_break_statutory_clock",
   "statutory_clock_started",
   "statutory_clock_stopped",
@@ -41,6 +49,12 @@
   "column_break_infrastructure",
   "existing_infrastructure",
   "contamination_status_hail",
+  "section_break_natural_hazards",
+  "natural_hazards",
+  "section_break_nes",
+  "nes_assessments",
+  "section_break_hail",
+  "hail_activities",
   "assessment_of_effects_tab",
   "section_break_assessment",
   "assessment_of_effects",
@@ -89,6 +103,9 @@
   "lapse_date",
   "review_date",
   "consent_duration",
+  "section_break_confidential",
+  "confidential_information_claimed",
+  "confidential_information_reason",
   "notification_submissions_tab",
   "section_break_notification",
   "notification_level",
@@ -128,7 +145,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Activity Status",
-   "options": "Permitted\nControlled\nRestricted Discretionary\nDiscretionary\nNon-Complying\nProhibited",
+   "options": "Permitted\nControlled\nRestricted Discretionary\nDiscretionary\nNon-Complying\nProhibited\nPermitted Boundary Activity",
    "reqd": 1
   },
   {
@@ -614,6 +631,115 @@
    "fieldname": "decision_tab",
    "fieldtype": "Tab Break",
    "label": "Decision & Consent Conditions"
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "eval:doc.activity_status=='Permitted Boundary Activity'",
+   "description": "For applications under RMA s87BA - Permitted Boundary Activities",
+   "fieldname": "section_break_permitted_boundary",
+   "fieldtype": "Section Break",
+   "label": "Permitted Boundary Activity (s87BA)"
+  },
+  {
+   "default": "0",
+   "fieldname": "permitted_boundary_activity",
+   "fieldtype": "Check",
+   "label": "Permitted Boundary Activity"
+  },
+  {
+   "depends_on": "permitted_boundary_activity",
+   "fieldname": "boundary_description",
+   "fieldtype": "Small Text",
+   "label": "Boundary Description"
+  },
+  {
+   "fieldname": "column_break_pba",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "permitted_boundary_activity",
+   "fieldname": "boundary_activity_description",
+   "fieldtype": "Text",
+   "label": "Activity Breaching Boundary Rules"
+  },
+  {
+   "default": "0",
+   "depends_on": "permitted_boundary_activity",
+   "fieldname": "boundary_owner_approval_obtained",
+   "fieldtype": "Check",
+   "label": "Boundary Owner Approval Obtained"
+  },
+  {
+   "depends_on": "boundary_owner_approval_obtained",
+   "fieldname": "boundary_approval_date",
+   "fieldtype": "Date",
+   "label": "Approval Date"
+  },
+  {
+   "depends_on": "boundary_owner_approval_obtained",
+   "fieldname": "boundary_approval_document",
+   "fieldtype": "Attach",
+   "label": "Approval Document"
+  },
+  {
+   "collapsible": 1,
+   "description": "Natural hazards assessment as required under RMA s104",
+   "fieldname": "section_break_natural_hazards",
+   "fieldtype": "Section Break",
+   "label": "Natural Hazards Assessment"
+  },
+  {
+   "fieldname": "natural_hazards",
+   "fieldtype": "Table",
+   "label": "Natural Hazards",
+   "options": "Natural Hazard"
+  },
+  {
+   "collapsible": 1,
+   "description": "National Environmental Standards compliance assessment",
+   "fieldname": "section_break_nes",
+   "fieldtype": "Section Break",
+   "label": "National Environmental Standards"
+  },
+  {
+   "fieldname": "nes_assessments",
+   "fieldtype": "Table",
+   "label": "NES Assessments",
+   "options": "NES Assessment"
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "eval:doc.nes_assessments && doc.nes_assessments.some(a => a.nes_type.includes('HAIL'))",
+   "description": "Hazardous Activities and Industries List (HAIL) for NES Soils",
+   "fieldname": "section_break_hail",
+   "fieldtype": "Section Break",
+   "label": "HAIL Activities"
+  },
+  {
+   "fieldname": "hail_activities",
+   "fieldtype": "Table",
+   "label": "HAIL Activities",
+   "options": "HAIL Activity"
+  },
+  {
+   "collapsible": 1,
+   "description": "RMA s42 - Confidential information (trade secrets, commercial sensitivity)",
+   "fieldname": "section_break_confidential",
+   "fieldtype": "Section Break",
+   "label": "Confidential Information"
+  },
+  {
+   "default": "0",
+   "fieldname": "confidential_information_claimed",
+   "fieldtype": "Check",
+   "label": "Contains Confidential Information"
+  },
+  {
+   "depends_on": "confidential_information_claimed",
+   "description": "Justify why information should be withheld from public under s42 RMA",
+   "fieldname": "confidential_information_reason",
+   "fieldtype": "Text Editor",
+   "label": "Justification for Confidentiality"
   }
  ],
  "index_web_pages_for_search": 1,
