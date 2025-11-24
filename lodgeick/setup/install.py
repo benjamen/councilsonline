@@ -143,7 +143,7 @@ def install_consent_condition_templates(force=False):
 			"condition_category": "Earthworks",
 			"is_standard": 1,
 			"is_active": 1,
-			"applies_to_consent_types": "Land Use\nEarthworks",
+			"applies_to_consent_types": "All",
 			"timing": "During Construction",
 			"monitoring_required": 1,
 			"condition_text": """<p>Prior to the commencement of earthworks, an Erosion and Sediment Control Plan (ESCP) shall be prepared in accordance with the Auckland Council Guideline Document GD05 and submitted to the Council for certification. The ESCP shall:</p>
