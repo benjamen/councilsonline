@@ -1,0 +1,65 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-11-25 08:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "hazard_type",
+  "present",
+  "risk_level",
+  "assessment_notes",
+  "mitigation_required"
+ ],
+ "fields": [
+  {
+   "fieldname": "hazard_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Hazard Type",
+   "options": "Earthquake\nFire\nTsunami\nErosion\nVolcanic and Geothermal\nFlood\nSedimentation\nSubsidence\nWind\nLandslip\nDrought",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "present",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Present"
+  },
+  {
+   "depends_on": "present",
+   "fieldname": "risk_level",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Risk Level",
+   "options": "\nLow\nMedium\nHigh\nExtreme"
+  },
+  {
+   "depends_on": "present",
+   "fieldname": "assessment_notes",
+   "fieldtype": "Small Text",
+   "label": "Assessment Notes"
+  },
+  {
+   "default": "0",
+   "depends_on": "present",
+   "fieldname": "mitigation_required",
+   "fieldtype": "Check",
+   "label": "Mitigation Required"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-11-25 08:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Natural Hazard",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
