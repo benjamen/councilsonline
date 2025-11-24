@@ -346,6 +346,26 @@ function add_custom_buttons(frm) {
 		}, __('Actions'));
 	}
 
+	// Button to refresh condition templates
+	frm.add_custom_button(__('Refresh Condition Templates'), function() {
+		frappe.confirm(
+			'This will clear existing conditions and reapply templates from the Request Type. Continue?',
+			() => {
+				frappe.call({
+					method: 'lodgeick.lodgeick.doctype.resource_consent_application.resource_consent_application.refresh_condition_templates',
+					args: {
+						resource_consent_name: frm.doc.name
+					},
+					callback: function(r) {
+						if (!r.exc) {
+							frm.reload_doc();
+						}
+					}
+				});
+			}
+		);
+	}, __('Conditions'));
+
 	// Button to start statutory clock
 	if (!frm.doc.statutory_clock_started && !frm.is_new()) {
 		frm.add_custom_button(__('Start Statutory Clock'), function() {

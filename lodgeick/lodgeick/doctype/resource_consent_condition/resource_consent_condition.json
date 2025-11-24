@@ -1,0 +1,73 @@
+{
+ "actions": [],
+ "creation": "2025-11-24 00:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "condition_number",
+  "condition_category",
+  "condition_text",
+  "column_break_1",
+  "compliance_status",
+  "compliance_due_date",
+  "compliance_notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "condition_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Condition Number",
+   "reqd": 1
+  },
+  {
+   "fieldname": "condition_category",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Category",
+   "options": "General\nTiming\nLapse\nReview\nFinancial Contribution\nBonds\nMonitoring\nEnvironmental Management\nConstruction\nOperation\nLandscape\nEcology\nArchaeology\nCultural\nTraffic\nParking\nNoise\nDischarge\nEarthworks\nOther",
+   "reqd": 1
+  },
+  {
+   "fieldname": "condition_text",
+   "fieldtype": "Text Editor",
+   "in_list_view": 1,
+   "label": "Condition",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Not Started",
+   "fieldname": "compliance_status",
+   "fieldtype": "Select",
+   "label": "Compliance Status",
+   "options": "Not Started\nIn Progress\nComplied\nNot Complied\nOngoing\nN/A"
+  },
+  {
+   "fieldname": "compliance_due_date",
+   "fieldtype": "Date",
+   "label": "Compliance Due Date"
+  },
+  {
+   "fieldname": "compliance_notes",
+   "fieldtype": "Small Text",
+   "label": "Compliance Notes"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-11-24 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Resource Consent Condition",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

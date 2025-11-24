@@ -354,8 +354,9 @@
   },
   {
    "fieldname": "conditions",
-   "fieldtype": "Text Editor",
-   "label": "Consent Conditions"
+   "fieldtype": "Table",
+   "label": "Consent Conditions",
+   "options": "Resource Consent Condition"
   },
   {
    "fieldname": "column_break_decision",
@@ -618,7 +619,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-11-23 20:30:00.000000",
+ "modified": "2025-11-24 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "Lodgeick",
  "name": "Resource Consent Application",

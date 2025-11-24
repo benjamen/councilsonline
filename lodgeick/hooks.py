@@ -83,7 +83,7 @@ home_page = "frontend"
 # ------------
 
 # before_install = "lodgeick.install.before_install"
-# after_install = "lodgeick.install.after_install"
+after_install = "lodgeick.install.after_install"
 
 # Uninstallation
 # ------------
@@ -202,6 +202,13 @@ doc_events = {
 # ----------
 # before_job = ["lodgeick.utils.before_job"]
 # after_job = ["lodgeick.utils.after_job"]
+
+# Custom Commands
+# ---------------
+# Add custom bench commands
+commands = [
+	"lodgeick.lodgeick.commands.install_default_data"
+]
 
 # User Data Protection
 # --------------------

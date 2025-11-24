@@ -6,6 +6,12 @@ from frappe.model.document import Document
 
 
 class ResourceConsentApplication(Document):
+    def before_insert(self):
+        """Actions before first insert"""
+        # Auto-populate conditions from Request Type templates
+        if self.request and not self.conditions:
+            self.apply_condition_templates()
+
     def validate(self):
         """Validation before saving"""
         # Ensure parent Request exists
@@ -90,3 +96,79 @@ class ResourceConsentApplication(Document):
         if self.statutory_clock_stopped:
             self.statutory_clock_stopped = None
             self.save(ignore_permissions=True)
+
+    def apply_condition_templates(self):
+        """
+        Apply condition templates from the Request Type to this Resource Consent Application.
+        This method is called automatically on document creation (before_insert).
+        Can also be called manually via a button to refresh conditions.
+        """
+        if not self.request:
+            return
+
+        # Get the parent Request
+        request = frappe.get_doc("Request", self.request)
+        if not request.request_type:
+            return
+
+        # Get the Request Type with its condition templates
+        request_type = frappe.get_doc("Request Type", request.request_type)
+
+        if not request_type.condition_templates:
+            return
+
+        # Counter for auto-numbering conditions
+        condition_number = 1
+
+        # Apply each template that has auto_apply enabled
+        for template_link in request_type.condition_templates:
+            if not template_link.auto_apply:
+                continue
+
+            # Get the condition template
+            template = frappe.get_doc("Consent Condition Template", template_link.condition_template)
+
+            if not template.is_active:
+                continue
+
+            # Use the template's instantiate method to create condition data
+            condition_data = template.instantiate_for_request(
+                request_doc=request,
+                condition_number=template_link.default_condition_number or str(condition_number)
+            )
+
+            # Append to conditions child table
+            self.append("conditions", condition_data)
+
+            condition_number += 1
+
+        frappe.msgprint(
+            f"Applied {len(self.conditions)} condition template(s) from Request Type: {request_type.type_name}",
+            indicator="green",
+            alert=True
+        )
+
+
+@frappe.whitelist()
+def refresh_condition_templates(resource_consent_name):
+    """
+    API method to refresh condition templates for an existing Resource Consent Application.
+    This clears existing conditions and reapplies templates.
+    """
+    doc = frappe.get_doc("Resource Consent Application", resource_consent_name)
+
+    # Clear existing conditions
+    doc.conditions = []
+
+    # Reapply templates
+    doc.apply_condition_templates()
+
+    # Save the document
+    doc.save()
+
+    frappe.msgprint(
+        f"Conditions refreshed. {len(doc.conditions)} template(s) applied.",
+        indicator="green"
+    )
+
+    return doc

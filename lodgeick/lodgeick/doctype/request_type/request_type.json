@@ -15,6 +15,8 @@
   "processing_sla_days",
   "workflow_template",
   "default_assessment_template",
+  "section_break_conditions",
+  "condition_templates",
   "section_break_fees",
   "base_fee",
   "fee_calculation_method",
@@ -80,6 +82,18 @@
    "label": "Default Assessment Template",
    "options": "Assessment Template",
    "description": "Auto-assigned when request is acknowledged. Determines which stages and tasks are created."
+  },
+  {
+   "fieldname": "section_break_conditions",
+   "fieldtype": "Section Break",
+   "label": "Default Consent Conditions"
+  },
+  {
+   "description": "Condition templates that will be automatically applied to Resource Consent Applications of this type",
+   "fieldname": "condition_templates",
+   "fieldtype": "Table",
+   "label": "Condition Templates",
+   "options": "Request Type Condition Template"
   },
   {
    "fieldname": "section_break_fees",
@@ -153,7 +167,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 0,
  "links": [],
- "modified": "2025-11-05 19:30:00",
+ "modified": "2025-11-24 01:00:00",
  "modified_by": "Administrator",
  "module": "Lodgeick",
  "name": "Request Type",

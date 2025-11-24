@@ -1,0 +1,83 @@
+{
+ "actions": [],
+ "creation": "2025-11-24 01:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "condition_template",
+  "condition_code",
+  "column_break_1",
+  "is_mandatory",
+  "auto_apply",
+  "section_break_2",
+  "default_condition_number",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "condition_template",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Condition Template",
+   "options": "Consent Condition Template",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "condition_template.condition_code",
+   "fieldname": "condition_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Code",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "description": "If checked, this condition must be included in all consents of this type",
+   "fieldname": "is_mandatory",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Mandatory"
+  },
+  {
+   "default": "1",
+   "description": "If checked, this condition will be automatically added when the consent is created",
+   "fieldname": "auto_apply",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Auto Apply"
+  },
+  {
+   "fieldname": "section_break_2",
+   "fieldtype": "Section Break"
+  },
+  {
+   "description": "Suggested condition number when applied (leave blank for auto-numbering)",
+   "fieldname": "default_condition_number",
+   "fieldtype": "Data",
+   "label": "Default Condition Number"
+  },
+  {
+   "description": "Notes about using this condition for this request type",
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-11-24 01:00:00",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Request Type Condition Template",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
