@@ -21,7 +21,7 @@ frappe.ui.form.on('Resource Consent Application', {
  * Add statutory clock indicator to the top of the form
  */
 function add_statutory_clock_indicator(frm) {
-	if (!frm.doc.working_days_elapsed && !frm.doc.working_days_remaining) {
+	if (!frm.doc.statutory_clock_started) {
 		return;
 	}
 
@@ -30,10 +30,16 @@ function add_statutory_clock_indicator(frm) {
 	const total_days = days_elapsed + days_remaining;
 	const percentage = total_days > 0 ? (days_elapsed / total_days) * 100 : 0;
 
+	// Check if clock is currently running
+	const is_running = frm.doc.statutory_clock_started && !frm.doc.statutory_clock_stopped;
+
 	// Determine status color
 	let status_color = 'green';
 	let status_text = 'On Track';
-	if (percentage > 80) {
+	if (!is_running) {
+		status_color = 'gray';
+		status_text = 'Stopped';
+	} else if (percentage > 80) {
 		status_color = 'red';
 		status_text = 'Urgent';
 	} else if (percentage > 60) {
@@ -41,60 +47,145 @@ function add_statutory_clock_indicator(frm) {
 		status_text = 'Monitor';
 	}
 
-	// Check if clock is stopped
-	const clock_stopped = frm.doc.statutory_clock_stopped;
-	if (clock_stopped) {
-		status_color = 'gray';
-		status_text = 'Stopped (RFI)';
+	// Calculate days since last start/stop for display
+	let runtime_info = '';
+	if (is_running && frm.doc.statutory_clock_started) {
+		const now = new Date();
+		const started = new Date(frm.doc.statutory_clock_started);
+		const calendar_days = Math.floor((now - started) / (1000 * 60 * 60 * 24));
+		runtime_info = `Running for ${calendar_days} calendar day${calendar_days !== 1 ? 's' : ''}`;
+	} else if (frm.doc.statutory_clock_stopped) {
+		const stopped = new Date(frm.doc.statutory_clock_stopped);
+		const started = new Date(frm.doc.statutory_clock_started);
+		const calendar_days = Math.floor((stopped - started) / (1000 * 60 * 60 * 24));
+		runtime_info = `Stopped after ${calendar_days} calendar day${calendar_days !== 1 ? 's' : ''}`;
 	}
 
-	// Create clock indicator HTML
+	// Format dates for display
+	const format_datetime = (dt) => {
+		if (!dt) return 'N/A';
+		const date = new Date(dt);
+		return date.toLocaleString('en-NZ', {
+			year: 'numeric',
+			month: 'short',
+			day: 'numeric',
+			hour: '2-digit',
+			minute: '2-digit'
+		});
+	};
+
+	// Create comprehensive clock summary panel
 	const clock_html = `
 		<div class="statutory-clock-indicator" style="
 			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 			color: white;
-			padding: 15px 20px;
+			padding: 20px;
 			margin: -15px -15px 20px -15px;
 			border-radius: 8px 8px 0 0;
 			box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 		">
-			<div style="display: flex; justify-content: space-between; align-items: center;">
+			<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
 				<div style="flex: 1;">
-					<div style="font-size: 11px; text-transform: uppercase; opacity: 0.8; margin-bottom: 5px;">
-						RMA Statutory Clock
+					<div style="font-size: 11px; text-transform: uppercase; opacity: 0.8; margin-bottom: 5px; letter-spacing: 0.5px;">
+						🕐 Statutory Clock Status
 					</div>
-					<div style="font-size: 24px; font-weight: bold;">
-						${days_elapsed} / ${total_days} days
+					<div style="font-size: 28px; font-weight: bold; line-height: 1.2;">
+						${days_elapsed} working days
 					</div>
-					<div style="font-size: 12px; opacity: 0.9; margin-top: 3px;">
-						${days_remaining} working days remaining
+					<div style="font-size: 13px; opacity: 0.9; margin-top: 5px;">
+						${days_remaining} day${days_remaining !== 1 ? 's' : ''} remaining of ${total_days} total
 					</div>
 				</div>
 				<div style="text-align: right;">
 					<div style="
 						background: ${status_color === 'green' ? '#10b981' : status_color === 'orange' ? '#f59e0b' : status_color === 'red' ? '#ef4444' : '#6b7280'};
-						padding: 8px 16px;
+						padding: 10px 18px;
 						border-radius: 20px;
 						font-size: 13px;
 						font-weight: 600;
 						display: inline-block;
 						box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+						margin-bottom: 8px;
 					">
-						${status_text}
+						${is_running ? '▶' : '⏸'} ${status_text}
 					</div>
-					<div style="margin-top: 8px; font-size: 11px; opacity: 0.8;">
+					<div style="font-size: 11px; opacity: 0.85;">
 						${Math.round(percentage)}% elapsed
 					</div>
 				</div>
 			</div>
-			<div style="margin-top: 12px; background: rgba(255,255,255,0.2); border-radius: 10px; height: 8px; overflow: hidden;">
+
+			<!-- Progress Bar -->
+			<div style="margin-bottom: 15px; background: rgba(255,255,255,0.2); border-radius: 10px; height: 10px; overflow: hidden;">
 				<div style="
 					width: ${percentage}%;
 					height: 100%;
-					background: ${status_color === 'red' ? '#ef4444' : status_color === 'orange' ? '#f59e0b' : '#10b981'};
+					background: ${status_color === 'red' ? '#ef4444' : status_color === 'orange' ? '#f59e0b' : status_color === 'gray' ? '#6b7280' : '#10b981'};
 					transition: width 0.3s ease;
+					box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
 				"></div>
 			</div>
+
+			<!-- Clock Details Grid -->
+			<div style="
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+				gap: 12px;
+				background: rgba(255,255,255,0.1);
+				padding: 12px;
+				border-radius: 6px;
+			">
+				<div>
+					<div style="font-size: 10px; text-transform: uppercase; opacity: 0.7; margin-bottom: 4px;">
+						Last Started
+					</div>
+					<div style="font-size: 12px; font-weight: 500;">
+						${format_datetime(frm.doc.statutory_clock_started)}
+					</div>
+				</div>
+				<div>
+					<div style="font-size: 10px; text-transform: uppercase; opacity: 0.7; margin-bottom: 4px;">
+						Last Stopped
+					</div>
+					<div style="font-size: 12px; font-weight: 500;">
+						${format_datetime(frm.doc.statutory_clock_stopped)}
+					</div>
+				</div>
+				<div>
+					<div style="font-size: 10px; text-transform: uppercase; opacity: 0.7; margin-bottom: 4px;">
+						Current Status
+					</div>
+					<div style="font-size: 12px; font-weight: 500;">
+						${runtime_info || 'N/A'}
+					</div>
+				</div>
+			</div>
+
+			${is_running ? `
+				<div style="
+					margin-top: 12px;
+					padding: 8px 12px;
+					background: rgba(255,255,255,0.15);
+					border-left: 3px solid #10b981;
+					border-radius: 4px;
+					font-size: 11px;
+					opacity: 0.9;
+				">
+					ℹ️ Clock is actively counting. Working days exclude weekends and public holidays.
+				</div>
+			` : `
+				<div style="
+					margin-top: 12px;
+					padding: 8px 12px;
+					background: rgba(255,255,255,0.15);
+					border-left: 3px solid #f59e0b;
+					border-radius: 4px;
+					font-size: 11px;
+					opacity: 0.9;
+				">
+					⚠️ Clock is paused. This period is excluded from working days calculation.
+				</div>
+			`}
 		</div>
 	`;
 
