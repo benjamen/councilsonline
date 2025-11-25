@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "nes_type",
+  "other_nes_description",
   "applies",
   "compliance_status",
   "assessment_notes"
@@ -17,8 +18,15 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "NES Type",
-   "options": "NES for Assessing and Managing Contaminants in Soil (HAIL)\nNES for Air Quality\nNES for Freshwater Management\nNES for Plantation Forestry\nNES for Electricity Transmission Activities\nNES for Telecommunication Facilities",
+   "options": "NES for Assessing and Managing Contaminants in Soil (HAIL)\nNES for Air Quality\nNES for Sources of Human Drinking Water\nNES for Freshwater Management\nNES for Plantation Forestry\nNES for Electricity Transmission Activities\nNES for Telecommunication Facilities\nOther",
    "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.nes_type=='Other'",
+   "fieldname": "other_nes_description",
+   "fieldtype": "Small Text",
+   "label": "Other NES Description",
+   "mandatory_depends_on": "eval:doc.nes_type=='Other'"
   },
   {
    "default": "0",

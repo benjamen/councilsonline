@@ -4,6 +4,7 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "document_category",
   "document_type",
   "file",
   "description",
@@ -14,10 +15,18 @@
  ],
  "fields": [
   {
+   "fieldname": "document_category",
+   "fieldtype": "Select",
+   "label": "Document Category",
+   "options": "General\nPlanning\nEngineering\nSpecialist\nNES Documentation\nHAIL Documentation\nOther",
+   "default": "General",
+   "reqd": 1
+  },
+  {
    "fieldname": "document_type",
    "fieldtype": "Select",
    "label": "Document Type",
-   "options": "Site Plan\nFloor Plans\nElevations\nCross Sections\nPhotographs\nSpecialist Report\nWritten Approval\nCertificate of Title\nOther",
+   "options": "Site Plan\nFloor Plans\nElevations\nCross Sections\nPhotographs\nSpecialist Report\nWritten Approval\nCertificate of Title\nNES Assessment\nHAIL Site Investigation\nPreliminary Site Investigation\nDetailed Site Investigation\nContamination Report\nSoil Sample Analysis\nOther",
    "reqd": 1
   },
   {

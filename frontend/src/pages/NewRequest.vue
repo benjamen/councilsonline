@@ -689,6 +689,29 @@
               <h3 class="text-sm font-semibold text-gray-900 mb-2">National Environmental Standards (NES) Assessment</h3>
               <p class="text-xs text-gray-500 mb-4">Indicate which National Environmental Standards apply to this proposal</p>
 
+              <!-- Context Summary Panel -->
+              <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                <h4 class="text-sm font-semibold text-blue-900 mb-2">Application Context</h4>
+                <div class="grid md:grid-cols-2 gap-3 text-xs">
+                  <div>
+                    <span class="font-medium text-blue-800">Applicant:</span>
+                    <span class="text-blue-700 ml-1">{{ formData.applicant_name || 'Not provided' }}</span>
+                  </div>
+                  <div>
+                    <span class="font-medium text-blue-800">Location:</span>
+                    <span class="text-blue-700 ml-1">{{ formData.property_address || 'Not provided' }}</span>
+                  </div>
+                  <div>
+                    <span class="font-medium text-blue-800">Consent Type(s):</span>
+                    <span class="text-blue-700 ml-1">{{ formData.consent_types.map(ct => ct.consent_type).join(', ') || 'Not selected' }}</span>
+                  </div>
+                  <div>
+                    <span class="font-medium text-blue-800">Activity Status:</span>
+                    <span class="text-blue-700 ml-1">{{ formData.activity_status || 'Not selected' }}</span>
+                  </div>
+                </div>
+              </div>
+
               <div class="space-y-3">
                 <div v-for="nesType in nesTypes" :key="nesType.value" class="border border-gray-200 rounded-lg p-3 bg-gray-50">
                   <div class="flex items-start mb-2">
@@ -704,6 +727,18 @@
                   </div>
 
                   <div v-if="getNESData(nesType.value).applies" class="ml-7 mt-3 space-y-3 border-l-2 border-blue-300 pl-3">
+                    <!-- Other NES Description (conditional) -->
+                    <div v-if="nesType.value === 'Other'">
+                      <label class="block text-xs font-medium text-gray-700 mb-1">Other NES Description *</label>
+                      <input
+                        v-model="getNESData(nesType.value).other_nes_description"
+                        type="text"
+                        required
+                        class="w-full px-2 py-1 border border-gray-300 rounded text-sm bg-white"
+                        placeholder="Please specify the NES type..."
+                      />
+                    </div>
+
                     <div>
                       <label class="block text-xs font-medium text-gray-700 mb-1">Compliance Status</label>
                       <select
@@ -725,6 +760,33 @@
                         class="w-full px-2 py-1 border border-gray-300 rounded text-sm bg-white"
                         placeholder="Provide details on how the NES applies..."
                       ></textarea>
+                    </div>
+
+                    <!-- In-context NES Document Upload -->
+                    <div>
+                      <label class="block text-xs font-medium text-gray-700 mb-1">Upload NES Assessment Document</label>
+                      <div class="flex items-center gap-2">
+                        <input
+                          type="file"
+                          @change="handleNESDocumentUpload($event, nesType.value)"
+                          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                          class="text-xs file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                        />
+                      </div>
+                      <p class="text-xs text-gray-500 mt-1">PDF, Word documents, or images (max 10MB)</p>
+                      <!-- Show uploaded NES documents for this type -->
+                      <div v-if="getNESDocuments(nesType.value).length > 0" class="mt-2 space-y-1">
+                        <div v-for="(doc, docIdx) in getNESDocuments(nesType.value)" :key="docIdx" class="flex items-center justify-between text-xs bg-gray-50 p-2 rounded">
+                          <span class="text-gray-700">{{ doc.document_type }} - {{ doc.file?.name || 'Uploaded' }}</span>
+                          <button
+                            @click="removeNESDocument(nesType.value, docIdx)"
+                            type="button"
+                            class="text-red-600 hover:text-red-800"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -778,6 +840,26 @@
                       ></textarea>
                     </div>
 
+                    <div>
+                      <label class="block text-xs font-medium text-gray-700 mb-1">HAIL Category</label>
+                      <select
+                        v-model="hail.hail_category"
+                        class="w-full px-2 py-1 border border-gray-300 rounded text-sm bg-white"
+                      >
+                        <option value="">Select HAIL category</option>
+                        <option value="Category A - Petroleum/Oil Storage">Category A - Petroleum/Oil Storage</option>
+                        <option value="Category B - Asbestos Products">Category B - Asbestos Products</option>
+                        <option value="Category C - Chemicals">Category C - Chemicals</option>
+                        <option value="Category D - Engineering Workshops">Category D - Engineering Workshops</option>
+                        <option value="Category E - Gasworks/Coke Works">Category E - Gasworks/Coke Works</option>
+                        <option value="Category F - Horticulture">Category F - Horticulture</option>
+                        <option value="Category G - Landfills/Waste Disposal">Category G - Landfills/Waste Disposal</option>
+                        <option value="Category H - Metal Treatment">Category H - Metal Treatment</option>
+                        <option value="Category I - Timber Treatment">Category I - Timber Treatment</option>
+                      </select>
+                      <p class="text-xs text-gray-500 mt-1">Select the applicable HAIL category for this activity</p>
+                    </div>
+
                     <div class="grid md:grid-cols-3 gap-3">
                       <div class="flex items-center">
                         <input
@@ -821,18 +903,60 @@
                     </div>
 
                     <div>
-                      <label class="block text-xs font-medium text-gray-700 mb-1">Proposed Activity</label>
-                      <select
-                        v-model="hail.proposed_activity"
-                        class="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                      >
-                        <option value="">Select proposed activity</option>
-                        <option value="Removing or replacing fuel storage system">Removing or replacing fuel storage system</option>
-                        <option value="Disturbing soil">Disturbing soil</option>
-                        <option value="Sampling soil">Sampling soil</option>
-                        <option value="Subdividing land">Subdividing land</option>
-                        <option value="Changing use of land">Changing use of land</option>
-                      </select>
+                      <label class="block text-xs font-medium text-gray-700 mb-2">Proposed Activities</label>
+                      <div class="space-y-2 p-3 border border-gray-200 rounded bg-gray-50">
+                        <div class="flex items-center">
+                          <input
+                            type="checkbox"
+                            :id="'hail-activity-fuel-' + index"
+                            @change="toggleHAILProposedActivity(index, 'Removing or replacing fuel storage system')"
+                            :checked="isHAILActivitySelected(index, 'Removing or replacing fuel storage system')"
+                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          />
+                          <label :for="'hail-activity-fuel-' + index" class="ml-2 text-xs text-gray-700">Removing or replacing fuel storage system</label>
+                        </div>
+                        <div class="flex items-center">
+                          <input
+                            type="checkbox"
+                            :id="'hail-activity-disturb-' + index"
+                            @change="toggleHAILProposedActivity(index, 'Disturbing soil')"
+                            :checked="isHAILActivitySelected(index, 'Disturbing soil')"
+                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          />
+                          <label :for="'hail-activity-disturb-' + index" class="ml-2 text-xs text-gray-700">Disturbing soil</label>
+                        </div>
+                        <div class="flex items-center">
+                          <input
+                            type="checkbox"
+                            :id="'hail-activity-sample-' + index"
+                            @change="toggleHAILProposedActivity(index, 'Sampling soil')"
+                            :checked="isHAILActivitySelected(index, 'Sampling soil')"
+                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          />
+                          <label :for="'hail-activity-sample-' + index" class="ml-2 text-xs text-gray-700">Sampling soil</label>
+                        </div>
+                        <div class="flex items-center">
+                          <input
+                            type="checkbox"
+                            :id="'hail-activity-subdivide-' + index"
+                            @change="toggleHAILProposedActivity(index, 'Subdividing land')"
+                            :checked="isHAILActivitySelected(index, 'Subdividing land')"
+                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          />
+                          <label :for="'hail-activity-subdivide-' + index" class="ml-2 text-xs text-gray-700">Subdividing land</label>
+                        </div>
+                        <div class="flex items-center">
+                          <input
+                            type="checkbox"
+                            :id="'hail-activity-change-' + index"
+                            @change="toggleHAILProposedActivity(index, 'Changing use of land')"
+                            :checked="isHAILActivitySelected(index, 'Changing use of land')"
+                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          />
+                          <label :for="'hail-activity-change-' + index" class="ml-2 text-xs text-gray-700">Changing use of land</label>
+                        </div>
+                      </div>
+                      <p class="text-xs text-gray-500 mt-1">Select all proposed activities that apply (multiple allowed)</p>
                     </div>
 
                     <div>
@@ -2348,10 +2472,12 @@ watch(hazardData, () => {
 const nesTypes = [
   { value: 'NES for Assessing and Managing Contaminants in Soil (HAIL)', label: 'NES for Assessing and Managing Contaminants in Soil (HAIL)' },
   { value: 'NES for Air Quality', label: 'NES for Air Quality' },
+  { value: 'NES for Sources of Human Drinking Water', label: 'NES for Sources of Human Drinking Water' },
   { value: 'NES for Freshwater Management', label: 'NES for Freshwater Management' },
   { value: 'NES for Plantation Forestry', label: 'NES for Plantation Forestry' },
   { value: 'NES for Electricity Transmission Activities', label: 'NES for Electricity Transmission Activities' },
-  { value: 'NES for Telecommunication Facilities', label: 'NES for Telecommunication Facilities' }
+  { value: 'NES for Telecommunication Facilities', label: 'NES for Telecommunication Facilities' },
+  { value: 'Other', label: 'Other NES' }
 ]
 
 const nesData = ref({})
@@ -2363,10 +2489,57 @@ const getNESData = (nesType) => {
       nes_type: nesType,
       applies: false,
       compliance_status: '',
-      assessment_notes: ''
+      assessment_notes: '',
+      other_nes_description: ''
     }
   }
   return nesData.value[nesType]
+}
+
+// NES Document Upload Handling
+const handleNESDocumentUpload = (event, nesType) => {
+  const file = event.target.files[0]
+  if (!file) return
+
+  // Validation
+  if (file.size > 10 * 1024 * 1024) {
+    alert('File size must be less than 10MB')
+    event.target.value = ''
+    return
+  }
+
+  const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/jpg', 'image/png']
+  if (!allowedTypes.includes(file.type)) {
+    alert('Only PDF, Word documents, and images are allowed')
+    event.target.value = ''
+    return
+  }
+
+  // Add to attachments with NES category
+  formData.value.attachments.push({
+    document_category: 'NES Documentation',
+    document_type: 'NES Assessment',
+    file: file,
+    description: `NES Assessment for ${nesType}`,
+    nes_type: nesType  // Track which NES this belongs to
+  })
+
+  event.target.value = ''
+}
+
+const getNESDocuments = (nesType) => {
+  return formData.value.attachments.filter(att =>
+    att.document_category === 'NES Documentation' && att.nes_type === nesType
+  )
+}
+
+const removeNESDocument = (nesType, docIdx) => {
+  const nesDocuments = getNESDocuments(nesType)
+  const docToRemove = nesDocuments[docIdx]
+  const globalIdx = formData.value.attachments.indexOf(docToRemove)
+  if (globalIdx > -1) {
+    formData.value.attachments.splice(globalIdx, 1)
+  }
 }
 
 // Watch nesData to update formData.nes_assessments
@@ -2387,17 +2560,39 @@ const isNESSoilsSelected = computed(() => {
 const addHAILActivity = () => {
   formData.value.hail_activities.push({
     activity_description: '',
+    hail_category: '',
     currently_undertaken: false,
     previously_undertaken: false,
     likely_undertaken: false,
     preliminary_investigation_done: false,
-    proposed_activity: '',
+    proposed_activities: [],  // Changed to array for multiple selections
     notes: ''
   })
 }
 
 const removeHAILActivity = (index) => {
   formData.value.hail_activities.splice(index, 1)
+}
+
+// HAIL Proposed Activity checkbox handlers
+const toggleHAILProposedActivity = (hailIndex, activityType) => {
+  const hail = formData.value.hail_activities[hailIndex]
+  if (!hail.proposed_activities) {
+    hail.proposed_activities = []
+  }
+
+  const activityIndex = hail.proposed_activities.findIndex(a => a.activity_type === activityType)
+  if (activityIndex > -1) {
+    hail.proposed_activities.splice(activityIndex, 1)
+  } else {
+    hail.proposed_activities.push({ activity_type: activityType })
+  }
+}
+
+const isHAILActivitySelected = (hailIndex, activityType) => {
+  const hail = formData.value.hail_activities[hailIndex]
+  if (!hail.proposed_activities) return false
+  return hail.proposed_activities.some(a => a.activity_type === activityType)
 }
 
 // Boundary Approval Document Upload
