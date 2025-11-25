@@ -92,6 +92,13 @@ website_route_rules = [
 # before_install = "lodgeick.install.before_install"
 after_install = "lodgeick.install.after_install"
 
+# Fixtures
+# --------
+# Load fixtures from JSON files on migrate/install
+fixtures = [
+	{"dt": "Print Format", "filters": [["module", "=", "Lodgeick"]]}
+]
+
 # Uninstallation
 # ------------
 
