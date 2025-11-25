@@ -367,8 +367,10 @@
   },
   {
    "fieldname": "proposed_conditions",
-   "fieldtype": "Text Editor",
-   "label": "Proposed Conditions"
+   "fieldtype": "Table",
+   "label": "Proposed Conditions",
+   "options": "Resource Consent Condition",
+   "description": "Conditions proposed by applicant - select from standard templates or create custom"
   },
   {
    "description": "Final decision and conditions imposed by the council",
