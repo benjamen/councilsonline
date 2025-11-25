@@ -1068,21 +1068,65 @@
                 Add any specialist technical reports (traffic, geotechnical, acoustic, ecological, etc.)
               </p>
 
-              <div v-if="formData.specialist_reports.length > 0" class="space-y-2 mb-3">
+              <div v-if="formData.specialist_reports.length > 0" class="space-y-3 mb-3">
                 <div
                   v-for="(report, index) in formData.specialist_reports"
                   :key="index"
-                  class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200"
+                  class="p-4 bg-white rounded-lg border border-gray-300 hover:border-blue-400 transition-colors"
                 >
-                  <div class="flex-1">
-                    <p class="text-sm font-medium text-gray-900">{{ report.report_type }}</p>
-                    <p class="text-xs text-gray-500">{{ report.specialist_name }} | {{ report.date_prepared }}</p>
+                  <div class="flex items-start justify-between mb-2">
+                    <div class="flex items-center gap-2">
+                      <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      <h4 class="text-sm font-semibold text-gray-900">{{ report.report_type }}</h4>
+                    </div>
+                    <span class="px-2 py-0.5 text-xs bg-purple-100 text-purple-700 rounded font-medium">
+                      {{ report.report_date }}
+                    </span>
                   </div>
-                  <button @click="removeSpecialistReport(index)" class="text-red-600 hover:text-red-800">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
+
+                  <div class="space-y-2 text-xs text-gray-600 mb-3">
+                    <div class="flex items-center gap-2">
+                      <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      <span class="font-medium">{{ report.specialist_name }}</span>
+                      <span v-if="report.specialist_company" class="text-gray-400">• {{ report.specialist_company }}</span>
+                    </div>
+
+                    <div v-if="report.document" class="flex items-center gap-2 text-blue-600">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                      </svg>
+                      <span>{{ typeof report.document === 'object' ? report.document.name : 'Document attached' }}</span>
+                    </div>
+
+                    <div v-if="report.summary" class="mt-2 p-2 bg-gray-50 rounded text-xs text-gray-700">
+                      <span class="font-medium">Summary: </span>{{ report.summary }}
+                    </div>
+                  </div>
+
+                  <div class="flex gap-2">
+                    <button
+                      @click="editSpecialistReport(index)"
+                      class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded transition-colors"
+                    >
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                      Edit
+                    </button>
+                    <button
+                      @click="removeSpecialistReport(index)"
+                      class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded transition-colors"
+                    >
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                      Remove
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -1623,6 +1667,153 @@
             class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
           >
             {{ editingPartyIndex !== null ? 'Update' : 'Add' }} Party
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Specialist Report Modal -->
+    <div
+      v-if="showSpecialistReportModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      @click.self="cancelSpecialistReport"
+    >
+      <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-gray-900">
+              {{ editingReportIndex !== null ? 'Edit' : 'Add' }} Specialist Report
+            </h3>
+            <button
+              @click="cancelSpecialistReport"
+              class="text-gray-400 hover:text-gray-600"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="px-6 py-4 space-y-4">
+          <!-- Report Type * -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Report Type <span class="text-red-500">*</span>
+            </label>
+            <select
+              v-model="specialistReportForm.report_type"
+              required
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">Select report type</option>
+              <option value="Traffic Impact Assessment">Traffic Impact Assessment</option>
+              <option value="Acoustic Assessment">Acoustic Assessment</option>
+              <option value="Geotechnical Report">Geotechnical Report</option>
+              <option value="Ecological Assessment">Ecological Assessment</option>
+              <option value="Archaeological Assessment">Archaeological Assessment</option>
+              <option value="Landscape Assessment">Landscape Assessment</option>
+              <option value="Contaminated Land Assessment">Contaminated Land Assessment</option>
+              <option value="Flood Risk Assessment">Flood Risk Assessment</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <!-- Consultant Details -->
+          <div class="border-t border-gray-200 pt-4">
+            <h4 class="text-sm font-medium text-gray-900 mb-3">Consultant Details</h4>
+
+            <div class="space-y-3">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Specialist Name <span class="text-red-500">*</span>
+                </label>
+                <input
+                  v-model="specialistReportForm.specialist_name"
+                  type="text"
+                  required
+                  placeholder="e.g., Dr. Jane Smith"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Company/Organization</label>
+                <input
+                  v-model="specialistReportForm.specialist_company"
+                  type="text"
+                  placeholder="e.g., ABC Consultants Ltd"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Report Details -->
+          <div class="border-t border-gray-200 pt-4">
+            <h4 class="text-sm font-medium text-gray-900 mb-3">Report Details</h4>
+
+            <div class="space-y-3">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Report Date <span class="text-red-500">*</span>
+                </label>
+                <input
+                  v-model="specialistReportForm.report_date"
+                  type="date"
+                  required
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+                <p class="mt-1 text-xs text-gray-500">Date the report was prepared or finalized</p>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Document <span class="text-red-500">*</span>
+                </label>
+                <input
+                  type="file"
+                  @change="handleReportDocumentUpload"
+                  accept=".pdf,.doc,.docx"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                />
+                <p class="mt-1 text-xs text-gray-500">Upload the specialist report (PDF or Word, max 10MB)</p>
+                <div v-if="specialistReportForm.document" class="mt-2 text-xs text-green-600 flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>{{ typeof specialistReportForm.document === 'object' ? specialistReportForm.document.name : 'Document attached' }}</span>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Summary</label>
+                <textarea
+                  v-model="specialistReportForm.summary"
+                  rows="4"
+                  placeholder="Brief summary of key findings and recommendations..."
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                ></textarea>
+                <p class="mt-1 text-xs text-gray-500">Optional: Provide a brief summary of the report's key findings</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex justify-end gap-3">
+          <button
+            @click="cancelSpecialistReport"
+            type="button"
+            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+          >
+            Cancel
+          </button>
+          <button
+            @click="saveSpecialistReport"
+            type="button"
+            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+          >
+            {{ editingReportIndex !== null ? 'Update' : 'Add' }} Report
           </button>
         </div>
       </div>
@@ -2284,39 +2475,80 @@ const removeAffectedParty = (index) => {
   }
 }
 
+// Specialist Report Modal
+const showSpecialistReportModal = ref(false)
+const editingReportIndex = ref(null)
+const specialistReportForm = ref({
+  report_type: '',
+  specialist_name: '',
+  specialist_company: '',
+  report_date: '',
+  document: null,
+  summary: ''
+})
+
 const addSpecialistReport = () => {
-  const reportTypes = [
-    'Traffic Assessment',
-    'Geotechnical Report',
-    'Acoustic Assessment',
-    'Stormwater Design',
-    'Ecological Assessment',
-    'Heritage Impact Assessment',
-    'Archaeological Assessment',
-    'Landscape Assessment',
-    'Other'
-  ]
+  specialistReportForm.value = {
+    report_type: '',
+    specialist_name: '',
+    specialist_company: '',
+    report_date: '',
+    document: null,
+    summary: ''
+  }
+  editingReportIndex.value = null
+  showSpecialistReportModal.value = true
+}
 
-  const reportType = prompt(`Select report type:\n${reportTypes.map((t, i) => `${i + 1}. ${t}`).join('\n')}\n\nEnter number or type custom:`)
-  if (!reportType) return
+const editSpecialistReport = (index) => {
+  specialistReportForm.value = { ...formData.value.specialist_reports[index] }
+  editingReportIndex.value = index
+  showSpecialistReportModal.value = true
+}
 
-  const reportTypeValue = reportTypes[parseInt(reportType) - 1] || reportType
+const saveSpecialistReport = () => {
+  if (!specialistReportForm.value.report_type || !specialistReportForm.value.specialist_name || !specialistReportForm.value.report_date) {
+    alert('Please enter report type, specialist name, and report date')
+    return
+  }
 
-  const specialistName = prompt('Enter specialist/consultant name:')
-  if (!specialistName) return
+  if (editingReportIndex.value !== null) {
+    formData.value.specialist_reports[editingReportIndex.value] = { ...specialistReportForm.value }
+  } else {
+    formData.value.specialist_reports.push({ ...specialistReportForm.value })
+  }
+  showSpecialistReportModal.value = false
+}
 
-  const datePrepared = prompt('Enter date prepared (YYYY-MM-DD):')
-
-  formData.value.specialist_reports.push({
-    report_type: reportTypeValue,
-    specialist_name: specialistName,
-    date_prepared: datePrepared || new Date().toISOString().split('T')[0]
-  })
+const cancelSpecialistReport = () => {
+  showSpecialistReportModal.value = false
 }
 
 const removeSpecialistReport = (index) => {
   if (confirm('Remove this specialist report?')) {
     formData.value.specialist_reports.splice(index, 1)
+  }
+}
+
+const handleReportDocumentUpload = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('File size must be less than 10MB')
+      event.target.value = ''
+      return
+    }
+
+    // Validate file type
+    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
+    if (!allowedTypes.includes(file.type)) {
+      alert('Only PDF and Word documents are allowed')
+      event.target.value = ''
+      return
+    }
+
+    specialistReportForm.value.document = file
   }
 }
 
