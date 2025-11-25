@@ -1199,16 +1199,65 @@
 
             <!-- Proposed Conditions -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Proposed Conditions (Optional)
-              </label>
-              <textarea
-                v-model="formData.proposed_conditions"
-                rows="4"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                placeholder="If you wish to propose specific conditions of consent, list them here..."
-              ></textarea>
-              <p class="mt-1 text-xs text-gray-500">The council will determine final consent conditions</p>
+              <div class="flex items-center justify-between mb-2">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">
+                    Proposed Conditions (Optional)
+                  </label>
+                  <p class="mt-1 text-xs text-gray-500">Select from standard templates or propose custom conditions</p>
+                </div>
+                <button
+                  type="button"
+                  @click="openConditionsModal"
+                  class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 flex items-center gap-1.5"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  Browse Templates
+                </button>
+              </div>
+
+              <!-- Selected Conditions Display -->
+              <div v-if="formData.proposed_conditions && formData.proposed_conditions.length > 0" class="space-y-3 mt-3">
+                <div v-for="(condition, index) in formData.proposed_conditions" :key="index" class="p-3 bg-white rounded-lg border border-gray-300 hover:border-blue-400 transition-colors">
+                  <div class="flex items-start justify-between mb-2">
+                    <div class="flex items-center gap-2">
+                      <span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs font-mono rounded">{{ condition.condition_number }}</span>
+                      <span class="px-2 py-0.5 text-xs bg-blue-100 text-blue-700 rounded">{{ condition.condition_category }}</span>
+                    </div>
+                    <div class="flex gap-1">
+                      <button type="button" @click="editCondition(index)" class="p-1 text-blue-600 hover:bg-blue-50 rounded" title="Edit condition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                      <button type="button" @click="removeCondition(index)" class="p-1 text-red-600 hover:bg-red-50 rounded" title="Remove condition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="text-xs text-gray-700" v-html="condition.condition_text"></div>
+                  <div v-if="condition.compliance_notes" class="mt-2 text-xs text-gray-500 italic">{{ condition.compliance_notes }}</div>
+                </div>
+              </div>
+
+              <div v-else class="text-center py-6 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                <svg class="w-10 h-10 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <p class="text-sm text-gray-500">No conditions proposed yet</p>
+                <p class="text-xs text-gray-400 mt-1">Click "Browse Templates" to select standard conditions</p>
+              </div>
+
+              <p class="mt-2 text-xs text-gray-500">
+                <svg class="w-3.5 h-3.5 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                </svg>
+                The council will determine final consent conditions based on the assessment
+              </p>
             </div>
 
             <!-- Confidential Information (RMA s42) -->
@@ -1851,6 +1900,259 @@
         </div>
       </div>
     </div>
+
+    <!-- Proposed Conditions Modal -->
+    <div
+      v-if="showConditionsModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      @click.self="showConditionsModal = false"
+    >
+      <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] flex flex-col">
+        <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-gray-900">
+              Browse Condition Templates
+            </h3>
+            <button
+              @click="showConditionsModal = false"
+              class="text-gray-400 hover:text-gray-600"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto">
+          <div class="grid md:grid-cols-3 gap-6 p-6">
+            <!-- Left Column: Template Browser (2/3 width) -->
+            <div class="md:col-span-2 space-y-4">
+              <!-- Category Filter -->
+              <div class="flex items-center gap-2 mb-4 pb-4 border-b border-gray-200">
+                <label class="text-sm font-medium text-gray-700">Filter by Category:</label>
+                <select
+                  v-model="selectedCategory"
+                  class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option v-for="category in conditionCategories" :key="category" :value="category">
+                    {{ category }}
+                  </option>
+                </select>
+                <span class="ml-auto text-xs text-gray-500">
+                  {{ filteredConditionTemplates.length }} template{{ filteredConditionTemplates.length !== 1 ? 's' : '' }}
+                </span>
+              </div>
+
+              <!-- Loading State -->
+              <div v-if="loadingTemplates" class="text-center py-12">
+                <svg class="animate-spin h-8 w-8 mx-auto text-blue-600" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p class="mt-2 text-sm text-gray-500">Loading templates...</p>
+              </div>
+
+              <!-- Templates List -->
+              <div v-else-if="filteredConditionTemplates.length > 0" class="space-y-3">
+                <div
+                  v-for="template in filteredConditionTemplates"
+                  :key="template.name"
+                  class="p-4 bg-white border border-gray-300 rounded-lg hover:border-blue-400 hover:shadow-sm transition-all"
+                >
+                  <div class="flex items-start justify-between mb-2">
+                    <div class="flex-1">
+                      <div class="flex items-center gap-2 mb-1">
+                        <h4 class="text-sm font-semibold text-gray-900">{{ template.template_name }}</h4>
+                        <span v-if="template.condition_code" class="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-mono rounded">
+                          {{ template.condition_code }}
+                        </span>
+                      </div>
+                      <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-0.5 text-xs bg-blue-100 text-blue-700 rounded">
+                          {{ template.condition_category }}
+                        </span>
+                        <span v-if="template.timing" class="px-2 py-0.5 text-xs bg-purple-100 text-purple-700 rounded">
+                          {{ template.timing }}
+                        </span>
+                        <span v-if="template.monitoring_required" class="px-2 py-0.5 text-xs bg-orange-100 text-orange-700 rounded">
+                          Monitoring Required
+                        </span>
+                      </div>
+                      <div class="text-xs text-gray-700 line-clamp-3" v-html="template.condition_text"></div>
+                    </div>
+                    <button
+                      @click="addConditionFromTemplate(template)"
+                      type="button"
+                      class="ml-3 px-3 py-1.5 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700 flex items-center gap-1 flex-shrink-0"
+                    >
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                      </svg>
+                      Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- No Templates -->
+              <div v-else class="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                <svg class="w-12 h-12 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <p class="text-sm text-gray-500">No templates found for selected category</p>
+              </div>
+
+              <!-- Add Custom Condition Button -->
+              <div class="pt-4 border-t border-gray-200">
+                <button
+                  @click="addCustomCondition"
+                  type="button"
+                  class="w-full px-4 py-2.5 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 flex items-center justify-center gap-2 border-2 border-dashed border-gray-300"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  Add Custom Condition
+                </button>
+              </div>
+            </div>
+
+            <!-- Right Column: Selected Conditions (1/3 width) -->
+            <div class="md:col-span-1 bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center justify-between">
+                <span>Selected Conditions</span>
+                <span class="px-2 py-0.5 bg-blue-600 text-white text-xs rounded-full">
+                  {{ formData.proposed_conditions.length }}
+                </span>
+              </h4>
+
+              <div v-if="formData.proposed_conditions.length > 0" class="space-y-2 max-h-[600px] overflow-y-auto">
+                <div
+                  v-for="(condition, index) in formData.proposed_conditions"
+                  :key="index"
+                  class="p-2 bg-white rounded border border-gray-300 text-xs"
+                >
+                  <div class="flex items-start justify-between mb-1">
+                    <div class="flex items-center gap-1">
+                      <span class="px-1.5 py-0.5 bg-gray-100 text-gray-700 font-mono text-xs rounded">
+                        {{ condition.condition_number }}
+                      </span>
+                      <span class="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs rounded">
+                        {{ condition.condition_category }}
+                      </span>
+                    </div>
+                    <button
+                      @click="removeCondition(index)"
+                      type="button"
+                      class="text-red-600 hover:bg-red-50 rounded p-0.5"
+                      title="Remove"
+                    >
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                  <div class="text-gray-700 line-clamp-2" v-html="condition.condition_text"></div>
+                </div>
+              </div>
+
+              <div v-else class="text-center py-8 text-xs text-gray-500">
+                <svg class="w-8 h-8 mx-auto text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                No conditions selected
+              </div>
+            </div>
+          </div>
+
+          <!-- Custom Condition Editor (appears when editing) -->
+          <div v-if="editingConditionIndex !== null || conditionForm.condition_text || conditionForm.condition_category" class="border-t border-gray-200 bg-gray-50 p-6">
+            <h4 class="text-sm font-semibold text-gray-900 mb-4">
+              {{ editingConditionIndex !== null ? 'Edit' : 'Add Custom' }} Condition
+            </h4>
+
+            <div class="grid md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">
+                  Condition Number <span class="text-red-500">*</span>
+                </label>
+                <input
+                  v-model="conditionForm.condition_number"
+                  type="text"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="e.g., 1"
+                />
+              </div>
+
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">
+                  Category <span class="text-red-500">*</span>
+                </label>
+                <select
+                  v-model="conditionForm.condition_category"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">Select category</option>
+                  <option v-for="category in conditionCategories.filter(c => c !== 'All')" :key="category" :value="category">
+                    {{ category }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="block text-xs font-medium text-gray-700 mb-1">
+                Condition Text <span class="text-red-500">*</span>
+              </label>
+              <textarea
+                v-model="conditionForm.condition_text"
+                rows="4"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter the condition text..."
+              ></textarea>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-gray-700 mb-1">Notes</label>
+              <textarea
+                v-model="conditionForm.compliance_notes"
+                rows="2"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Optional notes about this condition..."
+              ></textarea>
+            </div>
+
+            <div class="flex justify-end gap-2 mt-4">
+              <button
+                @click="cancelConditionEdit"
+                type="button"
+                class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                @click="saveCondition"
+                type="button"
+                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+              >
+                {{ editingConditionIndex !== null ? 'Update' : 'Add' }} Condition
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="sticky bottom-0 bg-white border-t border-gray-200 px-6 py-4 flex justify-end">
+          <button
+            @click="showConditionsModal = false"
+            type="button"
+            class="px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+          >
+            Done
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -1995,7 +2297,7 @@ const formData = ref({
   iwi_consultation_undertaken: false,
   iwi_consulted: '',
   cultural_impact_assessment: null, // CIA file upload
-  proposed_conditions: '',
+  proposed_conditions: [], // Array of proposed conditions
   affected_parties: [], // Array of affected parties
   specialist_reports: [], // Array of specialist reports
 })
@@ -2661,6 +2963,195 @@ const handleCIAUpload = (event) => {
     }
 
     formData.value.cultural_impact_assessment = file
+  }
+}
+
+// Proposed Conditions Modal
+const showConditionsModal = ref(false)
+const editingConditionIndex = ref(null)
+const availableConditionTemplates = ref([])
+const loadingTemplates = ref(false)
+const selectedCategory = ref('All')
+
+const conditionForm = ref({
+  condition_number: '',
+  condition_category: '',
+  condition_text: '',
+  compliance_status: 'Not Started',
+  compliance_due_date: '',
+  compliance_notes: ''
+})
+
+const conditionCategories = [
+  'All',
+  'General',
+  'Timing',
+  'Lapse',
+  'Review',
+  'Financial Contribution',
+  'Bonds',
+  'Monitoring',
+  'Environmental Management',
+  'Construction',
+  'Operation',
+  'Landscape',
+  'Ecology',
+  'Archaeology',
+  'Cultural',
+  'Traffic',
+  'Parking',
+  'Noise',
+  'Discharge',
+  'Earthworks',
+  'Heritage',
+  'Water',
+  'Coastal',
+  'Other'
+]
+
+// Fetch condition templates based on selected consent types
+const fetchConditionTemplates = async () => {
+  loadingTemplates.value = true
+  try {
+    const selectedTypes = formData.value.consent_types.map(ct => ct.consent_type)
+
+    // Fetch templates from backend
+    const response = await fetch('/api/method/frappe.client.get_list', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Frappe-CSRF-Token': window.csrf_token
+      },
+      body: JSON.stringify({
+        doctype: 'Consent Condition Template',
+        fields: ['name', 'template_name', 'condition_code', 'condition_category', 'condition_text', 'applies_to_consent_types', 'timing', 'monitoring_required'],
+        filters: {
+          is_active: 1
+        },
+        limit_page_length: 0
+      })
+    })
+
+    const data = await response.json()
+
+    if (data.message) {
+      // Filter templates that apply to selected consent types
+      availableConditionTemplates.value = data.message.filter(template => {
+        if (!template.applies_to_consent_types || template.applies_to_consent_types === 'All') {
+          return true
+        }
+        return selectedTypes.some(type => template.applies_to_consent_types.includes(type))
+      })
+    }
+  } catch (error) {
+    console.error('Error fetching condition templates:', error)
+    alert('Failed to load condition templates')
+  } finally {
+    loadingTemplates.value = false
+  }
+}
+
+const filteredConditionTemplates = computed(() => {
+  if (selectedCategory.value === 'All') {
+    return availableConditionTemplates.value
+  }
+  return availableConditionTemplates.value.filter(t => t.condition_category === selectedCategory.value)
+})
+
+const openConditionsModal = async () => {
+  if (!formData.value.consent_types || formData.value.consent_types.length === 0) {
+    alert('Please select at least one consent type first')
+    return
+  }
+
+  await fetchConditionTemplates()
+  conditionForm.value = {
+    condition_number: '',
+    condition_category: '',
+    condition_text: '',
+    compliance_status: 'Not Started',
+    compliance_due_date: '',
+    compliance_notes: ''
+  }
+  editingConditionIndex.value = null
+  showConditionsModal.value = true
+}
+
+const addConditionFromTemplate = (template) => {
+  // Generate a condition number
+  const conditionNum = (formData.value.proposed_conditions.length + 1).toString()
+
+  const newCondition = {
+    condition_number: conditionNum,
+    condition_category: template.condition_category,
+    condition_text: template.condition_text,
+    compliance_status: 'Not Started',
+    compliance_due_date: '',
+    compliance_notes: ''
+  }
+
+  formData.value.proposed_conditions.push(newCondition)
+}
+
+const addCustomCondition = () => {
+  conditionForm.value = {
+    condition_number: (formData.value.proposed_conditions.length + 1).toString(),
+    condition_category: '',
+    condition_text: '',
+    compliance_status: 'Not Started',
+    compliance_due_date: '',
+    compliance_notes: ''
+  }
+  editingConditionIndex.value = null
+}
+
+const editCondition = (index) => {
+  conditionForm.value = { ...formData.value.proposed_conditions[index] }
+  editingConditionIndex.value = index
+}
+
+const saveCondition = () => {
+  if (!conditionForm.value.condition_category || !conditionForm.value.condition_text) {
+    alert('Please enter condition category and text')
+    return
+  }
+
+  if (editingConditionIndex.value !== null) {
+    formData.value.proposed_conditions[editingConditionIndex.value] = { ...conditionForm.value }
+  } else {
+    formData.value.proposed_conditions.push({ ...conditionForm.value })
+  }
+
+  conditionForm.value = {
+    condition_number: '',
+    condition_category: '',
+    condition_text: '',
+    compliance_status: 'Not Started',
+    compliance_due_date: '',
+    compliance_notes: ''
+  }
+  editingConditionIndex.value = null
+}
+
+const cancelConditionEdit = () => {
+  conditionForm.value = {
+    condition_number: '',
+    condition_category: '',
+    condition_text: '',
+    compliance_status: 'Not Started',
+    compliance_due_date: '',
+    compliance_notes: ''
+  }
+  editingConditionIndex.value = null
+}
+
+const removeCondition = (index) => {
+  if (confirm('Remove this condition?')) {
+    formData.value.proposed_conditions.splice(index, 1)
+    // Renumber remaining conditions
+    formData.value.proposed_conditions.forEach((cond, idx) => {
+      cond.condition_number = (idx + 1).toString()
+    })
   }
 }
 
