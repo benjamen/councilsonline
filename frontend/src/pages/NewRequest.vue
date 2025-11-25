@@ -263,25 +263,70 @@
           <p class="text-gray-600 mb-8">Provide Resource Management Act (RMA) specific information</p>
 
           <div class="space-y-6">
-            <!-- Consent Type and Activity Status -->
+            <!-- Reference and Delivery -->
+            <div class="grid md:grid-cols-3 gap-4 mb-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Applicant Reference Number
+                </label>
+                <input
+                  v-model="formData.applicant_reference_number"
+                  type="text"
+                  placeholder="e.g., PROJ-2025-001"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+                <p class="mt-1 text-xs text-gray-500">Your internal project/file reference (optional)</p>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  PIM Reference
+                </label>
+                <input
+                  v-model="formData.pim_reference"
+                  type="text"
+                  placeholder="e.g., PIM-2024-12345"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+                <p class="mt-1 text-xs text-gray-500">Property Information Memorandum number (if applicable)</p>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Delivery Preference
+                </label>
+                <select
+                  v-model="formData.delivery_preference"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">Select preference</option>
+                  <option value="Email">Email</option>
+                  <option value="Postal Mail">Postal Mail</option>
+                  <option value="Both Email and Postal">Both Email and Postal</option>
+                </select>
+                <p class="mt-1 text-xs text-gray-500">How to receive correspondence</p>
+              </div>
+            </div>
+
+            <!-- Consent Types and Activity Status -->
             <div class="grid md:grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Consent Type *
+                  Consent Type(s) *
                 </label>
-                <select
-                  v-model="formData.consent_types"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  required
-                >
-                  <option value="">Select consent type</option>
-                  <option value="Land Use">Land Use</option>
-                  <option value="Subdivision">Subdivision</option>
-                  <option value="Discharge Permit">Discharge Permit</option>
-                  <option value="Water Permit">Water Permit</option>
-                  <option value="Coastal Permit">Coastal Permit</option>
-                </select>
-                <p class="mt-1 text-xs text-gray-500">Type of resource consent under the RMA</p>
+                <div class="space-y-2 p-3 border border-gray-300 rounded-lg">
+                  <label v-for="consentType in availableConsentTypes" :key="consentType" class="flex items-center">
+                    <input
+                      type="checkbox"
+                      :value="consentType"
+                      @change="toggleConsentType(consentType)"
+                      :checked="isConsentTypeSelected(consentType)"
+                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <span class="ml-2 text-sm text-gray-700">{{ consentType }}</span>
+                  </label>
+                </div>
+                <p class="mt-1 text-xs text-gray-500">Select all consent types required (multiple allowed)</p>
               </div>
 
               <div>
@@ -1839,6 +1884,29 @@ const bookingMeeting = ref(false)
 const requestingMeeting = ref(false)
 const showActivityStatusHelp = ref(false)
 
+// Available consent types (managed configuration)
+const availableConsentTypes = [
+  'Land Use',
+  'Subdivision',
+  'Discharge Permit',
+  'Water Permit',
+  'Coastal Permit'
+]
+
+// Consent type multi-select functions
+const toggleConsentType = (consentType) => {
+  const index = formData.value.consent_types.findIndex(ct => ct.consent_type === consentType)
+  if (index > -1) {
+    formData.value.consent_types.splice(index, 1)
+  } else {
+    formData.value.consent_types.push({ consent_type: consentType })
+  }
+}
+
+const isConsentTypeSelected = (consentType) => {
+  return formData.value.consent_types.some(ct => ct.consent_type === consentType)
+}
+
 const steps = computed(() => {
   const baseSteps = [
     { title: 'Type', number: 1 },
@@ -1879,8 +1947,11 @@ const formData = ref({
   applicant_type: '',
 
   // Resource Consent specific fields
-  consent_types: '',
+  consent_types: [], // Array of consent type objects
   activity_status: '',
+  applicant_reference_number: '',
+  delivery_preference: '',
+  pim_reference: '',
 
   // Proposal Details
   building_height: null,
@@ -2165,7 +2236,7 @@ const canProceed = () => {
       // If RC, this is RC Details step - validate required fields
       if (isResourceConsent.value) {
         return !!(
-          formData.value.consent_types &&
+          formData.value.consent_types && formData.value.consent_types.length > 0 &&
           formData.value.activity_status &&
           formData.value.assessment_of_effects &&
           formData.value.planning_assessment

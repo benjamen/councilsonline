@@ -150,10 +150,11 @@
   },
   {
    "fieldname": "consent_types",
-   "fieldtype": "Small Text",
+   "fieldtype": "Table",
    "in_list_view": 1,
    "label": "Consent Types",
-   "description": "Multiple consent types can be combined (e.g., Land Use, Subdivision)",
+   "options": "Consent Type Item",
+   "description": "Select one or more consent types required for this application",
    "reqd": 1
   },
   {
