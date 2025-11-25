@@ -1093,6 +1093,22 @@
               <div v-else class="text-center py-6 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
                 <p class="text-sm text-gray-500">No affected parties added yet</p>
               </div>
+
+              <!-- Iwi Consultation Note -->
+              <div class="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                <div class="flex items-start gap-2">
+                  <svg class="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div>
+                    <h4 class="text-sm font-semibold text-green-900">Treaty of Waitangi Obligations</h4>
+                    <p class="text-xs text-green-700 mt-1">
+                      To record iwi/hapū consultation, add them as affected parties above using the relationship type "Iwi".
+                      Include their response in the comments field. Upload any Cultural Impact Assessment (CIA) as a specialist report.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- Specialist Reports -->
@@ -1178,53 +1194,6 @@
               <div v-else class="text-center py-6 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
                 <p class="text-sm text-gray-500">No specialist reports added yet</p>
                 <p class="text-xs text-gray-400 mt-1">Upload report files in the Documents step</p>
-              </div>
-            </div>
-
-            <!-- Iwi Consultation -->
-            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
-              <h3 class="text-sm font-semibold text-green-900 mb-3">
-                Iwi Consultation
-                <span class="ml-2 text-xs font-normal text-green-700">(Treaty of Waitangi obligations)</span>
-              </h3>
-
-              <div class="space-y-3">
-                <div class="flex items-start">
-                  <input
-                    type="checkbox"
-                    v-model="formData.iwi_consultation_undertaken"
-                    class="mt-1 h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-                  />
-                  <label class="ml-3 text-sm text-green-800">
-                    Consultation with iwi/hapū has been undertaken
-                  </label>
-                </div>
-
-                <div v-if="formData.iwi_consultation_undertaken">
-                  <label class="block text-xs font-medium text-green-700 mb-1">
-                    Iwi/Hapū Consulted
-                  </label>
-                  <textarea
-                    v-model="formData.iwi_consulted"
-                    rows="2"
-                    class="w-full px-3 py-2 border border-green-300 rounded-lg text-sm bg-white"
-                    placeholder="List the iwi/hapū that were consulted and summarize their response..."
-                  ></textarea>
-
-                  <label class="block text-xs font-medium text-green-700 mb-1 mt-3">
-                    Cultural Impact Assessment (CIA) Document
-                  </label>
-                  <input
-                    type="file"
-                    ref="ciaFileInput"
-                    @change="handleCIAUpload"
-                    accept=".pdf,.doc,.docx"
-                    class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-green-100 file:text-green-700 hover:file:bg-green-200"
-                  />
-                  <p v-if="formData.cultural_impact_assessment" class="text-xs text-green-600 mt-1">
-                    ✓ {{ formData.cultural_impact_assessment.name }} uploaded
-                  </p>
-                </div>
               </div>
             </div>
 
@@ -1676,13 +1645,32 @@
               </label>
             </div>
 
-            <div v-if="affectedPartyForm.approval_obtained" class="ml-7">
-              <label class="block text-xs font-medium text-gray-700 mb-1">Approval Date</label>
-              <input
-                v-model="affectedPartyForm.approval_date"
-                type="date"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-              />
+            <div v-if="affectedPartyForm.approval_obtained" class="ml-7 space-y-3">
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Approval Date</label>
+                <input
+                  v-model="affectedPartyForm.approval_date"
+                  type="date"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                />
+              </div>
+
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Approval Document</label>
+                <input
+                  type="file"
+                  @change="handleApprovalDocumentUpload"
+                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                />
+                <p class="mt-1 text-xs text-gray-500">Upload written approval (PDF, Word, or image, max 10MB)</p>
+                <div v-if="affectedPartyForm.approval_document" class="mt-2 text-xs text-green-600 flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>{{ typeof affectedPartyForm.approval_document === 'object' ? affectedPartyForm.approval_document.name : 'Document attached' }}</span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -2493,6 +2481,7 @@ const affectedPartyForm = ref({
   postal_address: '',
   approval_obtained: false,
   approval_date: '',
+  approval_document: null,
   comments: ''
 })
 
@@ -2507,6 +2496,7 @@ const addAffectedParty = () => {
     postal_address: '',
     approval_obtained: false,
     approval_date: '',
+    approval_document: null,
     comments: ''
   }
   editingPartyIndex.value = null
@@ -2543,6 +2533,35 @@ const cancelAffectedParty = () => {
 const removeAffectedParty = (index) => {
   if (confirm('Remove this affected party?')) {
     formData.value.affected_parties.splice(index, 1)
+  }
+}
+
+const handleApprovalDocumentUpload = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('File size must be less than 10MB')
+      event.target.value = ''
+      return
+    }
+
+    // Validate file type
+    const allowedTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'image/jpeg',
+      'image/jpg',
+      'image/png'
+    ]
+    if (!allowedTypes.includes(file.type)) {
+      alert('Only PDF, Word documents, and images (JPG, PNG) are allowed')
+      event.target.value = ''
+      return
+    }
+
+    affectedPartyForm.value.approval_document = file
   }
 }
 
