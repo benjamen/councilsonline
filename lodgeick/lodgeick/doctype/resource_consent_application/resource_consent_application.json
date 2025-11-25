@@ -926,6 +926,11 @@
    "group": "Public Engagement",
    "link_doctype": "Submission",
    "link_fieldname": "resource_consent_application"
+  },
+  {
+   "group": "Decision",
+   "link_doctype": "Consent Decision",
+   "link_fieldname": "resource_consent_application"
   }
  ],
  "modified": "2025-11-24 00:00:00.000000",
