@@ -7,6 +7,25 @@
  "engine": "InnoDB",
  "field_order": [
   "request",
+  "section_break_request_info",
+  "request_number_display",
+  "request_status_display",
+  "submitted_date_display",
+  "acknowledged_date_display",
+  "column_break_request_1",
+  "applicant_display",
+  "applicant_email_display",
+  "applicant_phone_display",
+  "applicant_type_display",
+  "column_break_request_2",
+  "agent_display",
+  "agent_email_display",
+  "section_break_property_info",
+  "property_address_display",
+  "legal_description_display",
+  "column_break_property",
+  "zoning_display",
+  "site_area_display",
   "applicant_reference_number",
   "delivery_preference",
   "section_break_consent",
@@ -128,6 +147,129 @@
    "options": "Request",
    "reqd": 1,
    "unique": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_request_info",
+   "fieldtype": "Section Break",
+   "label": "Request Information"
+  },
+  {
+   "fieldname": "request_number_display",
+   "fieldtype": "Data",
+   "label": "Request Number",
+   "fetch_from": "request.request_number",
+   "read_only": 1
+  },
+  {
+   "fieldname": "request_status_display",
+   "fieldtype": "Data",
+   "label": "Request Status",
+   "fetch_from": "request.status",
+   "read_only": 1
+  },
+  {
+   "fieldname": "submitted_date_display",
+   "fieldtype": "Date",
+   "label": "Submitted Date",
+   "fetch_from": "request.submitted_date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "acknowledged_date_display",
+   "fieldtype": "Date",
+   "label": "Acknowledged Date",
+   "fetch_from": "request.acknowledged_date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_request_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "applicant_display",
+   "fieldtype": "Data",
+   "label": "Applicant Name",
+   "fetch_from": "request.applicant_name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "applicant_email_display",
+   "fieldtype": "Data",
+   "label": "Applicant Email",
+   "fetch_from": "request.applicant_email",
+   "read_only": 1
+  },
+  {
+   "fieldname": "applicant_phone_display",
+   "fieldtype": "Data",
+   "label": "Applicant Phone",
+   "fetch_from": "request.applicant_phone",
+   "read_only": 1
+  },
+  {
+   "fieldname": "applicant_type_display",
+   "fieldtype": "Data",
+   "label": "Applicant Type",
+   "fetch_from": "request.applicant_type",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_request_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "agent_display",
+   "fieldtype": "Data",
+   "label": "Agent Name",
+   "fetch_from": "request.agent_name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "agent_email_display",
+   "fieldtype": "Data",
+   "label": "Agent Email",
+   "fetch_from": "request.agent_email",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_property_info",
+   "fieldtype": "Section Break",
+   "label": "Property Information"
+  },
+  {
+   "fieldname": "property_address_display",
+   "fieldtype": "Small Text",
+   "label": "Property Address",
+   "fetch_from": "request.property_address",
+   "read_only": 1
+  },
+  {
+   "fieldname": "legal_description_display",
+   "fieldtype": "Small Text",
+   "label": "Legal Description",
+   "fetch_from": "request.legal_description",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_property",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "zoning_display",
+   "fieldtype": "Data",
+   "label": "Zoning",
+   "fetch_from": "request.zoning",
+   "read_only": 1
+  },
+  {
+   "fieldname": "site_area_display",
+   "fieldtype": "Float",
+   "label": "Site Area (m²)",
+   "fetch_from": "request.site_area",
+   "read_only": 1,
+   "precision": "2"
   },
   {
    "fieldname": "applicant_reference_number",

@@ -6,6 +6,7 @@ frappe.ui.form.on('Resource Consent Application', {
 		// Add custom styling and UI enhancements
 		add_statutory_clock_indicator(frm);
 		add_summary_dashboard(frm);
+		enhance_request_info_section(frm);
 		style_applicant_fields(frm);
 		make_applicant_fields_readonly(frm);
 		add_custom_buttons(frm);
@@ -295,6 +296,108 @@ function add_summary_dashboard(frm) {
 		$(summary_html).insertAfter(clock_indicator);
 	} else {
 		$(summary_html).prependTo(frm.layout.wrapper.find('.form-layout'));
+	}
+}
+
+/**
+ * Enhance Request Information section with quick actions and styling
+ */
+function enhance_request_info_section(frm) {
+	if (!frm.doc.request) return;
+
+	// Style the Request Information section with blue background
+	const request_info_section = frm.fields_dict['section_break_request_info'];
+	if (request_info_section && request_info_section.wrapper) {
+		$(request_info_section.wrapper).css({
+			'background-color': '#eff6ff',
+			'padding': '12px',
+			'border-radius': '6px',
+			'margin-top': '10px',
+			'border-left': '4px solid #3b82f6'
+		});
+
+		// Add icon and quick action buttons to section header
+		const section_head = $(request_info_section.wrapper).find('.section-head');
+		if (section_head.length && !section_head.find('.request-info-actions').length) {
+			// Add icon to label
+			section_head.find('.section-title').prepend('🔗 ');
+
+			// Add quick action buttons
+			section_head.append(`
+				<span class="request-info-actions" style="float: right; margin-left: 10px;">
+					<button class="btn btn-xs btn-default"
+						onclick="frappe.set_route('Form', 'Request', '${frm.doc.request}')"
+						title="View full Request details">
+						<svg class="icon icon-sm" style="width: 14px; height: 14px;">
+							<use href="#icon-link"></use>
+						</svg>
+						View Request
+					</button>
+				</span>
+			`);
+		}
+
+		// Add helper text if not already added
+		if (!$(request_info_section.wrapper).find('.request-info-helper').length) {
+			$(request_info_section.wrapper).find('.form-section').append(`
+				<div class="request-info-helper" style="
+					margin-top: 10px;
+					padding: 8px 10px;
+					background: rgba(59, 130, 246, 0.1);
+					border-radius: 4px;
+					font-size: 11px;
+					color: #1e40af;
+				">
+					<svg class="icon icon-sm" style="width: 12px; height: 12px; vertical-align: middle;">
+						<use href="#icon-info"></use>
+					</svg>
+					These details are synced from the parent Request and are read-only. To update, edit the <a href="/app/request/${frm.doc.request}" style="color: #2563eb; text-decoration: underline;">parent Request</a>.
+				</div>
+			`);
+		}
+	}
+
+	// Style the Property Information subsection similarly
+	const property_info_section = frm.fields_dict['section_break_property_info'];
+	if (property_info_section && property_info_section.wrapper) {
+		$(property_info_section.wrapper).css({
+			'background-color': '#f0fdf4',
+			'padding': '12px',
+			'border-radius': '6px',
+			'margin-top': '10px',
+			'border-left': '4px solid #10b981'
+		});
+
+		// Add icon to label
+		const prop_section_head = $(property_info_section.wrapper).find('.section-head');
+		if (prop_section_head.length) {
+			prop_section_head.find('.section-title').prepend('📍 ');
+		}
+	}
+
+	// Add validation warning if Request not acknowledged
+	if (frm.doc.request && !frm.layout.wrapper.find('.request-status-warning').length) {
+		frappe.db.get_value('Request', frm.doc.request, 'status', (r) => {
+			if (r && r.status !== 'Acknowledged' && r.status !== 'Processing' && r.status !== 'Approved') {
+				const warning = $(`
+					<div class="request-status-warning alert alert-warning" style="
+						margin: 10px 0;
+						padding: 10px 15px;
+						background: #fef3c7;
+						border: 1px solid #fbbf24;
+						border-radius: 6px;
+						font-size: 13px;
+						color: #92400e;
+					">
+						<strong>⚠️ Request Status: ${r.status}</strong><br>
+						<span style="font-size: 12px;">
+							Resource Consent Applications are typically only processed after the Request has been acknowledged (s88 completeness check).
+						</span>
+					</div>
+				`);
+				warning.insertAfter(frm.fields_dict['section_break_property_info'].wrapper);
+			}
+		});
 	}
 }
 

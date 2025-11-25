@@ -515,6 +515,11 @@
  "links": [
   {
    "group": "Related Documents",
+   "link_doctype": "Resource Consent Application",
+   "link_fieldname": "request"
+  },
+  {
+   "group": "Related Documents",
    "link_doctype": "Assessment Project",
    "link_fieldname": "request"
   },
