@@ -1,0 +1,220 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:SR-{specialist_assignment}-{####}",
+ "creation": "2025-11-25 14:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "specialist_assignment",
+  "resource_consent_application",
+  "column_break_basic",
+  "review_date",
+  "reviewer",
+  "section_break_recommendation",
+  "recommendation",
+  "recommendation_summary",
+  "section_break_detailed_review",
+  "detailed_review",
+  "section_break_conditions",
+  "recommended_conditions",
+  "section_break_concerns",
+  "key_concerns",
+  "information_gaps",
+  "section_break_attachments",
+  "supporting_documents",
+  "section_break_follow_up",
+  "requires_follow_up",
+  "follow_up_notes",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "specialist_assignment",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Specialist Assignment",
+   "options": "Specialist Assignment",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "specialist_assignment.resource_consent_application",
+   "fieldname": "resource_consent_application",
+   "fieldtype": "Link",
+   "label": "Resource Consent Application",
+   "options": "Resource Consent Application",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_basic",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "review_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Review Date",
+   "reqd": 1
+  },
+  {
+   "default": "user",
+   "fieldname": "reviewer",
+   "fieldtype": "Link",
+   "label": "Reviewer",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_recommendation",
+   "fieldtype": "Section Break",
+   "label": "Recommendation"
+  },
+  {
+   "fieldname": "recommendation",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Recommendation",
+   "options": "\nSupport - Grant as Proposed\nSupport - Grant with Conditions\nSupport - Grant with Minor Amendments\nOppose - Request Major Amendments\nOppose - Decline Application\nNeutral - Further Information Required",
+   "reqd": 1
+  },
+  {
+   "fieldname": "recommendation_summary",
+   "fieldtype": "Text Editor",
+   "label": "Recommendation Summary"
+  },
+  {
+   "fieldname": "section_break_detailed_review",
+   "fieldtype": "Section Break",
+   "label": "Detailed Review"
+  },
+  {
+   "fieldname": "detailed_review",
+   "fieldtype": "Text Editor",
+   "label": "Detailed Review"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_conditions",
+   "fieldtype": "Section Break",
+   "label": "Recommended Conditions"
+  },
+  {
+   "fieldname": "recommended_conditions",
+   "fieldtype": "Table",
+   "label": "Recommended Conditions",
+   "options": "Specialist Recommended Condition"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_concerns",
+   "fieldtype": "Section Break",
+   "label": "Concerns & Information Gaps"
+  },
+  {
+   "fieldname": "key_concerns",
+   "fieldtype": "Text Editor",
+   "label": "Key Concerns"
+  },
+  {
+   "fieldname": "information_gaps",
+   "fieldtype": "Text Editor",
+   "label": "Information Gaps / Further Information Required"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_attachments",
+   "fieldtype": "Section Break",
+   "label": "Supporting Documents"
+  },
+  {
+   "fieldname": "supporting_documents",
+   "fieldtype": "Table",
+   "label": "Supporting Documents",
+   "options": "Specialist Review Document"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_follow_up",
+   "fieldtype": "Section Break",
+   "label": "Follow Up"
+  },
+  {
+   "default": "0",
+   "fieldname": "requires_follow_up",
+   "fieldtype": "Check",
+   "label": "Requires Follow Up"
+  },
+  {
+   "depends_on": "requires_follow_up",
+   "fieldname": "follow_up_notes",
+   "fieldtype": "Text Editor",
+   "label": "Follow Up Notes"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Specialist Review",
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-11-25 14:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Specialist Review",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Lodgeick Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Lodgeick User",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "recommendation",
+ "track_changes": 1
+}

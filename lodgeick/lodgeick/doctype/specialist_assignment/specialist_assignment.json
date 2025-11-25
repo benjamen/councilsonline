@@ -1,0 +1,255 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:SA-{resource_consent_application}-{####}",
+ "creation": "2025-11-25 14:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "resource_consent_application",
+  "request",
+  "column_break_basic",
+  "assignment_date",
+  "due_date",
+  "section_break_assignment",
+  "specialist_type",
+  "assigned_to",
+  "column_break_specialist",
+  "review_status",
+  "completed_date",
+  "section_break_scope",
+  "scope_of_review",
+  "specific_questions",
+  "section_break_budget",
+  "estimated_hours",
+  "estimated_cost",
+  "column_break_budget",
+  "actual_hours",
+  "actual_cost",
+  "section_break_attachments",
+  "reference_documents",
+  "section_break_notes",
+  "internal_notes",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "resource_consent_application",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Resource Consent Application",
+   "options": "Resource Consent Application",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "resource_consent_application.request",
+   "fieldname": "request",
+   "fieldtype": "Link",
+   "label": "Request",
+   "options": "Request",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_basic",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "assignment_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Assignment Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "due_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Due Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_assignment",
+   "fieldtype": "Section Break",
+   "label": "Specialist Assignment"
+  },
+  {
+   "fieldname": "specialist_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Specialist Type",
+   "options": "\nPlanning\nEngineering - Civil\nEngineering - Structural\nEngineering - Traffic\nEngineering - Geotechnical\nEnvironmental - Ecology\nEnvironmental - Air Quality\nEnvironmental - Noise\nEnvironmental - Water Quality\nLandscape Architecture\nUrban Design\nHeritage\nArchaeology\nCultural - Iwi\nContaminated Land\nNatural Hazards\nEconomic\nSocial Impact\nOther",
+   "reqd": 1
+  },
+  {
+   "fieldname": "assigned_to",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Assigned To",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_specialist",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Assigned",
+   "fieldname": "review_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Review Status",
+   "options": "Assigned\nIn Progress\nCompleted\nOn Hold\nCancelled",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.review_status=='Completed'",
+   "fieldname": "completed_date",
+   "fieldtype": "Date",
+   "label": "Completed Date"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_scope",
+   "fieldtype": "Section Break",
+   "label": "Scope of Review"
+  },
+  {
+   "fieldname": "scope_of_review",
+   "fieldtype": "Text Editor",
+   "label": "Scope of Review"
+  },
+  {
+   "fieldname": "specific_questions",
+   "fieldtype": "Text Editor",
+   "label": "Specific Questions for Specialist"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_budget",
+   "fieldtype": "Section Break",
+   "label": "Budget & Time"
+  },
+  {
+   "fieldname": "estimated_hours",
+   "fieldtype": "Float",
+   "label": "Estimated Hours",
+   "precision": "2"
+  },
+  {
+   "fieldname": "estimated_cost",
+   "fieldtype": "Currency",
+   "label": "Estimated Cost"
+  },
+  {
+   "fieldname": "column_break_budget",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.review_status=='Completed'",
+   "fieldname": "actual_hours",
+   "fieldtype": "Float",
+   "label": "Actual Hours",
+   "precision": "2"
+  },
+  {
+   "depends_on": "eval:doc.review_status=='Completed'",
+   "fieldname": "actual_cost",
+   "fieldtype": "Currency",
+   "label": "Actual Cost"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_attachments",
+   "fieldtype": "Section Break",
+   "label": "Reference Documents"
+  },
+  {
+   "fieldname": "reference_documents",
+   "fieldtype": "Table",
+   "label": "Reference Documents",
+   "options": "Specialist Assignment Document"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_notes",
+   "fieldtype": "Section Break",
+   "label": "Internal Notes"
+  },
+  {
+   "fieldname": "internal_notes",
+   "fieldtype": "Text Editor",
+   "label": "Internal Notes"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Specialist Assignment",
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [
+  {
+   "group": "Reviews",
+   "link_doctype": "Specialist Review",
+   "link_fieldname": "specialist_assignment"
+  }
+ ],
+ "modified": "2025-11-25 14:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Specialist Assignment",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Lodgeick Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Lodgeick User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "specialist_type",
+ "track_changes": 1
+}

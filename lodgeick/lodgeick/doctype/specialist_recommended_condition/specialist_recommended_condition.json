@@ -1,0 +1,46 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-11-25 14:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "condition_text",
+  "condition_category",
+  "justification"
+ ],
+ "fields": [
+  {
+   "fieldname": "condition_text",
+   "fieldtype": "Text",
+   "in_list_view": 1,
+   "label": "Condition Text",
+   "reqd": 1
+  },
+  {
+   "fieldname": "condition_category",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Condition Category",
+   "options": "\nGeneral\nPre-Commencement\nDuring Works\nPost-Construction\nOngoing/Operational\nMonitoring\nFinancial\nReview\nLapsing\nOther"
+  },
+  {
+   "fieldname": "justification",
+   "fieldtype": "Small Text",
+   "label": "Justification (RMA s108AA)"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-11-25 14:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Specialist Recommended Condition",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
