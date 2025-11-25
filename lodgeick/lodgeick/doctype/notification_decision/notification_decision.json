@@ -1,0 +1,370 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:ND-{resource_consent_application}",
+ "creation": "2025-11-25 15:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "resource_consent_application",
+  "request",
+  "column_break_basic",
+  "decision_date",
+  "decided_by",
+  "section_break_decision",
+  "notification_decision",
+  "notification_decision_summary",
+  "section_break_s95_assessment",
+  "s95_adverse_effects",
+  "s95_affected_persons",
+  "s95_written_approvals",
+  "s95a_preclusion_rules",
+  "s95a_precluded",
+  "s95a_preclusion_reason",
+  "section_break_s95b",
+  "s95b_permitted_boundary",
+  "s95b_assessment",
+  "section_break_s95c",
+  "s95c_protected_customary_rights",
+  "s95c_assessment",
+  "section_break_s95d",
+  "s95d_controlled_activity",
+  "s95d_assessment",
+  "section_break_s95e",
+  "s95e_permitted_activity",
+  "s95e_assessment",
+  "section_break_limited_notification",
+  "limited_notification_parties",
+  "section_break_public_notification",
+  "public_notification_method",
+  "newspaper_publication",
+  "website_publication",
+  "column_break_public",
+  "submission_period_start",
+  "submission_period_end",
+  "section_break_justification",
+  "decision_justification",
+  "section_break_delegation",
+  "delegated_authority",
+  "delegation_reference",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "resource_consent_application",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Resource Consent Application",
+   "options": "Resource Consent Application",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "resource_consent_application.request",
+   "fieldname": "request",
+   "fieldtype": "Link",
+   "label": "Request",
+   "options": "Request",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_basic",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "decision_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Decision Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "decided_by",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Decided By",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_decision",
+   "fieldtype": "Section Break",
+   "label": "Notification Decision"
+  },
+  {
+   "fieldname": "notification_decision",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Notification Decision",
+   "options": "\nNon-Notified (s95A applies)\nLimited Notification (s95B)\nPublic Notification (s95)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "notification_decision_summary",
+   "fieldtype": "Text Editor",
+   "label": "Decision Summary"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_s95_assessment",
+   "fieldtype": "Section Break",
+   "label": "RMA s95 - Public Notification Assessment"
+  },
+  {
+   "default": "0",
+   "fieldname": "s95_adverse_effects",
+   "fieldtype": "Check",
+   "label": "More than minor adverse effects on environment"
+  },
+  {
+   "default": "0",
+   "fieldname": "s95_affected_persons",
+   "fieldtype": "Check",
+   "label": "Affected persons identified (s95E)"
+  },
+  {
+   "default": "0",
+   "fieldname": "s95_written_approvals",
+   "fieldtype": "Check",
+   "label": "Written approvals obtained from all affected persons"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_s95a_preclusion_rules",
+   "fieldtype": "Section Break",
+   "label": "RMA s95A - Preclusion from Public Notification"
+  },
+  {
+   "default": "0",
+   "fieldname": "s95a_precluded",
+   "fieldtype": "Check",
+   "label": "Application precluded from public notification (s95A)"
+  },
+  {
+   "depends_on": "s95a_precluded",
+   "fieldname": "s95a_preclusion_reason",
+   "fieldtype": "Select",
+   "label": "Preclusion Reason",
+   "options": "\nBoundary Activity (s95B)\nProtected Customary Rights (s95C)\nControlled Activity (s95D)\nPermitted Activity (s95E)\nRule in plan/NES precludes notification"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_s95b",
+   "fieldtype": "Section Break",
+   "label": "RMA s95B - Boundary Activity"
+  },
+  {
+   "default": "0",
+   "fieldname": "s95b_permitted_boundary",
+   "fieldtype": "Check",
+   "label": "Permitted boundary activity (s87BA)"
+  },
+  {
+   "depends_on": "s95b_permitted_boundary",
+   "fieldname": "s95b_assessment",
+   "fieldtype": "Text Editor",
+   "label": "s95B Assessment"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_s95c",
+   "fieldtype": "Section Break",
+   "label": "RMA s95C - Protected Customary Rights"
+  },
+  {
+   "default": "0",
+   "fieldname": "s95c_protected_customary_rights",
+   "fieldtype": "Check",
+   "label": "Relates to protected customary rights (s95C)"
+  },
+  {
+   "depends_on": "s95c_protected_customary_rights",
+   "fieldname": "s95c_assessment",
+   "fieldtype": "Text Editor",
+   "label": "s95C Assessment"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_s95d",
+   "fieldtype": "Section Break",
+   "label": "RMA s95D - Controlled Activity"
+  },
+  {
+   "default": "0",
+   "fieldname": "s95d_controlled_activity",
+   "fieldtype": "Check",
+   "label": "Controlled activity with plan rule (s95D)"
+  },
+  {
+   "depends_on": "s95d_controlled_activity",
+   "fieldname": "s95d_assessment",
+   "fieldtype": "Text Editor",
+   "label": "s95D Assessment"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_s95e",
+   "fieldtype": "Section Break",
+   "label": "RMA s95E - Permitted Activity"
+  },
+  {
+   "default": "0",
+   "fieldname": "s95e_permitted_activity",
+   "fieldtype": "Check",
+   "label": "Would be permitted but for s87BA (s95E)"
+  },
+  {
+   "depends_on": "s95e_permitted_activity",
+   "fieldname": "s95e_assessment",
+   "fieldtype": "Text Editor",
+   "label": "s95E Assessment"
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "eval:doc.notification_decision=='Limited Notification (s95B)'",
+   "fieldname": "section_break_limited_notification",
+   "fieldtype": "Section Break",
+   "label": "Limited Notification Details"
+  },
+  {
+   "depends_on": "eval:doc.notification_decision=='Limited Notification (s95B)'",
+   "fieldname": "limited_notification_parties",
+   "fieldtype": "Table",
+   "label": "Parties to be Notified",
+   "options": "Notification Party"
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "eval:doc.notification_decision=='Public Notification (s95)'",
+   "fieldname": "section_break_public_notification",
+   "fieldtype": "Section Break",
+   "label": "Public Notification Details"
+  },
+  {
+   "depends_on": "eval:doc.notification_decision=='Public Notification (s95)'",
+   "fieldname": "public_notification_method",
+   "fieldtype": "Select",
+   "label": "Publication Method",
+   "options": "\nNewspaper Only\nWebsite Only\nNewspaper and Website",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.notification_decision=='Public Notification (s95)' && (doc.public_notification_method=='Newspaper Only' || doc.public_notification_method=='Newspaper and Website')",
+   "fieldname": "newspaper_publication",
+   "fieldtype": "Data",
+   "label": "Newspaper Name"
+  },
+  {
+   "default": "1",
+   "depends_on": "eval:doc.notification_decision=='Public Notification (s95)'",
+   "fieldname": "website_publication",
+   "fieldtype": "Check",
+   "label": "Publish on Council Website"
+  },
+  {
+   "fieldname": "column_break_public",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.notification_decision=='Public Notification (s95)'",
+   "fieldname": "submission_period_start",
+   "fieldtype": "Date",
+   "label": "Submission Period Start"
+  },
+  {
+   "depends_on": "eval:doc.notification_decision=='Public Notification (s95)'",
+   "fieldname": "submission_period_end",
+   "fieldtype": "Date",
+   "label": "Submission Period End (20 working days)"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_justification",
+   "fieldtype": "Section Break",
+   "label": "Decision Justification"
+  },
+  {
+   "fieldname": "decision_justification",
+   "fieldtype": "Text Editor",
+   "label": "Full Justification"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_delegation",
+   "fieldtype": "Section Break",
+   "label": "Delegation"
+  },
+  {
+   "fieldname": "delegated_authority",
+   "fieldtype": "Data",
+   "label": "Delegated Authority"
+  },
+  {
+   "fieldname": "delegation_reference",
+   "fieldtype": "Data",
+   "label": "Delegation Reference"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Notification Decision",
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-11-25 15:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Notification Decision",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Lodgeick Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Lodgeick User",
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "notification_decision",
+ "track_changes": 1
+}
