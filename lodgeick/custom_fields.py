@@ -151,6 +151,50 @@ def create_lodgeick_custom_fields():
 				"bold": 1,
 				"description": "Application Fee + Task Costs + Disbursements"
 			}
+		],
+
+		# User custom fields for council association and account type
+		"User": [
+			{
+				"fieldname": "lodgeick_account_section",
+				"fieldtype": "Section Break",
+				"label": "Account Information",
+				"insert_after": "user_image",
+				"collapsible": 1
+			},
+			{
+				"fieldname": "account_type",
+				"fieldtype": "Select",
+				"label": "Account Type",
+				"options": "\nApplicant\nAgent",
+				"insert_after": "lodgeick_account_section",
+				"description": "Applicant: Submit applications for yourself. Agent: Submit applications on behalf of clients.",
+				"default": "Applicant"
+			},
+			{
+				"fieldname": "applicant_type",
+				"fieldtype": "Select",
+				"label": "Default Applicant Type",
+				"options": "\nIndividual\nCompany\nTrust\nPartnership\nOther",
+				"insert_after": "account_type",
+				"description": "Default applicant type for new applications",
+				"depends_on": "eval:doc.account_type=='Applicant'"
+			},
+			{
+				"fieldname": "lodgeick_council_section",
+				"fieldtype": "Section Break",
+				"label": "Council Preferences",
+				"insert_after": "applicant_type",
+				"collapsible": 1
+			},
+			{
+				"fieldname": "default_council",
+				"fieldtype": "Link",
+				"label": "Default Council",
+				"options": "Council",
+				"insert_after": "lodgeick_council_section",
+				"description": "Your preferred council for new requests"
+			}
 		]
 	}
 

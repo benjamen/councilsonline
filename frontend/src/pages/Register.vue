@@ -75,6 +75,18 @@
             </div>
           </div>
 
+          <!-- Council Selection (Optional) -->
+          <div>
+            <CouncilSelector
+              v-model="selectedCouncil"
+              label="Default Council (Optional)"
+              description="Select your preferred council for submitting requests. You can change this later."
+              display-mode="dropdown"
+              :required="false"
+              :show-clear-button="true"
+            />
+          </div>
+
           <!-- Personal Information -->
           <div class="grid md:grid-cols-2 gap-4">
             <div>
@@ -304,14 +316,27 @@
 </template>
 
 <script setup>
-import { ref } from "vue"
-import { useRouter } from "vue-router"
+import { ref, onMounted } from "vue"
+import { useRouter, useRoute } from "vue-router"
 import { Input, Button } from "frappe-ui"
+import CouncilSelector from "../components/CouncilSelector.vue"
+import { useCouncilStore } from "../stores/councilStore"
 
 const router = useRouter()
+const route = useRoute()
+const councilStore = useCouncilStore()
+
 const accountType = ref('ratepayer')
+const selectedCouncil = ref(null)
 const isLoading = ref(false)
 const errorMessage = ref('')
+
+onMounted(() => {
+  // Check if council was preselected via URL
+  if (councilStore.preselectedFromUrl) {
+    selectedCouncil.value = councilStore.preselectedFromUrl
+  }
+})
 
 function submit(e) {
   const formData = new FormData(e.target)
@@ -342,6 +367,11 @@ function submit(e) {
   } else if (accountType.value === 'supplier') {
     userData.company_name = formData.get('company_name')
     userData.company_number = formData.get('company_number')
+  }
+
+  // Add council_code if selected
+  if (selectedCouncil.value) {
+    userData.council_code = selectedCouncil.value
   }
 
   // Call registration API

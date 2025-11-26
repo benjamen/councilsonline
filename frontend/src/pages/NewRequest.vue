@@ -60,8 +60,24 @@
     <!-- Main Content -->
     <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-        <!-- Step 1: Request Type -->
+        <!-- Step 1: Council Selection -->
         <div v-if="currentStep === 1">
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">Select Council</h2>
+          <p class="text-gray-600 mb-8">Choose the council that will process your application</p>
+
+          <CouncilSelector
+            v-model="formData.council"
+            @change="onCouncilChange"
+            display-mode="cards"
+            :required="true"
+            :show-selected-info="true"
+            label=""
+            :show-label="false"
+          />
+        </div>
+
+        <!-- Step 2: Request Type -->
+        <div v-if="currentStep === 2">
           <h2 class="text-2xl font-bold text-gray-900 mb-2">Select Application Type</h2>
           <p class="text-gray-600 mb-8">Choose the type of consent you wish to apply for</p>
 
@@ -99,8 +115,95 @@
           </div>
         </div>
 
-        <!-- Step 2: Property Details -->
-        <div v-if="currentStep === 2">
+        <!-- Step 3: Process Information -->
+        <div v-if="currentStep === 3">
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">Council Process Information</h2>
+          <p class="text-gray-600 mb-6">Understanding {{ councils.data?.find(c => c.name === formData.council)?.council_name }}'s process for this application</p>
+
+          <div v-if="selectedRequestTypeDetails" class="space-y-6">
+            <!-- Request Type Summary -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+              <div class="flex items-start justify-between mb-4">
+                <div>
+                  <h3 class="text-xl font-semibold text-gray-900">{{ selectedRequestTypeDetails.request_type_name }}</h3>
+                  <p v-if="selectedRequestTypeDetails.category" class="text-sm text-gray-500 mt-1">
+                    {{ selectedRequestTypeDetails.category }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Key Information -->
+              <div class="grid md:grid-cols-3 gap-4 mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div>
+                  <div class="text-xs text-blue-600 font-medium uppercase">Application Fee</div>
+                  <div class="text-2xl font-bold text-blue-900 mt-1">
+                    ${{ selectedRequestTypeDetails.base_fee || '0' }}
+                  </div>
+                  <div class="text-xs text-blue-600 mt-1">Plus any additional costs</div>
+                </div>
+                <div>
+                  <div class="text-xs text-blue-600 font-medium uppercase">Processing Time</div>
+                  <div class="text-2xl font-bold text-blue-900 mt-1">
+                    {{ selectedRequestTypeDetails.sla_days || 'N/A' }} <span class="text-base">days</span>
+                  </div>
+                  <div class="text-xs text-blue-600 mt-1">Standard timeframe</div>
+                </div>
+                <div>
+                  <div class="text-xs text-blue-600 font-medium uppercase">Payment Required</div>
+                  <div class="text-2xl font-bold text-blue-900 mt-1">
+                    {{ selectedRequestTypeDetails.requires_payment ? 'Yes' : 'No' }}
+                  </div>
+                  <div class="text-xs text-blue-600 mt-1">Before processing</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Council Process Description -->
+            <div v-if="selectedRequestTypeDetails.process_description" class="bg-white border border-gray-200 rounded-lg p-6">
+              <h4 class="text-lg font-semibold text-gray-900 mb-4">How This Works</h4>
+              <div class="prose prose-sm max-w-none text-gray-700" v-html="selectedRequestTypeDetails.process_description"></div>
+            </div>
+
+            <!-- Brief Description (if no process description) -->
+            <div v-else-if="selectedRequestTypeDetails.description" class="bg-white border border-gray-200 rounded-lg p-6">
+              <h4 class="text-lg font-semibold text-gray-900 mb-4">About This Application</h4>
+              <p class="text-gray-700">{{ selectedRequestTypeDetails.description }}</p>
+            </div>
+
+            <!-- Important Notice -->
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <div class="flex items-start">
+                <svg class="w-5 h-5 text-yellow-600 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <div>
+                  <h5 class="font-semibold text-yellow-900 text-sm">Before You Continue</h5>
+                  <p class="text-yellow-800 text-sm mt-1">
+                    Please review this information carefully. Make sure you understand the process, fees, and timeframes before proceeding with your application.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Continue Button -->
+            <div class="flex justify-center pt-4">
+              <button
+                @click="currentStep++"
+                class="px-8 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                I Understand - Continue to Application
+              </button>
+            </div>
+          </div>
+
+          <!-- No request type selected (shouldn't happen) -->
+          <div v-else class="text-center py-12">
+            <p class="text-gray-500">No request type selected. Please go back and select a request type.</p>
+          </div>
+        </div>
+
+        <!-- Step 4: Property Details -->
+        <div v-if="currentStep === 4">
           <h2 class="text-2xl font-bold text-gray-900 mb-2">Property Details</h2>
           <p class="text-gray-600 mb-8">Provide details about the property for this application</p>
 
@@ -122,49 +225,155 @@
               </select>
             </div>
 
-            <!-- Applicant Contact Details (Required) -->
+            <!-- Acting on Behalf Section -->
             <div class="border-t border-gray-200 pt-6 mt-6">
-              <h3 class="text-sm font-semibold text-gray-900 mb-4">Applicant Contact Information *</h3>
-              <div class="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Contact Phone *</label>
-                  <input
-                    v-model="formData.applicant_phone"
-                    type="tel"
-                    placeholder="021 123 4567"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    required
-                  />
-                  <p class="mt-1 text-xs text-gray-500">Required for application processing</p>
+              <div class="mb-6">
+                <h3 class="text-sm font-semibold text-gray-900 mb-3">Who is this application for?</h3>
+                <div class="space-y-3">
+                  <label class="flex items-start space-x-3 cursor-pointer">
+                    <input
+                      type="radio"
+                      :value="false"
+                      v-model="formData.acting_on_behalf"
+                      class="mt-1"
+                    />
+                    <div>
+                      <div class="font-medium text-gray-900">This application is for myself</div>
+                      <div class="text-sm text-gray-500">I am the applicant submitting this request</div>
+                    </div>
+                  </label>
+                  <label class="flex items-start space-x-3 cursor-pointer">
+                    <input
+                      type="radio"
+                      :value="true"
+                      v-model="formData.acting_on_behalf"
+                      class="mt-1"
+                    />
+                    <div>
+                      <div class="font-medium text-gray-900">I am acting on behalf of a client</div>
+                      <div class="text-sm text-gray-500">I am an agent submitting this request for someone else</div>
+                    </div>
+                  </label>
                 </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Applicant Type *</label>
-                  <select
-                    v-model="formData.applicant_type"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    required
-                  >
-                    <option value="">Select applicant type</option>
-                    <option value="Individual">Individual</option>
-                    <option value="Company">Company</option>
-                    <option value="Trust">Trust</option>
-                    <option value="Partnership">Partnership</option>
-                  </select>
-                  <p class="mt-1 text-xs text-gray-500">Type of entity making this application</p>
+              </div>
+
+              <!-- Applicant Contact Details (Required) -->
+              <div>
+                <h3 class="text-sm font-semibold text-gray-900 mb-4">
+                  {{ formData.acting_on_behalf ? 'Client Information *' : 'Applicant Contact Information *' }}
+                </h3>
+
+                <div class="space-y-4">
+                  <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+                      <input
+                        v-model="formData.applicant_name"
+                        type="text"
+                        placeholder="John Smith"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        :disabled="!formData.acting_on_behalf && userProfile"
+                        required
+                      />
+                      <p v-if="!formData.acting_on_behalf" class="mt-1 text-xs text-gray-500">Auto-populated from your profile</p>
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
+                      <input
+                        v-model="formData.applicant_email"
+                        type="email"
+                        placeholder="john@example.com"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        :disabled="!formData.acting_on_behalf && userProfile"
+                        required
+                      />
+                      <p v-if="!formData.acting_on_behalf" class="mt-1 text-xs text-gray-500">Auto-populated from your profile</p>
+                    </div>
+                  </div>
+
+                  <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">Contact Phone *</label>
+                      <input
+                        v-model="formData.applicant_phone"
+                        type="tel"
+                        placeholder="021 123 4567"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        required
+                      />
+                      <p class="mt-1 text-xs text-gray-500">
+                        {{ formData.acting_on_behalf ? 'Required for application processing' : 'Will be saved to your profile for future applications' }}
+                      </p>
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">Applicant Type *</label>
+                      <select
+                        v-model="formData.applicant_type"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        required
+                      >
+                        <option value="">Select applicant type</option>
+                        <option value="Individual">Individual</option>
+                        <option value="Company">Company</option>
+                        <option value="Trust">Trust</option>
+                        <option value="Partnership">Partnership</option>
+                        <option value="Other">Other</option>
+                      </select>
+                      <p class="mt-1 text-xs text-gray-500">Type of entity making this application</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <!-- Manual Property Entry -->
+            <!-- Manual Property Entry with Autocomplete -->
             <div v-if="!formData.property" class="space-y-4">
-              <div>
+              <div class="relative">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Property Address *</label>
                 <input
-                    v-model="formData.property_address"
+                    v-model="propertySearchQuery"
+                    @input="handlePropertySearch"
+                    @focus="showPropertyDropdown = true"
                     type="text"
-                    placeholder="123 Main Street, Wellington"
+                    placeholder="Start typing address... e.g., 123 Main Street"
                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    autocomplete="off"
                   />
+                <p class="mt-1 text-xs text-gray-500">Type to search LINZ property database</p>
+
+                <!-- Autocomplete Dropdown -->
+                <div
+                  v-if="showPropertyDropdown && (propertySearchResults.length > 0 || propertySearchLoading)"
+                  class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-96 overflow-y-auto"
+                >
+                  <!-- Loading State -->
+                  <div v-if="propertySearchLoading" class="p-4 text-center text-gray-500">
+                    <div class="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600 mb-2"></div>
+                    <p class="text-sm">Searching properties...</p>
+                  </div>
+
+                  <!-- Results -->
+                  <div v-else>
+                    <button
+                      v-for="(result, index) in propertySearchResults"
+                      :key="index"
+                      @click="selectProperty(result)"
+                      type="button"
+                      class="w-full text-left px-4 py-3 hover:bg-blue-50 border-b border-gray-100 last:border-b-0 transition-colors focus:outline-none focus:bg-blue-50"
+                    >
+                      <div class="font-medium text-gray-900">{{ result.address }}</div>
+                      <div class="text-sm text-gray-600 mt-1">{{ result.property?.legal_description || 'Legal description not available' }}</div>
+                      <div v-if="result.property?.title_no" class="text-xs text-gray-500 mt-1">
+                        Title: {{ result.property.title_no }}
+                      </div>
+                    </button>
+                  </div>
+
+                  <!-- No Results -->
+                  <div v-if="!propertySearchLoading && propertySearchResults.length === 0 && propertySearchQuery.length >= 3" class="p-4 text-center text-gray-500">
+                    <p class="text-sm">No properties found. Try a different search.</p>
+                  </div>
+                </div>
               </div>
 
               <div class="grid md:grid-cols-2 gap-4">
@@ -174,9 +383,29 @@
                     v-model="formData.legal_description"
                     type="text"
                     placeholder="Lot 1 DP 12345"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                    readonly
                   />
+                  <p v-if="formData.legal_description" class="mt-1 text-xs text-green-600">
+                    ✓ Auto-populated from LINZ
+                  </p>
                 </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Certificate of Title</label>
+                  <input
+                    v-model="formData.ct_reference"
+                    type="text"
+                    placeholder="WN123/456"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                    readonly
+                  />
+                  <p v-if="formData.ct_reference" class="mt-1 text-xs text-green-600">
+                    ✓ Auto-populated from LINZ
+                  </p>
+                </div>
+              </div>
+
+              <div class="grid md:grid-cols-2 gap-4">
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">Valuation Reference</label>
                   <input
@@ -185,80 +414,1437 @@
                     placeholder="1234567"
                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
+                  <p class="mt-1 text-xs text-gray-500">Property valuation number (optional)</p>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Parcel ID</label>
+                  <input
+                    v-model="formData.parcel_id"
+                    type="text"
+                    placeholder="Auto-populated"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                    readonly
+                  />
+                  <p v-if="formData.parcel_id" class="mt-1 text-xs text-green-600">
+                    ✓ LINZ Parcel ID
+                  </p>
                 </div>
               </div>
 
+              <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Zone</label>
+                  <input
+                    v-model="formData.zone"
+                    type="text"
+                    placeholder="Auto-populated from District Plan"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                    readonly
+                  />
+                  <p v-if="formData.zone" class="mt-1 text-xs text-green-600">
+                    ✓ District Plan zone
+                  </p>
+                  <p v-else class="mt-1 text-xs text-gray-500">
+                    Will be populated when address is selected
+                  </p>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Activity Zone
+                    <span v-if="isResourceConsent" class="text-red-600">*</span>
+                  </label>
+                  <select
+                    v-model="formData.activity_zone"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    :required="isResourceConsent"
+                  >
+                    <option value="">Select activity zone</option>
+                    <option value="Permitted">Permitted</option>
+                    <option value="Controlled">Controlled</option>
+                    <option value="Restricted Discretionary">Restricted Discretionary</option>
+                    <option value="Discretionary">Discretionary</option>
+                    <option value="Non-Complying">Non-Complying</option>
+                    <option value="Prohibited">Prohibited</option>
+                  </select>
+                  <p class="mt-1 text-xs text-gray-500">
+                    Activity status under the district plan
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: RC Details (Resource Consent) OR Additional Information (Other Requests) -->
+        <div v-if="currentStep === 4">
+          <!-- Resource Consent: RC Details -->
+          <div v-if="isResourceConsent">
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">Resource Consent Details</h2>
+            <p class="text-gray-600 mb-8">Provide Resource Management Act (RMA) specific information</p>
+          <div class="space-y-6">
+            <!-- Reference and Delivery -->
+            <div class="grid md:grid-cols-3 gap-4 mb-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Zone</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Applicant Reference Number
+                </label>
+                <input
+                  v-model="formData.applicant_reference_number"
+                  type="text"
+                  placeholder="e.g., PROJ-2025-001"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+                <p class="mt-1 text-xs text-gray-500">Your internal project/file reference (optional)</p>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  PIM Reference
+                </label>
+                <input
+                  v-model="formData.pim_reference"
+                  type="text"
+                  placeholder="e.g., PIM-2024-12345"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+                <p class="mt-1 text-xs text-gray-500">Property Information Memorandum number (if applicable)</p>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Delivery Preference
+                </label>
                 <select
-                  v-model="formData.zone"
+                  v-model="formData.delivery_preference"
                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <option value="">Select zone</option>
-                  <option value="Residential">Residential</option>
-                  <option value="Commercial">Commercial</option>
-                  <option value="Industrial">Industrial</option>
-                  <option value="Rural">Rural</option>
-                  <option value="Mixed Use">Mixed Use</option>
+                  <option value="">Select preference</option>
+                  <option value="Email">Email</option>
+                  <option value="Postal Mail">Postal Mail</option>
+                  <option value="Both Email and Postal">Both Email and Postal</option>
                 </select>
+                <p class="mt-1 text-xs text-gray-500">How to receive correspondence</p>
               </div>
             </div>
-          </div>
-        </div>
 
-        <!-- Step 3: Application Details -->
-        <div v-if="currentStep === 3">
-          <h2 class="text-2xl font-bold text-gray-900 mb-2">Application Details</h2>
-          <p class="text-gray-600 mb-8">Describe your proposed activity or development</p>
-
-          <div class="space-y-6">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Brief Description *</label>
-              <input
-                    v-model="formData.brief_description"
-                    type="text"
-                    placeholder="e.g., Two-storey residential dwelling"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Detailed Description *</label>
-              <textarea
-                v-model="formData.detailed_description"
-                rows="6"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Provide a detailed description of the proposed activity, including any relevant technical details, dimensions, materials, and timeframes..."
-              ></textarea>
-            </div>
-
+            <!-- Consent Types and Activity Status -->
             <div class="grid md:grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Estimated Project Value</label>
-                <Input
-                  v-model="formData.estimated_value"
-                  placeholder="e.g., 500000"
-                  type="number"
-                >
-                  <template #prefix>
-                    <span class="text-gray-500">$</span>
-                  </template>
-                </Input>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Consent Type(s) *
+                </label>
+                <div class="space-y-2 p-3 border border-gray-300 rounded-lg">
+                  <label v-for="consentType in availableConsentTypes" :key="consentType" class="flex items-center">
+                    <input
+                      type="checkbox"
+                      :value="consentType"
+                      @change="toggleConsentType(consentType)"
+                      :checked="isConsentTypeSelected(consentType)"
+                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <span class="ml-2 text-sm text-gray-700">{{ consentType }}</span>
+                  </label>
+                </div>
+                <p class="mt-1 text-xs text-gray-500">Select all consent types required (multiple allowed)</p>
               </div>
+
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Proposed Start Date</label>
-                <input
-                    v-model="formData.proposed_start_date"
-                    type="date"
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Activity Status *
+                  <button
+                    type="button"
+                    @click="showActivityStatusHelp = !showActivityStatusHelp"
+                    class="ml-1 text-blue-600 hover:text-blue-800"
+                    title="Click for help"
+                  >
+                    <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </button>
+                </label>
+
+                <div v-if="showActivityStatusHelp" class="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg text-xs text-blue-900">
+                  <p class="font-semibold mb-2">RMA Activity Status Guide:</p>
+                  <ul class="space-y-1 ml-4 list-disc">
+                    <li><strong>Permitted:</strong> Allowed without consent (no application needed)</li>
+                    <li><strong>Controlled:</strong> Consent must be granted; council sets conditions</li>
+                    <li><strong>Restricted Discretionary:</strong> Council has limited grounds to decline</li>
+                    <li><strong>Discretionary:</strong> Council has full discretion to grant or decline</li>
+                    <li><strong>Non-Complying:</strong> Does not comply with plan; requires special justification</li>
+                    <li><strong>Prohibited:</strong> Cannot be consented under any circumstances</li>
+                  </ul>
+                  <p class="mt-2 text-xs text-blue-700">Check your district plan zone rules to determine status</p>
+                </div>
+
+                <select
+                  v-model="formData.activity_status"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  required
+                >
+                  <option value="">Select activity status</option>
+                  <option value="Controlled">Controlled</option>
+                  <option value="Restricted Discretionary">Restricted Discretionary</option>
+                  <option value="Discretionary">Discretionary</option>
+                  <option value="Non-Complying">Non-Complying</option>
+                  <option value="Permitted Boundary Activity">Permitted Boundary Activity</option>
+                </select>
+                <p class="mt-1 text-xs text-gray-500">Activity classification under district plan</p>
+
+                <div v-if="activityStatusWarning" class="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-800">
+                  {{ activityStatusWarning }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Permitted Boundary Activity (RMA s87BA) -->
+            <div v-if="formData.activity_status === 'Permitted Boundary Activity'" class="border-t border-gray-200 pt-6 mt-6">
+              <h3 class="text-sm font-semibold text-gray-900 mb-2">Permitted Boundary Activity (RMA s87BA)</h3>
+              <p class="text-xs text-gray-500 mb-4">This is a special consent type for boundary infringements under section 87BA of the Resource Management Act</p>
+
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Boundary Description</label>
+                  <input
+                    v-model="formData.boundary_description"
+                    type="text"
+                    placeholder="e.g., Side boundary with 123 Main Street"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Description of Boundary Activity</label>
+                  <textarea
+                    v-model="formData.boundary_activity_description"
+                    rows="3"
+                    placeholder="Describe how the activity infringes the boundary setback requirements..."
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                  ></textarea>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <div class="flex items-start mb-2">
+                      <input
+                        type="checkbox"
+                        v-model="formData.boundary_owner_approval_obtained"
+                        class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      />
+                      <label class="ml-3 text-xs font-medium text-gray-700">
+                        Affected boundary owner approval obtained
+                      </label>
+                    </div>
+                  </div>
+
+                  <div v-if="formData.boundary_owner_approval_obtained">
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Approval Date</label>
+                    <input
+                      v-model="formData.boundary_approval_date"
+                      type="date"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    />
+                  </div>
+                </div>
+
+                <div v-if="formData.boundary_owner_approval_obtained">
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Approval Documentation</label>
+                  <input
+                    type="file"
+                    @change="handleBoundaryApprovalUpload"
+                    accept=".pdf,.doc,.docx,.jpg,.png"
+                    class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200"
+                  />
+                  <p v-if="formData.boundary_approval_document" class="text-xs text-blue-600 mt-1">
+                    ✓ Document uploaded
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Proposal Details -->
+            <div class="border-t border-gray-200 pt-6 mt-6">
+              <h3 class="text-sm font-semibold text-gray-900 mb-4">Proposal Details</h3>
+              <p class="text-xs text-gray-500 mb-4">Provide details about your proposed development (all fields optional)</p>
+
+              <!-- Building/Structure Details -->
+              <div class="mb-4">
+                <h4 class="text-xs font-medium text-gray-700 mb-3">Building/Structure Dimensions</h4>
+                <div class="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Building Height (metres)</label>
+                    <input
+                    v-model="formData.building_height"
+                    type="number"
+                    placeholder="e.g., 8.5"
                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Total Floor Area (m²)</label>
+                    <input
+                    v-model="formData.building_floor_area"
+                    type="number"
+                    placeholder="e.g., 250"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Earthworks -->
+              <div class="mb-4">
+                <h4 class="text-xs font-medium text-gray-700 mb-3">Earthworks</h4>
+                <div class="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Earthworks Volume (m³)</label>
+                    <input
+                    v-model="formData.earthworks_volume"
+                    type="number"
+                    placeholder="e.g., 150"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Maximum Vertical Alteration (metres)</label>
+                    <input
+                    v-model="formData.earthworks_vertical_alteration"
+                    type="number"
+                    placeholder="e.g., 2.5"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Traffic & Operations -->
+              <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                  <h4 class="text-xs font-medium text-gray-700 mb-3">Traffic & Parking</h4>
+                  <div class="space-y-3">
+                    <div>
+                      <label class="block text-xs font-medium text-gray-600 mb-1">Additional Vehicle Movements/Day</label>
+                      <input
+                    v-model="formData.vehicle_movements_daily"
+                    type="number"
+                    placeholder="e.g., 20"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                    </div>
+                    <div>
+                      <label class="block text-xs font-medium text-gray-600 mb-1">Parking Spaces Provided</label>
+                      <input
+                    v-model="formData.parking_spaces_provided"
+                    type="number"
+                    placeholder="e.g., 4"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h4 class="text-xs font-medium text-gray-700 mb-3">Operations</h4>
+                  <div class="space-y-3">
+                    <div>
+                      <label class="block text-xs font-medium text-gray-600 mb-1">Hours of Operation</label>
+                      <input
+                    v-model="formData.hours_of_operation"
+                    type="text"
+                    placeholder="e.g., Mon-Fri 8am-6pm"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                    </div>
+                    <div>
+                      <label class="block text-xs font-medium text-gray-600 mb-1">Consent Term Requested</label>
+                      <input
+                    v-model="formData.consent_term_requested"
+                    type="text"
+                    placeholder="e.g., 5 years, Unlimited"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Site & Environment -->
+            <div class="border-t border-gray-200 pt-6 mt-6">
+              <h3 class="text-sm font-semibold text-gray-900 mb-4">Site & Environment</h3>
+              <p class="text-xs text-gray-500 mb-4">Describe existing site conditions and environmental features (all fields optional)</p>
+
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">Site Topography</label>
+                  <textarea
+                    v-model="formData.site_topography"
+                    rows="2"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    placeholder="e.g., Generally flat with gentle slope to north, approximately 10m elevation..."
+                  ></textarea>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">Existing Vegetation</label>
+                  <textarea
+                    v-model="formData.existing_vegetation_description"
+                    rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    placeholder="Describe existing trees, shrubs, native vegetation, notable specimens..."
+                  ></textarea>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <div class="flex items-start mb-2">
+                      <input
+                        type="checkbox"
+                        v-model="formData.watercourses_present"
+                        class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      />
+                      <label class="ml-3 text-xs font-medium text-gray-700">
+                        Watercourses/Wetlands Present on Site
+                      </label>
+                    </div>
+                    <div v-if="formData.watercourses_present">
+                      <textarea
+                        v-model="formData.watercourse_description"
+                        rows="2"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="Describe watercourses, streams, wetlands..."
+                      ></textarea>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">HAIL Contamination Status</label>
+                    <select
+                      v-model="formData.contamination_status_hail"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    >
+                      <option value="">Select contamination status</option>
+                      <option value="Not Assessed">Not Assessed</option>
+                      <option value="Not HAIL">Not HAIL (Hazardous Activities and Industries List)</option>
+                      <option value="HAIL - Not Investigated">HAIL - Not Investigated</option>
+                      <option value="HAIL - Investigated (Clean)">HAIL - Investigated (Clean)</option>
+                      <option value="HAIL - Contaminated">HAIL - Contaminated</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Natural Hazards Assessment (RMA s104) -->
+                <div class="border border-blue-200 rounded-lg p-4 bg-blue-50">
+                  <h4 class="text-sm font-semibold text-blue-900 mb-3">Natural Hazards Assessment (RMA s104)</h4>
+                  <p class="text-xs text-blue-700 mb-3">Indicate which natural hazards are present on or near the site</p>
+
+                  <div class="space-y-2 mb-3">
+                    <div v-for="hazard in naturalHazardTypes" :key="hazard" class="flex items-center">
+                      <input
+                        type="checkbox"
+                        :id="'hazard-' + hazard"
+                        :value="hazard"
+                        v-model="selectedHazards"
+                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      />
+                      <label :for="'hazard-' + hazard" class="ml-2 text-sm text-gray-700">{{ hazard }}</label>
+                    </div>
+                  </div>
+
+                  <div v-if="selectedHazards.length > 0" class="border-t border-blue-300 pt-3 mt-3">
+                    <div v-for="hazard in selectedHazards" :key="hazard" class="mb-4 last:mb-0">
+                      <h5 class="text-xs font-semibold text-blue-900 mb-2">{{ hazard }}</h5>
+                      <div class="grid md:grid-cols-2 gap-3">
+                        <div>
+                          <label class="block text-xs font-medium text-gray-700 mb-1">Risk Level</label>
+                          <select
+                            v-model="getHazardData(hazard).risk_level"
+                            class="w-full px-2 py-1 border border-gray-300 rounded text-sm bg-white"
+                          >
+                            <option value="">Select risk level</option>
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                            <option value="Extreme">Extreme</option>
+                          </select>
+                        </div>
+                        <div class="flex items-end">
+                          <div class="flex items-center mb-1">
+                            <input
+                              type="checkbox"
+                              :id="'mitigation-' + hazard"
+                              v-model="getHazardData(hazard).mitigation_required"
+                              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                            />
+                            <label :for="'mitigation-' + hazard" class="ml-2 text-xs text-gray-700">Mitigation Required</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="mt-2">
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Assessment Notes</label>
+                        <textarea
+                          v-model="getHazardData(hazard).assessment_notes"
+                          rows="2"
+                          class="w-full px-2 py-1 border border-gray-300 rounded text-sm bg-white"
+                          placeholder="Describe the hazard and its potential impact..."
+                        ></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">Existing Infrastructure</label>
+                  <textarea
+                    v-model="formData.existing_infrastructure"
+                    rows="2"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    placeholder="e.g., Wastewater, stormwater, electricity connections..."
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- National Environmental Standards (NES) Assessment -->
+            <div class="border-t border-gray-200 pt-6 mt-6">
+              <h3 class="text-sm font-semibold text-gray-900 mb-2">National Environmental Standards (NES) Assessment</h3>
+              <p class="text-xs text-gray-500 mb-4">Indicate which National Environmental Standards apply to this proposal</p>
+
+              <!-- Context Summary Panel -->
+              <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                <h4 class="text-sm font-semibold text-blue-900 mb-2">Application Context</h4>
+                <div class="grid md:grid-cols-2 gap-3 text-xs">
+                  <div>
+                    <span class="font-medium text-blue-800">Applicant:</span>
+                    <span class="text-blue-700 ml-1">{{ formData.applicant_name || 'Not provided' }}</span>
+                  </div>
+                  <div>
+                    <span class="font-medium text-blue-800">Location:</span>
+                    <span class="text-blue-700 ml-1">{{ formData.property_address || 'Not provided' }}</span>
+                  </div>
+                  <div>
+                    <span class="font-medium text-blue-800">Consent Type(s):</span>
+                    <span class="text-blue-700 ml-1">{{ formData.consent_types.map(ct => ct.consent_type).join(', ') || 'Not selected' }}</span>
+                  </div>
+                  <div>
+                    <span class="font-medium text-blue-800">Activity Status:</span>
+                    <span class="text-blue-700 ml-1">{{ formData.activity_status || 'Not selected' }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="space-y-3">
+                <div v-for="nesType in nesTypes" :key="nesType.value" class="border border-gray-200 rounded-lg p-3 bg-gray-50">
+                  <div class="flex items-start mb-2">
+                    <input
+                      type="checkbox"
+                      :id="'nes-' + nesType.value"
+                      v-model="getNESData(nesType.value).applies"
+                      class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <label :for="'nes-' + nesType.value" class="ml-3 text-sm font-medium text-gray-900">
+                      {{ nesType.label }}
+                    </label>
+                  </div>
+
+                  <div v-if="getNESData(nesType.value).applies" class="ml-7 mt-3 space-y-3 border-l-2 border-blue-300 pl-3">
+                    <!-- Other NES Description (conditional) -->
+                    <div v-if="nesType.value === 'Other'">
+                      <label class="block text-xs font-medium text-gray-700 mb-1">Other NES Description *</label>
+                      <input
+                        v-model="getNESData(nesType.value).other_nes_description"
+                        type="text"
+                        required
+                        class="w-full px-2 py-1 border border-gray-300 rounded text-sm bg-white"
+                        placeholder="Please specify the NES type..."
+                      />
+                    </div>
+
+                    <div>
+                      <label class="block text-xs font-medium text-gray-700 mb-1">Compliance Status</label>
+                      <select
+                        v-model="getNESData(nesType.value).compliance_status"
+                        class="w-full px-2 py-1 border border-gray-300 rounded text-sm bg-white"
+                      >
+                        <option value="">Select compliance status</option>
+                        <option value="Permitted Activity">Permitted Activity</option>
+                        <option value="Requires Consent">Requires Consent</option>
+                        <option value="Non-Complying Activity">Non-Complying Activity</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label class="block text-xs font-medium text-gray-700 mb-1">Assessment Notes</label>
+                      <textarea
+                        v-model="getNESData(nesType.value).assessment_notes"
+                        rows="2"
+                        class="w-full px-2 py-1 border border-gray-300 rounded text-sm bg-white"
+                        placeholder="Provide details on how the NES applies..."
+                      ></textarea>
+                    </div>
+
+                    <!-- In-context NES Document Upload -->
+                    <div>
+                      <label class="block text-xs font-medium text-gray-700 mb-1">Upload NES Assessment Document</label>
+                      <div class="flex items-center gap-2">
+                        <input
+                          type="file"
+                          @change="handleNESDocumentUpload($event, nesType.value)"
+                          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                          class="text-xs file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                        />
+                      </div>
+                      <p class="text-xs text-gray-500 mt-1">PDF, Word documents, or images (max 10MB)</p>
+                      <!-- Show uploaded NES documents for this type -->
+                      <div v-if="getNESDocuments(nesType.value).length > 0" class="mt-2 space-y-1">
+                        <div v-for="(doc, docIdx) in getNESDocuments(nesType.value)" :key="docIdx" class="flex items-center justify-between text-xs bg-gray-50 p-2 rounded">
+                          <span class="text-gray-700">{{ doc.document_type }} - {{ doc.file?.name || 'Uploaded' }}</span>
+                          <button
+                            @click="removeNESDocument(nesType.value, docIdx)"
+                            type="button"
+                            class="text-red-600 hover:text-red-800"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- HAIL Activities (Contaminated Land) -->
+            <div v-if="isNESSoilsSelected" class="border-t border-gray-200 pt-6 mt-6">
+              <h3 class="text-sm font-semibold text-gray-900 mb-2">HAIL Activities (Hazardous Activities and Industries List)</h3>
+              <p class="text-xs text-gray-500 mb-4">For sites with potential soil contamination under the NES for Assessing and Managing Contaminants in Soil</p>
+
+              <div class="flex items-center justify-between mb-3">
+                <p class="text-xs text-gray-600">List any HAIL activities on the site (past, current, or likely)</p>
+                <button
+                  @click="addHAILActivity"
+                  type="button"
+                  class="px-3 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-lg hover:bg-blue-200"
+                >
+                  + Add HAIL Activity
+                </button>
+              </div>
+
+              <div v-if="formData.hail_activities.length > 0" class="space-y-3">
+                <div
+                  v-for="(hail, index) in formData.hail_activities"
+                  :key="index"
+                  class="border border-gray-300 rounded-lg p-4 bg-white"
+                >
+                  <div class="flex items-start justify-between mb-3">
+                    <h4 class="text-sm font-medium text-gray-900">HAIL Activity #{{ index + 1 }}</h4>
+                    <button
+                      @click="removeHAILActivity(index)"
+                      type="button"
+                      class="text-red-600 hover:text-red-800"
+                    >
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <div class="space-y-3">
+                    <div>
+                      <label class="block text-xs font-medium text-gray-700 mb-1">Activity Description *</label>
+                      <textarea
+                        v-model="hail.activity_description"
+                        rows="2"
+                        required
+                        class="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                        placeholder="Describe the HAIL activity (e.g., Former service station, industrial site)..."
+                      ></textarea>
+                    </div>
+
+                    <div>
+                      <label class="block text-xs font-medium text-gray-700 mb-1">HAIL Category</label>
+                      <select
+                        v-model="hail.hail_category"
+                        class="w-full px-2 py-1 border border-gray-300 rounded text-sm bg-white"
+                      >
+                        <option value="">Select HAIL category</option>
+                        <option value="Category A - Petroleum/Oil Storage">Category A - Petroleum/Oil Storage</option>
+                        <option value="Category B - Asbestos Products">Category B - Asbestos Products</option>
+                        <option value="Category C - Chemicals">Category C - Chemicals</option>
+                        <option value="Category D - Engineering Workshops">Category D - Engineering Workshops</option>
+                        <option value="Category E - Gasworks/Coke Works">Category E - Gasworks/Coke Works</option>
+                        <option value="Category F - Horticulture">Category F - Horticulture</option>
+                        <option value="Category G - Landfills/Waste Disposal">Category G - Landfills/Waste Disposal</option>
+                        <option value="Category H - Metal Treatment">Category H - Metal Treatment</option>
+                        <option value="Category I - Timber Treatment">Category I - Timber Treatment</option>
+                      </select>
+                      <p class="text-xs text-gray-500 mt-1">Select the applicable HAIL category for this activity</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-3">
+                      <div class="flex items-center">
+                        <input
+                          type="checkbox"
+                          :id="'hail-current-' + index"
+                          v-model="hail.currently_undertaken"
+                          class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        />
+                        <label :for="'hail-current-' + index" class="ml-2 text-xs text-gray-700">Currently Being Undertaken</label>
+                      </div>
+
+                      <div class="flex items-center">
+                        <input
+                          type="checkbox"
+                          :id="'hail-previous-' + index"
+                          v-model="hail.previously_undertaken"
+                          class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        />
+                        <label :for="'hail-previous-' + index" class="ml-2 text-xs text-gray-700">Previously Undertaken</label>
+                      </div>
+
+                      <div class="flex items-center">
+                        <input
+                          type="checkbox"
+                          :id="'hail-likely-' + index"
+                          v-model="hail.likely_undertaken"
+                          class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        />
+                        <label :for="'hail-likely-' + index" class="ml-2 text-xs text-gray-700">Likely to Have Been Undertaken</label>
+                      </div>
+                    </div>
+
+                    <div class="flex items-center">
+                      <input
+                        type="checkbox"
+                        :id="'hail-investigated-' + index"
+                        v-model="hail.preliminary_investigation_done"
+                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      />
+                      <label :for="'hail-investigated-' + index" class="ml-2 text-xs text-gray-700">Preliminary Investigation Completed</label>
+                    </div>
+
+                    <div>
+                      <label class="block text-xs font-medium text-gray-700 mb-2">Proposed Activities</label>
+                      <div class="space-y-2 p-3 border border-gray-200 rounded bg-gray-50">
+                        <div class="flex items-center">
+                          <input
+                            type="checkbox"
+                            :id="'hail-activity-fuel-' + index"
+                            @change="toggleHAILProposedActivity(index, 'Removing or replacing fuel storage system')"
+                            :checked="isHAILActivitySelected(index, 'Removing or replacing fuel storage system')"
+                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          />
+                          <label :for="'hail-activity-fuel-' + index" class="ml-2 text-xs text-gray-700">Removing or replacing fuel storage system</label>
+                        </div>
+                        <div class="flex items-center">
+                          <input
+                            type="checkbox"
+                            :id="'hail-activity-disturb-' + index"
+                            @change="toggleHAILProposedActivity(index, 'Disturbing soil')"
+                            :checked="isHAILActivitySelected(index, 'Disturbing soil')"
+                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          />
+                          <label :for="'hail-activity-disturb-' + index" class="ml-2 text-xs text-gray-700">Disturbing soil</label>
+                        </div>
+                        <div class="flex items-center">
+                          <input
+                            type="checkbox"
+                            :id="'hail-activity-sample-' + index"
+                            @change="toggleHAILProposedActivity(index, 'Sampling soil')"
+                            :checked="isHAILActivitySelected(index, 'Sampling soil')"
+                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          />
+                          <label :for="'hail-activity-sample-' + index" class="ml-2 text-xs text-gray-700">Sampling soil</label>
+                        </div>
+                        <div class="flex items-center">
+                          <input
+                            type="checkbox"
+                            :id="'hail-activity-subdivide-' + index"
+                            @change="toggleHAILProposedActivity(index, 'Subdividing land')"
+                            :checked="isHAILActivitySelected(index, 'Subdividing land')"
+                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          />
+                          <label :for="'hail-activity-subdivide-' + index" class="ml-2 text-xs text-gray-700">Subdividing land</label>
+                        </div>
+                        <div class="flex items-center">
+                          <input
+                            type="checkbox"
+                            :id="'hail-activity-change-' + index"
+                            @change="toggleHAILProposedActivity(index, 'Changing use of land')"
+                            :checked="isHAILActivitySelected(index, 'Changing use of land')"
+                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          />
+                          <label :for="'hail-activity-change-' + index" class="ml-2 text-xs text-gray-700">Changing use of land</label>
+                        </div>
+                      </div>
+                      <p class="text-xs text-gray-500 mt-1">Select all proposed activities that apply (multiple allowed)</p>
+                    </div>
+
+                    <div>
+                      <label class="block text-xs font-medium text-gray-700 mb-1">Notes</label>
+                      <textarea
+                        v-model="hail.notes"
+                        rows="2"
+                        class="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                        placeholder="Additional notes about the HAIL activity..."
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div v-else class="text-center py-6 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                <p class="text-sm text-gray-500">No HAIL activities added yet</p>
+                <p class="text-xs text-gray-400 mt-1">Click "Add HAIL Activity" to document contaminated land activities</p>
+              </div>
+            </div>
+
+            <!-- Assessment of Environmental Effects -->
+            <div class="border-t border-gray-200 pt-6 mt-6">
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Assessment of Environmental Effects (AEE) *
+              </label>
+              <textarea
+                v-model="formData.assessment_of_effects"
+                rows="8"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Describe the actual and potential effects on the environment as per Schedule 4 of the RMA. Include effects on people, physical environment, ecosystems, and cultural/heritage values..."
+                required
+              ></textarea>
+              <p class="mt-1 text-xs text-gray-500">Required under Schedule 4 of the Resource Management Act</p>
+            </div>
+
+            <!-- Effects Breakdown (Optional) -->
+            <div class="border-t border-gray-200 pt-4">
+              <h3 class="text-sm font-semibold text-gray-900 mb-3">Detailed Effects Assessment (Optional)</h3>
+              <p class="text-xs text-gray-500 mb-4">Break down your AEE into specific effect categories for a more comprehensive assessment</p>
+
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">Effects on People</label>
+                  <textarea
+                    v-model="formData.effects_on_people"
+                    rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    placeholder="Privacy, sunlight access, visual amenity, noise impacts..."
+                  ></textarea>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">Physical Effects</label>
+                  <textarea
+                    v-model="formData.physical_effects"
+                    rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    placeholder="Traffic, parking, stormwater, infrastructure impacts..."
+                  ></textarea>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">Earthworks Effects</label>
+                  <textarea
+                    v-model="formData.earthworks_effects"
+                    rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    placeholder="Soil disturbance, erosion, sediment control, slope stability, construction impacts..."
+                  ></textarea>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">Discharge/Contaminants Effects</label>
+                  <textarea
+                    v-model="formData.discharge_contaminants_effects"
+                    rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    placeholder="Stormwater discharge, wastewater, air quality, dust, odour, contaminant management..."
+                  ></textarea>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">Ecosystem Effects</label>
+                  <textarea
+                    v-model="formData.ecosystem_effects"
+                    rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    placeholder="Indigenous vegetation, habitat values, watercourses, biodiversity..."
+                  ></textarea>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">Hazard Risk Assessment</label>
+                  <textarea
+                    v-model="formData.hazard_risk_assessment"
+                    rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    placeholder="Flood risk, liquefaction, slope instability, coastal hazards, seismic risk..."
+                  ></textarea>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">Cultural/Heritage Effects</label>
+                  <textarea
+                    v-model="formData.cultural_effects"
+                    rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    placeholder="Heritage values, sites of significance to Māori, archaeological sites..."
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Planning Assessment -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Planning Assessment *
+              </label>
+              <textarea
+                v-model="formData.planning_assessment"
+                rows="6"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Assess the proposal against relevant district plan provisions, objectives and policies. Address how the proposal aligns with planning framework..."
+                required
+              ></textarea>
+              <p class="mt-1 text-xs text-gray-500">Assessment against district plan objectives and policies</p>
+            </div>
+
+            <!-- RMA Part 2 Assessment -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                RMA Part 2 Assessment
+              </label>
+              <textarea
+                v-model="formData.rma_part2_assessment"
+                rows="5"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Assess the proposal against Part 2 of the RMA, including sections 5 (Purpose), 6 (Matters of national importance), 7 (Other matters), and 8 (Treaty of Waitangi)..."
+              ></textarea>
+              <p class="mt-1 text-xs text-gray-500">Assessment against RMA Part 2 principles (sections 5-8)</p>
+            </div>
+
+            <!-- Alternatives and Mitigation -->
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Alternatives Considered
+                </label>
+                <textarea
+                  v-model="formData.alternatives_considered"
+                  rows="4"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  placeholder="What alternative designs, locations, or methods were considered?..."
+                ></textarea>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Mitigation Measures
+                </label>
+                <textarea
+                  v-model="formData.mitigation_proposed"
+                  rows="4"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  placeholder="What measures will be implemented to avoid, remedy or mitigate adverse effects?..."
+                ></textarea>
+              </div>
+            </div>
+
+            <!-- Affected Parties -->
+            <div class="border-t border-gray-200 pt-4">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-sm font-semibold text-gray-900">Affected Parties</h3>
+                <Button @click="addAffectedParty" variant="outline" theme="blue" size="sm">
+                  <template #prefix>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                  </template>
+                  Add Party
+                </Button>
+              </div>
+
+              <p class="text-xs text-gray-500 mb-3">
+                List any parties (neighbors, landowners, etc.) who may be adversely affected by the proposal
+              </p>
+
+              <div v-if="formData.affected_parties.length > 0" class="space-y-3 mb-3">
+                <div
+                  v-for="(party, index) in formData.affected_parties"
+                  :key="index"
+                  class="p-4 bg-white rounded-lg border border-gray-300 hover:border-blue-400 transition-colors"
+                >
+                  <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                      <div class="flex items-center gap-2 mb-2">
+                        <h4 class="text-sm font-semibold text-gray-900">{{ party.party_name }}</h4>
+                        <span class="px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-700 rounded">
+                          {{ party.relationship }}
+                        </span>
+                      </div>
+
+                      <div class="grid md:grid-cols-2 gap-x-6 gap-y-1 text-xs text-gray-600">
+                        <div v-if="party.property_address" class="flex items-start gap-1">
+                          <svg class="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                          <span>{{ party.property_address }}</span>
+                        </div>
+
+                        <div v-if="party.email" class="flex items-center gap-1">
+                          <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                          </svg>
+                          <a :href="'mailto:' + party.email" class="text-blue-600 hover:underline">{{ party.email }}</a>
+                        </div>
+
+                        <div v-if="party.phone" class="flex items-center gap-1">
+                          <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                          </svg>
+                          <a :href="'tel:' + party.phone" class="text-blue-600 hover:underline">{{ party.phone }}</a>
+                        </div>
+
+                        <div v-if="party.postal_address" class="flex items-start gap-1">
+                          <svg class="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76" />
+                          </svg>
+                          <span>Postal: {{ party.postal_address }}</span>
+                        </div>
+                      </div>
+
+                      <div v-if="party.approval_obtained" class="mt-2 flex items-center gap-2">
+                        <span class="inline-flex items-center gap-1 text-xs text-green-700 bg-green-50 px-2 py-1 rounded">
+                          <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                          </svg>
+                          Written approval obtained
+                        </span>
+                        <span v-if="party.approval_date" class="text-xs text-gray-500">{{ party.approval_date }}</span>
+                      </div>
+
+                      <p v-if="party.comments" class="mt-2 text-xs text-gray-600 italic">{{ party.comments }}</p>
+                    </div>
+
+                    <div class="flex gap-1 ml-3">
+                      <button
+                        @click="editAffectedParty(index)"
+                        class="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                        title="Edit party"
+                      >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                      <button
+                        @click="removeAffectedParty(index)"
+                        class="p-1 text-red-600 hover:bg-red-50 rounded"
+                        title="Remove party"
+                      >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div v-else class="text-center py-6 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                <p class="text-sm text-gray-500">No affected parties added yet</p>
+              </div>
+
+              <!-- Written Approvals Count -->
+              <div v-if="formData.affected_parties.length > 0" class="mt-3">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Number of Written Approvals Obtained
+                </label>
+                <input
+                  v-model.number="formData.written_approvals_obtained"
+                  type="number"
+                  min="0"
+                  :max="formData.affected_parties.length"
+                  class="w-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+                <p class="mt-1 text-xs text-gray-500">
+                  How many of the {{ formData.affected_parties.length }} affected parties have provided written approval?
+                </p>
+              </div>
+
+              <!-- Iwi Consultation Note -->
+              <div class="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                <div class="flex items-start gap-2">
+                  <svg class="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div>
+                    <h4 class="text-sm font-semibold text-green-900">Treaty of Waitangi Obligations</h4>
+                    <p class="text-xs text-green-700 mt-1">
+                      To record iwi/hapū consultation, add them as affected parties above using the relationship type "Iwi".
+                      Include their response in the comments field. Upload any Cultural Impact Assessment (CIA) as a specialist report.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Iwi Consultation (Dedicated Section) -->
+            <div class="border-t border-gray-200 pt-4">
+              <h3 class="text-sm font-semibold text-gray-900 mb-3">Iwi Consultation</h3>
+              <p class="text-xs text-gray-500 mb-4">
+                Details of consultation with iwi and hapū under RMA s8 (Treaty of Waitangi)
+              </p>
+
+              <div class="space-y-4">
+                <!-- Consultation Undertaken -->
+                <div class="flex items-center">
+                  <input
+                    v-model="formData.iwi_consultation_undertaken"
+                    type="checkbox"
+                    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label class="ml-2 text-sm text-gray-700">
+                    Iwi/Hapū consultation has been undertaken
+                  </label>
+                </div>
+
+                <!-- Iwi Consulted -->
+                <div v-if="formData.iwi_consultation_undertaken">
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Iwi/Hapū Consulted
+                  </label>
+                  <textarea
+                    v-model="formData.iwi_consulted"
+                    rows="2"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    placeholder="List the iwi and hapū groups that were consulted..."
+                  ></textarea>
+                </div>
+
+                <!-- Response Summary -->
+                <div v-if="formData.iwi_consultation_undertaken">
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Response Summary
+                  </label>
+                  <textarea
+                    v-model="formData.iwi_response_summary"
+                    rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    placeholder="Summarize the responses received from iwi/hapū, including any concerns raised and how they are addressed..."
+                  ></textarea>
+                  <p class="mt-1 text-xs text-gray-500">
+                    Summary of feedback and responses from consulted iwi/hapū
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Specialist Reports -->
+            <div class="border-t border-gray-200 pt-4">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-sm font-semibold text-gray-900">Specialist Reports</h3>
+                <Button @click="addSpecialistReport" variant="outline" theme="blue" size="sm">
+                  <template #prefix>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                  </template>
+                  Add Report
+                </Button>
+              </div>
+
+              <p class="text-xs text-gray-500 mb-3">
+                Add any specialist technical reports (traffic, geotechnical, acoustic, ecological, etc.)
+              </p>
+
+              <div v-if="formData.specialist_reports.length > 0" class="space-y-3 mb-3">
+                <div
+                  v-for="(report, index) in formData.specialist_reports"
+                  :key="index"
+                  class="p-4 bg-white rounded-lg border border-gray-300 hover:border-blue-400 transition-colors"
+                >
+                  <div class="flex items-start justify-between mb-2">
+                    <div class="flex items-center gap-2">
+                      <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      <h4 class="text-sm font-semibold text-gray-900">{{ report.report_type }}</h4>
+                    </div>
+                    <span class="px-2 py-0.5 text-xs bg-purple-100 text-purple-700 rounded font-medium">
+                      {{ report.report_date }}
+                    </span>
+                  </div>
+
+                  <div class="space-y-2 text-xs text-gray-600 mb-3">
+                    <div class="flex items-center gap-2">
+                      <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      <span class="font-medium">{{ report.specialist_name }}</span>
+                      <span v-if="report.specialist_company" class="text-gray-400">• {{ report.specialist_company }}</span>
+                    </div>
+
+                    <div v-if="report.document" class="flex items-center gap-2 text-blue-600">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                      </svg>
+                      <span>{{ typeof report.document === 'object' ? report.document.name : 'Document attached' }}</span>
+                    </div>
+
+                    <div v-if="report.summary" class="mt-2 p-2 bg-gray-50 rounded text-xs text-gray-700">
+                      <span class="font-medium">Summary: </span>{{ report.summary }}
+                    </div>
+                  </div>
+
+                  <div class="flex gap-2">
+                    <button
+                      @click="editSpecialistReport(index)"
+                      class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded transition-colors"
+                    >
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                      Edit
+                    </button>
+                    <button
+                      @click="removeSpecialistReport(index)"
+                      class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded transition-colors"
+                    >
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div v-else class="text-center py-6 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                <p class="text-sm text-gray-500">No specialist reports added yet</p>
+                <p class="text-xs text-gray-400 mt-1">Upload report files in the Documents step</p>
+              </div>
+            </div>
+
+            <!-- Proposed Conditions -->
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">
+                    Proposed Conditions (Optional)
+                  </label>
+                  <p class="mt-1 text-xs text-gray-500">Select from standard templates or propose custom conditions</p>
+                </div>
+                <button
+                  type="button"
+                  @click="openConditionsModal"
+                  class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 flex items-center gap-1.5"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  Browse Templates
+                </button>
+              </div>
+
+              <!-- Selected Conditions Display -->
+              <div v-if="formData.proposed_conditions && formData.proposed_conditions.length > 0" class="space-y-3 mt-3">
+                <div v-for="(condition, index) in formData.proposed_conditions" :key="index" class="p-3 bg-white rounded-lg border border-gray-300 hover:border-blue-400 transition-colors">
+                  <div class="flex items-start justify-between mb-2">
+                    <div class="flex items-center gap-2">
+                      <span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs font-mono rounded">{{ condition.condition_number }}</span>
+                      <span class="px-2 py-0.5 text-xs bg-blue-100 text-blue-700 rounded">{{ condition.condition_category }}</span>
+                    </div>
+                    <div class="flex gap-1">
+                      <button type="button" @click="editCondition(index)" class="p-1 text-blue-600 hover:bg-blue-50 rounded" title="Edit condition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                      <button type="button" @click="removeCondition(index)" class="p-1 text-red-600 hover:bg-red-50 rounded" title="Remove condition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="text-xs text-gray-700" v-html="condition.condition_text"></div>
+                  <div v-if="condition.compliance_notes" class="mt-2 text-xs text-gray-500 italic">{{ condition.compliance_notes }}</div>
+                </div>
+              </div>
+
+              <div v-else class="text-center py-6 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                <svg class="w-10 h-10 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <p class="text-sm text-gray-500">No conditions proposed yet</p>
+                <p class="text-xs text-gray-400 mt-1">Click "Browse Templates" to select standard conditions</p>
+              </div>
+
+              <p class="mt-2 text-xs text-gray-500">
+                <svg class="w-3.5 h-3.5 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                </svg>
+                The council will determine final consent conditions based on the assessment
+              </p>
+            </div>
+
+            <!-- Confidential Information (RMA s42) -->
+            <div class="border-t border-gray-200 pt-6 mt-6">
+              <h3 class="text-sm font-semibold text-gray-900 mb-2">Confidential Information (RMA s42)</h3>
+              <p class="text-xs text-gray-500 mb-4">Under section 42 of the RMA, you may request that certain information be kept confidential if it contains trade secrets or is commercially sensitive</p>
+
+              <div class="space-y-4">
+                <div class="flex items-start">
+                  <input
+                    type="checkbox"
+                    v-model="formData.confidential_information_claimed"
+                    class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label class="ml-3 text-sm font-medium text-gray-700">
+                    This application contains confidential information that should be withheld from public notification
+                  </label>
+                </div>
+
+                <div v-if="formData.confidential_information_claimed" class="ml-7 border-l-2 border-yellow-300 pl-4 bg-yellow-50 p-4 rounded-r-lg">
+                  <label class="block text-sm font-medium text-gray-900 mb-2">
+                    Justification for Confidentiality *
+                  </label>
+                  <p class="text-xs text-gray-600 mb-3">
+                    Explain why this information should be withheld under s42 of the RMA. You must demonstrate that the information is a trade secret or that making it public would unreasonably prejudice your commercial position.
+                  </p>
+                  <textarea
+                    v-model="formData.confidential_information_reason"
+                    rows="4"
+                    required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
+                    placeholder="Provide detailed justification for why this information should be kept confidential. Include references to specific documents or sections that contain confidential material..."
+                  ></textarea>
+                  <p class="mt-2 text-xs text-yellow-700">
+                    ⚠ Note: The consent authority will determine whether your justification meets the requirements of s42. Confidentiality is not guaranteed.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pre-Application Meeting -->
+            <div class="border-t border-gray-200 pt-6 mt-6">
+              <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                <div class="flex items-start">
+                  <div class="flex-shrink-0">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <div class="ml-3 flex-1">
+                    <h3 class="text-sm font-semibold text-blue-900 mb-2">
+                      Need Help with Your Application?
+                    </h3>
+                    <p class="text-sm text-blue-800 mb-3">
+                      For <strong>discretionary</strong> or <strong>non-complying</strong> activities, we recommend booking a pre-application meeting with our planning team. This can help:
+                    </p>
+                    <ul class="text-sm text-blue-800 space-y-1 ml-4 list-disc mb-4">
+                      <li>Clarify district plan requirements</li>
+                      <li>Identify potential issues early</li>
+                      <li>Understand what information you'll need</li>
+                      <li>Get preliminary feedback on your proposal</li>
+                    </ul>
+                    <Button
+                      @click="requestPreAppMeeting"
+                      variant="solid"
+                      theme="blue"
+                      size="sm"
+                      :loading="requestingMeeting"
+                    >
+                      <template #prefix>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </template>
+                      Request Pre-Application Meeting
+                    </Button>
+                    <p class="text-xs text-blue-700 mt-2">
+                      A planning officer will contact you within 2 business days to schedule.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <!-- Non-Resource Consent: Additional Information with File Upload -->
+          <div v-else>
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">Additional Information</h2>
+            <p class="text-gray-600 mb-8">Provide details about your request and attach any supporting documents</p>
+
+            <div class="space-y-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Brief Description *</label>
+                <input
+                  v-model="formData.brief_description"
+                  type="text"
+                  placeholder="e.g., Request for LIM report on property"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Additional Details</label>
+                <textarea
+                  v-model="formData.detailed_description"
+                  rows="6"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Provide any additional information relevant to your request..."
+                ></textarea>
+              </div>
+
+              <!-- File Upload Section -->
+              <div class="border-2 border-dashed border-gray-300 rounded-lg p-6">
+                <div class="text-center">
+                  <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                  </svg>
+                  <div class="mt-4">
+                    <label class="cursor-pointer">
+                      <span class="px-4 py-2 bg-white text-sm font-medium text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50">
+                        Choose Files
+                      </span>
+                      <input
+                        ref="fileInput"
+                        type="file"
+                        multiple
+                        @change="handleFileUpload"
+                        class="hidden"
+                      />
+                    </label>
+                  </div>
+                  <p class="mt-2 text-xs text-gray-500">
+                    Upload any supporting documents (optional)
+                  </p>
+                </div>
+
+                <!-- Uploaded Files List -->
+                <div v-if="uploadedFiles.length > 0" class="mt-4 space-y-2">
+                  <div v-for="(file, index) in uploadedFiles" :key="index" class="flex items-center justify-between p-2 bg-gray-50 rounded">
+                    <div class="flex items-center space-x-2">
+                      <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      <span class="text-sm text-gray-700">{{ file.name }}</span>
+                      <span class="text-xs text-gray-500">({{ formatFileSize(file.size) }})</span>
+                    </div>
+                    <button @click="removeFile(index)" type="button" class="text-red-600 hover:text-red-800">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Step 4: Resource Consent Details (conditional) -->
-        <div v-if="isResourceConsent && currentStep === 4">
+        <!-- Step 5 content moved to Step 4 - this section will be deleted -->
+        <div v-if="false">
           <h2 class="text-2xl font-bold text-gray-900 mb-2">Resource Consent Details</h2>
           <p class="text-gray-600 mb-8">Provide Resource Management Act (RMA) specific information</p>
 
@@ -1086,6 +2672,20 @@
               <p class="mt-1 text-xs text-gray-500">Assessment against district plan objectives and policies</p>
             </div>
 
+            <!-- RMA Part 2 Assessment -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                RMA Part 2 Assessment
+              </label>
+              <textarea
+                v-model="formData.rma_part2_assessment"
+                rows="5"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Assess the proposal against Part 2 of the RMA, including sections 5 (Purpose), 6 (Matters of national importance), 7 (Other matters), and 8 (Treaty of Waitangi)..."
+              ></textarea>
+              <p class="mt-1 text-xs text-gray-500">Assessment against RMA Part 2 principles (sections 5-8)</p>
+            </div>
+
             <!-- Alternatives and Mitigation -->
             <div class="grid md:grid-cols-2 gap-4">
               <div>
@@ -1218,6 +2818,23 @@
                 <p class="text-sm text-gray-500">No affected parties added yet</p>
               </div>
 
+              <!-- Written Approvals Count -->
+              <div v-if="formData.affected_parties.length > 0" class="mt-3">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Number of Written Approvals Obtained
+                </label>
+                <input
+                  v-model.number="formData.written_approvals_obtained"
+                  type="number"
+                  min="0"
+                  :max="formData.affected_parties.length"
+                  class="w-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+                <p class="mt-1 text-xs text-gray-500">
+                  How many of the {{ formData.affected_parties.length }} affected parties have provided written approval?
+                </p>
+              </div>
+
               <!-- Iwi Consultation Note -->
               <div class="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
                 <div class="flex items-start gap-2">
@@ -1231,6 +2848,57 @@
                       Include their response in the comments field. Upload any Cultural Impact Assessment (CIA) as a specialist report.
                     </p>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Iwi Consultation (Dedicated Section) -->
+            <div class="border-t border-gray-200 pt-4">
+              <h3 class="text-sm font-semibold text-gray-900 mb-3">Iwi Consultation</h3>
+              <p class="text-xs text-gray-500 mb-4">
+                Details of consultation with iwi and hapū under RMA s8 (Treaty of Waitangi)
+              </p>
+
+              <div class="space-y-4">
+                <!-- Consultation Undertaken -->
+                <div class="flex items-center">
+                  <input
+                    v-model="formData.iwi_consultation_undertaken"
+                    type="checkbox"
+                    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label class="ml-2 text-sm text-gray-700">
+                    Iwi/Hapū consultation has been undertaken
+                  </label>
+                </div>
+
+                <!-- Iwi Consulted -->
+                <div v-if="formData.iwi_consultation_undertaken">
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Iwi/Hapū Consulted
+                  </label>
+                  <textarea
+                    v-model="formData.iwi_consulted"
+                    rows="2"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    placeholder="List the iwi and hapū groups that were consulted..."
+                  ></textarea>
+                </div>
+
+                <!-- Response Summary -->
+                <div v-if="formData.iwi_consultation_undertaken">
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Response Summary
+                  </label>
+                  <textarea
+                    v-model="formData.iwi_response_summary"
+                    rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    placeholder="Summarize the responses received from iwi/hapū, including any concerns raised and how they are addressed..."
+                  ></textarea>
+                  <p class="mt-1 text-xs text-gray-500">
+                    Summary of feedback and responses from consulted iwi/hapū
+                  </p>
                 </div>
               </div>
             </div>
@@ -1468,10 +3136,10 @@
           </div>
         </div>
 
-        <!-- Step 4/5: Documents -->
-        <div v-if="currentStep === (isResourceConsent ? 5 : 4)">
+        <!-- Step 6: Documents removed as requested -->
+        <div v-if="false">
           <h2 class="text-2xl font-bold text-gray-900 mb-2">Upload Documents</h2>
-          <p class="text-gray-600 mb-8">Attach all required supporting documents</p>
+          <p class="text-gray-600 mb-8">Attach all required supporting documents for Resource Consent</p>
 
           <div class="space-y-6">
             <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition">
@@ -1544,8 +3212,8 @@
           </div>
         </div>
 
-        <!-- Step 5/6: Review & Submit -->
-        <div v-if="currentStep === (isResourceConsent ? 6 : 5)">
+        <!-- Review Step (Last Step - always step 5) -->
+        <div v-if="currentStep === 5">
           <h2 class="text-2xl font-bold text-gray-900 mb-2">Review & Submit</h2>
           <p class="text-gray-600 mb-8">Please review your application before submission</p>
 
@@ -2283,9 +3951,17 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { createResource, Input, Button } from 'frappe-ui'
+import { createResource, Input, Button, call } from 'frappe-ui'
+import CouncilSelector from '../components/CouncilSelector.vue'
+import { useCouncilStore } from '../stores/councilStore'
+import { session } from '../data/session'
 
 const router = useRouter()
+const councilStore = useCouncilStore()
+
+// User profile data
+const userProfile = ref(null)
+const loadingProfile = ref(false)
 
 // Form state
 const currentStep = ref(1)
@@ -2323,33 +3999,41 @@ const isConsentTypeSelected = (consentType) => {
 
 const steps = computed(() => {
   const baseSteps = [
-    { title: 'Type', number: 1 },
-    { title: 'Property', number: 2 },
-    { title: 'Details', number: 3 }
+    { title: 'Council', number: 1 },
+    { title: 'Type', number: 2 },
+    { title: 'Process Info', number: 3 },
+    { title: 'Property', number: 4 }
   ]
 
-  // Add RC-specific step if Resource Consent selected
+  // Add RC-specific step
   if (isResourceConsent.value) {
-    baseSteps.push({ title: 'RC Details', number: 4 })
+    baseSteps.push({ title: 'RC Details', number: 5 })
+  } else {
+    // For non-RC requests, add Additional Information step
+    baseSteps.push({ title: 'Additional Info', number: 5 })
   }
 
-  baseSteps.push(
-    { title: 'Documents', number: baseSteps.length + 1 },
-    { title: 'Review', number: baseSteps.length + 2 }
-  )
+  // Review step is always last
+  baseSteps.push({ title: 'Review', number: baseSteps.length + 1 })
 
   return baseSteps
 })
 
 // Form data
 const formData = ref({
+  council: '',
   request_type: '',
   request_category: '', // Store the category of the selected request type
   property: '',
   property_address: '',
   legal_description: '',
   valuation_reference: '',
+  parcel_id: '',
+  ct_reference: '',
+  property_coordinates: '',
+  hazard_data: null,
   zone: '',
+  activity_zone: '',
   brief_description: '',
   detailed_description: '',
   estimated_value: null,
@@ -2359,6 +4043,11 @@ const formData = ref({
   // Required applicant fields
   applicant_phone: '',
   applicant_type: '',
+
+  // Agent workflow fields
+  acting_on_behalf: false,
+  applicant_name: '',
+  applicant_email: '',
 
   // Resource Consent specific fields
   consent_types: [], // Array of consent type objects
@@ -2416,15 +4105,34 @@ const formData = ref({
   cultural_effects: '',
 
   planning_assessment: '',
+  rma_part2_assessment: '', // RMA Part 2 principles assessment
   alternatives_considered: '',
   mitigation_proposed: '',
+
+  // Affected Parties
+  affected_parties: [], // Array of affected parties
+  written_approvals_obtained: 0, // Count of approvals obtained
+
+  // Iwi Consultation
   iwi_consultation_undertaken: false,
   iwi_consulted: '',
   cultural_impact_assessment: null, // CIA file upload
-  proposed_conditions: [], // Array of proposed conditions
-  affected_parties: [], // Array of affected parties
+  iwi_response_summary: '', // Summary of iwi consultation responses
+
+  // Specialist Reports & Conditions
   specialist_reports: [], // Array of specialist reports
+  proposed_conditions: [], // Array of proposed conditions
 })
+
+// Property Search Autocomplete State
+const propertySearchQuery = ref('')
+const propertySearchResults = ref([])
+const propertySearchLoading = ref(false)
+const showPropertyDropdown = ref(false)
+let propertySearchTimeout = null
+
+// Selected Request Type Details (with council-specific info)
+const selectedRequestTypeDetails = ref(null)
 
 // Natural Hazards - RMA s104
 const naturalHazardTypes = [
@@ -2647,18 +4355,8 @@ const canSubmit = computed(() => {
   return hasFormChanges.value || uploadedFiles.value.length > 0
 })
 
-// Get request types
-const requestTypes = createResource({
-  url: 'lodgeick.lodgeick.doctype.request_type.request_type.get_active_request_types',
-  auto: true,
-  onError(error) {
-    console.error('[NewRequest] Failed to load Request Types:', error)
-    alert(`Error loading Request Types: ${error.messages?.[0] || error.message || 'Unknown error'}. Please refresh the page or contact support.`)
-  },
-  onSuccess(data) {
-    console.log('[NewRequest] Loaded Request Types:', data?.length || 0, 'types')
-  }
-})
+// Get request types (will be loaded based on council selection)
+const requestTypes = ref({ data: [], loading: false, error: null })
 
 // Get user's properties
 const properties = createResource({
@@ -2672,6 +4370,28 @@ const properties = createResource({
 })
 
 // Methods
+const onCouncilChange = async (councilCode) => {
+  if (!councilCode) {
+    requestTypes.value = { data: [], loading: false, error: null }
+    return
+  }
+
+  // Load request types for the selected council
+  requestTypes.value.loading = true
+  requestTypes.value.error = null
+
+  try {
+    await councilStore.loadRequestTypesForCouncil(councilCode)
+    requestTypes.value.data = councilStore.availableRequestTypes
+    console.log(`[NewRequest] Loaded ${requestTypes.value.data.length} request types for council ${councilCode}`)
+  } catch (error) {
+    requestTypes.value.error = error.message || 'Failed to load request types'
+    console.error('[NewRequest] Failed to load request types:', error)
+  } finally {
+    requestTypes.value.loading = false
+  }
+}
+
 const goBack = () => {
   if (confirm('Are you sure you want to leave? Any unsaved changes will be lost.')) {
     router.push({ name: 'Dashboard' })
@@ -2692,7 +4412,15 @@ const selectRequestType = (type) => {
   console.log('[NewRequest] Selecting Request Type:', type.name, type.type_name)
   formData.value.request_type = type.name
   formData.value.request_category = type.category || ''
-  console.log('[NewRequest] Form data updated:', { request_type: formData.value.request_type, request_category: formData.value.request_category })
+
+  // Store the full request type details for the Process Info step
+  selectedRequestTypeDetails.value = type
+
+  console.log('[NewRequest] Form data updated:', {
+    request_type: formData.value.request_type,
+    request_category: formData.value.request_category,
+    details: selectedRequestTypeDetails.value
+  })
 }
 
 const onPropertySelect = () => {
@@ -2704,34 +4432,149 @@ const onPropertySelect = () => {
   }
 }
 
+// Property Search Autocomplete Handlers
+const handlePropertySearch = () => {
+  // Clear existing timeout
+  if (propertySearchTimeout) {
+    clearTimeout(propertySearchTimeout)
+  }
+
+  const query = propertySearchQuery.value.trim()
+
+  // Only search if query is at least 3 characters
+  if (query.length < 3) {
+    propertySearchResults.value = []
+    return
+  }
+
+  // Debounce search
+  propertySearchTimeout = setTimeout(async () => {
+    propertySearchLoading.value = true
+    showPropertyDropdown.value = true
+
+    try {
+      const response = await fetch('/api/method/lodgeick.api.search_property_address', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Frappe-CSRF-Token': window.csrf_token
+        },
+        body: JSON.stringify({ query })
+      })
+
+      const data = await response.json()
+
+      if (data.message && data.message.results) {
+        propertySearchResults.value = data.message.results
+      } else {
+        propertySearchResults.value = []
+      }
+    } catch (error) {
+      console.error('[PropertySearch] Error searching properties:', error)
+      propertySearchResults.value = []
+    } finally {
+      propertySearchLoading.value = false
+    }
+  }, 300) // 300ms debounce
+}
+
+const selectProperty = (result) => {
+  // Set the property address
+  formData.value.property_address = result.address
+  propertySearchQuery.value = result.address
+
+  // Set legal description if available
+  if (result.property?.legal_description) {
+    formData.value.legal_description = result.property.legal_description
+  }
+
+  // Set title number if available
+  if (result.property?.title_no) {
+    formData.value.ct_reference = result.property.title_no
+  }
+
+  // Set valuation reference if available
+  if (result.property?.valuation_reference) {
+    formData.value.valuation_reference = result.property.valuation_reference
+  }
+
+  // Set parcel ID if available
+  if (result.property?.parcel_id) {
+    formData.value.parcel_id = result.property.parcel_id
+  }
+
+  // Set property coordinates if available
+  if (result.projected_x && result.projected_y) {
+    formData.value.property_coordinates = `NZTM2000: ${result.projected_x.toFixed(2)}, ${result.projected_y.toFixed(2)}`
+  }
+
+  // Extract and set zoning from district plan hazards
+  if (result.hazards?.districtPlan && Array.isArray(result.hazards.districtPlan) && result.hazards.districtPlan.length > 0) {
+    const districtPlan = result.hazards.districtPlan[0]
+    if (districtPlan.attributes?.Zone_Code || districtPlan.attributes?.ZONE_CODE) {
+      formData.value.zone = districtPlan.attributes.Zone_Code || districtPlan.attributes.ZONE_CODE
+    } else if (districtPlan.attributes?.Zone_Name || districtPlan.attributes?.ZONE_NAME) {
+      formData.value.zone = districtPlan.attributes.Zone_Name || districtPlan.attributes.ZONE_NAME
+    }
+  }
+
+  // Store full hazard data for potential future use
+  formData.value.hazard_data = result.hazards
+
+  // Close dropdown
+  showPropertyDropdown.value = false
+  propertySearchResults.value = []
+
+  console.log('[PropertySearch] Selected property:', {
+    address: result.address,
+    legal_description: formData.value.legal_description,
+    title_no: formData.value.ct_reference,
+    zone: formData.value.zone,
+    hazards: result.hazards
+  })
+}
+
+// Close dropdown when clicking outside
+const closePropertyDropdown = () => {
+  showPropertyDropdown.value = false
+}
+
 const canProceed = () => {
   switch (currentStep.value) {
     case 1:
-      const canProceedStep1 = !!formData.value.request_type
-      console.log('[NewRequest] canProceed Step 1:', canProceedStep1, 'request_type:', formData.value.request_type)
+      // Step 1: Council selection
+      const canProceedStep1 = !!formData.value.council
+      console.log('[NewRequest] canProceed Step 1 (Council):', canProceedStep1, 'council:', formData.value.council)
       return canProceedStep1
     case 2:
-      // Require either property link OR property_address, plus applicant fields
-      const hasProperty = formData.value.property || formData.value.property_address
-      const hasApplicantInfo = formData.value.applicant_phone && formData.value.applicant_type
-      return !!(hasProperty && hasApplicantInfo)
+      // Step 2: Request type selection
+      const canProceedStep2 = !!formData.value.request_type
+      console.log('[NewRequest] canProceed Step 2 (Type):', canProceedStep2, 'request_type:', formData.value.request_type)
+      return canProceedStep2
     case 3:
-      return !!formData.value.brief_description && !!formData.value.detailed_description
+      // Step 3: Process Info - always can proceed (just informational)
+      return true
     case 4:
-      // If RC, this is RC Details step - validate required fields
+      // Step 4: Property - Require either property link OR property_address, plus applicant fields
+      const hasProperty = formData.value.property || formData.value.property_address
+      const hasApplicantInfo = formData.value.applicant_phone && formData.value.applicant_type && formData.value.applicant_name && formData.value.applicant_email
+      return !!(hasProperty && hasApplicantInfo)
+    case 5:
+      // Step 5: RC Details (Resource Consent) OR Additional Info (non-RC)
       if (isResourceConsent.value) {
+        // RC Details step - validate required fields
         return !!(
           formData.value.consent_types && formData.value.consent_types.length > 0 &&
           formData.value.activity_status &&
           formData.value.assessment_of_effects &&
           formData.value.planning_assessment
         )
+      } else {
+        // Additional Info step - just need brief description
+        return !!formData.value.brief_description
       }
-      // Otherwise, this is Documents step (optional)
-      return true
-    case 5:
-      // If RC, this is Documents step (optional)
-      // Otherwise, this is Review step
+    case 6:
+      // Step 6: Review step - always allow to proceed
       return true
     default:
       return true
@@ -2788,14 +4631,15 @@ const saveDraft = async () => {
 
     if (result.message && result.message.success) {
       alert(`Draft saved successfully! Request ID: ${result.message.request_number}`)
-      // Optionally redirect to dashboard
-      // router.push({ name: 'Dashboard' })
+      // Return the result for use by other functions
+      return result.message
     } else {
       throw new Error(result.message || 'Failed to save draft')
     }
   } catch (error) {
     console.error('Error saving draft:', error)
     alert('Failed to save draft. Please try again.')
+    return null
   } finally {
     savingDraft.value = false
   }
@@ -3402,4 +5246,95 @@ const requestPreAppMeeting = async () => {
     requestingMeeting.value = false
   }
 }
+
+// Initialize on mount
+// Load user profile and auto-populate fields
+const loadUserProfile = async () => {
+  try {
+    loadingProfile.value = true
+    const profile = await call('lodgeick.api.get_user_profile')
+    userProfile.value = profile
+
+    // Auto-populate applicant type from profile default
+    if (profile.applicant_type && !formData.value.applicant_type) {
+      formData.value.applicant_type = profile.applicant_type
+    }
+
+    // Auto-populate phone if not acting on behalf
+    if (profile.phone && !formData.value.applicant_phone && !formData.value.acting_on_behalf) {
+      formData.value.applicant_phone = profile.phone
+    }
+
+    // Auto-populate applicant name and email when not acting on behalf
+    if (!formData.value.acting_on_behalf) {
+      formData.value.applicant_name = `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || profile.email
+      formData.value.applicant_email = profile.email
+    }
+  } catch (error) {
+    console.error('Error loading user profile:', error)
+  } finally {
+    loadingProfile.value = false
+  }
+}
+
+// Watch acting_on_behalf to auto-populate or clear applicant details
+watch(() => formData.value.acting_on_behalf, (actingOnBehalf) => {
+  if (!actingOnBehalf && userProfile.value) {
+    // Auto-populate from profile
+    formData.value.applicant_name = `${userProfile.value.first_name || ''} ${userProfile.value.last_name || ''}`.trim() || userProfile.value.email
+    formData.value.applicant_email = userProfile.value.email
+    if (userProfile.value.phone) {
+      formData.value.applicant_phone = userProfile.value.phone
+    }
+    if (userProfile.value.applicant_type) {
+      formData.value.applicant_type = userProfile.value.applicant_type
+    }
+  } else if (actingOnBehalf) {
+    // Clear fields for agent to fill in client details
+    formData.value.applicant_name = ''
+    formData.value.applicant_email = ''
+    formData.value.applicant_phone = ''
+    // Keep applicant_type as it might be different for the client
+  }
+})
+
+// Watch phone number to save back to profile when user updates it (and not acting on behalf)
+watch(() => formData.value.applicant_phone, async (newPhone, oldPhone) => {
+  // Only save if:
+  // 1. Not acting on behalf (it's their own application)
+  // 2. Profile is loaded
+  // 3. Phone has actually changed
+  // 4. New phone is not empty
+  if (!formData.value.acting_on_behalf && userProfile.value && newPhone && newPhone !== oldPhone && newPhone !== userProfile.value.phone) {
+    try {
+      await call('lodgeick.api.update_user_profile', {
+        phone: newPhone
+      })
+      // Update local profile copy
+      userProfile.value.phone = newPhone
+      console.log('[NewRequest] Phone number saved to profile:', newPhone)
+    } catch (error) {
+      console.error('[NewRequest] Error saving phone to profile:', error)
+      // Don't show error to user - this is a background operation
+    }
+  }
+})
+
+onMounted(async () => {
+  // Load user profile first
+  await loadUserProfile()
+
+  // Check if council was preselected via URL or user default
+  if (councilStore.preselectedFromUrl) {
+    formData.value.council = councilStore.preselectedFromUrl
+    await onCouncilChange(councilStore.preselectedFromUrl)
+  } else {
+    // Try to load user's default council
+    const userCouncils = await councilStore.getUserCouncils()
+    if (userCouncils.default_council) {
+      formData.value.council = userCouncils.default_council
+      await onCouncilChange(userCouncils.default_council)
+    }
+  }
+})
 </script>

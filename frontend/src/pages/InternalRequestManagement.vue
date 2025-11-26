@@ -65,10 +65,19 @@
 
         <!-- Filters -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-          <div class="grid md:grid-cols-4 gap-4">
+          <div class="grid md:grid-cols-5 gap-4">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
               <Input v-model="searchQuery" placeholder="Request number, property..." />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Council</label>
+              <select v-model="filterCouncil" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                <option value="">All Councils</option>
+                <option v-for="council in availableCouncils" :key="council" :value="council">
+                  {{ council }}
+                </option>
+              </select>
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
@@ -111,6 +120,9 @@
                     Request
                   </th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Council
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Applicant
                   </th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -132,12 +144,12 @@
               </thead>
               <tbody class="bg-white divide-y divide-gray-200">
                 <tr v-if="requests.loading">
-                  <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                  <td colspan="8" class="px-6 py-12 text-center text-gray-500">
                     <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
                   </td>
                 </tr>
                 <tr v-else-if="!requests.data || requests.data.length === 0">
-                  <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                  <td colspan="8" class="px-6 py-12 text-center text-gray-500">
                     No requests found
                   </td>
                 </tr>
@@ -145,6 +157,9 @@
                   <td class="px-6 py-4 whitespace-nowrap" @click="viewRequest(request.name)">
                     <div class="text-sm font-medium text-gray-900">{{ request.request_number }}</div>
                     <div class="text-sm text-gray-500">{{ request.request_type }}</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-900">{{ request.council || 'N/A' }}</div>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
                     <div class="text-sm text-gray-900">{{ request.applicant_name || request.applicant }}</div>
@@ -327,6 +342,7 @@ const tabs = [
 // Filters
 const searchQuery = ref('')
 const filterStatus = ref('')
+const filterCouncil = ref('')
 const filterAssignee = ref('')
 const filterType = ref('')
 
@@ -347,6 +363,13 @@ const requests = createResource({
 const staffUsers = createResource({
   url: 'lodgeick.api.get_staff_users',
   auto: true,
+})
+
+// Available councils from requests
+const availableCouncils = computed(() => {
+  const data = requests.data || []
+  const councils = [...new Set(data.map(r => r.council).filter(Boolean))]
+  return councils.sort()
 })
 
 // Computed stats
@@ -376,6 +399,10 @@ const filteredRequests = computed(() => {
 
   if (filterStatus.value) {
     data = data.filter(r => r.status === filterStatus.value)
+  }
+
+  if (filterCouncil.value) {
+    data = data.filter(r => r.council === filterCouncil.value)
   }
 
   if (filterAssignee.value === 'unassigned') {

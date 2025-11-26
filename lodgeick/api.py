@@ -16,7 +16,8 @@ def register_user(
     account_type="ratepayer",
     property_address=None,
     company_name=None,
-    company_number=None
+    company_number=None,
+    council_code=None
 ):
     """
     Register a new user for Lodgeick
@@ -31,6 +32,7 @@ def register_user(
         property_address: Property address (for ratepayers)
         company_name: Company name (for suppliers)
         company_number: Company registration number (for suppliers)
+        council_code: Council code for default council (optional)
 
     Returns:
         dict: Success message and user info
@@ -58,18 +60,37 @@ def register_user(
             "user_type": "Website User"
         })
 
-        # Set default roles based on account type
+        # Set account type and default roles
         if account_type == "ratepayer":
+            user.account_type = "Applicant"
+            user.applicant_type = "Individual"
             user.append("roles", {"role": "Applicant"})
         elif account_type == "civilian":
+            user.account_type = "Applicant"
+            user.applicant_type = "Individual"
             user.append("roles", {"role": "Applicant"})
         elif account_type == "supplier":
+            user.account_type = "Agent"
+            user.applicant_type = "Company"
             user.append("roles", {"role": "Applicant"})
             user.append("roles", {"role": "Agent"})
 
         # Save user
         user.flags.ignore_permissions = True
         user.insert()
+
+        # Set default council if provided
+        if council_code:
+            # Validate council exists and is active
+            council = frappe.db.get_value(
+                "Council",
+                {"council_code": council_code, "is_active": 1},
+                ["name", "council_name"],
+                as_dict=True
+            )
+            if council:
+                user.default_council = council.name
+                user.save(ignore_permissions=True)
 
         # Create additional profile information if needed
         # You might want to create a custom doctype for extended user profile
@@ -148,6 +169,18 @@ def create_draft_request(data):
             property_doc.insert(ignore_permissions=True)
             property_link = property_doc.name
 
+        # Determine applicant details based on whether acting on behalf
+        acting_on_behalf = data.get("acting_on_behalf", False)
+
+        if acting_on_behalf:
+            # Agent workflow - use client details provided in the form
+            applicant_name = data.get("applicant_name")
+            applicant_email = data.get("applicant_email")
+        else:
+            # Self-application - use current user's details
+            applicant_name = data.get("applicant_name") or frappe.get_value("User", frappe.session.user, "full_name")
+            applicant_email = data.get("applicant_email") or frappe.session.user
+
         # Create request document
         request_doc = frappe.get_doc({
             "doctype": "Request",
@@ -158,11 +191,13 @@ def create_draft_request(data):
             "property": property_link,  # Link to Property DocType
             "property_address": data.get("property_address"),
             "legal_description": data.get("legal_description"),
-            "applicant": frappe.session.user,
-            "applicant_name": frappe.get_value("User", frappe.session.user, "full_name"),
-            "applicant_email": frappe.session.user,
+            "council": data.get("council"),  # Add council field
+            "applicant": frappe.session.user,  # The user who created it (may be agent)
+            "applicant_name": applicant_name,  # The actual applicant (client or self)
+            "applicant_email": applicant_email,  # The actual applicant email
             "applicant_phone": data.get("applicant_phone"),
             "applicant_type": data.get("applicant_type"),
+            "acting_on_behalf": acting_on_behalf,  # Track if agent workflow
             "status": "Draft",
             "priority": data.get("priority", "Standard")
         })
@@ -508,3 +543,565 @@ def book_council_meeting(request_id, meeting_type="Pre-Application Meeting"):
     except Exception as e:
         frappe.log_error(f"Book Council Meeting Error: {str(e)}", "Meeting Booking Error")
         frappe.throw(_("Failed to book meeting: {0}").format(str(e)))
+
+
+# ============================================================================
+# COUNCIL MANAGEMENT API ENDPOINTS
+# ============================================================================
+
+@frappe.whitelist(allow_guest=True)
+def get_active_councils():
+    """
+    Get all active councils for public display
+
+    Returns:
+        list: List of active councils with basic info
+    """
+    councils = frappe.get_all(
+        "Council",
+        filters={"is_active": 1},
+        fields=["council_code", "council_name", "logo", "website", "primary_color", "secondary_color", "is_active"],
+        order_by="council_name"
+    )
+
+    return councils
+
+
+@frappe.whitelist(allow_guest=True)
+def get_council_by_code(council_code):
+    """
+    Get council details by code (for URL parameter handling)
+
+    Args:
+        council_code: Council code (e.g., AKL, WLG)
+
+    Returns:
+        dict: Council details or None if not found/inactive
+    """
+    if not council_code:
+        return None
+
+    try:
+        council = frappe.get_doc("Council", council_code)
+
+        if not council.is_active:
+            return None
+
+        return {
+            "council_code": council.council_code,
+            "council_name": council.council_name,
+            "official_name": council.official_name,
+            "logo": council.logo,
+            "primary_color": council.primary_color,
+            "secondary_color": council.secondary_color,
+            "website": council.website,
+            "contact_email": council.contact_email,
+            "contact_phone": council.contact_phone,
+            "is_license_valid": council.is_license_valid()
+        }
+
+    except frappe.DoesNotExistError:
+        return None
+
+
+@frappe.whitelist()
+def get_user_councils(user=None):
+    """
+    Get councils associated with current user
+
+    Args:
+        user: User email (optional, defaults to current user)
+
+    Returns:
+        dict: User's default council and associated councils
+    """
+    user = user or frappe.session.user
+
+    # Get default council
+    default_council = frappe.db.get_value("User", user, "default_council")
+
+    # Get all requests submitted by this user to find associated councils
+    user_councils = frappe.db.sql("""
+        SELECT DISTINCT council
+        FROM `tabRequest`
+        WHERE applicant = %s AND council IS NOT NULL
+    """, user, as_dict=True)
+
+    associated_councils = [uc.get("council") for uc in user_councils if uc.get("council")]
+
+    return {
+        "default_council": default_council,
+        "associated_councils": associated_councils
+    }
+
+
+@frappe.whitelist(allow_guest=True)
+def get_request_types_for_council(council_code):
+    """
+    Get enabled request types for a specific council
+
+    Args:
+        council_code: Council code
+
+    Returns:
+        list: List of enabled request types with council-specific pricing
+    """
+    if not council_code:
+        return []
+
+    try:
+        council = frappe.get_doc("Council", council_code)
+
+        if not council.is_active or not council.is_license_valid():
+            return []
+
+        enabled_types = []
+
+        for rt in council.enabled_request_types:
+            if rt.is_enabled:
+                request_type_doc = frappe.get_doc("Request Type", rt.request_type)
+
+                enabled_types.append({
+                    "name": request_type_doc.name,
+                    "type_name": request_type_doc.type_name,
+                    "type_code": request_type_doc.type_code,
+                    "category": request_type_doc.category,
+                    "description": request_type_doc.description if hasattr(request_type_doc, 'description') else "",
+                    "base_fee": rt.base_fee_override if rt.base_fee_override else request_type_doc.base_fee,
+                    "sla_days": rt.sla_days_override if rt.sla_days_override else request_type_doc.processing_sla_days,
+                    "fee_calculation_method": request_type_doc.fee_calculation_method
+                })
+
+        return enabled_types
+
+    except frappe.DoesNotExistError:
+        return []
+
+
+@frappe.whitelist()
+def set_user_default_council(council_code):
+    """
+    Set default council for current user
+
+    Args:
+        council_code: Council code to set as default
+
+    Returns:
+        dict: Success status and default council
+    """
+    user = frappe.session.user
+
+    # Validate council exists and is active
+    if not frappe.db.exists("Council", {"council_code": council_code, "is_active": 1}):
+        frappe.throw(_("Invalid or inactive council"))
+
+    frappe.db.set_value("User", user, "default_council", council_code)
+    frappe.db.commit()
+
+    return {
+        "success": True,
+        "default_council": council_code
+    }
+
+
+@frappe.whitelist()
+def get_council_stats(council_code):
+    """
+    Get statistics for a council (for admin dashboards)
+
+    Args:
+        council_code: Council code
+
+    Returns:
+        dict: Council statistics
+    """
+    council = frappe.get_doc("Council", council_code)
+
+    # Get monthly request count
+    monthly_count = council.get_monthly_request_count()
+
+    # Get total requests all time
+    total_requests = frappe.db.count("Request", {"council": council_code})
+
+    # Get requests by status
+    requests_by_status = frappe.db.sql("""
+        SELECT status, COUNT(*) as count
+        FROM `tabRequest`
+        WHERE council = %s
+        GROUP BY status
+    """, council_code, as_dict=True)
+
+    return {
+        "council_name": council.council_name,
+        "is_active": council.is_active,
+        "is_license_valid": council.is_license_valid(),
+        "monthly_request_count": monthly_count,
+        "monthly_quota": council.max_requests_per_month,
+        "total_requests": total_requests,
+        "requests_by_status": requests_by_status,
+        "enabled_request_types_count": len([rt for rt in council.enabled_request_types if rt.is_enabled])
+    }
+
+
+# ============================================================================
+# USER PROFILE & SETTINGS API ENDPOINTS
+# ============================================================================
+
+@frappe.whitelist()
+def get_user_profile(user=None):
+    """
+    Get user profile information including custom fields and organization data
+
+    Args:
+        user: User email (optional, defaults to current user)
+
+    Returns:
+        dict: User profile data
+    """
+    if not user:
+        user = frappe.session.user
+
+    # Get user document with custom fields
+    user_doc = frappe.get_doc("User", user)
+
+    # Get organization data if user has organization link
+    organization_data = None
+    if user_doc.get("organization"):
+        org = frappe.get_doc("Organization", user_doc.organization)
+        organization_data = {
+            "name": org.name,
+            "organization_name": org.organization_name,
+            "organization_type": org.organization_type,
+            "registration_number": org.registration_number,
+            "contact_email": org.contact_email,
+            "contact_phone": org.contact_phone,
+            "address": org.address,
+            "city": org.city,
+            "postal_code": org.postal_code
+        }
+
+    # Get default council data if set
+    default_council_data = None
+    if user_doc.get("default_council"):
+        council = frappe.get_doc("Council", user_doc.default_council)
+        default_council_data = {
+            "council_code": council.council_code,
+            "council_name": council.council_name,
+            "primary_color": council.primary_color
+        }
+
+    return {
+        "email": user_doc.email,
+        "first_name": user_doc.first_name,
+        "last_name": user_doc.last_name,
+        "full_name": user_doc.full_name,
+        "user_image": user_doc.user_image,
+        "mobile_no": user_doc.mobile_no,
+        "phone": user_doc.phone,
+        "bio": user_doc.bio,
+        "location": user_doc.location,
+        "account_type": user_doc.get("account_type") or "Applicant",
+        "applicant_type": user_doc.get("applicant_type") or "Individual",
+        "default_council": user_doc.get("default_council"),
+        "default_council_data": default_council_data,
+        "organization": user_doc.get("organization"),
+        "organization_data": organization_data,
+        "enabled": user_doc.enabled,
+        "user_type": user_doc.user_type,
+        "creation": user_doc.creation,
+        "modified": user_doc.modified
+    }
+
+
+@frappe.whitelist()
+def update_user_profile(first_name=None, last_name=None, mobile_no=None, phone=None,
+                       bio=None, location=None, default_council=None, user_image=None):
+    """
+    Update user profile information
+
+    Args:
+        first_name: User's first name
+        last_name: User's last name
+        mobile_no: Mobile phone number
+        phone: Phone number
+        bio: User biography
+        location: User location
+        default_council: Default council code
+        user_image: User profile image URL
+
+    Returns:
+        dict: Success status and updated user data
+    """
+    user = frappe.session.user
+    user_doc = frappe.get_doc("User", user)
+
+    # Update fields if provided
+    if first_name is not None:
+        user_doc.first_name = first_name
+    if last_name is not None:
+        user_doc.last_name = last_name
+    if mobile_no is not None:
+        user_doc.mobile_no = mobile_no
+    if phone is not None:
+        user_doc.phone = phone
+    if bio is not None:
+        user_doc.bio = bio
+    if location is not None:
+        user_doc.location = location
+    if user_image is not None:
+        user_doc.user_image = user_image
+
+    # Update default council if provided
+    if default_council is not None:
+        # Validate council exists and is active
+        if default_council:
+            council = frappe.get_doc("Council", default_council)
+            if not council.is_active:
+                frappe.throw("Selected council is not active")
+        user_doc.default_council = default_council
+
+    user_doc.save(ignore_permissions=True)
+    frappe.db.commit()
+
+    return {
+        "success": True,
+        "message": "Profile updated successfully",
+        "user": get_user_profile(user)
+    }
+
+
+@frappe.whitelist()
+def change_password(old_password, new_password):
+    """
+    Change user password
+
+    Args:
+        old_password: Current password
+        new_password: New password
+
+    Returns:
+        dict: Success status
+    """
+    from frappe.utils.password import check_password, update_password
+
+    user = frappe.session.user
+
+    # Verify old password
+    try:
+        check_password(user, old_password)
+    except Exception:
+        frappe.throw("Current password is incorrect")
+
+    # Update to new password
+    update_password(user, new_password)
+    frappe.db.commit()
+
+    return {
+        "success": True,
+        "message": "Password changed successfully"
+    }
+
+
+@frappe.whitelist()
+def get_user_organization(user=None):
+    """
+    Get organization details for the user
+
+    Args:
+        user: User email (optional, defaults to current user)
+
+    Returns:
+        dict: Organization data or None
+    """
+    if not user:
+        user = frappe.session.user
+
+    user_doc = frappe.get_doc("User", user)
+
+    if not user_doc.get("organization"):
+        return None
+
+    org = frappe.get_doc("Organization", user_doc.organization)
+
+    return {
+        "name": org.name,
+        "organization_name": org.organization_name,
+        "organization_type": org.organization_type,
+        "registration_number": org.registration_number,
+        "contact_email": org.contact_email,
+        "contact_phone": org.contact_phone,
+        "address": org.address,
+        "city": org.city,
+        "postal_code": org.postal_code,
+        "website": org.website,
+        "description": org.description,
+        "is_verified": org.is_verified,
+        "creation": org.creation,
+        "modified": org.modified
+    }
+
+
+@frappe.whitelist()
+def update_user_organization(organization_name=None, contact_email=None, contact_phone=None,
+                            address=None, city=None, postal_code=None, website=None, description=None):
+    """
+    Update organization details for the user
+
+    Args:
+        organization_name: Organization name
+        contact_email: Contact email
+        contact_phone: Contact phone
+        address: Street address
+        city: City
+        postal_code: Postal code
+        website: Website URL
+        description: Organization description
+
+    Returns:
+        dict: Success status and updated organization data
+    """
+    user = frappe.session.user
+    user_doc = frappe.get_doc("User", user)
+
+    if not user_doc.get("organization"):
+        frappe.throw("No organization linked to this user")
+
+    org = frappe.get_doc("Organization", user_doc.organization)
+
+    # Update fields if provided
+    if organization_name is not None:
+        org.organization_name = organization_name
+    if contact_email is not None:
+        org.contact_email = contact_email
+    if contact_phone is not None:
+        org.contact_phone = contact_phone
+    if address is not None:
+        org.address = address
+    if city is not None:
+        org.city = city
+    if postal_code is not None:
+        org.postal_code = postal_code
+    if website is not None:
+        org.website = website
+    if description is not None:
+        org.description = description
+
+    org.save(ignore_permissions=True)
+    frappe.db.commit()
+
+    return {
+        "success": True,
+        "message": "Organization updated successfully",
+        "organization": get_user_organization(user)
+    }
+
+
+@frappe.whitelist()
+def search_property_address(query):
+    """
+    Search for property addresses using the LINZ property API
+
+    Args:
+        query: Address search string
+
+    Returns:
+        dict: Search results with property and hazard information
+    """
+    import requests
+
+    if not query or len(query) < 3:
+        return {"results": []}
+
+    try:
+        # Call the property API service
+        # Note: The property API should be running on localhost:3000
+        property_api_url = frappe.conf.get("property_api_url", "http://localhost:3000")
+
+        response = requests.get(
+            f"{property_api_url}/api/search",
+            params={"q": query},
+            timeout=10
+        )
+
+        if response.status_code != 200:
+            frappe.log_error(
+                title="Property API Error",
+                message=f"Status: {response.status_code}, Response: {response.text}"
+            )
+            return {"results": []}
+
+        data = response.json()
+        return data
+
+    except requests.exceptions.RequestException as e:
+        frappe.log_error(
+            title="Property API Connection Error",
+            message=str(e)
+        )
+        return {"results": []}
+    except Exception as e:
+        frappe.log_error(
+            title="Property Search Error",
+            message=str(e)
+        )
+        return {"results": []}
+
+
+@frappe.whitelist()
+def get_council_request_types(council_code):
+    """
+    Get enabled request types for a specific council with council-specific configuration
+
+    Args:
+        council_code: Council code (e.g., "HCC" for Hutt City Council)
+
+    Returns:
+        list: List of enabled request types with council-specific pricing, description, and process
+    """
+    try:
+        council = frappe.get_doc("Council", council_code)
+
+        if not council.is_active:
+            return []
+
+        result = []
+
+        for council_rt in council.enabled_request_types:
+            if not council_rt.is_enabled:
+                continue
+
+            # Get the base request type
+            request_type = frappe.get_doc("Request Type", council_rt.request_type)
+
+            # Build result with council overrides
+            rt_data = {
+                "name": request_type.name,
+                "request_type_name": request_type.request_type_name,
+                "category": request_type.category,
+                "description": council_rt.brief_description or request_type.description,
+                "base_fee": council_rt.base_fee_override or request_type.base_fee,
+                "sla_days": council_rt.sla_days_override or request_type.sla_days,
+                "process_description": council_rt.process_description or "",
+                "is_active": request_type.is_active,
+                "requires_property": request_type.requires_property,
+                "requires_payment": request_type.requires_payment,
+                "council_specific": {
+                    "brief_description": council_rt.brief_description,
+                    "process_description": council_rt.process_description,
+                    "base_fee_override": council_rt.base_fee_override,
+                    "sla_days_override": council_rt.sla_days_override
+                }
+            }
+
+            result.append(rt_data)
+
+        return result
+
+    except frappe.DoesNotExistError:
+        frappe.throw(_("Council not found: {0}").format(council_code))
+    except Exception as e:
+        frappe.log_error(
+            title="Error fetching council request types",
+            message=str(e)
+        )
+        frappe.throw(_("Error fetching request types for council"))

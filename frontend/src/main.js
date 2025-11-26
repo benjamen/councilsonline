@@ -1,4 +1,5 @@
 import { createApp } from "vue"
+import { createPinia } from "pinia"
 
 import App from "./App.vue"
 import router from "./router"
@@ -33,9 +34,11 @@ const globalComponents = {
 }
 
 const app = createApp(App)
+const pinia = createPinia()
 
 setConfig("resourceFetcher", frappeRequest)
 
+app.use(pinia)
 app.use(router)
 app.use(resourcesPlugin)
 app.use(pageMetaPlugin)

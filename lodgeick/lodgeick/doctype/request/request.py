@@ -24,34 +24,80 @@ class Request(Document):
 
     def validate(self):
         """Validation before saving"""
-        # 1. Validate brief description length
-        if self.brief_description and len(self.brief_description) > 200:
-            frappe.throw("Brief description must be 200 characters or less")
-
-        # 2. Set default status if not set
+        # 1. Set default status if not set (do this first)
         if not self.status:
             self.status = "Draft"
 
-        # 3. Set default payment status
+        # 2. Validate council and request type association (skip for drafts)
+        if self.status != "Draft":
+            self.validate_council_license()
+            self.validate_request_type_for_council()
+
+        # 3. Validate brief description length
+        if self.brief_description and len(self.brief_description) > 200:
+            frappe.throw("Brief description must be 200 characters or less")
+
+        # 4. Set default payment status
         if not self.payment_status:
             self.payment_status = "Pending"
 
-        # 4. Calculate target completion date
+        # 5. Calculate target completion date
         if self.request_type and self.submitted_date and not self.target_completion_date:
             self.calculate_target_completion_date()
 
-        # 5. Calculate working days
+        # 6. Calculate working days
         if self.statutory_clock_started:
             self.calculate_working_days()
 
-        # 6. Calculate total fees
+        # 7. Calculate total fees
         self.calculate_total_fees()
 
-        # 7. Calculate costing (task costs + disbursements)
+        # 8. Calculate costing (task costs + disbursements)
         self.calculate_costing()
+
+    def validate_council_license(self):
+        """Validate that council is active and has valid license"""
+        if not self.council:
+            frappe.throw("Council is required")
+
+        council = frappe.get_doc("Council", self.council)
+
+        if not council.is_active:
+            frappe.throw(f"Council '{council.council_name}' is not active")
+
+        if not council.is_license_valid():
+            frappe.throw(f"Council '{council.council_name}' license has expired")
+
+        if not council.can_accept_requests():
+            frappe.throw(f"Council '{council.council_name}' has reached its monthly request limit")
+
+    def validate_request_type_for_council(self):
+        """Validate that request type is enabled for selected council"""
+        if not self.council or not self.request_type:
+            return
+
+        # Check if request type is enabled for this council
+        enabled = frappe.db.get_value(
+            "Council Request Type",
+            {
+                "parent": self.council,
+                "request_type": self.request_type,
+                "is_enabled": 1
+            },
+            "name"
+        )
+
+        if not enabled:
+            council_name = frappe.db.get_value("Council", self.council, "council_name")
+            request_type_name = frappe.db.get_value("Request Type", self.request_type, "type_name")
+            frappe.throw(f"Request type '{request_type_name}' is not available for {council_name}")
 
     def before_submit(self):
         """Actions before document is submitted"""
+        # Validate council and request type before submission
+        self.validate_council_license()
+        self.validate_request_type_for_council()
+
         # Set submitted date
         if not self.submitted_date:
             self.submitted_date = getdate()
@@ -483,13 +529,18 @@ def get_my_applications(status=None):
         fields=[
             "name", "request_number", "status", "property_address",
             "brief_description", "submitted_date", "target_completion_date",
-            "is_overdue", "request_type", "request_category", "creation"
+            "is_overdue", "request_type", "request_category", "council", "creation"
         ],
         order_by="modified desc"
     )
 
-    # Enrich with statutory clock data from child DocTypes
+    # Enrich with statutory clock data from child DocTypes and council name
     for app in applications:
+        # Get council name if council is set
+        if app.get("council"):
+            council_name = frappe.db.get_value("Council", app["council"], "council_name")
+            app["council"] = council_name
+
         if app.get("request_category") == "Resource Consent":
             # Get clock data from Resource Consent Application
             rc_app = frappe.db.get_value(
@@ -609,6 +660,7 @@ def get_all_requests_for_staff():
             "request_category",
             "brief_description",
             "property_address",
+            "council",
             "status",
             "submitted_date",
             "target_completion_date",
@@ -621,8 +673,13 @@ def get_all_requests_for_staff():
         order_by="creation desc"
     )
 
-    # Enrich with statutory clock data from child DocTypes
+    # Enrich with statutory clock data from child DocTypes and council name
     for req in requests:
+        # Get council name if council is set
+        if req.get("council"):
+            council_name = frappe.db.get_value("Council", req["council"], "council_name")
+            req["council"] = council_name
+
         if req.get("request_category") == "Resource Consent":
             # Get clock data from Resource Consent Application
             rc_app = frappe.db.get_value(

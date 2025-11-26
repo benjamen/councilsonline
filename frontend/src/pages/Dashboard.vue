@@ -82,7 +82,7 @@
 
       <!-- Filters and Search -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
           <div class="md:col-span-2">
             <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
             <Input
@@ -108,6 +108,16 @@
               <option value="RFI Issued">RFI Issued</option>
               <option value="Approved">Approved</option>
               <option value="Declined">Declined</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Council</label>
+            <select v-model="filterCouncil" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              <option value="">All Councils</option>
+              <option v-for="council in availableCouncils" :key="council" :value="council">
+                {{ council }}
+              </option>
             </select>
           </div>
 
@@ -154,6 +164,7 @@
             <thead class="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Request #</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Council</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
@@ -166,6 +177,9 @@
               <tr v-for="request in filteredRequests" :key="request.name" class="hover:bg-gray-50 transition cursor-pointer" @click="viewRequest(request.name)">
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-blue-600">{{ request.request_number }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">{{ request.council || 'N/A' }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm text-gray-900">{{ request.request_type }}</div>
@@ -230,12 +244,20 @@ const userInitials = computed(() => {
 // Filters
 const searchQuery = ref('')
 const filterStatus = ref('')
+const filterCouncil = ref('')
 const filterType = ref('')
 
 // Get user's requests
 const requests = createResource({
   url: 'lodgeick.lodgeick.doctype.request.request.get_my_applications',
   auto: true,
+})
+
+// Available councils from requests
+const availableCouncils = computed(() => {
+  const data = requests.data || []
+  const councils = [...new Set(data.map(r => r.council).filter(Boolean))]
+  return councils.sort()
 })
 
 // Computed stats
@@ -266,6 +288,11 @@ const filteredRequests = computed(() => {
   // Status filter
   if (filterStatus.value) {
     data = data.filter(r => r.status === filterStatus.value)
+  }
+
+  // Council filter
+  if (filterCouncil.value) {
+    data = data.filter(r => r.council === filterCouncil.value)
   }
 
   // Type filter
@@ -300,9 +327,13 @@ const editRequest = (requestId) => {
   router.push({ name: 'RequestDetail', params: { id: requestId } })
 }
 
-// Navigation to internal view
+// Navigation
 const goToInternal = () => {
   router.push({ name: 'InternalRequestManagement' })
+}
+
+const goToSettings = () => {
+  router.push({ name: 'Settings' })
 }
 
 // User menu
@@ -312,12 +343,8 @@ const userMenuOptions = [
     onClick: goToInternal,
   },
   {
-    label: 'My Profile',
-    onClick: () => console.log('Profile'),
-  },
-  {
     label: 'Settings',
-    onClick: () => console.log('Settings'),
+    onClick: goToSettings,
   },
   {
     label: 'Sign Out',

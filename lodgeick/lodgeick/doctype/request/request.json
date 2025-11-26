@@ -9,6 +9,7 @@
  "field_order": [
   "request_number",
   "request_type",
+  "council",
   "request_category",
   "status",
   "priority",
@@ -21,6 +22,7 @@
   "applicant_email",
   "applicant_phone",
   "applicant_type",
+  "acting_on_behalf",
   "column_break_2",
   "agent",
   "agent_name",
@@ -33,6 +35,7 @@
   "legal_description",
   "ct_reference",
   "zoning",
+  "activity_zone",
   "column_break_3",
   "site_area",
   "property_coordinates",
@@ -89,6 +92,16 @@
    "label": "Request Type",
    "options": "Request Type",
    "reqd": 1
+  },
+  {
+   "fieldname": "council",
+   "fieldtype": "Link",
+   "label": "Council",
+   "options": "Council",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "description": "The council processing this request"
   },
   {
    "fieldname": "request_category",
@@ -170,6 +183,12 @@
    "reqd": 1
   },
   {
+   "default": "0",
+   "fieldname": "acting_on_behalf",
+   "fieldtype": "Check",
+   "label": "Acting on Behalf of Client"
+  },
+  {
    "fieldname": "column_break_2",
    "fieldtype": "Column Break"
   },
@@ -244,6 +263,13 @@
    "fieldtype": "Data",
    "label": "Zoning",
    "read_only": 1
+  },
+  {
+   "fieldname": "activity_zone",
+   "fieldtype": "Select",
+   "label": "Activity Zone",
+   "options": "\nPermitted\nControlled\nRestricted Discretionary\nDiscretionary\nNon-Complying\nProhibited",
+   "description": "Activity status of the proposal under the district plan"
   },
   {
    "fieldname": "column_break_3",

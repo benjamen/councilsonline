@@ -1,6 +1,7 @@
 import { userResource } from "@/data/user"
 import { createRouter, createWebHistory } from "vue-router"
 import { session } from "./data/session"
+import { useCouncilStore } from "./stores/councilStore"
 
 const routes = [
 	{
@@ -41,6 +42,11 @@ const routes = [
 		component: () => import("@/pages/InternalRequestDetail.vue"),
 	},
 	{
+		path: "/settings",
+		name: "Settings",
+		component: () => import("@/pages/Settings.vue"),
+	},
+	{
 		name: "Login",
 		path: "/account/login",
 		component: () => import("@/pages/Login.vue"),
@@ -60,6 +66,15 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
+	// Handle council URL parameter
+	if (to.query.council) {
+		const councilStore = useCouncilStore()
+		councilStore.setPreselectedFromUrl(to.query.council)
+
+		// Optionally load council data immediately
+		await councilStore.loadCouncilByCode(to.query.council)
+	}
+
 	// Allow public pages without authentication
 	if (to.meta.public) {
 		next()

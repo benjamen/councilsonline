@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    CouncilSelector: typeof import('./src/components/CouncilSelector.vue')['default']
     FeatureCard: typeof import('./src/components/FeatureCard.vue')['default']
     ProcessStep: typeof import('./src/components/ProcessStep.vue')['default']
     ResourceConsentDetails: typeof import('./src/components/ResourceConsentDetails.vue')['default']

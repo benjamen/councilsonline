@@ -1,0 +1,261 @@
+{
+ "actions": [],
+ "autoname": "field:council_code",
+ "creation": "2025-11-26 00:00:00",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "identity_section",
+  "council_code",
+  "council_name",
+  "official_name",
+  "column_break_1",
+  "is_active",
+  "subscription_tier",
+  "contact_section",
+  "contact_email",
+  "contact_phone",
+  "column_break_2",
+  "physical_address",
+  "website",
+  "branding_section",
+  "logo",
+  "column_break_3",
+  "primary_color",
+  "secondary_color",
+  "letterhead",
+  "configuration_section",
+  "timezone",
+  "default_sla_days",
+  "column_break_4",
+  "licensing_section",
+  "license_start_date",
+  "license_expiry_date",
+  "column_break_5",
+  "max_requests_per_month",
+  "request_types_section",
+  "enabled_request_types"
+ ],
+ "fields": [
+  {
+   "fieldname": "identity_section",
+   "fieldtype": "Section Break",
+   "label": "Identity"
+  },
+  {
+   "description": "Unique code for this council (e.g., AKL, WLG, CHC)",
+   "fieldname": "council_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Council Code",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "description": "Display name (e.g., Auckland Council)",
+   "fieldname": "council_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Council Name",
+   "reqd": 1
+  },
+  {
+   "description": "Full legal name (e.g., Auckland District Council)",
+   "fieldname": "official_name",
+   "fieldtype": "Data",
+   "label": "Official Name"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Active"
+  },
+  {
+   "default": "Standard",
+   "fieldname": "subscription_tier",
+   "fieldtype": "Select",
+   "label": "Subscription Tier",
+   "options": "Free\nStandard\nPremium\nEnterprise"
+  },
+  {
+   "fieldname": "contact_section",
+   "fieldtype": "Section Break",
+   "label": "Contact Information"
+  },
+  {
+   "fieldname": "contact_email",
+   "fieldtype": "Data",
+   "label": "Contact Email",
+   "options": "Email",
+   "reqd": 1
+  },
+  {
+   "fieldname": "contact_phone",
+   "fieldtype": "Data",
+   "label": "Contact Phone",
+   "options": "Phone"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "physical_address",
+   "fieldtype": "Small Text",
+   "label": "Physical Address"
+  },
+  {
+   "fieldname": "website",
+   "fieldtype": "Data",
+   "label": "Website",
+   "options": "URL"
+  },
+  {
+   "fieldname": "branding_section",
+   "fieldtype": "Section Break",
+   "label": "Branding"
+  },
+  {
+   "fieldname": "logo",
+   "fieldtype": "Attach Image",
+   "label": "Logo"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Main brand color for UI elements",
+   "fieldname": "primary_color",
+   "fieldtype": "Color",
+   "label": "Primary Color"
+  },
+  {
+   "description": "Secondary brand color",
+   "fieldname": "secondary_color",
+   "fieldtype": "Color",
+   "label": "Secondary Color"
+  },
+  {
+   "description": "Optional letterhead for official documents",
+   "fieldname": "letterhead",
+   "fieldtype": "Link",
+   "label": "Letterhead",
+   "options": "Letter Head"
+  },
+  {
+   "fieldname": "configuration_section",
+   "fieldtype": "Section Break",
+   "label": "Configuration"
+  },
+  {
+   "default": "Pacific/Auckland",
+   "fieldname": "timezone",
+   "fieldtype": "Select",
+   "label": "Timezone",
+   "options": "Pacific/Auckland\nPacific/Chatham"
+  },
+  {
+   "default": "20",
+   "description": "Default statutory timeframe in working days",
+   "fieldname": "default_sla_days",
+   "fieldtype": "Int",
+   "label": "Default SLA Days"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "licensing_section",
+   "fieldtype": "Section Break",
+   "label": "Licensing"
+  },
+  {
+   "fieldname": "license_start_date",
+   "fieldtype": "Date",
+   "label": "License Start Date"
+  },
+  {
+   "fieldname": "license_expiry_date",
+   "fieldtype": "Date",
+   "label": "License Expiry Date"
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "description": "0 = unlimited",
+   "fieldname": "max_requests_per_month",
+   "fieldtype": "Int",
+   "label": "Max Requests Per Month"
+  },
+  {
+   "fieldname": "request_types_section",
+   "fieldtype": "Section Break",
+   "label": "Enabled Request Types"
+  },
+  {
+   "description": "Request types available for this council",
+   "fieldname": "enabled_request_types",
+   "fieldtype": "Table",
+   "label": "Enabled Request Types",
+   "options": "Council Request Type"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-11-26 17:37:07.011096",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Council",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Consent Planner",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Consent Officer",
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "council_name",
+ "track_changes": 1
+}
