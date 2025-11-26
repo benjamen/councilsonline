@@ -666,10 +666,13 @@ def get_request_types_for_council(council_code):
                     "type_name": request_type_doc.type_name,
                     "type_code": request_type_doc.type_code,
                     "category": request_type_doc.category,
-                    "description": request_type_doc.description if hasattr(request_type_doc, 'description') else "",
+                    "description": rt.brief_description if rt.brief_description else (request_type_doc.description if hasattr(request_type_doc, 'description') else ""),
                     "base_fee": rt.base_fee_override if rt.base_fee_override else request_type_doc.base_fee,
                     "sla_days": rt.sla_days_override if rt.sla_days_override else request_type_doc.processing_sla_days,
-                    "fee_calculation_method": request_type_doc.fee_calculation_method
+                    "fee_calculation_method": request_type_doc.fee_calculation_method,
+                    "process_description": rt.process_description or "",
+                    "requires_property": request_type_doc.requires_property if hasattr(request_type_doc, 'requires_property') else True,
+                    "requires_payment": request_type_doc.requires_payment if hasattr(request_type_doc, 'requires_payment') else True
                 })
 
         return enabled_types
