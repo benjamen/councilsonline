@@ -324,6 +324,69 @@
                   </div>
                 </div>
               </div>
+
+              <!-- Property Owner Details (Conditional) -->
+              <div class="mt-6 border-t border-gray-200 pt-6">
+                <div class="flex items-start mb-4">
+                  <input
+                    type="checkbox"
+                    v-model="formData.applicant_is_not_owner"
+                    class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label class="ml-3 text-sm font-medium text-gray-700">
+                    I am not the property owner
+                  </label>
+                </div>
+
+                <div v-if="formData.applicant_is_not_owner" class="space-y-4 pl-7">
+                  <p class="text-xs text-gray-600 mb-4">
+                    Under Section 88 of the RMA, you must provide the property owner's contact details.
+                  </p>
+
+                  <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">Owner Name *</label>
+                      <input
+                        v-model="formData.owner_name"
+                        type="text"
+                        placeholder="Property owner's full name"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        :required="formData.applicant_is_not_owner"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">Owner Email</label>
+                      <input
+                        v-model="formData.owner_email"
+                        type="email"
+                        placeholder="owner@example.com"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">Owner Phone</label>
+                      <input
+                        v-model="formData.owner_phone"
+                        type="tel"
+                        placeholder="021 123 4567"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">Owner Address</label>
+                      <textarea
+                        v-model="formData.owner_address"
+                        rows="3"
+                        placeholder="Owner's postal address"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- Manual Property Entry with Autocomplete -->
@@ -425,6 +488,23 @@
                     ✓ Auto-populated from LINZ
                   </p>
                 </div>
+              </div>
+
+              <!-- Certificate of Title Document Upload -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Upload Certificate of Title (Optional)
+                </label>
+                <input
+                  type="file"
+                  @change="handleCTUpload"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200"
+                />
+                <p v-if="formData.certificate_of_title_document" class="text-xs text-green-600 mt-1">
+                  ✓ Document uploaded
+                </p>
+                <p class="mt-1 text-xs text-gray-500">Upload a copy of the Certificate of Title if available</p>
               </div>
 
               <div class="grid md:grid-cols-2 gap-4">
@@ -545,6 +625,36 @@
                   <option value="Both Email and Postal">Both Email and Postal</option>
                 </select>
                 <p class="mt-1 text-xs text-gray-500">How to receive correspondence</p>
+              </div>
+            </div>
+
+            <!-- Transfer Deposit from Existing Consent -->
+            <div class="border-t border-gray-200 pt-6 mt-6 mb-6">
+              <div class="flex items-start mb-4">
+                <input
+                  type="checkbox"
+                  v-model="formData.transfer_deposit_required"
+                  class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label class="ml-3 text-sm font-medium text-gray-700">
+                  Transfer deposit from existing consent
+                </label>
+              </div>
+
+              <div v-if="formData.transfer_deposit_required" class="pl-7">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Existing Consent Number *
+                </label>
+                <input
+                  v-model="formData.transfer_deposit_consent_number"
+                  type="text"
+                  placeholder="e.g., RC123456"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  :required="formData.transfer_deposit_required"
+                />
+                <p class="mt-1 text-xs text-gray-500">
+                  Enter the consent number from which the deposit should be transferred
+                </p>
               </div>
             </div>
 
@@ -3991,10 +4101,42 @@ const formData = ref({
   hazard_risk_assessment: '',
   cultural_effects: '',
 
+  // NEW: Structured AEE fields + document upload
+  aee_document: null,
+  aee_activity_description: '',
+  aee_existing_environment: '',
+  aee_part2_assessment: '',
+
   // Note: planning_assessment and rma_part2_assessment are back-office fields
   // completed by council officers, not applicants
   alternatives_considered: '',
   mitigation_proposed: '',
+
+  // NEW: Owner/Occupier fields
+  applicant_is_not_owner: false,
+  owner_name: '',
+  owner_email: '',
+  owner_phone: '',
+  owner_address: '',
+
+  // NEW: Certificate of Title document
+  certificate_of_title_document: null,
+
+  // NEW: Statutory declarations
+  declaration_rma_compliance: false,
+  declaration_public_information: false,
+  declaration_authorized: false,
+
+  // NEW: Invoicing details
+  invoice_to: 'Applicant',
+  invoice_name: '',
+  invoice_email: '',
+  invoice_address: '',
+  purchase_order_number: '',
+
+  // NEW: Transfer deposit (RC-specific)
+  transfer_deposit_required: false,
+  transfer_deposit_consent_number: '',
 
   // Affected Parties
   affected_parties: [], // Array of affected parties
