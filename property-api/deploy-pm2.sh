@@ -43,7 +43,7 @@ pm2 delete lodgeick-property-api 2>/dev/null || true
 # Start with PM2
 echo ""
 echo "🚀 Starting with PM2..."
-pm2 start ecosystem.config.js
+pm2 start ecosystem.config.cjs
 
 # Save PM2 process list
 echo ""

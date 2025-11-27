@@ -114,7 +114,7 @@ pm2 logs lodgeick-property-api --lines 50
 **Port 3000 already in use?**
 ```bash
 sudo lsof -i :3000
-# Kill the process or change PORT in ecosystem.config.js
+# Kill the process or change PORT in ecosystem.config.cjs
 ```
 
 **Frontend can't reach API?**

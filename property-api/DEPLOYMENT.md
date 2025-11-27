@@ -42,7 +42,7 @@ npm install
 #### Step 4: Create PM2 ecosystem file
 
 ```bash
-cat > ecosystem.config.js << 'EOF'
+cat > ecosystem.config.cjs << 'EOF'
 module.exports = {
   apps: [{
     name: 'lodgeick-property-api',
@@ -68,7 +68,7 @@ EOF
 
 ```bash
 # Start the service
-pm2 start ecosystem.config.js
+pm2 start ecosystem.config.cjs
 
 # Save the PM2 process list
 pm2 save
