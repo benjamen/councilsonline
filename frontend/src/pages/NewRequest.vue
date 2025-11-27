@@ -328,8 +328,30 @@
 
             <!-- Manual Property Entry with Autocomplete -->
             <div v-if="!formData.property" class="space-y-4">
-              <div class="relative">
+              <!-- Property Address Display (after selection) -->
+              <div v-if="formData.property_address" class="relative">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Property Address *</label>
+                <div class="flex gap-2">
+                  <input
+                    v-model="formData.property_address"
+                    type="text"
+                    readonly
+                    class="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
+                  />
+                  <button
+                    @click="clearPropertyAddress"
+                    type="button"
+                    class="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 border border-blue-600 rounded-lg hover:bg-blue-50"
+                  >
+                    Change
+                  </button>
+                </div>
+                <p class="mt-1 text-xs text-green-600">✓ Address selected from LINZ database</p>
+              </div>
+
+              <!-- Property Address Search (before selection) -->
+              <div v-else class="relative">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Search Property Address *</label>
                 <input
                     v-model="propertySearchQuery"
                     @input="handlePropertySearch"
@@ -4460,6 +4482,21 @@ const selectProperty = (result) => {
 // Close dropdown when clicking outside
 const closePropertyDropdown = () => {
   showPropertyDropdown.value = false
+}
+
+// Clear property address to allow new search
+const clearPropertyAddress = () => {
+  formData.value.property_address = ''
+  formData.value.legal_description = ''
+  formData.value.ct_reference = ''
+  formData.value.valuation_reference = ''
+  formData.value.parcel_id = ''
+  formData.value.zone = ''
+  formData.value.property_coordinates = ''
+  formData.value.hazard_data = null
+  propertySearchQuery.value = ''
+  propertySearchResults.value = []
+  console.log('[PropertySearch] Cleared property data for new search')
 }
 
 const canProceed = () => {
