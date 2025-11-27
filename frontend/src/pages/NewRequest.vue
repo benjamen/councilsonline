@@ -1311,35 +1311,6 @@
               </div>
             </div>
 
-            <!-- Planning Assessment -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Planning Assessment *
-              </label>
-              <textarea
-                v-model="formData.planning_assessment"
-                rows="6"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Assess the proposal against relevant district plan provisions, objectives and policies. Address how the proposal aligns with planning framework..."
-                required
-              ></textarea>
-              <p class="mt-1 text-xs text-gray-500">Assessment against district plan objectives and policies</p>
-            </div>
-
-            <!-- RMA Part 2 Assessment -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                RMA Part 2 Assessment
-              </label>
-              <textarea
-                v-model="formData.rma_part2_assessment"
-                rows="5"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Assess the proposal against Part 2 of the RMA, including sections 5 (Purpose), 6 (Matters of national importance), 7 (Other matters), and 8 (Treaty of Waitangi)..."
-              ></textarea>
-              <p class="mt-1 text-xs text-gray-500">Assessment against RMA Part 2 principles (sections 5-8)</p>
-            </div>
-
             <!-- Alternatives and Mitigation -->
             <div class="grid md:grid-cols-2 gap-4">
               <div>
@@ -2602,35 +2573,6 @@
                   ></textarea>
                 </div>
               </div>
-            </div>
-
-            <!-- Planning Assessment -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Planning Assessment *
-              </label>
-              <textarea
-                v-model="formData.planning_assessment"
-                rows="6"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Assess the proposal against relevant district plan provisions, objectives and policies. Address how the proposal aligns with planning framework..."
-                required
-              ></textarea>
-              <p class="mt-1 text-xs text-gray-500">Assessment against district plan objectives and policies</p>
-            </div>
-
-            <!-- RMA Part 2 Assessment -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                RMA Part 2 Assessment
-              </label>
-              <textarea
-                v-model="formData.rma_part2_assessment"
-                rows="5"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Assess the proposal against Part 2 of the RMA, including sections 5 (Purpose), 6 (Matters of national importance), 7 (Other matters), and 8 (Treaty of Waitangi)..."
-              ></textarea>
-              <p class="mt-1 text-xs text-gray-500">Assessment against RMA Part 2 principles (sections 5-8)</p>
             </div>
 
             <!-- Alternatives and Mitigation -->
@@ -4049,8 +3991,8 @@ const formData = ref({
   hazard_risk_assessment: '',
   cultural_effects: '',
 
-  planning_assessment: '',
-  rma_part2_assessment: '', // RMA Part 2 principles assessment
+  // Note: planning_assessment and rma_part2_assessment are back-office fields
+  // completed by council officers, not applicants
   alternatives_considered: '',
   mitigation_proposed: '',
 
@@ -4546,8 +4488,7 @@ const canProceed = () => {
         return !!(
           formData.value.consent_types && formData.value.consent_types.length > 0 &&
           formData.value.activity_status &&
-          formData.value.assessment_of_effects &&
-          formData.value.planning_assessment
+          formData.value.assessment_of_effects
         )
       } else {
         // This is Review step for non-RC requests - always allow
