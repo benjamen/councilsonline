@@ -220,7 +220,7 @@
               >
                 <option value="">-- Select a property or enter new --</option>
                 <option v-for="prop in properties.data" :key="prop.name" :value="prop.name">
-                  {{ prop.property_id }} - {{ prop.street_address }}, {{ prop.suburb }}
+                  {{ prop.street_address }}, {{ prop.suburb }}{{ prop.legal_description ? ' - ' + prop.legal_description : '' }}{{ prop.zone ? ' [' + prop.zone + ']' : '' }}
                 </option>
               </select>
             </div>
@@ -4286,7 +4286,7 @@ const properties = createResource({
   url: 'frappe.client.get_list',
   params: {
     doctype: 'Property',
-    fields: ['name', 'property_id', 'street_address', 'suburb', 'city'],
+    fields: ['name', 'property_id', 'street_address', 'suburb', 'city', 'legal_description', 'certificate_of_title', 'zone'],
     limit_page_length: 100,
   },
   auto: true,
