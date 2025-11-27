@@ -118,7 +118,7 @@
         <!-- Step 3: Process Information -->
         <div v-if="currentStep === 3">
           <h2 class="text-2xl font-bold text-gray-900 mb-2">Council Process Information</h2>
-          <p class="text-gray-600 mb-6">Understanding {{ councils.data?.find(c => c.name === formData.council)?.council_name }}'s process for this application</p>
+          <p class="text-gray-600 mb-6">Understanding {{ councilStore.councils?.find(c => c.council_code === formData.council)?.council_name }}'s process for this application</p>
 
           <div v-if="selectedRequestTypeDetails" class="space-y-6">
             <!-- Request Type Summary -->
