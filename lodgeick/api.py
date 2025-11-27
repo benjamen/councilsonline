@@ -617,8 +617,10 @@ def get_user_councils(user=None):
     """
     user = user or frappe.session.user
 
-    # Get default council
-    default_council = frappe.db.get_value("User", user, "default_council")
+    # Get default council (only if field exists)
+    default_council = None
+    if frappe.db.has_column("User", "default_council"):
+        default_council = frappe.db.get_value("User", user, "default_council")
 
     # Get all requests submitted by this user to find associated councils
     user_councils = frappe.db.sql("""
@@ -699,8 +701,15 @@ def set_user_default_council(council_code):
     if not frappe.db.exists("Council", {"council_code": council_code, "is_active": 1}):
         frappe.throw(_("Invalid or inactive council"))
 
-    frappe.db.set_value("User", user, "default_council", council_code)
-    frappe.db.commit()
+    # Only set if field exists
+    if frappe.db.has_column("User", "default_council"):
+        frappe.db.set_value("User", user, "default_council", council_code)
+        frappe.db.commit()
+    else:
+        frappe.log_error(
+            title="User DocType Missing default_council Field",
+            message="The default_council field needs to be added to the User DocType"
+        )
 
     return {
         "success": True,
