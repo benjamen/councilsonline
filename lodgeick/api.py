@@ -664,6 +664,7 @@ def get_request_types_for_council(council_code):
                 enabled_types.append({
                     "name": request_type_doc.name,
                     "type_name": request_type_doc.type_name,
+                    "request_type_name": request_type_doc.type_name,  # Alias for frontend compatibility
                     "type_code": request_type_doc.type_code,
                     "category": request_type_doc.category,
                     "description": rt.brief_description if rt.brief_description else (request_type_doc.description if hasattr(request_type_doc, 'description') else ""),
