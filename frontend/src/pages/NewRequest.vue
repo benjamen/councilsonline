@@ -327,7 +327,7 @@
             </div>
 
             <!-- Manual Property Entry with Autocomplete -->
-            <div v-if="!formData.property" class="space-y-4">
+            <div class="space-y-4">
               <!-- Property Address Display (after selection) -->
               <div v-if="formData.property_address" class="relative">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Property Address *</label>
@@ -472,7 +472,7 @@
                 </div>
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Activity Zone
+                    Activity Status
                     <span v-if="isResourceConsent" class="text-red-600">*</span>
                   </label>
                   <select
@@ -480,7 +480,7 @@
                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     :required="isResourceConsent"
                   >
-                    <option value="">Select activity zone</option>
+                    <option value="">Select activity status</option>
                     <option value="Permitted">Permitted</option>
                     <option value="Controlled">Controlled</option>
                     <option value="Restricted Discretionary">Restricted Discretionary</option>
@@ -489,7 +489,7 @@
                     <option value="Prohibited">Prohibited</option>
                   </select>
                   <p class="mt-1 text-xs text-gray-500">
-                    Activity status under the district plan
+                    What is the activity status of your proposal under the zone rules?
                   </p>
                 </div>
               </div>
@@ -4372,7 +4372,27 @@ const onPropertySelect = () => {
   if (formData.value.property) {
     const selected = properties.data.find(p => p.name === formData.value.property)
     if (selected) {
+      // Populate address
       formData.value.property_address = `${selected.street_address}, ${selected.suburb}, ${selected.city}`
+
+      // Populate property details
+      formData.value.legal_description = selected.legal_description || ''
+      formData.value.ct_reference = selected.certificate_of_title || ''
+      formData.value.parcel_id = selected.property_id || ''
+      formData.value.zone = selected.zoning || ''
+
+      // Populate coordinates if available
+      if (selected.latitude && selected.longitude) {
+        formData.value.property_coordinates = `${selected.latitude},${selected.longitude}`
+      }
+
+      console.log('[NewRequest] Populated property details from existing property:', {
+        address: formData.value.property_address,
+        legal_description: formData.value.legal_description,
+        ct_reference: formData.value.ct_reference,
+        parcel_id: formData.value.parcel_id,
+        zone: formData.value.zone
+      })
     }
   }
 }
