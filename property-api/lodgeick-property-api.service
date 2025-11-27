@@ -1,0 +1,20 @@
+[Unit]
+Description=Lodgeick Property API - LINZ Address Search
+After=network.target
+
+[Service]
+Type=simple
+User=frappe
+WorkingDirectory=/home/frappe/frappe-bench/apps/lodgeick/property-api
+ExecStart=/home/frappe/.nvm/versions/node/v20.19.2/bin/node server.js
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=lodgeick-property-api
+
+Environment="NODE_ENV=production"
+Environment="PORT=3000"
+
+[Install]
+WantedBy=multi-user.target
