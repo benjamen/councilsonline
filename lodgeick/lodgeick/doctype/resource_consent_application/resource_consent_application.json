@@ -32,6 +32,9 @@
   "consent_types",
   "pim_reference",
   "activity_status",
+  "section_break_transfer_deposit",
+  "transfer_deposit_required",
+  "transfer_deposit_consent_number",
   "section_break_permitted_boundary",
   "permitted_boundary_activity",
   "boundary_description",
@@ -79,7 +82,11 @@
   "hail_activities",
   "assessment_of_effects_tab",
   "section_break_assessment",
+  "aee_document",
   "assessment_of_effects",
+  "aee_activity_description",
+  "aee_existing_environment",
+  "aee_part2_assessment",
   "effects_on_people",
   "physical_effects",
   "earthworks_effects",
@@ -314,6 +321,28 @@
    "reqd": 1
   },
   {
+   "collapsible": 1,
+   "description": "Transfer of deposit from existing consent if applicable",
+   "fieldname": "section_break_transfer_deposit",
+   "fieldtype": "Section Break",
+   "label": "Transfer of Deposit"
+  },
+  {
+   "default": "0",
+   "description": "Check if you wish to transfer a deposit from an existing consent",
+   "fieldname": "transfer_deposit_required",
+   "fieldtype": "Check",
+   "label": "Transfer Deposit from Existing Consent"
+  },
+  {
+   "depends_on": "eval:doc.transfer_deposit_required==1",
+   "description": "Enter the consent number from which the deposit should be transferred",
+   "fieldname": "transfer_deposit_consent_number",
+   "fieldtype": "Data",
+   "label": "Consent Number for Transfer",
+   "mandatory_depends_on": "eval:doc.transfer_deposit_required==1"
+  },
+  {
    "description": "Council determination of notification requirements and public submissions",
    "fieldname": "section_break_notification",
    "fieldtype": "Section Break",
@@ -392,11 +421,35 @@
    "label": "Assessment of Effects (AEE)"
   },
   {
+   "description": "Upload a completed AEE document (optional if completing structured fields below)",
+   "fieldname": "aee_document",
+   "fieldtype": "Attach",
+   "label": "AEE Document Upload"
+  },
+  {
+   "description": "Complete this field OR upload an AEE document above. Full assessment as per Schedule 4 RMA.",
    "fieldname": "assessment_of_effects",
    "fieldtype": "Text Editor",
    "in_list_view": 1,
-   "label": "AEE (Schedule 4 RMA)",
-   "reqd": 1
+   "label": "AEE (Schedule 4 RMA)"
+  },
+  {
+   "description": "1. Description of the activity and its purpose",
+   "fieldname": "aee_activity_description",
+   "fieldtype": "Text Editor",
+   "label": "Activity Description"
+  },
+  {
+   "description": "2. Description of the existing environment",
+   "fieldname": "aee_existing_environment",
+   "fieldtype": "Text Editor",
+   "label": "Existing Environment"
+  },
+  {
+   "description": "3. Assessment against Part 2 of the RMA (sustainable management principles)",
+   "fieldname": "aee_part2_assessment",
+   "fieldtype": "Text Editor",
+   "label": "Part 2 Assessment"
   },
   {
    "fieldname": "effects_on_people",

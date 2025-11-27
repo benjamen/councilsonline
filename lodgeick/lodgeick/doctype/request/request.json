@@ -29,11 +29,19 @@
   "agent_email",
   "agent_phone",
   "organization",
+  "section_break_owner",
+  "applicant_is_not_owner",
+  "owner_name",
+  "owner_email",
+  "column_break_owner",
+  "owner_phone",
+  "owner_address",
   "section_break_property",
   "property",
   "property_address",
   "legal_description",
   "ct_reference",
+  "certificate_of_title_document",
   "zoning",
   "activity_zone",
   "column_break_3",
@@ -63,6 +71,10 @@
   "column_break_assessment",
   "assessment_template",
   "assessment_owner",
+  "section_break_declarations",
+  "declaration_rma_compliance",
+  "declaration_public_information",
+  "declaration_authorized",
   "section_break_attachments",
   "attachments",
   "section_break_fees",
@@ -72,6 +84,13 @@
   "column_break_5",
   "payment_status",
   "fees",
+  "section_break_invoicing",
+  "invoice_to",
+  "invoice_name",
+  "invoice_email",
+  "column_break_invoicing",
+  "invoice_address",
+  "purchase_order_number",
   "section_break_history",
   "status_history",
   "section_break_related",
@@ -224,6 +243,49 @@
    "options": "Organization"
   },
   {
+   "collapsible": 1,
+   "description": "If you are not the property owner, provide the owner's contact details. This is required under Section 88 of the RMA.",
+   "fieldname": "section_break_owner",
+   "fieldtype": "Section Break",
+   "label": "Property Owner Details"
+  },
+  {
+   "default": "0",
+   "fieldname": "applicant_is_not_owner",
+   "fieldtype": "Check",
+   "label": "I am not the property owner"
+  },
+  {
+   "depends_on": "eval:doc.applicant_is_not_owner==1",
+   "fieldname": "owner_name",
+   "fieldtype": "Data",
+   "label": "Owner Name",
+   "mandatory_depends_on": "eval:doc.applicant_is_not_owner==1"
+  },
+  {
+   "depends_on": "eval:doc.applicant_is_not_owner==1",
+   "fieldname": "owner_email",
+   "fieldtype": "Data",
+   "label": "Owner Email",
+   "options": "Email"
+  },
+  {
+   "fieldname": "column_break_owner",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.applicant_is_not_owner==1",
+   "fieldname": "owner_phone",
+   "fieldtype": "Data",
+   "label": "Owner Phone"
+  },
+  {
+   "depends_on": "eval:doc.applicant_is_not_owner==1",
+   "fieldname": "owner_address",
+   "fieldtype": "Small Text",
+   "label": "Owner Address"
+  },
+  {
    "description": "The property where the proposed work will take place. Select an existing property or create a new one with the address and legal description.",
    "fieldname": "section_break_property",
    "fieldtype": "Section Break",
@@ -256,6 +318,12 @@
    "fieldtype": "Data",
    "label": "Certificate of Title",
    "read_only": 1
+  },
+  {
+   "description": "Optional: Upload a copy of the Certificate of Title if available",
+   "fieldname": "certificate_of_title_document",
+   "fieldtype": "Attach",
+   "label": "Certificate of Title Document"
   },
   {
    "fetch_from": "property.zoning",
@@ -449,6 +517,33 @@
    "read_only": 1
   },
   {
+   "description": "Statutory declarations required under the Resource Management Act 1991. All declarations must be confirmed to submit this application.",
+   "fieldname": "section_break_declarations",
+   "fieldtype": "Section Break",
+   "label": "Statutory Declarations"
+  },
+  {
+   "default": "0",
+   "description": "I confirm this application contains all information required under Section 88 of the RMA 1991",
+   "fieldname": "declaration_rma_compliance",
+   "fieldtype": "Check",
+   "label": "RMA Section 88 Compliance"
+  },
+  {
+   "default": "0",
+   "description": "I understand this information will be publicly available (unless marked as confidential)",
+   "fieldname": "declaration_public_information",
+   "fieldtype": "Check",
+   "label": "Public Information Acknowledgment"
+  },
+  {
+   "default": "0",
+   "description": "I am authorized to submit this application on behalf of the applicant/owner",
+   "fieldname": "declaration_authorized",
+   "fieldtype": "Check",
+   "label": "Authorization Confirmation"
+  },
+  {
    "collapsible": 1,
    "fieldname": "section_break_attachments",
    "fieldtype": "Section Break",
@@ -503,6 +598,50 @@
    "fieldtype": "Table",
    "label": "Fee Breakdown",
    "options": "Request Fee"
+  },
+  {
+   "collapsible": 1,
+   "description": "Specify who should receive the invoice if different from the applicant. This could be the agent, property owner, or another party.",
+   "fieldname": "section_break_invoicing",
+   "fieldtype": "Section Break",
+   "label": "Invoicing Details"
+  },
+  {
+   "fieldname": "invoice_to",
+   "fieldtype": "Select",
+   "label": "Invoice To",
+   "options": "Applicant\nAgent/Consultant\nProperty Owner\nOther",
+   "default": "Applicant"
+  },
+  {
+   "depends_on": "eval:doc.invoice_to=='Other'",
+   "fieldname": "invoice_name",
+   "fieldtype": "Data",
+   "label": "Invoice Recipient Name",
+   "mandatory_depends_on": "eval:doc.invoice_to=='Other'"
+  },
+  {
+   "depends_on": "eval:doc.invoice_to=='Other'",
+   "fieldname": "invoice_email",
+   "fieldtype": "Data",
+   "label": "Invoice Email",
+   "options": "Email",
+   "mandatory_depends_on": "eval:doc.invoice_to=='Other'"
+  },
+  {
+   "fieldname": "column_break_invoicing",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.invoice_to=='Other'",
+   "fieldname": "invoice_address",
+   "fieldtype": "Small Text",
+   "label": "Invoice Address"
+  },
+  {
+   "fieldname": "purchase_order_number",
+   "fieldtype": "Data",
+   "label": "Purchase Order Number"
   },
   {
    "collapsible": 1,
