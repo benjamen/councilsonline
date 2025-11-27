@@ -1,0 +1,169 @@
+[
+  {
+    "doctype": "Council",
+    "name": "HCC",
+    "council_code": "HCC",
+    "council_name": "Hutt City Council",
+    "region": "Wellington",
+    "phone": "04 570 6666",
+    "email": "contact@huttcity.govt.nz",
+    "website": "https://www.huttcity.govt.nz",
+    "is_active": 1,
+    "license_start_date": "2025-01-01",
+    "license_end_date": "2026-12-31",
+    "enabled_request_types": [
+      {
+        "request_type": "resource-consent",
+        "is_enabled": 1,
+        "base_fee_override": 350.00,
+        "sla_days_override": 20,
+        "brief_description": "Apply for resource consent for activities requiring approval under the Lower Hutt District Plan. Typical processing time is 20 working days for non-notified applications.",
+        "process_description": "<h3>How to Apply</h3><ol><li><strong>Submit Online:</strong> Complete the application form with all required information</li><li><strong>Initial Review:</strong> We'll acknowledge receipt within 2 working days and assign a planner</li><li><strong>RFI (if needed):</strong> We may request additional information - the clock stops during this time</li><li><strong>Decision:</strong> Non-notified applications decided within 20 working days</li></ol><h4>What You Need</h4><ul><li>Site plans and drawings</li><li>Assessment of Environmental Effects (AEE)</li><li>Written approvals from affected parties (if applicable)</li></ul><h4>Questions?</h4><p>Contact our planning team: <a href=\"mailto:planning@huttcity.govt.nz\">planning@huttcity.govt.nz</a> or call 04 570 6666</p>",
+        "notes": "Assign to planning team. Check for pre-app meetings first."
+      },
+      {
+        "request_type": "building-consent",
+        "is_enabled": 1,
+        "base_fee_override": 275.00,
+        "sla_days_override": 20,
+        "brief_description": "Apply for building consent for construction, alteration, or demolition work under the Building Act 2004.",
+        "process_description": "<h3>Building Consent Process</h3><ol><li>Submit detailed plans and specifications</li><li>Initial assessment within 5 working days</li><li>Request for Information (RFI) if required</li><li>Consent issued within 20 working days</li></ol><p>For complex projects, please contact our building team first.</p>",
+        "notes": "Route to building consents team"
+      },
+      {
+        "request_type": "lim-request",
+        "is_enabled": 1,
+        "base_fee_override": 220.00,
+        "sla_days_override": 10,
+        "brief_description": "Request property information including zoning, rates, building consents, and known hazards.",
+        "process_description": "<h3>LIM Turnaround</h3><p>Standard LIMs are processed within 10 working days. We gather information from multiple council departments to provide you with comprehensive property information.</p><p><strong>Includes:</strong></p><ul><li>Property zoning and district plan information</li><li>Building and resource consent history</li><li>Rates and services information</li><li>Known hazards and restrictions</li></ul>",
+        "notes": "Standard processing - no complex review needed"
+      },
+      {
+        "request_type": "subdivision-consent",
+        "is_enabled": 1,
+        "base_fee_override": 550.00,
+        "sla_days_override": 30,
+        "brief_description": "Apply to subdivide your property into multiple titles. Required for all subdivisions regardless of number of lots.",
+        "process_description": "<h3>Subdivision Process</h3><ol><li>Pre-application meeting recommended (free)</li><li>Submit subdivision application with survey plan</li><li>Processing and assessment (up to 30 working days)</li><li>Resource consent decision</li><li>Survey plan approval (s223 certification)</li><li>Title issue via LINZ</li></ol><p>Contact our subdivision team to discuss your proposal: <a href=\"mailto:subdivisions@huttcity.govt.nz\">subdivisions@huttcity.govt.nz</a></p>",
+        "notes": "Complex - assign to senior planner. May require infrastructure contributions."
+      },
+      {
+        "request_type": "certificate-compliance",
+        "is_enabled": 1,
+        "base_fee_override": 175.00,
+        "sla_days_override": 10,
+        "brief_description": "Obtain certification that your proposed activity complies with district plan rules without needing resource consent.",
+        "process_description": "<h3>Certificate Process</h3><p>We will assess your proposal against the district plan rules and provide written confirmation of compliance within 10 working days.</p><p>This is useful when you need formal confirmation for property sales or legal purposes.</p>",
+        "notes": "Check zone rules carefully before issuing"
+      },
+      {
+        "request_type": "service-request",
+        "is_enabled": 1,
+        "brief_description": "General enquiries, service requests, or complaints about council services.",
+        "process_description": "<h3>Service Request</h3><p>We aim to respond to all service requests within 5 working days. Urgent matters such as blocked drains or fallen trees are prioritized.</p><p>You can track your service request online once submitted.</p>",
+        "notes": "Triage and route to appropriate team"
+      }
+    ]
+  },
+  {
+    "doctype": "Council",
+    "name": "WCC",
+    "council_code": "WCC",
+    "council_name": "Wellington City Council",
+    "region": "Wellington",
+    "phone": "04 499 4444",
+    "email": "info@wcc.govt.nz",
+    "website": "https://www.wellington.govt.nz",
+    "is_active": 1,
+    "license_start_date": "2025-01-01",
+    "license_end_date": "2026-12-31",
+    "enabled_request_types": [
+      {
+        "request_type": "resource-consent",
+        "is_enabled": 1,
+        "base_fee_override": 400.00,
+        "sla_days_override": 20,
+        "brief_description": "Apply for resource consent under the Wellington District Plan. Higher fees reflect our comprehensive assessment process.",
+        "process_description": "<h3>Wellington City Resource Consent Process</h3><p>Our planning team provides thorough assessment of resource consent applications. We work with heritage, urban design, and transport advisors to ensure quality outcomes.</p><h4>Timeline</h4><ul><li>Acknowledgement: 2 working days</li><li>Processing: up to 20 working days (non-notified)</li><li>Notified applications: up to 130 working days</li></ul>",
+        "notes": "Wellington-specific assessment required"
+      },
+      {
+        "request_type": "building-consent",
+        "is_enabled": 1,
+        "base_fee_override": 300.00,
+        "sla_days_override": 20,
+        "brief_description": "Building consent applications for Wellington City. Earthquake-prone building requirements apply.",
+        "process_description": "<h3>Building Consent - Wellington</h3><p>Special attention to seismic requirements and heritage considerations in the central city.</p>",
+        "notes": "Check EPB status for existing buildings"
+      },
+      {
+        "request_type": "lim-request",
+        "is_enabled": 1,
+        "base_fee_override": 250.00,
+        "sla_days_override": 10,
+        "brief_description": "Property information reports including earthquake-prone building status and heritage listings.",
+        "process_description": "<h3>Wellington City LIM</h3><p>Comprehensive property reports including earthquake risk, heritage status, and CBD overlay information.</p>",
+        "notes": "Include EPB register check"
+      },
+      {
+        "request_type": "service-request",
+        "is_enabled": 1,
+        "brief_description": "Report issues, request services, or make enquiries about Wellington City Council services.",
+        "process_description": "<h3>Service Requests</h3><p>Report issues online 24/7. Track your request from submission to completion.</p>",
+        "notes": "Use CRM system for routing"
+      }
+    ]
+  },
+  {
+    "doctype": "Council",
+    "name": "PCC",
+    "council_code": "PCC",
+    "council_name": "Porirua City Council",
+    "region": "Wellington",
+    "phone": "04 237 5089",
+    "email": "enquiries@pcc.govt.nz",
+    "website": "https://www.poriruacity.govt.nz",
+    "is_active": 1,
+    "license_start_date": "2025-01-01",
+    "license_end_date": "2026-12-31",
+    "enabled_request_types": [
+      {
+        "request_type": "resource-consent",
+        "is_enabled": 1,
+        "base_fee_override": 325.00,
+        "sla_days_override": 20,
+        "brief_description": "Resource consent applications for Porirua City. Free pre-application advice available.",
+        "process_description": "<h3>Porirua Resource Consents</h3><p>We encourage early engagement with our planning team. Book a free 30-minute pre-application meeting to discuss your proposal.</p>",
+        "notes": "Promote pre-app meetings"
+      },
+      {
+        "request_type": "building-consent",
+        "is_enabled": 1,
+        "base_fee_override": 260.00,
+        "sla_days_override": 20,
+        "brief_description": "Building consent for construction work in Porirua City.",
+        "process_description": "<h3>Building Consents</h3><p>Fast-track available for standard residential builds. Contact our building team to check eligibility.</p>",
+        "notes": "Fast-track option available"
+      },
+      {
+        "request_type": "lim-request",
+        "is_enabled": 1,
+        "base_fee_override": 210.00,
+        "sla_days_override": 10,
+        "brief_description": "Land Information Memorandum for properties in Porirua City.",
+        "process_description": "<h3>Porirua LIM Service</h3><p>Quick turnaround for standard LIM requests within 10 working days.</p>",
+        "notes": "Standard LIM processing"
+      },
+      {
+        "request_type": "subdivision-consent",
+        "is_enabled": 1,
+        "base_fee_override": 500.00,
+        "sla_days_override": 30,
+        "brief_description": "Subdivision applications for Porirua. Three Waters requirements apply.",
+        "process_description": "<h3>Subdivision - Porirua</h3><p>All subdivisions require assessment of three waters capacity. Early consultation with infrastructure team recommended.</p>",
+        "notes": "Check 3 waters capacity"
+      }
+    ]
+  }
+]

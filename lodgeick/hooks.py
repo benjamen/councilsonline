@@ -96,7 +96,9 @@ after_install = "lodgeick.install.after_install"
 # --------
 # Load fixtures from JSON files on migrate/install
 fixtures = [
-	{"dt": "Print Format", "filters": [["module", "=", "Lodgeick"]]}
+	{"dt": "Print Format", "filters": [["module", "=", "Lodgeick"]]},
+	"lodgeick.lodgeick.fixtures.request_types",
+	"lodgeick.lodgeick.fixtures.councils"
 ]
 
 # Uninstallation
