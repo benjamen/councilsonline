@@ -475,12 +475,11 @@
           </div>
         </div>
 
-        <!-- Step 4: RC Details (Resource Consent) OR Additional Information (Other Requests) -->
-        <div v-if="currentStep === 4">
-          <!-- Resource Consent: RC Details -->
-          <div v-if="isResourceConsent">
-            <h2 class="text-2xl font-bold text-gray-900 mb-2">Resource Consent Details</h2>
-            <p class="text-gray-600 mb-8">Provide Resource Management Act (RMA) specific information</p>
+        <!-- Step 5: RC Details (Resource Consent Only) -->
+        <div v-if="currentStep === 5 && isResourceConsent">
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">Resource Consent Details</h2>
+          <p class="text-gray-600 mb-8">Provide Resource Management Act (RMA) specific information</p>
+
           <div class="space-y-6">
             <!-- Reference and Delivery -->
             <div class="grid md:grid-cols-3 gap-4 mb-4">
@@ -1762,80 +1761,6 @@
                     <p class="text-xs text-blue-700 mt-2">
                       A planning officer will contact you within 2 business days to schedule.
                     </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          </div>
-
-          <!-- Non-Resource Consent: Additional Information with File Upload -->
-          <div v-else>
-            <h2 class="text-2xl font-bold text-gray-900 mb-2">Additional Information</h2>
-            <p class="text-gray-600 mb-8">Provide details about your request and attach any supporting documents</p>
-
-            <div class="space-y-6">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Brief Description *</label>
-                <input
-                  v-model="formData.brief_description"
-                  type="text"
-                  placeholder="e.g., Request for LIM report on property"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  required
-                />
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Additional Details</label>
-                <textarea
-                  v-model="formData.detailed_description"
-                  rows="6"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Provide any additional information relevant to your request..."
-                ></textarea>
-              </div>
-
-              <!-- File Upload Section -->
-              <div class="border-2 border-dashed border-gray-300 rounded-lg p-6">
-                <div class="text-center">
-                  <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                  </svg>
-                  <div class="mt-4">
-                    <label class="cursor-pointer">
-                      <span class="px-4 py-2 bg-white text-sm font-medium text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50">
-                        Choose Files
-                      </span>
-                      <input
-                        ref="fileInput"
-                        type="file"
-                        multiple
-                        @change="handleFileUpload"
-                        class="hidden"
-                      />
-                    </label>
-                  </div>
-                  <p class="mt-2 text-xs text-gray-500">
-                    Upload any supporting documents (optional)
-                  </p>
-                </div>
-
-                <!-- Uploaded Files List -->
-                <div v-if="uploadedFiles.length > 0" class="mt-4 space-y-2">
-                  <div v-for="(file, index) in uploadedFiles" :key="index" class="flex items-center justify-between p-2 bg-gray-50 rounded">
-                    <div class="flex items-center space-x-2">
-                      <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                      <span class="text-sm text-gray-700">{{ file.name }}</span>
-                      <span class="text-xs text-gray-500">({{ formatFileSize(file.size) }})</span>
-                    </div>
-                    <button @click="removeFile(index)" type="button" class="text-red-600 hover:text-red-800">
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
                   </div>
                 </div>
               </div>
@@ -3212,8 +3137,8 @@
           </div>
         </div>
 
-        <!-- Review Step (Last Step - always step 5) -->
-        <div v-if="currentStep === 5">
+        <!-- Review Step (Last Step - step 5 for non-RC, step 6 for RC) -->
+        <div v-if="currentStep === steps[steps.length - 1].number">
           <h2 class="text-2xl font-bold text-gray-900 mb-2">Review & Submit</h2>
           <p class="text-gray-600 mb-8">Please review your application before submission</p>
 
@@ -4005,13 +3930,11 @@ const steps = computed(() => {
     { title: 'Property', number: 4 }
   ]
 
-  // Add RC-specific step
+  // Add RC-specific step (only for RC requests)
   if (isResourceConsent.value) {
     baseSteps.push({ title: 'RC Details', number: 5 })
-  } else {
-    // For non-RC requests, add Additional Information step
-    baseSteps.push({ title: 'Additional Info', number: 5 })
   }
+  // Non-RC requests skip directly to Review
 
   // Review step is always last
   baseSteps.push({ title: 'Review', number: baseSteps.length + 1 })
@@ -4560,7 +4483,7 @@ const canProceed = () => {
       const hasApplicantInfo = formData.value.applicant_phone && formData.value.applicant_type && formData.value.applicant_name && formData.value.applicant_email
       return !!(hasProperty && hasApplicantInfo)
     case 5:
-      // Step 5: RC Details (Resource Consent) OR Additional Info (non-RC)
+      // Step 5: RC Details (RC only) OR Review (non-RC)
       if (isResourceConsent.value) {
         // RC Details step - validate required fields
         return !!(
@@ -4570,11 +4493,11 @@ const canProceed = () => {
           formData.value.planning_assessment
         )
       } else {
-        // Additional Info step - just need brief description
-        return !!formData.value.brief_description
+        // This is Review step for non-RC requests - always allow
+        return true
       }
     case 6:
-      // Step 6: Review step - always allow to proceed
+      // Step 6: Review step (RC only) - always allow to proceed
       return true
     default:
       return true
