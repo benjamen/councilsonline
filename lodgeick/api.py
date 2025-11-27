@@ -1009,7 +1009,7 @@ def update_user_organization(organization_name=None, contact_email=None, contact
     }
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def search_property_address(query):
     """
     Search for property addresses using the LINZ property API
