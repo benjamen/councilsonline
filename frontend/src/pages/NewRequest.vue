@@ -1348,7 +1348,7 @@
                     rows="4"
                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Describe what you propose to do and why. Include the scale, duration, and key features of the activity..."
-                    :required="!formData.aee_document"
+                    required
                   ></textarea>
                   <p class="mt-1 text-xs text-gray-500">What is the activity and why is it proposed?</p>
                 </div>
@@ -1383,7 +1383,7 @@
                     rows="4"
                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Describe the current state of the site and surrounding area. Include topography, vegetation, neighboring uses, zoning, existing infrastructure..."
-                    :required="!formData.aee_document"
+                    required
                   ></textarea>
                   <p class="mt-1 text-xs text-gray-500">What is the current state of the site and surrounding environment?</p>
                 </div>
@@ -1581,15 +1581,214 @@
                     rows="4"
                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Provide a concise summary of the overall environmental effects. Will effects be minor, more than minor, or significant? What is your overall conclusion?..."
-                    :required="!formData.aee_document"
+                    required
                   ></textarea>
                   <p class="mt-1 text-xs text-gray-500">Summarize the overall environmental effects of your proposal</p>
                 </div>
               </div>
 
               <div class="mt-4 p-3 bg-gray-50 border border-gray-200 rounded text-xs text-gray-600">
-                <strong>Note:</strong> You must either upload an AEE document OR complete questions 1, 2, and 7 as a minimum.
-                Questions 3-6 are recommended for comprehensive applications.
+                <strong>Note:</strong> Questions 1, 2, and 7 are required as a minimum.
+                Questions 3-6 and all supporting sections are recommended for comprehensive applications.
+              </div>
+            </div>
+
+            <!-- Plan Assessment -->
+            <div class="border-t border-gray-200 pt-6 mt-6 mb-6">
+              <h3 class="text-base font-semibold text-gray-900 mb-3">Plan Assessment</h3>
+              <p class="text-sm text-gray-600 mb-4">
+                Identify the plan rules that apply to your proposal and assess compliance with plan standards.
+              </p>
+
+              <!-- Plan Rules Section -->
+              <div class="mb-6">
+                <div class="flex items-center justify-between mb-3">
+                  <h4 class="text-sm font-semibold text-gray-900">Plan Rules</h4>
+                  <Button @click="addPlanRule" variant="outline" theme="blue" size="sm">
+                    <template #prefix>
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                      </svg>
+                    </template>
+                    Add Rule
+                  </Button>
+                </div>
+
+                <p class="text-xs text-gray-500 mb-3">
+                  List the specific plan rules that trigger the need for resource consent
+                </p>
+
+                <div v-if="formData.aee_plan_rules.length > 0" class="space-y-3 mb-3">
+                  <div
+                    v-for="(rule, index) in formData.aee_plan_rules"
+                    :key="index"
+                    class="p-4 bg-white rounded-lg border border-gray-300"
+                  >
+                    <div class="flex items-start justify-between">
+                      <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-2">
+                          <h5 class="text-sm font-semibold text-gray-900">{{ rule.rule_reference }}</h5>
+                          <span class="px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-700 rounded">
+                            {{ rule.activity_status }}
+                          </span>
+                        </div>
+                        <p v-if="rule.rule_description" class="text-xs text-gray-600">{{ rule.rule_description }}</p>
+                      </div>
+                      <Button @click="removePlanRule(index)" variant="ghost" theme="red" size="sm">
+                        <template #prefix>
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </template>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                <p v-else class="text-xs text-gray-500 italic">No plan rules added yet</p>
+              </div>
+
+              <!-- Compliance Standards Section -->
+              <div class="mb-6">
+                <div class="flex items-center justify-between mb-3">
+                  <h4 class="text-sm font-semibold text-gray-900">Compliance Standards</h4>
+                  <Button @click="addComplianceStandard" variant="outline" theme="blue" size="sm">
+                    <template #prefix>
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                      </svg>
+                    </template>
+                    Add Standard
+                  </Button>
+                </div>
+
+                <p class="text-xs text-gray-500 mb-3">
+                  Assess compliance with plan standards (e.g., height, setbacks, car parking)
+                </p>
+
+                <div v-if="formData.aee_compliance_standards.length > 0" class="space-y-3 mb-3">
+                  <div
+                    v-for="(standard, index) in formData.aee_compliance_standards"
+                    :key="index"
+                    class="p-4 bg-white rounded-lg border border-gray-300"
+                  >
+                    <div class="flex items-start justify-between">
+                      <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-2">
+                          <h5 class="text-sm font-semibold text-gray-900">{{ standard.standard_reference }}</h5>
+                          <span :class="['px-2 py-0.5 text-xs font-medium rounded', standard.complies ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700']">
+                            {{ standard.complies ? 'Complies' : 'Non-Complying' }}
+                          </span>
+                        </div>
+                        <p v-if="standard.compliance_analysis" class="text-xs text-gray-600">{{ standard.compliance_analysis }}</p>
+                      </div>
+                      <Button @click="removeComplianceStandard(index)" variant="ghost" theme="red" size="sm">
+                        <template #prefix>
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </template>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                <p v-else class="text-xs text-gray-500 italic">No compliance standards added yet</p>
+              </div>
+
+              <!-- Written Approvals Section -->
+              <div class="mb-6">
+                <div class="flex items-center justify-between mb-3">
+                  <h4 class="text-sm font-semibold text-gray-900">Written Approvals</h4>
+                  <Button @click="addWrittenApproval" variant="outline" theme="blue" size="sm">
+                    <template #prefix>
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                      </svg>
+                    </template>
+                    Add Approval
+                  </Button>
+                </div>
+
+                <p class="text-xs text-gray-500 mb-3">
+                  Written approvals obtained from affected parties under RMA s104(3)(a)(ii)
+                </p>
+
+                <div v-if="formData.aee_written_approvals.length > 0" class="space-y-3 mb-3">
+                  <div
+                    v-for="(approval, index) in formData.aee_written_approvals"
+                    :key="index"
+                    class="p-4 bg-white rounded-lg border border-gray-300"
+                  >
+                    <div class="flex items-start justify-between">
+                      <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                          <h5 class="text-sm font-semibold text-gray-900">{{ approval.party_name }}</h5>
+                          <span v-if="approval.approval_attached" class="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-700 rounded">
+                            ✓ Attached
+                          </span>
+                        </div>
+                        <p v-if="approval.party_address" class="text-xs text-gray-600">{{ approval.party_address }}</p>
+                      </div>
+                      <Button @click="removeWrittenApproval(index)" variant="ghost" theme="red" size="sm">
+                        <template #prefix>
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </template>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                <p v-else class="text-xs text-gray-500 italic">No written approvals added yet</p>
+              </div>
+
+              <!-- AEE Proposed Conditions Section -->
+              <div class="mb-6">
+                <div class="flex items-center justify-between mb-3">
+                  <h4 class="text-sm font-semibold text-gray-900">Proposed Conditions</h4>
+                  <Button @click="addAEECondition" variant="outline" theme="blue" size="sm">
+                    <template #prefix>
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                      </svg>
+                    </template>
+                    Add Condition
+                  </Button>
+                </div>
+
+                <p class="text-xs text-gray-500 mb-3">
+                  Conditions you propose to accept as part of the consent
+                </p>
+
+                <div v-if="formData.aee_proposed_conditions.length > 0" class="space-y-3 mb-3">
+                  <div
+                    v-for="(condition, index) in formData.aee_proposed_conditions"
+                    :key="index"
+                    class="p-4 bg-white rounded-lg border border-gray-300"
+                  >
+                    <div class="flex items-start justify-between">
+                      <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                          <span class="px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-700 rounded">
+                            Condition {{ condition.condition_number }}
+                          </span>
+                        </div>
+                        <p class="text-sm text-gray-900">{{ condition.condition_text }}</p>
+                      </div>
+                      <Button @click="removeAEECondition(index)" variant="ghost" theme="red" size="sm">
+                        <template #prefix>
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </template>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                <p v-else class="text-xs text-gray-500 italic">No proposed conditions added yet</p>
               </div>
             </div>
 
@@ -1713,6 +1912,20 @@
                 <p class="mt-1 text-xs text-gray-500">
                   How many of the {{ formData.affected_parties.length }} affected parties have provided written approval?
                 </p>
+              </div>
+
+              <!-- Consultation Summary -->
+              <div class="mt-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Consultation Summary (Optional)
+                </label>
+                <textarea
+                  v-model="formData.aee_consultation_summary"
+                  rows="4"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  placeholder="Summarize consultation undertaken with affected parties, including methods used, responses received, and how concerns have been addressed..."
+                ></textarea>
+                <p class="mt-1 text-xs text-gray-500">Provide a summary of consultation efforts with affected parties</p>
               </div>
 
               <!-- Iwi Consultation Note -->
@@ -2906,7 +3119,7 @@
                     rows="4"
                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Describe what you propose to do and why. Include the scale, duration, and key features of the activity..."
-                    :required="!formData.aee_document"
+                    required
                   ></textarea>
                   <p class="mt-1 text-xs text-gray-500">What is the activity and why is it proposed?</p>
                 </div>
@@ -2941,7 +3154,7 @@
                     rows="4"
                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Describe the current state of the site and surrounding area. Include topography, vegetation, neighboring uses, zoning, existing infrastructure..."
-                    :required="!formData.aee_document"
+                    required
                   ></textarea>
                   <p class="mt-1 text-xs text-gray-500">What is the current state of the site and surrounding environment?</p>
                 </div>
@@ -3139,15 +3352,214 @@
                     rows="4"
                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Provide a concise summary of the overall environmental effects. Will effects be minor, more than minor, or significant? What is your overall conclusion?..."
-                    :required="!formData.aee_document"
+                    required
                   ></textarea>
                   <p class="mt-1 text-xs text-gray-500">Summarize the overall environmental effects of your proposal</p>
                 </div>
               </div>
 
               <div class="mt-4 p-3 bg-gray-50 border border-gray-200 rounded text-xs text-gray-600">
-                <strong>Note:</strong> You must either upload an AEE document OR complete questions 1, 2, and 7 as a minimum.
-                Questions 3-6 are recommended for comprehensive applications.
+                <strong>Note:</strong> Questions 1, 2, and 7 are required as a minimum.
+                Questions 3-6 and all supporting sections are recommended for comprehensive applications.
+              </div>
+            </div>
+
+            <!-- Plan Assessment -->
+            <div class="border-t border-gray-200 pt-6 mt-6 mb-6">
+              <h3 class="text-base font-semibold text-gray-900 mb-3">Plan Assessment</h3>
+              <p class="text-sm text-gray-600 mb-4">
+                Identify the plan rules that apply to your proposal and assess compliance with plan standards.
+              </p>
+
+              <!-- Plan Rules Section -->
+              <div class="mb-6">
+                <div class="flex items-center justify-between mb-3">
+                  <h4 class="text-sm font-semibold text-gray-900">Plan Rules</h4>
+                  <Button @click="addPlanRule" variant="outline" theme="blue" size="sm">
+                    <template #prefix>
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                      </svg>
+                    </template>
+                    Add Rule
+                  </Button>
+                </div>
+
+                <p class="text-xs text-gray-500 mb-3">
+                  List the specific plan rules that trigger the need for resource consent
+                </p>
+
+                <div v-if="formData.aee_plan_rules.length > 0" class="space-y-3 mb-3">
+                  <div
+                    v-for="(rule, index) in formData.aee_plan_rules"
+                    :key="index"
+                    class="p-4 bg-white rounded-lg border border-gray-300"
+                  >
+                    <div class="flex items-start justify-between">
+                      <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-2">
+                          <h5 class="text-sm font-semibold text-gray-900">{{ rule.rule_reference }}</h5>
+                          <span class="px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-700 rounded">
+                            {{ rule.activity_status }}
+                          </span>
+                        </div>
+                        <p v-if="rule.rule_description" class="text-xs text-gray-600">{{ rule.rule_description }}</p>
+                      </div>
+                      <Button @click="removePlanRule(index)" variant="ghost" theme="red" size="sm">
+                        <template #prefix>
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </template>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                <p v-else class="text-xs text-gray-500 italic">No plan rules added yet</p>
+              </div>
+
+              <!-- Compliance Standards Section -->
+              <div class="mb-6">
+                <div class="flex items-center justify-between mb-3">
+                  <h4 class="text-sm font-semibold text-gray-900">Compliance Standards</h4>
+                  <Button @click="addComplianceStandard" variant="outline" theme="blue" size="sm">
+                    <template #prefix>
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                      </svg>
+                    </template>
+                    Add Standard
+                  </Button>
+                </div>
+
+                <p class="text-xs text-gray-500 mb-3">
+                  Assess compliance with plan standards (e.g., height, setbacks, car parking)
+                </p>
+
+                <div v-if="formData.aee_compliance_standards.length > 0" class="space-y-3 mb-3">
+                  <div
+                    v-for="(standard, index) in formData.aee_compliance_standards"
+                    :key="index"
+                    class="p-4 bg-white rounded-lg border border-gray-300"
+                  >
+                    <div class="flex items-start justify-between">
+                      <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-2">
+                          <h5 class="text-sm font-semibold text-gray-900">{{ standard.standard_reference }}</h5>
+                          <span :class="['px-2 py-0.5 text-xs font-medium rounded', standard.complies ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700']">
+                            {{ standard.complies ? 'Complies' : 'Non-Complying' }}
+                          </span>
+                        </div>
+                        <p v-if="standard.compliance_analysis" class="text-xs text-gray-600">{{ standard.compliance_analysis }}</p>
+                      </div>
+                      <Button @click="removeComplianceStandard(index)" variant="ghost" theme="red" size="sm">
+                        <template #prefix>
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </template>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                <p v-else class="text-xs text-gray-500 italic">No compliance standards added yet</p>
+              </div>
+
+              <!-- Written Approvals Section -->
+              <div class="mb-6">
+                <div class="flex items-center justify-between mb-3">
+                  <h4 class="text-sm font-semibold text-gray-900">Written Approvals</h4>
+                  <Button @click="addWrittenApproval" variant="outline" theme="blue" size="sm">
+                    <template #prefix>
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                      </svg>
+                    </template>
+                    Add Approval
+                  </Button>
+                </div>
+
+                <p class="text-xs text-gray-500 mb-3">
+                  Written approvals obtained from affected parties under RMA s104(3)(a)(ii)
+                </p>
+
+                <div v-if="formData.aee_written_approvals.length > 0" class="space-y-3 mb-3">
+                  <div
+                    v-for="(approval, index) in formData.aee_written_approvals"
+                    :key="index"
+                    class="p-4 bg-white rounded-lg border border-gray-300"
+                  >
+                    <div class="flex items-start justify-between">
+                      <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                          <h5 class="text-sm font-semibold text-gray-900">{{ approval.party_name }}</h5>
+                          <span v-if="approval.approval_attached" class="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-700 rounded">
+                            ✓ Attached
+                          </span>
+                        </div>
+                        <p v-if="approval.party_address" class="text-xs text-gray-600">{{ approval.party_address }}</p>
+                      </div>
+                      <Button @click="removeWrittenApproval(index)" variant="ghost" theme="red" size="sm">
+                        <template #prefix>
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </template>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                <p v-else class="text-xs text-gray-500 italic">No written approvals added yet</p>
+              </div>
+
+              <!-- AEE Proposed Conditions Section -->
+              <div class="mb-6">
+                <div class="flex items-center justify-between mb-3">
+                  <h4 class="text-sm font-semibold text-gray-900">Proposed Conditions</h4>
+                  <Button @click="addAEECondition" variant="outline" theme="blue" size="sm">
+                    <template #prefix>
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                      </svg>
+                    </template>
+                    Add Condition
+                  </Button>
+                </div>
+
+                <p class="text-xs text-gray-500 mb-3">
+                  Conditions you propose to accept as part of the consent
+                </p>
+
+                <div v-if="formData.aee_proposed_conditions.length > 0" class="space-y-3 mb-3">
+                  <div
+                    v-for="(condition, index) in formData.aee_proposed_conditions"
+                    :key="index"
+                    class="p-4 bg-white rounded-lg border border-gray-300"
+                  >
+                    <div class="flex items-start justify-between">
+                      <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                          <span class="px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-700 rounded">
+                            Condition {{ condition.condition_number }}
+                          </span>
+                        </div>
+                        <p class="text-sm text-gray-900">{{ condition.condition_text }}</p>
+                      </div>
+                      <Button @click="removeAEECondition(index)" variant="ghost" theme="red" size="sm">
+                        <template #prefix>
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </template>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                <p v-else class="text-xs text-gray-500 italic">No proposed conditions added yet</p>
               </div>
             </div>
 
@@ -3271,6 +3683,20 @@
                 <p class="mt-1 text-xs text-gray-500">
                   How many of the {{ formData.affected_parties.length }} affected parties have provided written approval?
                 </p>
+              </div>
+
+              <!-- Consultation Summary -->
+              <div class="mt-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Consultation Summary (Optional)
+                </label>
+                <textarea
+                  v-model="formData.aee_consultation_summary"
+                  rows="4"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  placeholder="Summarize consultation undertaken with affected parties, including methods used, responses received, and how concerns have been addressed..."
+                ></textarea>
+                <p class="mt-1 text-xs text-gray-500">Provide a summary of consultation efforts with affected parties</p>
               </div>
 
               <!-- Iwi Consultation Note -->
@@ -5146,13 +5572,13 @@ const canProceed = () => {
         )
 
         // NEW: AEE validation - either upload a document OR complete structured fields
-        const hasAEEDocument = !!formData.value.aee_document
+        // AEE is now structured-only (no upload option)
         const hasStructuredAEE = !!(
           formData.value.aee_activity_description &&
           formData.value.aee_existing_environment &&
           formData.value.assessment_of_effects
         )
-        const hasAEE = hasAEEDocument || hasStructuredAEE
+        const hasAEE = hasStructuredAEE
 
         // NEW: Invoice details validation
         const hasInvoiceDetails = formData.value.invoice_to === 'Applicant' || (
@@ -5646,6 +6072,98 @@ const handleCIAUpload = (event) => {
     }
 
     formData.value.cultural_impact_assessment = file
+  }
+}
+
+// ===== AEE Plan Assessment Handlers =====
+
+// Plan Rules
+const addPlanRule = () => {
+  const rule = prompt('Enter plan rule reference (e.g., Rule 16.4.2.1)')
+  if (!rule) return
+
+  const activityStatus = prompt('Activity status (Permitted/Controlled/Restricted Discretionary/Discretionary/Non-Complying/Prohibited)')
+  if (!activityStatus) return
+
+  const description = prompt('Rule description (optional)', '')
+
+  formData.value.aee_plan_rules.push({
+    rule_reference: rule,
+    activity_status: activityStatus,
+    rule_description: description || ''
+  })
+}
+
+const removePlanRule = (index) => {
+  if (confirm('Remove this plan rule?')) {
+    formData.value.aee_plan_rules.splice(index, 1)
+  }
+}
+
+// Compliance Standards
+const addComplianceStandard = () => {
+  const standard = prompt('Enter standard reference (e.g., Building height: 8m maximum)')
+  if (!standard) return
+
+  const complies = confirm('Does the proposal comply with this standard?')
+  const analysis = prompt('Compliance analysis (optional)', '')
+
+  formData.value.aee_compliance_standards.push({
+    standard_reference: standard,
+    complies: complies,
+    compliance_analysis: analysis || '',
+    standard_description: ''
+  })
+}
+
+const removeComplianceStandard = (index) => {
+  if (confirm('Remove this compliance standard?')) {
+    formData.value.aee_compliance_standards.splice(index, 1)
+  }
+}
+
+// Written Approvals
+const addWrittenApproval = () => {
+  const name = prompt('Enter party name')
+  if (!name) return
+
+  const address = prompt('Party address (optional)', '')
+  const attached = confirm('Is the written approval attached?')
+
+  formData.value.aee_written_approvals.push({
+    party_name: name,
+    party_address: address || '',
+    approval_attached: attached,
+    approval_document: null
+  })
+}
+
+const removeWrittenApproval = (index) => {
+  if (confirm('Remove this written approval?')) {
+    formData.value.aee_written_approvals.splice(index, 1)
+  }
+}
+
+// AEE Proposed Conditions
+const addAEECondition = () => {
+  const text = prompt('Enter proposed condition')
+  if (!text) return
+
+  const number = formData.value.aee_proposed_conditions.length + 1
+
+  formData.value.aee_proposed_conditions.push({
+    condition_number: number,
+    condition_text: text
+  })
+}
+
+const removeAEECondition = (index) => {
+  if (confirm('Remove this proposed condition?')) {
+    formData.value.aee_proposed_conditions.splice(index, 1)
+    // Renumber remaining conditions
+    formData.value.aee_proposed_conditions.forEach((cond, idx) => {
+      cond.condition_number = idx + 1
+    })
   }
 }
 
