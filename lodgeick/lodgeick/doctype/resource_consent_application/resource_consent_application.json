@@ -85,7 +85,13 @@
   "aee_document",
   "assessment_of_effects",
   "aee_activity_description",
+  "aee_activity_status",
   "aee_existing_environment",
+  "aee_site_area",
+  "aee_current_use",
+  "aee_zoning",
+  "aee_overlays",
+  "aee_designations",
   "aee_part2_assessment",
   "effects_on_people",
   "physical_effects",
@@ -94,10 +100,16 @@
   "ecosystem_effects",
   "hazard_risk_assessment",
   "cultural_effects",
+  "section_break_plan_assessment",
+  "aee_plan_rules",
+  "aee_compliance_standards",
+  "aee_written_approvals",
+  "aee_proposed_conditions",
   "section_break_parties_tab",
   "section_break_parties",
   "affected_parties",
   "written_approvals_obtained",
+  "aee_consultation_summary",
   "section_break_iwi_tab",
   "section_break_iwi",
   "iwi_consultation_undertaken",
@@ -440,10 +452,47 @@
    "label": "Activity Description"
   },
   {
+   "description": "Overall activity status under the District/Unitary Plan",
+   "fieldname": "aee_activity_status",
+   "fieldtype": "Select",
+   "label": "Activity Status",
+   "options": "\nPermitted\nControlled\nRestricted Discretionary\nDiscretionary\nNon-Complying\nProhibited"
+  },
+  {
    "description": "2. Description of the existing environment",
    "fieldname": "aee_existing_environment",
    "fieldtype": "Text Editor",
    "label": "Existing Environment"
+  },
+  {
+   "description": "Site area in square meters (optional)",
+   "fieldname": "aee_site_area",
+   "fieldtype": "Float",
+   "label": "Site Area (m²)"
+  },
+  {
+   "description": "Current use of the site (optional)",
+   "fieldname": "aee_current_use",
+   "fieldtype": "Data",
+   "label": "Current Use"
+  },
+  {
+   "description": "Planning zone (optional)",
+   "fieldname": "aee_zoning",
+   "fieldtype": "Data",
+   "label": "Zoning"
+  },
+  {
+   "description": "Plan overlays that apply to the site (optional)",
+   "fieldname": "aee_overlays",
+   "fieldtype": "Small Text",
+   "label": "Overlays"
+  },
+  {
+   "description": "Plan designations that apply to the site (optional)",
+   "fieldname": "aee_designations",
+   "fieldtype": "Small Text",
+   "label": "Designations"
   },
   {
    "description": "3. Assessment against Part 2 of the RMA (sustainable management principles)",
@@ -470,6 +519,40 @@
    "fieldname": "cultural_effects",
    "fieldtype": "Text Editor",
    "label": "Cultural/Heritage"
+  },
+  {
+   "description": "District/Unitary Plan rules and compliance assessment",
+   "fieldname": "section_break_plan_assessment",
+   "fieldtype": "Section Break",
+   "label": "Plan Assessment"
+  },
+  {
+   "description": "Relevant plan rules that trigger consent requirement",
+   "fieldname": "aee_plan_rules",
+   "fieldtype": "Table",
+   "label": "Plan Rules",
+   "options": "AEE Plan Rule"
+  },
+  {
+   "description": "Assessment against plan standards and performance criteria",
+   "fieldname": "aee_compliance_standards",
+   "fieldtype": "Table",
+   "label": "Compliance Standards",
+   "options": "AEE Compliance Standard"
+  },
+  {
+   "description": "Written approvals obtained from affected parties",
+   "fieldname": "aee_written_approvals",
+   "fieldtype": "Table",
+   "label": "Written Approvals",
+   "options": "AEE Written Approval"
+  },
+  {
+   "description": "Proposed conditions of consent",
+   "fieldname": "aee_proposed_conditions",
+   "fieldtype": "Table",
+   "label": "Proposed Conditions",
+   "options": "AEE Proposed Condition"
   },
   {
    "description": "Planning assessment and mitigation measures proposed by applicant",
@@ -514,6 +597,12 @@
    "fieldname": "written_approvals_obtained",
    "fieldtype": "Int",
    "label": "Approvals Obtained"
+  },
+  {
+   "description": "Summary of consultation undertaken with affected parties (optional)",
+   "fieldname": "aee_consultation_summary",
+   "fieldtype": "Text Editor",
+   "label": "Consultation Summary"
   },
   {
    "description": "Details of consultation with iwi and hap\u016b",

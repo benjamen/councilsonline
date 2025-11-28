@@ -1333,33 +1333,10 @@
               <h3 class="text-base font-semibold text-gray-900 mb-3">Assessment of Environmental Effects (AEE)</h3>
               <p class="text-sm text-gray-600 mb-4">
                 Under Schedule 4 of the RMA, you must assess the actual and potential effects of your proposed activity on the environment.
-                You can upload a consultant-prepared AEE document, OR complete the structured assessment below.
+                Complete all required sections below to provide a comprehensive assessment.
               </p>
 
-              <!-- Option 1: Upload AEE Document -->
-              <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Upload AEE Document (Optional)
-                </label>
-                <p class="text-xs text-gray-600 mb-3">
-                  If you have a consultant-prepared AEE report, upload it here. This can reduce the need for detailed answers below.
-                </p>
-                <input
-                  type="file"
-                  @change="handleAEEUpload"
-                  accept=".pdf,.doc,.docx"
-                  class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-600 file:text-white hover:file:bg-blue-700"
-                />
-                <p v-if="formData.aee_document" class="text-xs text-green-600 mt-2">
-                  ✓ AEE document uploaded
-                </p>
-              </div>
-
-              <div class="text-center text-gray-500 text-sm mb-4">
-                <span class="bg-white px-3">OR complete structured assessment below</span>
-              </div>
-
-              <!-- Option 2: Structured AEE Questions -->
+              <!-- Structured AEE Questions -->
               <div class="space-y-6">
                 <!-- Question 1: Description of Activity -->
                 <div>
@@ -1376,6 +1353,26 @@
                   <p class="mt-1 text-xs text-gray-500">What is the activity and why is it proposed?</p>
                 </div>
 
+                <!-- Activity Status -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Activity Status under District/Unitary Plan
+                  </label>
+                  <select
+                    v-model="formData.aee_activity_status"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Select activity status...</option>
+                    <option value="Permitted">Permitted</option>
+                    <option value="Controlled">Controlled</option>
+                    <option value="Restricted Discretionary">Restricted Discretionary</option>
+                    <option value="Discretionary">Discretionary</option>
+                    <option value="Non-Complying">Non-Complying</option>
+                    <option value="Prohibited">Prohibited</option>
+                  </select>
+                  <p class="mt-1 text-xs text-gray-500">Overall classification of the proposed activity</p>
+                </div>
+
                 <!-- Question 2: Existing Environment -->
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -1389,6 +1386,58 @@
                     :required="!formData.aee_document"
                   ></textarea>
                   <p class="mt-1 text-xs text-gray-500">What is the current state of the site and surrounding environment?</p>
+                </div>
+
+                <!-- Site Details (Optional) -->
+                <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                  <h4 class="text-sm font-medium text-gray-800 mb-3">Site Details (Optional)</h4>
+                  <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-xs font-medium text-gray-700 mb-1">Site Area (m²)</label>
+                      <input
+                        v-model.number="formData.aee_site_area"
+                        type="number"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="e.g., 800"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-xs font-medium text-gray-700 mb-1">Current Use</label>
+                      <input
+                        v-model="formData.aee_current_use"
+                        type="text"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="e.g., Residential dwelling"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-xs font-medium text-gray-700 mb-1">Zoning</label>
+                      <input
+                        v-model="formData.aee_zoning"
+                        type="text"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="e.g., Residential Medium Density"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-xs font-medium text-gray-700 mb-1">Overlays</label>
+                      <textarea
+                        v-model="formData.aee_overlays"
+                        rows="2"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="e.g., Flood Hazard, Heritage"
+                      ></textarea>
+                    </div>
+                    <div class="md:col-span-2">
+                      <label class="block text-xs font-medium text-gray-700 mb-1">Designations</label>
+                      <textarea
+                        v-model="formData.aee_designations"
+                        rows="2"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="e.g., Future road corridor"
+                      ></textarea>
+                    </div>
+                  </div>
                 </div>
 
                 <!-- Question 3: Effects on the Environment -->
@@ -2842,33 +2891,10 @@
               <h3 class="text-base font-semibold text-gray-900 mb-3">Assessment of Environmental Effects (AEE)</h3>
               <p class="text-sm text-gray-600 mb-4">
                 Under Schedule 4 of the RMA, you must assess the actual and potential effects of your proposed activity on the environment.
-                You can upload a consultant-prepared AEE document, OR complete the structured assessment below.
+                Complete all required sections below to provide a comprehensive assessment.
               </p>
 
-              <!-- Option 1: Upload AEE Document -->
-              <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Upload AEE Document (Optional)
-                </label>
-                <p class="text-xs text-gray-600 mb-3">
-                  If you have a consultant-prepared AEE report, upload it here. This can reduce the need for detailed answers below.
-                </p>
-                <input
-                  type="file"
-                  @change="handleAEEUpload"
-                  accept=".pdf,.doc,.docx"
-                  class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-600 file:text-white hover:file:bg-blue-700"
-                />
-                <p v-if="formData.aee_document" class="text-xs text-green-600 mt-2">
-                  ✓ AEE document uploaded
-                </p>
-              </div>
-
-              <div class="text-center text-gray-500 text-sm mb-4">
-                <span class="bg-white px-3">OR complete structured assessment below</span>
-              </div>
-
-              <!-- Option 2: Structured AEE Questions -->
+              <!-- Structured AEE Questions -->
               <div class="space-y-6">
                 <!-- Question 1: Description of Activity -->
                 <div>
@@ -2885,6 +2911,26 @@
                   <p class="mt-1 text-xs text-gray-500">What is the activity and why is it proposed?</p>
                 </div>
 
+                <!-- Activity Status -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Activity Status under District/Unitary Plan
+                  </label>
+                  <select
+                    v-model="formData.aee_activity_status"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Select activity status...</option>
+                    <option value="Permitted">Permitted</option>
+                    <option value="Controlled">Controlled</option>
+                    <option value="Restricted Discretionary">Restricted Discretionary</option>
+                    <option value="Discretionary">Discretionary</option>
+                    <option value="Non-Complying">Non-Complying</option>
+                    <option value="Prohibited">Prohibited</option>
+                  </select>
+                  <p class="mt-1 text-xs text-gray-500">Overall classification of the proposed activity</p>
+                </div>
+
                 <!-- Question 2: Existing Environment -->
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -2898,6 +2944,58 @@
                     :required="!formData.aee_document"
                   ></textarea>
                   <p class="mt-1 text-xs text-gray-500">What is the current state of the site and surrounding environment?</p>
+                </div>
+
+                <!-- Site Details (Optional) -->
+                <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                  <h4 class="text-sm font-medium text-gray-800 mb-3">Site Details (Optional)</h4>
+                  <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-xs font-medium text-gray-700 mb-1">Site Area (m²)</label>
+                      <input
+                        v-model.number="formData.aee_site_area"
+                        type="number"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="e.g., 800"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-xs font-medium text-gray-700 mb-1">Current Use</label>
+                      <input
+                        v-model="formData.aee_current_use"
+                        type="text"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="e.g., Residential dwelling"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-xs font-medium text-gray-700 mb-1">Zoning</label>
+                      <input
+                        v-model="formData.aee_zoning"
+                        type="text"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="e.g., Residential Medium Density"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-xs font-medium text-gray-700 mb-1">Overlays</label>
+                      <textarea
+                        v-model="formData.aee_overlays"
+                        rows="2"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="e.g., Flood Hazard, Heritage"
+                      ></textarea>
+                    </div>
+                    <div class="md:col-span-2">
+                      <label class="block text-xs font-medium text-gray-700 mb-1">Designations</label>
+                      <textarea
+                        v-model="formData.aee_designations"
+                        rows="2"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="e.g., Future road corridor"
+                      ></textarea>
+                    </div>
+                  </div>
                 </div>
 
                 <!-- Question 3: Effects on the Environment -->
@@ -4445,8 +4543,21 @@ const formData = ref({
   // NEW: Structured AEE fields + document upload
   aee_document: null,
   aee_activity_description: '',
+  aee_activity_status: '',
   aee_existing_environment: '',
+  aee_site_area: null,
+  aee_current_use: '',
+  aee_zoning: '',
+  aee_overlays: '',
+  aee_designations: '',
   aee_part2_assessment: '',
+
+  // NEW: AEE child tables
+  aee_plan_rules: [],
+  aee_compliance_standards: [],
+  aee_written_approvals: [],
+  aee_proposed_conditions: [],
+  aee_consultation_summary: '',
 
   // Note: planning_assessment and rma_part2_assessment are back-office fields
   // completed by council officers, not applicants
