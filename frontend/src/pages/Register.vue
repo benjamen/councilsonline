@@ -12,6 +12,37 @@
         <p class="text-gray-600">Join thousands using Lodgeick for council requests</p>
       </div>
 
+      <!-- Individual vs Company Selection -->
+      <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100 mb-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4 text-center">Choose Account Type</h2>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="p-6 border-2 border-blue-600 bg-blue-50 rounded-lg">
+            <div class="text-center">
+              <svg class="w-12 h-12 mx-auto mb-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              <h3 class="text-lg font-semibold text-gray-900 mb-2">Individual Account</h3>
+              <p class="text-sm text-gray-600 mb-4">Submit applications for yourself or your property</p>
+              <div class="text-sm text-blue-900 font-medium">✓ Currently selected</div>
+            </div>
+          </div>
+          <button
+            type="button"
+            @click="$router.push({ name: 'CompanyRegistration' })"
+            class="p-6 border-2 border-gray-200 hover:border-blue-300 hover:bg-blue-50 rounded-lg transition text-left"
+          >
+            <div class="text-center">
+              <svg class="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+              <h3 class="text-lg font-semibold text-gray-900 mb-2">Company Account</h3>
+              <p class="text-sm text-gray-600 mb-4">Manage applications on behalf of your organization</p>
+              <div class="text-sm text-blue-600 font-medium">Click to register as company →</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
       <!-- Registration Card -->
       <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
         <form @submit.prevent="submit" class="space-y-6">

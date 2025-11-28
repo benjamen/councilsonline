@@ -225,6 +225,40 @@
               </select>
             </div>
 
+            <!-- Company Submission Selector -->
+            <div v-if="userCompanyAccount" class="border-t border-gray-200 pt-6 mt-6">
+              <div class="mb-6">
+                <h3 class="text-sm font-semibold text-gray-900 mb-3">Submitting As</h3>
+                <div class="space-y-3">
+                  <label class="flex items-start space-x-3 cursor-pointer p-4 border-2 rounded-lg transition-colors" :class="formData.submitted_on_behalf_of === 'Myself' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-blue-300'">
+                    <input
+                      type="radio"
+                      value="Myself"
+                      v-model="formData.submitted_on_behalf_of"
+                      class="mt-1"
+                    />
+                    <div class="flex-1">
+                      <div class="font-medium text-gray-900">Individual - Submit for Myself</div>
+                      <div class="text-sm text-gray-500">This application is submitted as an individual</div>
+                    </div>
+                  </label>
+                  <label class="flex items-start space-x-3 cursor-pointer p-4 border-2 rounded-lg transition-colors" :class="formData.submitted_on_behalf_of === 'Company' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-blue-300'">
+                    <input
+                      type="radio"
+                      value="Company"
+                      v-model="formData.submitted_on_behalf_of"
+                      class="mt-1"
+                    />
+                    <div class="flex-1">
+                      <div class="font-medium text-gray-900">Company - {{ userCompanyAccount.company_name }}</div>
+                      <div class="text-sm text-gray-500">Submit on behalf of your company account</div>
+                      <div class="text-xs text-blue-600 mt-1">You are logged in as: {{ userCompanyAccount.user_role }}</div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+
             <!-- Acting on Behalf Section -->
             <div class="border-t border-gray-200 pt-6 mt-6">
               <div class="mb-6">
@@ -4955,6 +4989,7 @@ const councilStore = useCouncilStore()
 // User profile data
 const userProfile = ref(null)
 const loadingProfile = ref(false)
+const userCompanyAccount = ref(null)
 
 // Form state
 const currentStep = ref(1)
@@ -5034,6 +5069,10 @@ const formData = ref({
   // Required applicant fields
   applicant_phone: '',
   applicant_type: '',
+
+  // Company submission fields
+  submitted_on_behalf_of: 'Myself', // 'Myself' or 'Company'
+  company_account: null,
 
   // Agent workflow fields
   acting_on_behalf: false,
@@ -6664,6 +6703,26 @@ const loadUserProfile = async () => {
   }
 }
 
+const loadCompanyAccount = async () => {
+  try {
+    const companyAccount = await call('lodgeick.api.get_user_company_account')
+    if (companyAccount) {
+      userCompanyAccount.value = companyAccount
+    }
+  } catch (error) {
+    console.error('Error loading company account:', error)
+  }
+}
+
+// Watch submitted_on_behalf_of to set company_account
+watch(() => formData.value.submitted_on_behalf_of, (submittedAs) => {
+  if (submittedAs === 'Company' && userCompanyAccount.value) {
+    formData.value.company_account = userCompanyAccount.value.name
+  } else {
+    formData.value.company_account = null
+  }
+})
+
 // Watch acting_on_behalf to auto-populate or clear applicant details
 watch(() => formData.value.acting_on_behalf, (actingOnBehalf) => {
   if (!actingOnBehalf && userProfile.value) {
@@ -6710,6 +6769,9 @@ watch(() => formData.value.applicant_phone, async (newPhone, oldPhone) => {
 onMounted(async () => {
   // Load user profile first
   await loadUserProfile()
+
+  // Load company account if user has one
+  await loadCompanyAccount()
 
   // Check if council was preselected via URL or user default
   if (councilStore.preselectedFromUrl) {

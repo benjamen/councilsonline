@@ -47,6 +47,11 @@ const routes = [
 		component: () => import("@/pages/Settings.vue"),
 	},
 	{
+		path: "/company",
+		name: "CompanyManagement",
+		component: () => import("@/pages/CompanyManagement.vue"),
+	},
+	{
 		name: "Login",
 		path: "/account/login",
 		component: () => import("@/pages/Login.vue"),
@@ -56,6 +61,12 @@ const routes = [
 		name: "Register",
 		path: "/account/register",
 		component: () => import("@/pages/Register.vue"),
+		meta: { public: true }
+	},
+	{
+		name: "CompanyRegistration",
+		path: "/account/register-company",
+		component: () => import("@/pages/CompanyRegistration.vue"),
 		meta: { public: true }
 	},
 ]
