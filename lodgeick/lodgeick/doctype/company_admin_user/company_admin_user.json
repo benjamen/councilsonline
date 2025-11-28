@@ -1,0 +1,65 @@
+{
+ "actions": [],
+ "creation": "2025-11-28 00:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "user",
+  "designation",
+  "column_break_1",
+  "added_date",
+  "can_manage_users",
+  "can_manage_billing"
+ ],
+ "fields": [
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "User",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "designation",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Designation"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "added_date",
+   "fieldtype": "Date",
+   "label": "Added Date",
+   "default": "Today"
+  },
+  {
+   "fieldname": "can_manage_users",
+   "fieldtype": "Check",
+   "label": "Can Manage Users",
+   "default": "1"
+  },
+  {
+   "fieldname": "can_manage_billing",
+   "fieldtype": "Check",
+   "label": "Can Manage Billing",
+   "default": "1"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-11-28 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Company Admin User",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

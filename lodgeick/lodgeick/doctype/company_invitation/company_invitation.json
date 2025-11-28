@@ -1,0 +1,103 @@
+{
+ "actions": [],
+ "autoname": "format:INV-{company_account}-{#####}",
+ "creation": "2025-11-28 00:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "company_account",
+  "invited_user",
+  "invited_by",
+  "role",
+  "column_break_1",
+  "status",
+  "invitation_key",
+  "sent_date",
+  "accepted_date",
+  "expiry_date"
+ ],
+ "fields": [
+  {
+   "fieldname": "company_account",
+   "fieldtype": "Link",
+   "label": "Company Account",
+   "options": "Company Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "invited_user",
+   "fieldtype": "Link",
+   "label": "Invited User",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "invited_by",
+   "fieldtype": "Link",
+   "label": "Invited By",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "role",
+   "fieldtype": "Select",
+   "label": "Role",
+   "options": "Admin\nSubmitter\nViewer",
+   "default": "Submitter"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Pending\nAccepted\nDeclined\nExpired",
+   "default": "Pending"
+  },
+  {
+   "fieldname": "invitation_key",
+   "fieldtype": "Data",
+   "label": "Invitation Key",
+   "unique": 1
+  },
+  {
+   "fieldname": "sent_date",
+   "fieldtype": "Datetime",
+   "label": "Sent Date"
+  },
+  {
+   "fieldname": "accepted_date",
+   "fieldtype": "Datetime",
+   "label": "Accepted Date"
+  },
+  {
+   "fieldname": "expiry_date",
+   "fieldtype": "Datetime",
+   "label": "Expiry Date"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 0,
+ "links": [],
+ "modified": "2025-11-28 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Company Invitation",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "role": "System Manager",
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
