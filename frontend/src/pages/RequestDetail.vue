@@ -250,6 +250,61 @@
             </div>
           </div>
 
+          <!-- Meetings -->
+          <div v-if="meetings.data && meetings.data.length > 0" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Pre-Application Meetings</h2>
+
+            <div class="space-y-3">
+              <div
+                v-for="meeting in meetings.data"
+                :key="meeting.name"
+                class="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                <div class="flex items-start justify-between mb-2">
+                  <span class="text-sm font-medium text-gray-900">{{ meeting.meeting_type }}</span>
+                  <span
+                    class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
+                    :class="{
+                      'bg-yellow-100 text-yellow-800': meeting.status === 'Requested',
+                      'bg-blue-100 text-blue-800': meeting.status === 'Scheduled',
+                      'bg-green-100 text-green-800': meeting.status === 'Confirmed' || meeting.status === 'Completed',
+                      'bg-orange-100 text-orange-800': meeting.status === 'Rescheduled',
+                      'bg-red-100 text-red-800': meeting.status === 'Cancelled'
+                    }"
+                  >
+                    {{ meeting.status }}
+                  </span>
+                </div>
+
+                <div v-if="meeting.scheduled_start" class="flex items-center text-xs text-gray-600 mb-1">
+                  <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  {{ formatDate(meeting.scheduled_start) }}
+                </div>
+
+                <div v-if="meeting.meeting_format" class="flex items-center text-xs text-gray-600 mb-1">
+                  <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  {{ meeting.meeting_format }}
+                </div>
+
+                <div v-if="meeting.meeting_location" class="text-xs text-gray-600">
+                  {{ meeting.meeting_location }}
+                </div>
+
+                <div v-if="meeting.meeting_purpose" class="mt-2 text-xs text-gray-500 line-clamp-2">
+                  {{ meeting.meeting_purpose }}
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Quick Actions -->
           <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
@@ -363,6 +418,15 @@ const request = createResource({
   params: {
     doctype: 'Request',
     name: route.params.id
+  },
+  auto: true,
+})
+
+// Get meetings for this request
+const meetings = createResource({
+  url: 'lodgeick.api.get_request_meetings',
+  params: {
+    request_id: route.params.id
   },
   auto: true,
 })
@@ -519,7 +583,9 @@ const handleBookMeeting = async () => {
     const result = await response.json()
 
     if (result.message && result.message.success) {
-      alert(`Pre-Application Meeting request has been submitted! A council officer will contact you within 2 business days to schedule the meeting. Task ID: ${result.message.task_id}`)
+      alert(`Pre-Application Meeting request has been submitted! A council officer will contact you within 2 business days to schedule the meeting. Meeting ID: ${result.message.meeting_id}`)
+      // Refresh meetings list to show the new meeting
+      await meetings.reload()
     } else {
       throw new Error(result.message || 'Failed to book meeting')
     }
