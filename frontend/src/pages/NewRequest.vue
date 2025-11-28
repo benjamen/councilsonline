@@ -797,101 +797,172 @@
               <h3 class="text-sm font-semibold text-gray-900 mb-4">Proposal Details</h3>
               <p class="text-xs text-gray-500 mb-4">Provide details about your proposed development (all fields optional)</p>
 
-              <!-- Building/Structure Details -->
-              <div class="mb-4">
-                <h4 class="text-xs font-medium text-gray-700 mb-3">Building/Structure Dimensions</h4>
-                <div class="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Building Height (metres)</label>
-                    <input
-                    v-model="formData.building_height"
-                    type="number"
-                    placeholder="e.g., 8.5"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                  </div>
-                  <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Total Floor Area (m²)</label>
-                    <input
-                    v-model="formData.building_floor_area"
-                    type="number"
-                    placeholder="e.g., 250"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
+              <!-- Collapsible Accordion Sections -->
+              <div class="space-y-3">
+                <!-- Building/Structure Accordion -->
+                <div class="border border-gray-300 rounded-lg overflow-hidden">
+                  <button
+                    @click="toggleProposalSection('building')"
+                    type="button"
+                    class="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors"
+                  >
+                    <span class="text-sm font-medium text-gray-900">Building/Structure Dimensions</span>
+                    <svg
+                      :class="{ 'rotate-180': proposalAccordion.building }"
+                      class="w-5 h-5 text-gray-600 transition-transform"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <div v-if="proposalAccordion.building" class="p-4 bg-white">
+                    <div class="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Building Height (metres)</label>
+                        <input
+                          v-model="formData.building_height"
+                          type="number"
+                          placeholder="e.g., 8.5"
+                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Total Floor Area (m²)</label>
+                        <input
+                          v-model="formData.building_floor_area"
+                          type="number"
+                          placeholder="e.g., 250"
+                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <!-- Earthworks -->
-              <div class="mb-4">
-                <h4 class="text-xs font-medium text-gray-700 mb-3">Earthworks</h4>
-                <div class="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Earthworks Volume (m³)</label>
-                    <input
-                    v-model="formData.earthworks_volume"
-                    type="number"
-                    placeholder="e.g., 150"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                  </div>
-                  <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Maximum Vertical Alteration (metres)</label>
-                    <input
-                    v-model="formData.earthworks_vertical_alteration"
-                    type="number"
-                    placeholder="e.g., 2.5"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
+                <!-- Earthworks Accordion -->
+                <div class="border border-gray-300 rounded-lg overflow-hidden">
+                  <button
+                    @click="toggleProposalSection('earthworks')"
+                    type="button"
+                    class="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors"
+                  >
+                    <span class="text-sm font-medium text-gray-900">Earthworks</span>
+                    <svg
+                      :class="{ 'rotate-180': proposalAccordion.earthworks }"
+                      class="w-5 h-5 text-gray-600 transition-transform"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <div v-if="proposalAccordion.earthworks" class="p-4 bg-white">
+                    <div class="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Earthworks Volume (m³)</label>
+                        <input
+                          v-model="formData.earthworks_volume"
+                          type="number"
+                          placeholder="e.g., 150"
+                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Maximum Vertical Alteration (metres)</label>
+                        <input
+                          v-model="formData.earthworks_vertical_alteration"
+                          type="number"
+                          placeholder="e.g., 2.5"
+                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <!-- Traffic & Operations -->
-              <div class="grid md:grid-cols-2 gap-4">
-                <div>
-                  <h4 class="text-xs font-medium text-gray-700 mb-3">Traffic & Parking</h4>
-                  <div class="space-y-3">
-                    <div>
-                      <label class="block text-xs font-medium text-gray-600 mb-1">Additional Vehicle Movements/Day</label>
-                      <input
-                    v-model="formData.vehicle_movements_daily"
-                    type="number"
-                    placeholder="e.g., 20"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                    </div>
-                    <div>
-                      <label class="block text-xs font-medium text-gray-600 mb-1">Parking Spaces Provided</label>
-                      <input
-                    v-model="formData.parking_spaces_provided"
-                    type="number"
-                    placeholder="e.g., 4"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
+                <!-- Traffic & Parking Accordion -->
+                <div class="border border-gray-300 rounded-lg overflow-hidden">
+                  <button
+                    @click="toggleProposalSection('traffic')"
+                    type="button"
+                    class="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors"
+                  >
+                    <span class="text-sm font-medium text-gray-900">Traffic & Parking</span>
+                    <svg
+                      :class="{ 'rotate-180': proposalAccordion.traffic }"
+                      class="w-5 h-5 text-gray-600 transition-transform"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <div v-if="proposalAccordion.traffic" class="p-4 bg-white">
+                    <div class="space-y-3">
+                      <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Additional Vehicle Movements/Day</label>
+                        <input
+                          v-model="formData.vehicle_movements_daily"
+                          type="number"
+                          placeholder="e.g., 20"
+                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Parking Spaces Provided</label>
+                        <input
+                          v-model="formData.parking_spaces_provided"
+                          type="number"
+                          placeholder="e.g., 4"
+                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div>
-                  <h4 class="text-xs font-medium text-gray-700 mb-3">Operations</h4>
-                  <div class="space-y-3">
-                    <div>
-                      <label class="block text-xs font-medium text-gray-600 mb-1">Hours of Operation</label>
-                      <input
-                    v-model="formData.hours_of_operation"
-                    type="text"
-                    placeholder="e.g., Mon-Fri 8am-6pm"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                    </div>
-                    <div>
-                      <label class="block text-xs font-medium text-gray-600 mb-1">Consent Term Requested</label>
-                      <input
-                    v-model="formData.consent_term_requested"
-                    type="text"
-                    placeholder="e.g., 5 years, Unlimited"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
+
+                <!-- Operations Accordion -->
+                <div class="border border-gray-300 rounded-lg overflow-hidden">
+                  <button
+                    @click="toggleProposalSection('operations')"
+                    type="button"
+                    class="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors"
+                  >
+                    <span class="text-sm font-medium text-gray-900">Operations</span>
+                    <svg
+                      :class="{ 'rotate-180': proposalAccordion.operations }"
+                      class="w-5 h-5 text-gray-600 transition-transform"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <div v-if="proposalAccordion.operations" class="p-4 bg-white">
+                    <div class="space-y-3">
+                      <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Hours of Operation</label>
+                        <input
+                          v-model="formData.hours_of_operation"
+                          type="text"
+                          placeholder="e.g., Mon-Fri 8am-6pm"
+                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Consent Term Requested</label>
+                        <input
+                          v-model="formData.consent_term_requested"
+                          type="text"
+                          placeholder="e.g., 5 years, Unlimited"
+                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -2466,101 +2537,172 @@
               <h3 class="text-sm font-semibold text-gray-900 mb-4">Proposal Details</h3>
               <p class="text-xs text-gray-500 mb-4">Provide details about your proposed development (all fields optional)</p>
 
-              <!-- Building/Structure Details -->
-              <div class="mb-4">
-                <h4 class="text-xs font-medium text-gray-700 mb-3">Building/Structure Dimensions</h4>
-                <div class="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Building Height (metres)</label>
-                    <input
-                    v-model="formData.building_height"
-                    type="number"
-                    placeholder="e.g., 8.5"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                  </div>
-                  <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Total Floor Area (m²)</label>
-                    <input
-                    v-model="formData.building_floor_area"
-                    type="number"
-                    placeholder="e.g., 250"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
+              <!-- Collapsible Accordion Sections -->
+              <div class="space-y-3">
+                <!-- Building/Structure Accordion -->
+                <div class="border border-gray-300 rounded-lg overflow-hidden">
+                  <button
+                    @click="toggleProposalSection('building')"
+                    type="button"
+                    class="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors"
+                  >
+                    <span class="text-sm font-medium text-gray-900">Building/Structure Dimensions</span>
+                    <svg
+                      :class="{ 'rotate-180': proposalAccordion.building }"
+                      class="w-5 h-5 text-gray-600 transition-transform"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <div v-if="proposalAccordion.building" class="p-4 bg-white">
+                    <div class="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Building Height (metres)</label>
+                        <input
+                          v-model="formData.building_height"
+                          type="number"
+                          placeholder="e.g., 8.5"
+                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Total Floor Area (m²)</label>
+                        <input
+                          v-model="formData.building_floor_area"
+                          type="number"
+                          placeholder="e.g., 250"
+                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <!-- Earthworks -->
-              <div class="mb-4">
-                <h4 class="text-xs font-medium text-gray-700 mb-3">Earthworks</h4>
-                <div class="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Earthworks Volume (m³)</label>
-                    <input
-                    v-model="formData.earthworks_volume"
-                    type="number"
-                    placeholder="e.g., 150"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                  </div>
-                  <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Maximum Vertical Alteration (metres)</label>
-                    <input
-                    v-model="formData.earthworks_vertical_alteration"
-                    type="number"
-                    placeholder="e.g., 2.5"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
+                <!-- Earthworks Accordion -->
+                <div class="border border-gray-300 rounded-lg overflow-hidden">
+                  <button
+                    @click="toggleProposalSection('earthworks')"
+                    type="button"
+                    class="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors"
+                  >
+                    <span class="text-sm font-medium text-gray-900">Earthworks</span>
+                    <svg
+                      :class="{ 'rotate-180': proposalAccordion.earthworks }"
+                      class="w-5 h-5 text-gray-600 transition-transform"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <div v-if="proposalAccordion.earthworks" class="p-4 bg-white">
+                    <div class="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Earthworks Volume (m³)</label>
+                        <input
+                          v-model="formData.earthworks_volume"
+                          type="number"
+                          placeholder="e.g., 150"
+                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Maximum Vertical Alteration (metres)</label>
+                        <input
+                          v-model="formData.earthworks_vertical_alteration"
+                          type="number"
+                          placeholder="e.g., 2.5"
+                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <!-- Traffic & Operations -->
-              <div class="grid md:grid-cols-2 gap-4">
-                <div>
-                  <h4 class="text-xs font-medium text-gray-700 mb-3">Traffic & Parking</h4>
-                  <div class="space-y-3">
-                    <div>
-                      <label class="block text-xs font-medium text-gray-600 mb-1">Additional Vehicle Movements/Day</label>
-                      <input
-                    v-model="formData.vehicle_movements_daily"
-                    type="number"
-                    placeholder="e.g., 20"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                    </div>
-                    <div>
-                      <label class="block text-xs font-medium text-gray-600 mb-1">Parking Spaces Provided</label>
-                      <input
-                    v-model="formData.parking_spaces_provided"
-                    type="number"
-                    placeholder="e.g., 4"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
+                <!-- Traffic & Parking Accordion -->
+                <div class="border border-gray-300 rounded-lg overflow-hidden">
+                  <button
+                    @click="toggleProposalSection('traffic')"
+                    type="button"
+                    class="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors"
+                  >
+                    <span class="text-sm font-medium text-gray-900">Traffic & Parking</span>
+                    <svg
+                      :class="{ 'rotate-180': proposalAccordion.traffic }"
+                      class="w-5 h-5 text-gray-600 transition-transform"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <div v-if="proposalAccordion.traffic" class="p-4 bg-white">
+                    <div class="space-y-3">
+                      <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Additional Vehicle Movements/Day</label>
+                        <input
+                          v-model="formData.vehicle_movements_daily"
+                          type="number"
+                          placeholder="e.g., 20"
+                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Parking Spaces Provided</label>
+                        <input
+                          v-model="formData.parking_spaces_provided"
+                          type="number"
+                          placeholder="e.g., 4"
+                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div>
-                  <h4 class="text-xs font-medium text-gray-700 mb-3">Operations</h4>
-                  <div class="space-y-3">
-                    <div>
-                      <label class="block text-xs font-medium text-gray-600 mb-1">Hours of Operation</label>
-                      <input
-                    v-model="formData.hours_of_operation"
-                    type="text"
-                    placeholder="e.g., Mon-Fri 8am-6pm"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                    </div>
-                    <div>
-                      <label class="block text-xs font-medium text-gray-600 mb-1">Consent Term Requested</label>
-                      <input
-                    v-model="formData.consent_term_requested"
-                    type="text"
-                    placeholder="e.g., 5 years, Unlimited"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
+
+                <!-- Operations Accordion -->
+                <div class="border border-gray-300 rounded-lg overflow-hidden">
+                  <button
+                    @click="toggleProposalSection('operations')"
+                    type="button"
+                    class="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors"
+                  >
+                    <span class="text-sm font-medium text-gray-900">Operations</span>
+                    <svg
+                      :class="{ 'rotate-180': proposalAccordion.operations }"
+                      class="w-5 h-5 text-gray-600 transition-transform"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <div v-if="proposalAccordion.operations" class="p-4 bg-white">
+                    <div class="space-y-3">
+                      <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Hours of Operation</label>
+                        <input
+                          v-model="formData.hours_of_operation"
+                          type="text"
+                          placeholder="e.g., Mon-Fri 8am-6pm"
+                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Consent Term Requested</label>
+                        <input
+                          v-model="formData.consent_term_requested"
+                          type="text"
+                          placeholder="e.g., 5 years, Unlimited"
+                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -5329,6 +5471,18 @@ const isHAILActivitySelected = (hailIndex, activityType) => {
   const hail = formData.value.hail_activities[hailIndex]
   if (!hail.proposed_activities) return false
   return hail.proposed_activities.some(a => a.activity_type === activityType)
+}
+
+// Proposal Details Accordion State
+const proposalAccordion = ref({
+  building: true,  // Start with first section open
+  earthworks: false,
+  traffic: false,
+  operations: false
+})
+
+const toggleProposalSection = (section) => {
+  proposalAccordion.value[section] = !proposalAccordion.value[section]
 }
 
 // Boundary Approval Document Upload
