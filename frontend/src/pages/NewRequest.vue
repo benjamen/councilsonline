@@ -1328,123 +1328,219 @@
               </div>
             </div>
 
-            <!-- Assessment of Environmental Effects -->
-            <div class="border-t border-gray-200 pt-6 mt-6">
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Assessment of Environmental Effects (AEE) *
-              </label>
-              <textarea
-                v-model="formData.assessment_of_effects"
-                rows="8"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Describe the actual and potential effects on the environment as per Schedule 4 of the RMA. Include effects on people, physical environment, ecosystems, and cultural/heritage values..."
-                required
-              ></textarea>
-              <p class="mt-1 text-xs text-gray-500">Required under Schedule 4 of the Resource Management Act</p>
-            </div>
+            <!-- Assessment of Environmental Effects (AEE) -->
+            <div class="border-t border-gray-200 pt-6 mt-6 mb-6">
+              <h3 class="text-base font-semibold text-gray-900 mb-3">Assessment of Environmental Effects (AEE)</h3>
+              <p class="text-sm text-gray-600 mb-4">
+                Under Schedule 4 of the RMA, you must assess the actual and potential effects of your proposed activity on the environment.
+                You can upload a consultant-prepared AEE document, OR complete the structured assessment below.
+              </p>
 
-            <!-- Effects Breakdown (Optional) -->
-            <div class="border-t border-gray-200 pt-4">
-              <h3 class="text-sm font-semibold text-gray-900 mb-3">Detailed Effects Assessment (Optional)</h3>
-              <p class="text-xs text-gray-500 mb-4">Break down your AEE into specific effect categories for a more comprehensive assessment</p>
-
-              <div class="space-y-4">
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1">Effects on People</label>
-                  <textarea
-                    v-model="formData.effects_on_people"
-                    rows="3"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                    placeholder="Privacy, sunlight access, visual amenity, noise impacts..."
-                  ></textarea>
-                </div>
-
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1">Physical Effects</label>
-                  <textarea
-                    v-model="formData.physical_effects"
-                    rows="3"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                    placeholder="Traffic, parking, stormwater, infrastructure impacts..."
-                  ></textarea>
-                </div>
-
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1">Earthworks Effects</label>
-                  <textarea
-                    v-model="formData.earthworks_effects"
-                    rows="3"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                    placeholder="Soil disturbance, erosion, sediment control, slope stability, construction impacts..."
-                  ></textarea>
-                </div>
-
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1">Discharge/Contaminants Effects</label>
-                  <textarea
-                    v-model="formData.discharge_contaminants_effects"
-                    rows="3"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                    placeholder="Stormwater discharge, wastewater, air quality, dust, odour, contaminant management..."
-                  ></textarea>
-                </div>
-
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1">Ecosystem Effects</label>
-                  <textarea
-                    v-model="formData.ecosystem_effects"
-                    rows="3"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                    placeholder="Indigenous vegetation, habitat values, watercourses, biodiversity..."
-                  ></textarea>
-                </div>
-
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1">Hazard Risk Assessment</label>
-                  <textarea
-                    v-model="formData.hazard_risk_assessment"
-                    rows="3"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                    placeholder="Flood risk, liquefaction, slope instability, coastal hazards, seismic risk..."
-                  ></textarea>
-                </div>
-
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1">Cultural/Heritage Effects</label>
-                  <textarea
-                    v-model="formData.cultural_effects"
-                    rows="3"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                    placeholder="Heritage values, sites of significance to Māori, archaeological sites..."
-                  ></textarea>
-                </div>
-              </div>
-            </div>
-
-            <!-- Alternatives and Mitigation -->
-            <div class="grid md:grid-cols-2 gap-4">
-              <div>
+              <!-- Option 1: Upload AEE Document -->
+              <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Alternatives Considered
+                  Upload AEE Document (Optional)
                 </label>
-                <textarea
-                  v-model="formData.alternatives_considered"
-                  rows="4"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                  placeholder="What alternative designs, locations, or methods were considered?..."
-                ></textarea>
+                <p class="text-xs text-gray-600 mb-3">
+                  If you have a consultant-prepared AEE report, upload it here. This can reduce the need for detailed answers below.
+                </p>
+                <input
+                  type="file"
+                  @change="handleAEEUpload"
+                  accept=".pdf,.doc,.docx"
+                  class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+                />
+                <p v-if="formData.aee_document" class="text-xs text-green-600 mt-2">
+                  ✓ AEE document uploaded
+                </p>
               </div>
 
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Mitigation Measures
-                </label>
-                <textarea
-                  v-model="formData.mitigation_proposed"
-                  rows="4"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                  placeholder="What measures will be implemented to avoid, remedy or mitigate adverse effects?..."
-                ></textarea>
+              <div class="text-center text-gray-500 text-sm mb-4">
+                <span class="bg-white px-3">OR complete structured assessment below</span>
+              </div>
+
+              <!-- Option 2: Structured AEE Questions -->
+              <div class="space-y-6">
+                <!-- Question 1: Description of Activity -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    1. Description of Activity and Purpose *
+                  </label>
+                  <textarea
+                    v-model="formData.aee_activity_description"
+                    rows="4"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Describe what you propose to do and why. Include the scale, duration, and key features of the activity..."
+                    :required="!formData.aee_document"
+                  ></textarea>
+                  <p class="mt-1 text-xs text-gray-500">What is the activity and why is it proposed?</p>
+                </div>
+
+                <!-- Question 2: Existing Environment -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    2. Description of Existing Environment *
+                  </label>
+                  <textarea
+                    v-model="formData.aee_existing_environment"
+                    rows="4"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Describe the current state of the site and surrounding area. Include topography, vegetation, neighboring uses, zoning, existing infrastructure..."
+                    :required="!formData.aee_document"
+                  ></textarea>
+                  <p class="mt-1 text-xs text-gray-500">What is the current state of the site and surrounding environment?</p>
+                </div>
+
+                <!-- Question 3: Effects on the Environment -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-3">
+                    3. Actual and Potential Effects on the Environment *
+                  </label>
+                  <p class="text-xs text-gray-600 mb-3">
+                    Assess effects across the following categories. Complete all that are relevant to your proposal:
+                  </p>
+
+                  <div class="space-y-4 pl-4">
+                    <!-- Effects on People -->
+                    <div>
+                      <label class="block text-xs font-medium text-gray-600 mb-1">a) Effects on People</label>
+                      <textarea
+                        v-model="formData.effects_on_people"
+                        rows="3"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="Privacy, sunlight access, visual amenity, noise impacts, safety, community wellbeing..."
+                      ></textarea>
+                    </div>
+
+                    <!-- Physical Effects -->
+                    <div>
+                      <label class="block text-xs font-medium text-gray-600 mb-1">b) Physical Effects</label>
+                      <textarea
+                        v-model="formData.physical_effects"
+                        rows="3"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="Traffic, parking, stormwater, wastewater, infrastructure impacts, building scale..."
+                      ></textarea>
+                    </div>
+
+                    <!-- Earthworks Effects -->
+                    <div>
+                      <label class="block text-xs font-medium text-gray-600 mb-1">c) Earthworks and Land Disturbance</label>
+                      <textarea
+                        v-model="formData.earthworks_effects"
+                        rows="3"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="Soil disturbance, erosion, sediment control, slope stability, construction impacts..."
+                      ></textarea>
+                    </div>
+
+                    <!-- Discharges/Contaminants -->
+                    <div>
+                      <label class="block text-xs font-medium text-gray-600 mb-1">d) Discharges and Contaminants</label>
+                      <textarea
+                        v-model="formData.discharge_contaminants_effects"
+                        rows="3"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="Stormwater discharge, wastewater, air quality, dust, odour, contaminant management..."
+                      ></textarea>
+                    </div>
+
+                    <!-- Ecosystem Effects -->
+                    <div>
+                      <label class="block text-xs font-medium text-gray-600 mb-1">e) Effects on Ecosystems and Biodiversity</label>
+                      <textarea
+                        v-model="formData.ecosystem_effects"
+                        rows="3"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="Indigenous vegetation, habitat values, watercourses, wetlands, biodiversity..."
+                      ></textarea>
+                    </div>
+
+                    <!-- Hazards -->
+                    <div>
+                      <label class="block text-xs font-medium text-gray-600 mb-1">f) Natural Hazard Risks</label>
+                      <textarea
+                        v-model="formData.hazard_risk_assessment"
+                        rows="3"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="Flood risk, liquefaction, slope instability, coastal hazards, seismic risk..."
+                      ></textarea>
+                    </div>
+
+                    <!-- Cultural/Heritage -->
+                    <div>
+                      <label class="block text-xs font-medium text-gray-600 mb-1">g) Cultural and Heritage Effects</label>
+                      <textarea
+                        v-model="formData.cultural_effects"
+                        rows="3"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="Heritage values, sites of significance to Māori, archaeological sites, Treaty considerations..."
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Question 4: Mitigation Measures -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    4. Measures to Avoid, Remedy, or Mitigate Adverse Effects
+                  </label>
+                  <textarea
+                    v-model="formData.mitigation_proposed"
+                    rows="4"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    placeholder="Describe measures you will implement to manage adverse effects. Include design features, construction methods, operational controls, conditions you're willing to accept..."
+                  ></textarea>
+                  <p class="mt-1 text-xs text-gray-500">How will you avoid, remedy, or mitigate adverse effects?</p>
+                </div>
+
+                <!-- Question 5: Alternatives -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    5. Alternative Locations, Methods, or Designs Considered
+                  </label>
+                  <textarea
+                    v-model="formData.alternatives_considered"
+                    rows="4"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    placeholder="What alternative designs, locations, methods, or approaches were considered? Why was this proposal selected?..."
+                  ></textarea>
+                  <p class="mt-1 text-xs text-gray-500">What alternatives did you consider?</p>
+                </div>
+
+                <!-- Question 6: RMA Part 2 Assessment -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    6. Assessment Against RMA Part 2 Matters
+                  </label>
+                  <textarea
+                    v-model="formData.aee_part2_assessment"
+                    rows="4"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    placeholder="Address sustainable management (s5), matters of national importance (s6), other matters (s7), Treaty of Waitangi (s8)..."
+                  ></textarea>
+                  <p class="mt-1 text-xs text-gray-500">How does your proposal align with the purpose and principles of the RMA?</p>
+                </div>
+
+                <!-- Question 7: Summary -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    7. Overall Summary of Environmental Effects *
+                  </label>
+                  <textarea
+                    v-model="formData.assessment_of_effects"
+                    rows="4"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Provide a concise summary of the overall environmental effects. Will effects be minor, more than minor, or significant? What is your overall conclusion?..."
+                    :required="!formData.aee_document"
+                  ></textarea>
+                  <p class="mt-1 text-xs text-gray-500">Summarize the overall environmental effects of your proposal</p>
+                </div>
+              </div>
+
+              <div class="mt-4 p-3 bg-gray-50 border border-gray-200 rounded text-xs text-gray-600">
+                <strong>Note:</strong> You must either upload an AEE document OR complete questions 1, 2, and 7 as a minimum.
+                Questions 3-6 are recommended for comprehensive applications.
               </div>
             </div>
 
@@ -1823,6 +1919,155 @@
                   </p>
                 </div>
               </div>
+            </div>
+
+            <!-- Invoicing Details -->
+            <div class="border-t border-gray-200 pt-6 mt-6">
+              <h3 class="text-base font-semibold text-gray-900 mb-3">Invoicing Details</h3>
+              <p class="text-sm text-gray-600 mb-4">
+                Specify where the invoice for this application should be sent.
+              </p>
+
+              <div class="space-y-4">
+                <!-- Invoice To -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Send Invoice To *
+                  </label>
+                  <div class="space-y-2">
+                    <label class="flex items-center">
+                      <input
+                        type="radio"
+                        v-model="formData.invoice_to"
+                        value="Applicant"
+                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                      />
+                      <span class="ml-2 text-sm text-gray-700">Applicant (use contact details from Step 1)</span>
+                    </label>
+                    <label class="flex items-center">
+                      <input
+                        type="radio"
+                        v-model="formData.invoice_to"
+                        value="Other"
+                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                      />
+                      <span class="ml-2 text-sm text-gray-700">Other (specify below)</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Other Invoice Details (conditional) -->
+                <div v-if="formData.invoice_to === 'Other'" class="pl-6 border-l-2 border-blue-300 space-y-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                      Invoice Contact Name *
+                    </label>
+                    <input
+                      v-model="formData.invoice_name"
+                      type="text"
+                      placeholder="Full name"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      :required="formData.invoice_to === 'Other'"
+                    />
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                      Invoice Email *
+                    </label>
+                    <input
+                      v-model="formData.invoice_email"
+                      type="email"
+                      placeholder="email@example.com"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      :required="formData.invoice_to === 'Other'"
+                    />
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                      Invoice Postal Address *
+                    </label>
+                    <textarea
+                      v-model="formData.invoice_address"
+                      rows="3"
+                      placeholder="Full postal address"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      :required="formData.invoice_to === 'Other'"
+                    ></textarea>
+                  </div>
+                </div>
+
+                <!-- Purchase Order Number -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Purchase Order Number (Optional)
+                  </label>
+                  <input
+                    v-model="formData.purchase_order_number"
+                    type="text"
+                    placeholder="e.g., PO-2024-12345"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                  <p class="mt-1 text-xs text-gray-500">If your organization uses purchase orders, enter the PO number here</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Statutory Declarations -->
+            <div class="border-t border-gray-200 pt-6 mt-6">
+              <h3 class="text-base font-semibold text-gray-900 mb-3">Statutory Declarations</h3>
+              <p class="text-sm text-gray-600 mb-4">
+                Before submitting your application, you must confirm the following declarations under the Resource Management Act 1991.
+              </p>
+
+              <div class="space-y-4 bg-gray-50 border border-gray-300 rounded-lg p-4">
+                <!-- Declaration 1: RMA Compliance -->
+                <div class="flex items-start">
+                  <input
+                    type="checkbox"
+                    v-model="formData.declaration_rma_compliance"
+                    class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    required
+                  />
+                  <label class="ml-3 text-sm text-gray-700">
+                    <span class="font-medium">RMA Compliance:</span> I declare that, to the best of my knowledge, the information provided in this application is true and correct. I understand that providing false or misleading information is an offense under section 43 of the Resource Management Act 1991. *
+                  </label>
+                </div>
+
+                <!-- Declaration 2: Public Information -->
+                <div class="flex items-start">
+                  <input
+                    type="checkbox"
+                    v-model="formData.declaration_public_information"
+                    class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    required
+                  />
+                  <label class="ml-3 text-sm text-gray-700">
+                    <span class="font-medium">Public Information:</span> I understand that this application and supporting documents (except information claimed as confidential under s42) will be made publicly available and may be subject to public notification under the RMA. *
+                  </label>
+                </div>
+
+                <!-- Declaration 3: Authorization -->
+                <div class="flex items-start">
+                  <input
+                    type="checkbox"
+                    v-model="formData.declaration_authorized"
+                    class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    required
+                  />
+                  <label class="ml-3 text-sm text-gray-700">
+                    <span class="font-medium">Authorization:</span> I confirm that I am authorized to submit this application on behalf of the applicant, and that I have obtained all necessary consents from property owners, affected parties, and other relevant stakeholders as required by the RMA. *
+                  </label>
+                </div>
+              </div>
+
+              <p class="mt-3 text-xs text-gray-600">
+                <svg class="w-4 h-4 inline mr-1 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                </svg>
+                All three declarations are required to submit your application.
+              </p>
             </div>
 
             <!-- Pre-Application Meeting -->
@@ -2592,123 +2837,219 @@
               </div>
             </div>
 
-            <!-- Assessment of Environmental Effects -->
-            <div class="border-t border-gray-200 pt-6 mt-6">
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Assessment of Environmental Effects (AEE) *
-              </label>
-              <textarea
-                v-model="formData.assessment_of_effects"
-                rows="8"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Describe the actual and potential effects on the environment as per Schedule 4 of the RMA. Include effects on people, physical environment, ecosystems, and cultural/heritage values..."
-                required
-              ></textarea>
-              <p class="mt-1 text-xs text-gray-500">Required under Schedule 4 of the Resource Management Act</p>
-            </div>
+            <!-- Assessment of Environmental Effects (AEE) -->
+            <div class="border-t border-gray-200 pt-6 mt-6 mb-6">
+              <h3 class="text-base font-semibold text-gray-900 mb-3">Assessment of Environmental Effects (AEE)</h3>
+              <p class="text-sm text-gray-600 mb-4">
+                Under Schedule 4 of the RMA, you must assess the actual and potential effects of your proposed activity on the environment.
+                You can upload a consultant-prepared AEE document, OR complete the structured assessment below.
+              </p>
 
-            <!-- Effects Breakdown (Optional) -->
-            <div class="border-t border-gray-200 pt-4">
-              <h3 class="text-sm font-semibold text-gray-900 mb-3">Detailed Effects Assessment (Optional)</h3>
-              <p class="text-xs text-gray-500 mb-4">Break down your AEE into specific effect categories for a more comprehensive assessment</p>
-
-              <div class="space-y-4">
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1">Effects on People</label>
-                  <textarea
-                    v-model="formData.effects_on_people"
-                    rows="3"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                    placeholder="Privacy, sunlight access, visual amenity, noise impacts..."
-                  ></textarea>
-                </div>
-
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1">Physical Effects</label>
-                  <textarea
-                    v-model="formData.physical_effects"
-                    rows="3"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                    placeholder="Traffic, parking, stormwater, infrastructure impacts..."
-                  ></textarea>
-                </div>
-
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1">Earthworks Effects</label>
-                  <textarea
-                    v-model="formData.earthworks_effects"
-                    rows="3"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                    placeholder="Soil disturbance, erosion, sediment control, slope stability, construction impacts..."
-                  ></textarea>
-                </div>
-
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1">Discharge/Contaminants Effects</label>
-                  <textarea
-                    v-model="formData.discharge_contaminants_effects"
-                    rows="3"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                    placeholder="Stormwater discharge, wastewater, air quality, dust, odour, contaminant management..."
-                  ></textarea>
-                </div>
-
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1">Ecosystem Effects</label>
-                  <textarea
-                    v-model="formData.ecosystem_effects"
-                    rows="3"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                    placeholder="Indigenous vegetation, habitat values, watercourses, biodiversity..."
-                  ></textarea>
-                </div>
-
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1">Hazard Risk Assessment</label>
-                  <textarea
-                    v-model="formData.hazard_risk_assessment"
-                    rows="3"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                    placeholder="Flood risk, liquefaction, slope instability, coastal hazards, seismic risk..."
-                  ></textarea>
-                </div>
-
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1">Cultural/Heritage Effects</label>
-                  <textarea
-                    v-model="formData.cultural_effects"
-                    rows="3"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                    placeholder="Heritage values, sites of significance to Māori, archaeological sites..."
-                  ></textarea>
-                </div>
-              </div>
-            </div>
-
-            <!-- Alternatives and Mitigation -->
-            <div class="grid md:grid-cols-2 gap-4">
-              <div>
+              <!-- Option 1: Upload AEE Document -->
+              <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Alternatives Considered
+                  Upload AEE Document (Optional)
                 </label>
-                <textarea
-                  v-model="formData.alternatives_considered"
-                  rows="4"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                  placeholder="What alternative designs, locations, or methods were considered?..."
-                ></textarea>
+                <p class="text-xs text-gray-600 mb-3">
+                  If you have a consultant-prepared AEE report, upload it here. This can reduce the need for detailed answers below.
+                </p>
+                <input
+                  type="file"
+                  @change="handleAEEUpload"
+                  accept=".pdf,.doc,.docx"
+                  class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+                />
+                <p v-if="formData.aee_document" class="text-xs text-green-600 mt-2">
+                  ✓ AEE document uploaded
+                </p>
               </div>
 
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Mitigation Measures
-                </label>
-                <textarea
-                  v-model="formData.mitigation_proposed"
-                  rows="4"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                  placeholder="What measures will be implemented to avoid, remedy or mitigate adverse effects?..."
-                ></textarea>
+              <div class="text-center text-gray-500 text-sm mb-4">
+                <span class="bg-white px-3">OR complete structured assessment below</span>
+              </div>
+
+              <!-- Option 2: Structured AEE Questions -->
+              <div class="space-y-6">
+                <!-- Question 1: Description of Activity -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    1. Description of Activity and Purpose *
+                  </label>
+                  <textarea
+                    v-model="formData.aee_activity_description"
+                    rows="4"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Describe what you propose to do and why. Include the scale, duration, and key features of the activity..."
+                    :required="!formData.aee_document"
+                  ></textarea>
+                  <p class="mt-1 text-xs text-gray-500">What is the activity and why is it proposed?</p>
+                </div>
+
+                <!-- Question 2: Existing Environment -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    2. Description of Existing Environment *
+                  </label>
+                  <textarea
+                    v-model="formData.aee_existing_environment"
+                    rows="4"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Describe the current state of the site and surrounding area. Include topography, vegetation, neighboring uses, zoning, existing infrastructure..."
+                    :required="!formData.aee_document"
+                  ></textarea>
+                  <p class="mt-1 text-xs text-gray-500">What is the current state of the site and surrounding environment?</p>
+                </div>
+
+                <!-- Question 3: Effects on the Environment -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-3">
+                    3. Actual and Potential Effects on the Environment *
+                  </label>
+                  <p class="text-xs text-gray-600 mb-3">
+                    Assess effects across the following categories. Complete all that are relevant to your proposal:
+                  </p>
+
+                  <div class="space-y-4 pl-4">
+                    <!-- Effects on People -->
+                    <div>
+                      <label class="block text-xs font-medium text-gray-600 mb-1">a) Effects on People</label>
+                      <textarea
+                        v-model="formData.effects_on_people"
+                        rows="3"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="Privacy, sunlight access, visual amenity, noise impacts, safety, community wellbeing..."
+                      ></textarea>
+                    </div>
+
+                    <!-- Physical Effects -->
+                    <div>
+                      <label class="block text-xs font-medium text-gray-600 mb-1">b) Physical Effects</label>
+                      <textarea
+                        v-model="formData.physical_effects"
+                        rows="3"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="Traffic, parking, stormwater, wastewater, infrastructure impacts, building scale..."
+                      ></textarea>
+                    </div>
+
+                    <!-- Earthworks Effects -->
+                    <div>
+                      <label class="block text-xs font-medium text-gray-600 mb-1">c) Earthworks and Land Disturbance</label>
+                      <textarea
+                        v-model="formData.earthworks_effects"
+                        rows="3"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="Soil disturbance, erosion, sediment control, slope stability, construction impacts..."
+                      ></textarea>
+                    </div>
+
+                    <!-- Discharges/Contaminants -->
+                    <div>
+                      <label class="block text-xs font-medium text-gray-600 mb-1">d) Discharges and Contaminants</label>
+                      <textarea
+                        v-model="formData.discharge_contaminants_effects"
+                        rows="3"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="Stormwater discharge, wastewater, air quality, dust, odour, contaminant management..."
+                      ></textarea>
+                    </div>
+
+                    <!-- Ecosystem Effects -->
+                    <div>
+                      <label class="block text-xs font-medium text-gray-600 mb-1">e) Effects on Ecosystems and Biodiversity</label>
+                      <textarea
+                        v-model="formData.ecosystem_effects"
+                        rows="3"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="Indigenous vegetation, habitat values, watercourses, wetlands, biodiversity..."
+                      ></textarea>
+                    </div>
+
+                    <!-- Hazards -->
+                    <div>
+                      <label class="block text-xs font-medium text-gray-600 mb-1">f) Natural Hazard Risks</label>
+                      <textarea
+                        v-model="formData.hazard_risk_assessment"
+                        rows="3"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="Flood risk, liquefaction, slope instability, coastal hazards, seismic risk..."
+                      ></textarea>
+                    </div>
+
+                    <!-- Cultural/Heritage -->
+                    <div>
+                      <label class="block text-xs font-medium text-gray-600 mb-1">g) Cultural and Heritage Effects</label>
+                      <textarea
+                        v-model="formData.cultural_effects"
+                        rows="3"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        placeholder="Heritage values, sites of significance to Māori, archaeological sites, Treaty considerations..."
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Question 4: Mitigation Measures -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    4. Measures to Avoid, Remedy, or Mitigate Adverse Effects
+                  </label>
+                  <textarea
+                    v-model="formData.mitigation_proposed"
+                    rows="4"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    placeholder="Describe measures you will implement to manage adverse effects. Include design features, construction methods, operational controls, conditions you're willing to accept..."
+                  ></textarea>
+                  <p class="mt-1 text-xs text-gray-500">How will you avoid, remedy, or mitigate adverse effects?</p>
+                </div>
+
+                <!-- Question 5: Alternatives -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    5. Alternative Locations, Methods, or Designs Considered
+                  </label>
+                  <textarea
+                    v-model="formData.alternatives_considered"
+                    rows="4"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    placeholder="What alternative designs, locations, methods, or approaches were considered? Why was this proposal selected?..."
+                  ></textarea>
+                  <p class="mt-1 text-xs text-gray-500">What alternatives did you consider?</p>
+                </div>
+
+                <!-- Question 6: RMA Part 2 Assessment -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    6. Assessment Against RMA Part 2 Matters
+                  </label>
+                  <textarea
+                    v-model="formData.aee_part2_assessment"
+                    rows="4"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    placeholder="Address sustainable management (s5), matters of national importance (s6), other matters (s7), Treaty of Waitangi (s8)..."
+                  ></textarea>
+                  <p class="mt-1 text-xs text-gray-500">How does your proposal align with the purpose and principles of the RMA?</p>
+                </div>
+
+                <!-- Question 7: Summary -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    7. Overall Summary of Environmental Effects *
+                  </label>
+                  <textarea
+                    v-model="formData.assessment_of_effects"
+                    rows="4"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Provide a concise summary of the overall environmental effects. Will effects be minor, more than minor, or significant? What is your overall conclusion?..."
+                    :required="!formData.aee_document"
+                  ></textarea>
+                  <p class="mt-1 text-xs text-gray-500">Summarize the overall environmental effects of your proposal</p>
+                </div>
+              </div>
+
+              <div class="mt-4 p-3 bg-gray-50 border border-gray-200 rounded text-xs text-gray-600">
+                <strong>Note:</strong> You must either upload an AEE document OR complete questions 1, 2, and 7 as a minimum.
+                Questions 3-6 are recommended for comprehensive applications.
               </div>
             </div>
 
@@ -4277,6 +4618,56 @@ const removeNESDocument = (nesType, docIdx) => {
   if (globalIdx > -1) {
     formData.value.attachments.splice(globalIdx, 1)
   }
+}
+
+// Certificate of Title Upload Handler
+const handleCTUpload = (event) => {
+  const file = event.target.files[0]
+  if (!file) return
+
+  // Validation
+  if (file.size > 10 * 1024 * 1024) {
+    alert('File size must be less than 10MB')
+    event.target.value = ''
+    return
+  }
+
+  const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png']
+  if (!allowedTypes.includes(file.type)) {
+    alert('Only PDF and image files (JPG, PNG) are allowed for Certificate of Title')
+    event.target.value = ''
+    return
+  }
+
+  // Store the file reference
+  formData.value.certificate_of_title_document = file
+
+  event.target.value = ''
+}
+
+// AEE Document Upload Handler
+const handleAEEUpload = (event) => {
+  const file = event.target.files[0]
+  if (!file) return
+
+  // Validation
+  if (file.size > 20 * 1024 * 1024) {
+    alert('File size must be less than 20MB')
+    event.target.value = ''
+    return
+  }
+
+  const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
+  if (!allowedTypes.includes(file.type)) {
+    alert('Only PDF and Word documents (.doc, .docx) are allowed for AEE documents')
+    event.target.value = ''
+    return
+  }
+
+  // Store the file reference
+  formData.value.aee_document = file
+
+  event.target.value = ''
 }
 
 // Watch nesData to update formData.nes_assessments
