@@ -1163,160 +1163,58 @@
                 <div
                   v-for="(hail, index) in formData.hail_activities"
                   :key="index"
-                  class="border border-gray-300 rounded-lg p-4 bg-white"
+                  class="border border-gray-300 rounded-lg p-4 bg-white hover:shadow-md transition-shadow"
                 >
-                  <div class="flex items-start justify-between mb-3">
-                    <h4 class="text-sm font-medium text-gray-900">HAIL Activity #{{ index + 1 }}</h4>
-                    <button
-                      @click="removeHAILActivity(index)"
-                      type="button"
-                      class="text-red-600 hover:text-red-800"
-                    >
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
+                  <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                      <div class="flex items-center gap-2 mb-2">
+                        <h4 class="text-sm font-semibold text-gray-900">HAIL Activity #{{ index + 1 }}</h4>
+                        <span v-if="hail.hail_category" class="px-2 py-0.5 text-xs font-medium bg-purple-100 text-purple-700 rounded">
+                          {{ hail.hail_category }}
+                        </span>
+                        <span v-if="hail.preliminary_investigation_done" class="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-700 rounded">
+                          ✓ Investigated
+                        </span>
+                      </div>
+                      <p class="text-sm text-gray-700 mb-2">{{ hail.activity_description || 'No description provided' }}</p>
 
-                  <div class="space-y-3">
-                    <div>
-                      <label class="block text-xs font-medium text-gray-700 mb-1">Activity Description *</label>
-                      <textarea
-                        v-model="hail.activity_description"
-                        rows="2"
-                        required
-                        class="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                        placeholder="Describe the HAIL activity (e.g., Former service station, industrial site)..."
-                      ></textarea>
+                      <!-- Status badges -->
+                      <div class="flex flex-wrap gap-2 mb-2">
+                        <span v-if="hail.currently_undertaken" class="px-2 py-0.5 text-xs bg-blue-100 text-blue-700 rounded">Currently Undertaken</span>
+                        <span v-if="hail.previously_undertaken" class="px-2 py-0.5 text-xs bg-orange-100 text-orange-700 rounded">Previously Undertaken</span>
+                        <span v-if="hail.likely_undertaken" class="px-2 py-0.5 text-xs bg-yellow-100 text-yellow-700 rounded">Likely Undertaken</span>
+                      </div>
+
+                      <!-- Proposed activities -->
+                      <div v-if="hail.proposed_activities && hail.proposed_activities.length > 0" class="text-xs text-gray-600">
+                        <strong>Proposed:</strong> {{ hail.proposed_activities.map(a => a.activity_type).join(', ') }}
+                      </div>
+
+                      <!-- Notes -->
+                      <p v-if="hail.notes" class="text-xs text-gray-600 mt-2 italic">{{ hail.notes }}</p>
                     </div>
 
-                    <div>
-                      <label class="block text-xs font-medium text-gray-700 mb-1">HAIL Category</label>
-                      <select
-                        v-model="hail.hail_category"
-                        class="w-full px-2 py-1 border border-gray-300 rounded text-sm bg-white"
+                    <div class="flex gap-2 ml-4">
+                      <button
+                        @click="editHAILActivity(index)"
+                        type="button"
+                        class="text-blue-600 hover:text-blue-800"
+                        title="Edit activity"
                       >
-                        <option value="">Select HAIL category</option>
-                        <option value="Category A - Petroleum/Oil Storage">Category A - Petroleum/Oil Storage</option>
-                        <option value="Category B - Asbestos Products">Category B - Asbestos Products</option>
-                        <option value="Category C - Chemicals">Category C - Chemicals</option>
-                        <option value="Category D - Engineering Workshops">Category D - Engineering Workshops</option>
-                        <option value="Category E - Gasworks/Coke Works">Category E - Gasworks/Coke Works</option>
-                        <option value="Category F - Horticulture">Category F - Horticulture</option>
-                        <option value="Category G - Landfills/Waste Disposal">Category G - Landfills/Waste Disposal</option>
-                        <option value="Category H - Metal Treatment">Category H - Metal Treatment</option>
-                        <option value="Category I - Timber Treatment">Category I - Timber Treatment</option>
-                      </select>
-                      <p class="text-xs text-gray-500 mt-1">Select the applicable HAIL category for this activity</p>
-                    </div>
-
-                    <div class="grid md:grid-cols-3 gap-3">
-                      <div class="flex items-center">
-                        <input
-                          type="checkbox"
-                          :id="'hail-current-' + index"
-                          v-model="hail.currently_undertaken"
-                          class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                        />
-                        <label :for="'hail-current-' + index" class="ml-2 text-xs text-gray-700">Currently Being Undertaken</label>
-                      </div>
-
-                      <div class="flex items-center">
-                        <input
-                          type="checkbox"
-                          :id="'hail-previous-' + index"
-                          v-model="hail.previously_undertaken"
-                          class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                        />
-                        <label :for="'hail-previous-' + index" class="ml-2 text-xs text-gray-700">Previously Undertaken</label>
-                      </div>
-
-                      <div class="flex items-center">
-                        <input
-                          type="checkbox"
-                          :id="'hail-likely-' + index"
-                          v-model="hail.likely_undertaken"
-                          class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                        />
-                        <label :for="'hail-likely-' + index" class="ml-2 text-xs text-gray-700">Likely to Have Been Undertaken</label>
-                      </div>
-                    </div>
-
-                    <div class="flex items-center">
-                      <input
-                        type="checkbox"
-                        :id="'hail-investigated-' + index"
-                        v-model="hail.preliminary_investigation_done"
-                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                      />
-                      <label :for="'hail-investigated-' + index" class="ml-2 text-xs text-gray-700">Preliminary Investigation Completed</label>
-                    </div>
-
-                    <div>
-                      <label class="block text-xs font-medium text-gray-700 mb-2">Proposed Activities</label>
-                      <div class="space-y-2 p-3 border border-gray-200 rounded bg-gray-50">
-                        <div class="flex items-center">
-                          <input
-                            type="checkbox"
-                            :id="'hail-activity-fuel-' + index"
-                            @change="toggleHAILProposedActivity(index, 'Removing or replacing fuel storage system')"
-                            :checked="isHAILActivitySelected(index, 'Removing or replacing fuel storage system')"
-                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                          />
-                          <label :for="'hail-activity-fuel-' + index" class="ml-2 text-xs text-gray-700">Removing or replacing fuel storage system</label>
-                        </div>
-                        <div class="flex items-center">
-                          <input
-                            type="checkbox"
-                            :id="'hail-activity-disturb-' + index"
-                            @change="toggleHAILProposedActivity(index, 'Disturbing soil')"
-                            :checked="isHAILActivitySelected(index, 'Disturbing soil')"
-                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                          />
-                          <label :for="'hail-activity-disturb-' + index" class="ml-2 text-xs text-gray-700">Disturbing soil</label>
-                        </div>
-                        <div class="flex items-center">
-                          <input
-                            type="checkbox"
-                            :id="'hail-activity-sample-' + index"
-                            @change="toggleHAILProposedActivity(index, 'Sampling soil')"
-                            :checked="isHAILActivitySelected(index, 'Sampling soil')"
-                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                          />
-                          <label :for="'hail-activity-sample-' + index" class="ml-2 text-xs text-gray-700">Sampling soil</label>
-                        </div>
-                        <div class="flex items-center">
-                          <input
-                            type="checkbox"
-                            :id="'hail-activity-subdivide-' + index"
-                            @change="toggleHAILProposedActivity(index, 'Subdividing land')"
-                            :checked="isHAILActivitySelected(index, 'Subdividing land')"
-                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                          />
-                          <label :for="'hail-activity-subdivide-' + index" class="ml-2 text-xs text-gray-700">Subdividing land</label>
-                        </div>
-                        <div class="flex items-center">
-                          <input
-                            type="checkbox"
-                            :id="'hail-activity-change-' + index"
-                            @change="toggleHAILProposedActivity(index, 'Changing use of land')"
-                            :checked="isHAILActivitySelected(index, 'Changing use of land')"
-                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                          />
-                          <label :for="'hail-activity-change-' + index" class="ml-2 text-xs text-gray-700">Changing use of land</label>
-                        </div>
-                      </div>
-                      <p class="text-xs text-gray-500 mt-1">Select all proposed activities that apply (multiple allowed)</p>
-                    </div>
-
-                    <div>
-                      <label class="block text-xs font-medium text-gray-700 mb-1">Notes</label>
-                      <textarea
-                        v-model="hail.notes"
-                        rows="2"
-                        class="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                        placeholder="Additional notes about the HAIL activity..."
-                      ></textarea>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                      <button
+                        @click="removeHAILActivity(index)"
+                        type="button"
+                        class="text-red-600 hover:text-red-800"
+                        title="Remove activity"
+                      >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -2934,160 +2832,58 @@
                 <div
                   v-for="(hail, index) in formData.hail_activities"
                   :key="index"
-                  class="border border-gray-300 rounded-lg p-4 bg-white"
+                  class="border border-gray-300 rounded-lg p-4 bg-white hover:shadow-md transition-shadow"
                 >
-                  <div class="flex items-start justify-between mb-3">
-                    <h4 class="text-sm font-medium text-gray-900">HAIL Activity #{{ index + 1 }}</h4>
-                    <button
-                      @click="removeHAILActivity(index)"
-                      type="button"
-                      class="text-red-600 hover:text-red-800"
-                    >
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
+                  <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                      <div class="flex items-center gap-2 mb-2">
+                        <h4 class="text-sm font-semibold text-gray-900">HAIL Activity #{{ index + 1 }}</h4>
+                        <span v-if="hail.hail_category" class="px-2 py-0.5 text-xs font-medium bg-purple-100 text-purple-700 rounded">
+                          {{ hail.hail_category }}
+                        </span>
+                        <span v-if="hail.preliminary_investigation_done" class="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-700 rounded">
+                          ✓ Investigated
+                        </span>
+                      </div>
+                      <p class="text-sm text-gray-700 mb-2">{{ hail.activity_description || 'No description provided' }}</p>
 
-                  <div class="space-y-3">
-                    <div>
-                      <label class="block text-xs font-medium text-gray-700 mb-1">Activity Description *</label>
-                      <textarea
-                        v-model="hail.activity_description"
-                        rows="2"
-                        required
-                        class="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                        placeholder="Describe the HAIL activity (e.g., Former service station, industrial site)..."
-                      ></textarea>
+                      <!-- Status badges -->
+                      <div class="flex flex-wrap gap-2 mb-2">
+                        <span v-if="hail.currently_undertaken" class="px-2 py-0.5 text-xs bg-blue-100 text-blue-700 rounded">Currently Undertaken</span>
+                        <span v-if="hail.previously_undertaken" class="px-2 py-0.5 text-xs bg-orange-100 text-orange-700 rounded">Previously Undertaken</span>
+                        <span v-if="hail.likely_undertaken" class="px-2 py-0.5 text-xs bg-yellow-100 text-yellow-700 rounded">Likely Undertaken</span>
+                      </div>
+
+                      <!-- Proposed activities -->
+                      <div v-if="hail.proposed_activities && hail.proposed_activities.length > 0" class="text-xs text-gray-600">
+                        <strong>Proposed:</strong> {{ hail.proposed_activities.map(a => a.activity_type).join(', ') }}
+                      </div>
+
+                      <!-- Notes -->
+                      <p v-if="hail.notes" class="text-xs text-gray-600 mt-2 italic">{{ hail.notes }}</p>
                     </div>
 
-                    <div>
-                      <label class="block text-xs font-medium text-gray-700 mb-1">HAIL Category</label>
-                      <select
-                        v-model="hail.hail_category"
-                        class="w-full px-2 py-1 border border-gray-300 rounded text-sm bg-white"
+                    <div class="flex gap-2 ml-4">
+                      <button
+                        @click="editHAILActivity(index)"
+                        type="button"
+                        class="text-blue-600 hover:text-blue-800"
+                        title="Edit activity"
                       >
-                        <option value="">Select HAIL category</option>
-                        <option value="Category A - Petroleum/Oil Storage">Category A - Petroleum/Oil Storage</option>
-                        <option value="Category B - Asbestos Products">Category B - Asbestos Products</option>
-                        <option value="Category C - Chemicals">Category C - Chemicals</option>
-                        <option value="Category D - Engineering Workshops">Category D - Engineering Workshops</option>
-                        <option value="Category E - Gasworks/Coke Works">Category E - Gasworks/Coke Works</option>
-                        <option value="Category F - Horticulture">Category F - Horticulture</option>
-                        <option value="Category G - Landfills/Waste Disposal">Category G - Landfills/Waste Disposal</option>
-                        <option value="Category H - Metal Treatment">Category H - Metal Treatment</option>
-                        <option value="Category I - Timber Treatment">Category I - Timber Treatment</option>
-                      </select>
-                      <p class="text-xs text-gray-500 mt-1">Select the applicable HAIL category for this activity</p>
-                    </div>
-
-                    <div class="grid md:grid-cols-3 gap-3">
-                      <div class="flex items-center">
-                        <input
-                          type="checkbox"
-                          :id="'hail-current-' + index"
-                          v-model="hail.currently_undertaken"
-                          class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                        />
-                        <label :for="'hail-current-' + index" class="ml-2 text-xs text-gray-700">Currently Being Undertaken</label>
-                      </div>
-
-                      <div class="flex items-center">
-                        <input
-                          type="checkbox"
-                          :id="'hail-previous-' + index"
-                          v-model="hail.previously_undertaken"
-                          class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                        />
-                        <label :for="'hail-previous-' + index" class="ml-2 text-xs text-gray-700">Previously Undertaken</label>
-                      </div>
-
-                      <div class="flex items-center">
-                        <input
-                          type="checkbox"
-                          :id="'hail-likely-' + index"
-                          v-model="hail.likely_undertaken"
-                          class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                        />
-                        <label :for="'hail-likely-' + index" class="ml-2 text-xs text-gray-700">Likely to Have Been Undertaken</label>
-                      </div>
-                    </div>
-
-                    <div class="flex items-center">
-                      <input
-                        type="checkbox"
-                        :id="'hail-investigated-' + index"
-                        v-model="hail.preliminary_investigation_done"
-                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                      />
-                      <label :for="'hail-investigated-' + index" class="ml-2 text-xs text-gray-700">Preliminary Investigation Completed</label>
-                    </div>
-
-                    <div>
-                      <label class="block text-xs font-medium text-gray-700 mb-2">Proposed Activities</label>
-                      <div class="space-y-2 p-3 border border-gray-200 rounded bg-gray-50">
-                        <div class="flex items-center">
-                          <input
-                            type="checkbox"
-                            :id="'hail-activity-fuel-' + index"
-                            @change="toggleHAILProposedActivity(index, 'Removing or replacing fuel storage system')"
-                            :checked="isHAILActivitySelected(index, 'Removing or replacing fuel storage system')"
-                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                          />
-                          <label :for="'hail-activity-fuel-' + index" class="ml-2 text-xs text-gray-700">Removing or replacing fuel storage system</label>
-                        </div>
-                        <div class="flex items-center">
-                          <input
-                            type="checkbox"
-                            :id="'hail-activity-disturb-' + index"
-                            @change="toggleHAILProposedActivity(index, 'Disturbing soil')"
-                            :checked="isHAILActivitySelected(index, 'Disturbing soil')"
-                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                          />
-                          <label :for="'hail-activity-disturb-' + index" class="ml-2 text-xs text-gray-700">Disturbing soil</label>
-                        </div>
-                        <div class="flex items-center">
-                          <input
-                            type="checkbox"
-                            :id="'hail-activity-sample-' + index"
-                            @change="toggleHAILProposedActivity(index, 'Sampling soil')"
-                            :checked="isHAILActivitySelected(index, 'Sampling soil')"
-                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                          />
-                          <label :for="'hail-activity-sample-' + index" class="ml-2 text-xs text-gray-700">Sampling soil</label>
-                        </div>
-                        <div class="flex items-center">
-                          <input
-                            type="checkbox"
-                            :id="'hail-activity-subdivide-' + index"
-                            @change="toggleHAILProposedActivity(index, 'Subdividing land')"
-                            :checked="isHAILActivitySelected(index, 'Subdividing land')"
-                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                          />
-                          <label :for="'hail-activity-subdivide-' + index" class="ml-2 text-xs text-gray-700">Subdividing land</label>
-                        </div>
-                        <div class="flex items-center">
-                          <input
-                            type="checkbox"
-                            :id="'hail-activity-change-' + index"
-                            @change="toggleHAILProposedActivity(index, 'Changing use of land')"
-                            :checked="isHAILActivitySelected(index, 'Changing use of land')"
-                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                          />
-                          <label :for="'hail-activity-change-' + index" class="ml-2 text-xs text-gray-700">Changing use of land</label>
-                        </div>
-                      </div>
-                      <p class="text-xs text-gray-500 mt-1">Select all proposed activities that apply (multiple allowed)</p>
-                    </div>
-
-                    <div>
-                      <label class="block text-xs font-medium text-gray-700 mb-1">Notes</label>
-                      <textarea
-                        v-model="hail.notes"
-                        rows="2"
-                        class="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                        placeholder="Additional notes about the HAIL activity..."
-                      ></textarea>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                      <button
+                        @click="removeHAILActivity(index)"
+                        type="button"
+                        class="text-red-600 hover:text-red-800"
+                        title="Remove activity"
+                      >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -4557,6 +4353,197 @@
       </div>
     </div>
 
+    <!-- HAIL Activity Modal -->
+    <div
+      v-if="showHAILModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      @click.self="cancelHAIL"
+    >
+      <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-gray-900">
+              {{ editingHAILIndex !== null ? 'Edit' : 'Add' }} HAIL Activity
+            </h3>
+            <button
+              @click="cancelHAIL"
+              class="text-gray-400 hover:text-gray-600"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="px-6 py-4 space-y-4">
+          <!-- Activity Description -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Activity Description <span class="text-red-500">*</span>
+            </label>
+            <textarea
+              v-model="hailForm.activity_description"
+              rows="3"
+              required
+              placeholder="Describe the HAIL activity (e.g., Former service station, industrial site)..."
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            ></textarea>
+          </div>
+
+          <!-- HAIL Category -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              HAIL Category
+            </label>
+            <select
+              v-model="hailForm.hail_category"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">Select HAIL category</option>
+              <option value="Category A - Petroleum/Oil Storage">Category A - Petroleum/Oil Storage</option>
+              <option value="Category B - Asbestos Products">Category B - Asbestos Products</option>
+              <option value="Category C - Chemicals">Category C - Chemicals</option>
+              <option value="Category D - Engineering Workshops">Category D - Engineering Workshops</option>
+              <option value="Category E - Gasworks/Coke Works">Category E - Gasworks/Coke Works</option>
+              <option value="Category F - Horticulture">Category F - Horticulture</option>
+              <option value="Category G - Landfills/Waste Disposal">Category G - Landfills/Waste Disposal</option>
+              <option value="Category H - Metal Treatment">Category H - Metal Treatment</option>
+              <option value="Category I - Timber Treatment">Category I - Timber Treatment</option>
+            </select>
+          </div>
+
+          <!-- Status Checkboxes -->
+          <div class="border-t border-gray-200 pt-4">
+            <h4 class="text-sm font-medium text-gray-900 mb-3">Activity Status</h4>
+            <div class="grid md:grid-cols-3 gap-3">
+              <div class="flex items-center">
+                <input
+                  type="checkbox"
+                  id="hail-current"
+                  v-model="hailForm.currently_undertaken"
+                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label for="hail-current" class="ml-2 text-sm text-gray-700">Currently Being Undertaken</label>
+              </div>
+
+              <div class="flex items-center">
+                <input
+                  type="checkbox"
+                  id="hail-previous"
+                  v-model="hailForm.previously_undertaken"
+                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label for="hail-previous" class="ml-2 text-sm text-gray-700">Previously Undertaken</label>
+              </div>
+
+              <div class="flex items-center">
+                <input
+                  type="checkbox"
+                  id="hail-likely"
+                  v-model="hailForm.likely_undertaken"
+                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label for="hail-likely" class="ml-2 text-sm text-gray-700">Likely to Have Been Undertaken</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Investigation -->
+          <div class="flex items-center">
+            <input
+              type="checkbox"
+              id="hail-investigated"
+              v-model="hailForm.preliminary_investigation_done"
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <label for="hail-investigated" class="ml-2 text-sm text-gray-700">Preliminary Investigation Completed</label>
+          </div>
+
+          <!-- Proposed Activities -->
+          <div class="border-t border-gray-200 pt-4">
+            <h4 class="text-sm font-medium text-gray-900 mb-3">Proposed Activities</h4>
+            <div class="space-y-2 p-3 border border-gray-200 rounded bg-gray-50">
+              <div class="flex items-center">
+                <input
+                  type="checkbox"
+                  id="hail-activity-fuel"
+                  v-model="proposedActivities.fuel"
+                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label for="hail-activity-fuel" class="ml-2 text-sm text-gray-700">Removing or replacing fuel storage system</label>
+              </div>
+              <div class="flex items-center">
+                <input
+                  type="checkbox"
+                  id="hail-activity-disturb"
+                  v-model="proposedActivities.disturb"
+                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label for="hail-activity-disturb" class="ml-2 text-sm text-gray-700">Disturbing soil</label>
+              </div>
+              <div class="flex items-center">
+                <input
+                  type="checkbox"
+                  id="hail-activity-sample"
+                  v-model="proposedActivities.sample"
+                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label for="hail-activity-sample" class="ml-2 text-sm text-gray-700">Sampling soil</label>
+              </div>
+              <div class="flex items-center">
+                <input
+                  type="checkbox"
+                  id="hail-activity-subdivide"
+                  v-model="proposedActivities.subdivide"
+                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label for="hail-activity-subdivide" class="ml-2 text-sm text-gray-700">Subdividing land</label>
+              </div>
+              <div class="flex items-center">
+                <input
+                  type="checkbox"
+                  id="hail-activity-change"
+                  v-model="proposedActivities.change"
+                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label for="hail-activity-change" class="ml-2 text-sm text-gray-700">Changing use of land</label>
+              </div>
+            </div>
+            <p class="text-xs text-gray-500 mt-2">Select all proposed activities that apply</p>
+          </div>
+
+          <!-- Notes -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Additional Notes</label>
+            <textarea
+              v-model="hailForm.notes"
+              rows="3"
+              placeholder="Additional notes about the HAIL activity..."
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex justify-end gap-3">
+          <button
+            @click="cancelHAIL"
+            type="button"
+            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+          >
+            Cancel
+          </button>
+          <button
+            @click="saveHAIL"
+            type="button"
+            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+          >
+            {{ editingHAILIndex !== null ? 'Update' : 'Add' }} Activity
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Proposed Conditions Modal -->
     <div
       v-if="showConditionsModal"
@@ -5222,21 +5209,105 @@ const isNESSoilsSelected = computed(() => {
 })
 
 // HAIL Activities Management
+// HAIL Activity Modal
+const showHAILModal = ref(false)
+const editingHAILIndex = ref(null)
+const hailForm = ref({
+  activity_description: '',
+  hail_category: '',
+  currently_undertaken: false,
+  previously_undertaken: false,
+  likely_undertaken: false,
+  preliminary_investigation_done: false,
+  proposed_activities: [],
+  notes: ''
+})
+const proposedActivities = ref({
+  fuel: false,
+  disturb: false,
+  sample: false,
+  subdivide: false,
+  change: false
+})
+
 const addHAILActivity = () => {
-  formData.value.hail_activities.push({
+  // Reset form
+  hailForm.value = {
     activity_description: '',
     hail_category: '',
     currently_undertaken: false,
     previously_undertaken: false,
     likely_undertaken: false,
     preliminary_investigation_done: false,
-    proposed_activities: [],  // Changed to array for multiple selections
+    proposed_activities: [],
     notes: ''
-  })
+  }
+  proposedActivities.value = {
+    fuel: false,
+    disturb: false,
+    sample: false,
+    subdivide: false,
+    change: false
+  }
+  editingHAILIndex.value = null
+  showHAILModal.value = true
+}
+
+const editHAILActivity = (index) => {
+  const hail = formData.value.hail_activities[index]
+  hailForm.value = { ...hail }
+
+  // Convert proposed_activities array to checkbox states
+  proposedActivities.value = {
+    fuel: hail.proposed_activities?.some(a => a.activity_type === 'Removing or replacing fuel storage system') || false,
+    disturb: hail.proposed_activities?.some(a => a.activity_type === 'Disturbing soil') || false,
+    sample: hail.proposed_activities?.some(a => a.activity_type === 'Sampling soil') || false,
+    subdivide: hail.proposed_activities?.some(a => a.activity_type === 'Subdividing land') || false,
+    change: hail.proposed_activities?.some(a => a.activity_type === 'Changing use of land') || false
+  }
+
+  editingHAILIndex.value = index
+  showHAILModal.value = true
+}
+
+const saveHAIL = () => {
+  if (!hailForm.value.activity_description) {
+    alert('Please enter activity description')
+    return
+  }
+
+  // Convert checkbox states back to proposed_activities array
+  const proposedActivitiesArray = []
+  if (proposedActivities.value.fuel) proposedActivitiesArray.push({ activity_type: 'Removing or replacing fuel storage system' })
+  if (proposedActivities.value.disturb) proposedActivitiesArray.push({ activity_type: 'Disturbing soil' })
+  if (proposedActivities.value.sample) proposedActivitiesArray.push({ activity_type: 'Sampling soil' })
+  if (proposedActivities.value.subdivide) proposedActivitiesArray.push({ activity_type: 'Subdividing land' })
+  if (proposedActivities.value.change) proposedActivitiesArray.push({ activity_type: 'Changing use of land' })
+
+  const hailData = {
+    ...hailForm.value,
+    proposed_activities: proposedActivitiesArray
+  }
+
+  if (editingHAILIndex.value !== null) {
+    // Edit existing
+    formData.value.hail_activities[editingHAILIndex.value] = hailData
+  } else {
+    // Add new
+    formData.value.hail_activities.push(hailData)
+  }
+
+  showHAILModal.value = false
+}
+
+const cancelHAIL = () => {
+  showHAILModal.value = false
 }
 
 const removeHAILActivity = (index) => {
-  formData.value.hail_activities.splice(index, 1)
+  if (confirm('Remove this HAIL activity?')) {
+    formData.value.hail_activities.splice(index, 1)
+  }
 }
 
 // HAIL Proposed Activity checkbox handlers
