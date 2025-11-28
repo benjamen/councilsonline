@@ -93,6 +93,38 @@ def create_lodgeick_custom_fields():
 		# Request custom fields for disbursements and total costing
 		"Request": [
 			{
+				"fieldname": "lodgeick_company_section",
+				"fieldtype": "Section Break",
+				"label": "Company Submission",
+				"insert_after": "applicant_email",
+				"collapsible": 1
+			},
+			{
+				"fieldname": "company_account",
+				"fieldtype": "Link",
+				"label": "Company Account",
+				"options": "Company Account",
+				"insert_after": "lodgeick_company_section",
+				"description": "Company submitting this application (if applicable)"
+			},
+			{
+				"fieldname": "submitted_by",
+				"fieldtype": "Link",
+				"label": "Submitted By (User)",
+				"options": "User",
+				"insert_after": "company_account",
+				"read_only": 1,
+				"description": "Individual user who submitted this application"
+			},
+			{
+				"fieldname": "submitted_on_behalf_of",
+				"fieldtype": "Select",
+				"label": "Submitted On Behalf Of",
+				"options": "\nMyself\nCompany",
+				"insert_after": "submitted_by",
+				"description": "Whether submitting for self or on behalf of company"
+			},
+			{
 				"fieldname": "lodgeick_disbursements_section",
 				"fieldtype": "Section Break",
 				"label": "Disbursements",
@@ -181,10 +213,34 @@ def create_lodgeick_custom_fields():
 				"depends_on": "eval:doc.account_type=='Applicant'"
 			},
 			{
+				"fieldname": "lodgeick_company_section",
+				"fieldtype": "Section Break",
+				"label": "Company Account",
+				"insert_after": "applicant_type",
+				"collapsible": 1
+			},
+			{
+				"fieldname": "company_account",
+				"fieldtype": "Link",
+				"label": "Company Account",
+				"options": "Company Account",
+				"insert_after": "lodgeick_company_section",
+				"description": "Link to company account if user is part of a company"
+			},
+			{
+				"fieldname": "company_role",
+				"fieldtype": "Select",
+				"label": "Company Role",
+				"options": "\nAdmin\nSubmitter\nViewer",
+				"insert_after": "company_account",
+				"depends_on": "eval:doc.company_account",
+				"description": "Role within the company account"
+			},
+			{
 				"fieldname": "lodgeick_council_section",
 				"fieldtype": "Section Break",
 				"label": "Council Preferences",
-				"insert_after": "applicant_type",
+				"insert_after": "company_role",
 				"collapsible": 1
 			},
 			{
