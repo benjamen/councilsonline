@@ -5013,16 +5013,56 @@ const canProceed = () => {
       // Step 4: Property - Require either property link OR property_address, plus applicant fields
       const hasProperty = formData.value.property || formData.value.property_address
       const hasApplicantInfo = formData.value.applicant_phone && formData.value.applicant_type && formData.value.applicant_name && formData.value.applicant_email
-      return !!(hasProperty && hasApplicantInfo)
+
+      // NEW: Validate owner details if applicant is not the owner
+      const ownerDetailsValid = !formData.value.applicant_is_not_owner || (
+        formData.value.owner_name &&
+        formData.value.owner_email &&
+        formData.value.owner_phone &&
+        formData.value.owner_address
+      )
+
+      return !!(hasProperty && hasApplicantInfo && ownerDetailsValid)
     case 5:
       // Step 5: RC Details (RC only) OR Review (non-RC)
       if (isResourceConsent.value) {
         // RC Details step - validate required fields
-        return !!(
+
+        // Basic RC fields
+        const hasBasicRC = !!(
           formData.value.consent_types && formData.value.consent_types.length > 0 &&
-          formData.value.activity_status &&
+          formData.value.activity_status
+        )
+
+        // NEW: AEE validation - either upload a document OR complete structured fields
+        const hasAEEDocument = !!formData.value.aee_document
+        const hasStructuredAEE = !!(
+          formData.value.aee_activity_description &&
+          formData.value.aee_existing_environment &&
           formData.value.assessment_of_effects
         )
+        const hasAEE = hasAEEDocument || hasStructuredAEE
+
+        // NEW: Invoice details validation
+        const hasInvoiceDetails = formData.value.invoice_to === 'Applicant' || (
+          formData.value.invoice_to === 'Other' &&
+          formData.value.invoice_name &&
+          formData.value.invoice_email &&
+          formData.value.invoice_address
+        )
+
+        // NEW: Statutory declarations validation
+        const hasDeclarations = !!(
+          formData.value.declaration_rma_compliance &&
+          formData.value.declaration_public_information &&
+          formData.value.declaration_authorized
+        )
+
+        // NEW: Transfer deposit validation (if selected)
+        const transferDepositValid = !formData.value.transfer_deposit_required ||
+          !!formData.value.transfer_deposit_consent_number
+
+        return !!(hasBasicRC && hasAEE && hasInvoiceDetails && hasDeclarations && transferDepositValid)
       } else {
         // This is Review step for non-RC requests - always allow
         return true
@@ -5131,8 +5171,11 @@ const getApplicationFee = () => {
 }
 
 const submitApplication = async () => {
-  if (!formData.value.terms_accepted) {
-    alert('Please accept the terms and conditions')
+  // NEW: Check statutory declarations instead of single terms_accepted
+  if (!formData.value.declaration_rma_compliance ||
+      !formData.value.declaration_public_information ||
+      !formData.value.declaration_authorized) {
+    alert('Please confirm all three statutory declarations before submitting your application')
     return
   }
 
@@ -5175,6 +5218,42 @@ const submitApplication = async () => {
           body: fileFormData
         })
       }
+    }
+
+    // NEW: Upload Certificate of Title document if provided
+    if (formData.value.certificate_of_title_document) {
+      const ctFormData = new FormData()
+      ctFormData.append('file', formData.value.certificate_of_title_document)
+      ctFormData.append('doctype', 'Request')
+      ctFormData.append('docname', requestId)
+      ctFormData.append('fieldname', 'certificate_of_title_document')
+      ctFormData.append('is_private', 0)
+
+      await fetch('/api/method/upload_file', {
+        method: 'POST',
+        headers: {
+          'X-Frappe-CSRF-Token': window.csrf_token
+        },
+        body: ctFormData
+      })
+    }
+
+    // NEW: Upload AEE document if provided
+    if (formData.value.aee_document) {
+      const aeeFormData = new FormData()
+      aeeFormData.append('file', formData.value.aee_document)
+      aeeFormData.append('doctype', 'Resource Consent Application')
+      aeeFormData.append('docname', requestId)
+      aeeFormData.append('fieldname', 'aee_document')
+      aeeFormData.append('is_private', 0)
+
+      await fetch('/api/method/upload_file', {
+        method: 'POST',
+        headers: {
+          'X-Frappe-CSRF-Token': window.csrf_token
+        },
+        body: aeeFormData
+      })
     }
 
     // Step 3: Submit the request
