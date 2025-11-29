@@ -20,17 +20,103 @@
         </div>
       </div>
 
+      <!-- Template Selection (Optional) -->
+      <div class="bg-white border border-gray-200 rounded-lg p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900">Select from Standard Conditions</h3>
+            <p class="text-sm text-gray-600 mt-1">Choose from pre-approved condition templates or create your own</p>
+          </div>
+          <button
+            @click="showTemplates = !showTemplates"
+            type="button"
+            class="px-4 py-2 text-blue-600 hover:text-blue-700 font-medium text-sm border border-blue-600 rounded-lg hover:bg-blue-50"
+          >
+            {{ showTemplates ? 'Hide Templates' : 'Browse Templates' }}
+          </button>
+        </div>
+
+        <!-- Template Browser -->
+        <div v-if="showTemplates" class="mt-4 border-t border-gray-200 pt-4">
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Category</label>
+            <select
+              v-model="selectedCategory"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="All">All Categories</option>
+              <option value="General">General</option>
+              <option value="Timing">Timing</option>
+              <option value="Lapse">Lapse</option>
+              <option value="Environmental Management">Environmental Management</option>
+              <option value="Construction">Construction</option>
+              <option value="Operation">Operation</option>
+              <option value="Landscape">Landscape</option>
+              <option value="Ecology">Ecology</option>
+              <option value="Traffic">Traffic</option>
+              <option value="Noise">Noise</option>
+              <option value="Discharge">Discharge</option>
+              <option value="Earthworks">Earthworks</option>
+              <option value="Water">Water</option>
+              <option value="Coastal">Coastal</option>
+            </select>
+          </div>
+
+          <!-- Template List -->
+          <div v-if="loadingTemplates" class="text-center py-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-2"></div>
+            <p class="text-sm text-gray-600">Loading templates...</p>
+          </div>
+
+          <div v-else-if="filteredTemplates.length === 0" class="text-center py-8 text-gray-500">
+            <p class="text-sm">No templates found for this category</p>
+          </div>
+
+          <div v-else class="space-y-2 max-h-96 overflow-y-auto">
+            <div
+              v-for="template in filteredTemplates"
+              :key="template.name"
+              @click="addConditionFromTemplate(template)"
+              class="border border-gray-200 rounded-lg p-4 hover:border-blue-600 hover:bg-blue-50 cursor-pointer transition-all"
+            >
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-1">
+                    <h4 class="font-medium text-gray-900">{{ template.template_name }}</h4>
+                    <span v-if="template.condition_code" class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                      {{ template.condition_code }}
+                    </span>
+                    <span class="text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded">
+                      {{ template.condition_category }}
+                    </span>
+                  </div>
+                  <p class="text-sm text-gray-700">{{ template.condition_text }}</p>
+                  <p v-if="template.timing" class="text-xs text-gray-500 mt-1">
+                    ⏱ Timing: {{ template.timing }}
+                  </p>
+                </div>
+                <button
+                  class="ml-4 text-blue-600 hover:text-blue-700 text-sm font-medium whitespace-nowrap"
+                >
+                  + Add
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Proposed Conditions Section -->
       <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
         <div class="bg-gray-50 px-6 py-3 border-b border-gray-200">
           <div class="flex items-center justify-between">
-            <h3 class="font-semibold text-gray-900">Proposed Consent Conditions</h3>
+            <h3 class="font-semibold text-gray-900">Your Proposed Conditions</h3>
             <button
               @click="addCondition"
               type="button"
               class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
             >
-              + Add Condition
+              + Add Custom Condition
             </button>
           </div>
         </div>
@@ -199,7 +285,8 @@ Example: 'All construction activities shall be limited to the hours of 7:00am to
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref, watch } from 'vue'
+import { defineProps, defineEmits, ref, watch, computed, onMounted } from 'vue'
+import { call } from 'frappe-ui'
 
 const props = defineProps({
   modelValue: {
@@ -209,6 +296,12 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue'])
+
+// Template state
+const showTemplates = ref(false)
+const loadingTemplates = ref(false)
+const availableTemplates = ref([])
+const selectedCategory = ref('All')
 
 // Create local copy of data
 const localData = ref({
@@ -229,6 +322,68 @@ watch(localData, (newVal) => {
     proposed_conditions: newVal.proposed_conditions
   })
 }, { deep: true })
+
+// Filtered templates based on category and consent types
+const filteredTemplates = computed(() => {
+  let templates = availableTemplates.value
+
+  // Filter by category
+  if (selectedCategory.value !== 'All') {
+    templates = templates.filter(t => t.condition_category === selectedCategory.value)
+  }
+
+  // Filter by consent types (if selected)
+  const consentTypes = props.modelValue.consent_types?.map(ct => ct.consent_type) || []
+  if (consentTypes.length > 0) {
+    templates = templates.filter(t => {
+      // Include if template applies to 'All' or matches one of the selected consent types
+      return t.applies_to_consent_types === 'All' ||
+             consentTypes.includes(t.applies_to_consent_types)
+    })
+  }
+
+  return templates
+})
+
+// Load templates when component mounts or when templates section is shown
+watch(showTemplates, async (isShown) => {
+  if (isShown && availableTemplates.value.length === 0) {
+    await loadTemplates()
+  }
+})
+
+const loadTemplates = async () => {
+  loadingTemplates.value = true
+  try {
+    const result = await call('frappe.client.get_list', {
+      doctype: 'Consent Condition Template',
+      fields: ['name', 'template_name', 'condition_code', 'condition_category',
+               'condition_text', 'timing', 'applies_to_consent_types', 'is_standard'],
+      filters: {
+        is_active: 1
+      },
+      limit_page_length: 100,
+      order_by: 'condition_category asc, template_name asc'
+    })
+    availableTemplates.value = result || []
+  } catch (error) {
+    console.error('[Step15] Error loading templates:', error)
+    availableTemplates.value = []
+  } finally {
+    loadingTemplates.value = false
+  }
+}
+
+const addConditionFromTemplate = (template) => {
+  localData.value.proposed_conditions.push({
+    category: template.condition_category,
+    timing: template.timing || '',
+    condition_text: template.condition_text,
+    rationale: template.is_standard ? 'Standard condition template' : '',
+    template_name: template.template_name,
+    condition_code: template.condition_code || ''
+  })
+}
 
 const addCondition = () => {
   localData.value.proposed_conditions.push({
