@@ -1687,7 +1687,7 @@ def get_user_company_account():
 	"""
 	user = frappe.get_doc("User", frappe.session.user)
 
-	if not user.company_account:
+	if not hasattr(user, 'company_account') or not user.company_account:
 		return None
 
 	try:
@@ -1718,8 +1718,10 @@ def get_user_company_account():
 
 	except frappe.DoesNotExistError:
 		# Company was deleted
-		user.company_account = None
-		user.company_role = None
+		if hasattr(user, 'company_account'):
+			user.company_account = None
+		if hasattr(user, 'company_role'):
+			user.company_role = None
 		user.save(ignore_permissions=True)
 		return None
 

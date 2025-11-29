@@ -547,10 +547,16 @@
                   <input
                     v-model="formData.valuation_reference"
                     type="text"
-                    placeholder="1234567"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Auto-populated"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                    readonly
                   />
-                  <p class="mt-1 text-xs text-gray-500">Property valuation number (optional)</p>
+                  <p v-if="formData.valuation_reference" class="mt-1 text-xs text-green-600">
+                    ✓ Valuation Reference
+                  </p>
+                  <p v-else class="mt-1 text-xs text-gray-500">
+                    Will be populated when address is selected
+                  </p>
                 </div>
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">Parcel ID</label>
@@ -567,7 +573,7 @@
                 </div>
               </div>
 
-              <div class="grid md:grid-cols-2 gap-4">
+              <div class="grid md:grid-cols-1 gap-4">
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">Zone</label>
                   <input
@@ -582,28 +588,6 @@
                   </p>
                   <p v-else class="mt-1 text-xs text-gray-500">
                     Will be populated when address is selected
-                  </p>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Activity Status
-                    <span v-if="isResourceConsent" class="text-red-600">*</span>
-                  </label>
-                  <select
-                    v-model="formData.activity_zone"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    :required="isResourceConsent"
-                  >
-                    <option value="">Select activity status</option>
-                    <option value="Permitted">Permitted</option>
-                    <option value="Controlled">Controlled</option>
-                    <option value="Restricted Discretionary">Restricted Discretionary</option>
-                    <option value="Discretionary">Discretionary</option>
-                    <option value="Non-Complying">Non-Complying</option>
-                    <option value="Prohibited">Prohibited</option>
-                  </select>
-                  <p class="mt-1 text-xs text-gray-500">
-                    What is the activity status of your proposal under the zone rules?
                   </p>
                 </div>
               </div>
@@ -5030,12 +5014,13 @@ const steps = computed(() => {
     { title: 'Council', number: 1 },
     { title: 'Type', number: 2 },
     { title: 'Process Info', number: 3 },
-    { title: 'Property', number: 4 }
+    { title: 'Applicant', number: 4 },
+    { title: 'Property', number: 5 }
   ]
 
   // Add RC-specific step (only for RC requests)
   if (isResourceConsent.value) {
-    baseSteps.push({ title: 'RC Details', number: 5 })
+    baseSteps.push({ title: 'RC Details', number: 6 })
   }
   // Non-RC requests skip directly to Review
 
