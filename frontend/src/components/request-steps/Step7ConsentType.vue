@@ -36,8 +36,22 @@
       <!-- Activity Status -->
       <div class="border-t border-gray-200 pt-6">
         <label class="block text-sm font-medium text-gray-700 mb-3">
-          Activity Status Under District/Regional Plan *
+          Activity Status Under District/Regional Plan (Optional)
         </label>
+        <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <div class="flex items-start">
+            <svg class="w-5 h-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+              <h5 class="font-semibold text-blue-900 text-sm">Not sure? That's okay!</h5>
+              <p class="text-blue-800 text-sm mt-1">
+                If you're unsure about your activity status, you can leave this blank. The council planner will determine the correct status when processing your application.
+                Alternatively, you can book a free pre-application meeting with the council to discuss this.
+              </p>
+            </div>
+          </div>
+        </div>
         <div class="space-y-2">
           <label
             v-for="status in activityStatuses"
@@ -105,6 +119,11 @@ const availableConsentTypes = [
 
 // Activity statuses
 const activityStatuses = [
+  {
+    value: 'Unsure',
+    label: 'Unsure / To Be Determined by Council',
+    description: 'Council planner will assess and determine the correct status'
+  },
   {
     value: 'Permitted',
     label: 'Permitted Activity',

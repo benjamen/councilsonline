@@ -26,15 +26,12 @@
   "column_break_property",
   "zoning_display",
   "site_area_display",
-  "applicant_reference_number",
-  "delivery_preference",
   "section_break_consent",
-  "consent_types",
+  "applicant_reference_number",
   "pim_reference",
+  "column_break_consent_1",
+  "consent_types",
   "activity_status",
-  "section_break_transfer_deposit",
-  "transfer_deposit_required",
-  "transfer_deposit_consent_number",
   "section_break_permitted_boundary",
   "permitted_boundary_activity",
   "boundary_description",
@@ -134,6 +131,11 @@
   "proposed_conditions_tab",
   "section_break_conditions",
   "proposed_conditions",
+  "declarations_tab",
+  "section_break_declarations",
+  "declaration_rma_compliance",
+  "declaration_public_information",
+  "declaration_authorized",
   "decision_tab",
   "section_break_decision",
   "decision_type",
@@ -291,32 +293,16 @@
    "precision": "2"
   },
   {
+   "description": "Core consent information provided by the applicant",
+   "fieldname": "section_break_consent",
+   "fieldtype": "Section Break",
+   "label": "Consent Type & Activity Status"
+  },
+  {
    "fieldname": "applicant_reference_number",
    "fieldtype": "Data",
    "label": "Applicant Reference Number",
    "description": "Your own reference number for tracking this application"
-  },
-  {
-   "fieldname": "delivery_preference",
-   "fieldtype": "Select",
-   "label": "Delivery Preference",
-   "options": "\nEmail\nPostal Mail\nBoth Email and Postal",
-   "description": "How you would like to receive correspondence from council"
-  },
-  {
-   "description": "Core consent information provided by the applicant",
-   "fieldname": "section_break_consent",
-   "fieldtype": "Section Break",
-   "label": "Consent Details"
-  },
-  {
-   "fieldname": "consent_types",
-   "fieldtype": "Table",
-   "in_list_view": 1,
-   "label": "Consent Types",
-   "options": "Consent Type Item",
-   "description": "Select one or more consent types required for this application",
-   "reqd": 1
   },
   {
    "fieldname": "pim_reference",
@@ -325,34 +311,24 @@
    "description": "Property Information Memorandum reference number if applicable"
   },
   {
+   "fieldname": "column_break_consent_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "consent_types",
+   "fieldtype": "Table",
+   "in_list_view": 1,
+   "label": "Consent Types",
+   "options": "RC Consent Type",
+   "reqd": 1
+  },
+  {
    "fieldname": "activity_status",
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Activity Status",
    "options": "Permitted\nControlled\nRestricted Discretionary\nDiscretionary\nNon-Complying\nProhibited\nPermitted Boundary Activity",
    "reqd": 1
-  },
-  {
-   "collapsible": 1,
-   "description": "Transfer of deposit from existing consent if applicable",
-   "fieldname": "section_break_transfer_deposit",
-   "fieldtype": "Section Break",
-   "label": "Transfer of Deposit"
-  },
-  {
-   "default": "0",
-   "description": "Check if you wish to transfer a deposit from an existing consent",
-   "fieldname": "transfer_deposit_required",
-   "fieldtype": "Check",
-   "label": "Transfer Deposit from Existing Consent"
-  },
-  {
-   "depends_on": "eval:doc.transfer_deposit_required==1",
-   "description": "Enter the consent number from which the deposit should be transferred",
-   "fieldname": "transfer_deposit_consent_number",
-   "fieldtype": "Data",
-   "label": "Consent Number for Transfer",
-   "mandatory_depends_on": "eval:doc.transfer_deposit_required==1"
   },
   {
    "description": "Council determination of notification requirements and public submissions",
@@ -531,28 +507,28 @@
    "fieldname": "aee_plan_rules",
    "fieldtype": "Table",
    "label": "Plan Rules",
-   "options": "AEE Plan Rule"
+   "options": "RC Plan Rule"
   },
   {
    "description": "Assessment against plan standards and performance criteria",
    "fieldname": "aee_compliance_standards",
    "fieldtype": "Table",
    "label": "Compliance Standards",
-   "options": "AEE Compliance Standard"
+   "options": "RC Compliance Standard"
   },
   {
    "description": "Written approvals obtained from affected parties",
    "fieldname": "aee_written_approvals",
    "fieldtype": "Table",
    "label": "Written Approvals",
-   "options": "AEE Written Approval"
+   "options": "RC Written Approval"
   },
   {
    "description": "Proposed conditions of consent",
    "fieldname": "aee_proposed_conditions",
    "fieldtype": "Table",
    "label": "Proposed Conditions",
-   "options": "AEE Proposed Condition"
+   "options": "RC Proposed Condition"
   },
   {
    "description": "Planning assessment and mitigation measures proposed by applicant",
@@ -591,7 +567,7 @@
    "fieldname": "affected_parties",
    "fieldtype": "Table",
    "label": "Affected Parties",
-   "options": "Affected Party"
+   "options": "RC Affected Party"
   },
   {
    "fieldname": "written_approvals_obtained",
@@ -641,7 +617,7 @@
    "fieldname": "specialist_reports",
    "fieldtype": "Table",
    "label": "Specialist Reports",
-   "options": "Specialist Report"
+   "options": "RC Specialist Report"
   },
   {
    "description": "Conditions proposed by the applicant",
@@ -655,6 +631,36 @@
    "label": "Proposed Conditions",
    "options": "Resource Consent Condition",
    "description": "Conditions proposed by applicant - select from standard templates or create custom"
+  },
+  {
+   "description": "Required statutory declarations under the Resource Management Act 1991",
+   "fieldname": "section_break_declarations",
+   "fieldtype": "Section Break",
+   "label": "Statutory Declarations"
+  },
+  {
+   "default": "0",
+   "description": "I confirm that to the best of my knowledge, the information provided in this application is true and correct. I understand that providing false or misleading information is an offence under the Resource Management Act 1991.",
+   "fieldname": "declaration_rma_compliance",
+   "fieldtype": "Check",
+   "label": "Information True and Correct (RMA s43)",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "description": "I understand that unless confidentiality is requested under RMA s42, documents submitted as part of this application may be made publicly available.",
+   "fieldname": "declaration_public_information",
+   "fieldtype": "Check",
+   "label": "Public Availability of Information",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "description": "I confirm that I am authorised to submit this application on behalf of the applicant named in this application.",
+   "fieldname": "declaration_authorized",
+   "fieldtype": "Check",
+   "label": "Authority to Submit",
+   "reqd": 1
   },
   {
    "description": "Final decision and conditions imposed by the council",
@@ -1001,7 +1007,7 @@
    "fieldname": "natural_hazards",
    "fieldtype": "Table",
    "label": "Natural Hazards",
-   "options": "Natural Hazard"
+   "options": "RC Natural Hazard"
   },
   {
    "collapsible": 1,
@@ -1014,7 +1020,7 @@
    "fieldname": "nes_assessments",
    "fieldtype": "Table",
    "label": "NES Assessments",
-   "options": "NES Assessment"
+   "options": "RC NES Item"
   },
   {
    "collapsible": 1,

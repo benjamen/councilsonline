@@ -64,7 +64,8 @@ export function useFormValidation(formData, currentStep, isResourceConsent) {
 
     // Step 7: Consent Type (Resource Consent only)
     if (step === 7 && isResourceConsent.value) {
-      return formData.value.consent_types?.length > 0 && !!formData.value.activity_status
+      // Activity status is now optional - can proceed with just consent types
+      return formData.value.consent_types?.length > 0
     }
 
     // Step 8: Proposal Details (Resource Consent only)
@@ -144,7 +145,7 @@ export function useFormValidation(formData, currentStep, isResourceConsent) {
     // Resource Consent specific validations
     if (isResourceConsent.value) {
       const hasConsentTypes = formData.value.consent_types?.length > 0
-      const hasActivityStatus = !!formData.value.activity_status
+      // Activity status is optional - council can determine this
       const hasProposalDetails = formData.value.proposal_details?.length > 0
       const hasSiteDescription = !!formData.value.site_description
       const hasCurrentUse = !!formData.value.current_use
@@ -157,7 +158,7 @@ export function useFormValidation(formData, currentStep, isResourceConsent) {
 
       return hasCouncil && hasRequestType && hasApplicantDetails &&
         hasPropertyAddress && hasDeliveryPreference && hasInvoiceTo &&
-        hasConsentTypes && hasActivityStatus && hasProposalDetails &&
+        hasConsentTypes && hasProposalDetails &&
         hasSiteDescription && hasCurrentUse && hasAEE && hasDeclarations
     }
 

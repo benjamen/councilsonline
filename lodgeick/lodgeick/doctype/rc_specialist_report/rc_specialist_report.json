@@ -1,0 +1,86 @@
+{
+ "actions": [],
+ "creation": "2025-11-29 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "report_name",
+  "report_type",
+  "author",
+  "date",
+  "file",
+  "description",
+  "is_confidential",
+  "linked_to_aee_section",
+  "linked_to_plan_rule"
+ ],
+ "fields": [
+  {
+   "fieldname": "report_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Report Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "report_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Report Type",
+   "options": "Traffic\nGeotech\nAcoustic\nEcological\nContamination\nAEE\nCIA\nHydrological\nOther",
+   "reqd": 1
+  },
+  {
+   "fieldname": "author",
+   "fieldtype": "Data",
+   "label": "Author"
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "fieldname": "file",
+   "fieldtype": "Attach",
+   "in_list_view": 1,
+   "label": "File",
+   "reqd": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text",
+   "label": "Description"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_confidential",
+   "fieldtype": "Check",
+   "label": "Confidential (RMA s42)"
+  },
+  {
+   "fieldname": "linked_to_aee_section",
+   "fieldtype": "Data",
+   "label": "Linked to AEE Section"
+  },
+  {
+   "fieldname": "linked_to_plan_rule",
+   "fieldtype": "Data",
+   "label": "Linked to Plan Rule"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-11-29 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "RC Specialist Report",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

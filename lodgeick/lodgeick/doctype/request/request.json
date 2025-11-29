@@ -91,6 +91,10 @@
   "column_break_invoicing",
   "invoice_address",
   "purchase_order_number",
+  "section_break_delivery",
+  "delivery_preference",
+  "transfer_deposit_required",
+  "transfer_deposit_consent_number",
   "section_break_history",
   "status_history",
   "section_break_related",
@@ -642,6 +646,33 @@
    "fieldname": "purchase_order_number",
    "fieldtype": "Data",
    "label": "Purchase Order Number"
+  },
+  {
+   "collapsible": 1,
+   "description": "Choose how you would like to receive decision documents and communications from the council.",
+   "fieldname": "section_break_delivery",
+   "fieldtype": "Section Break",
+   "label": "Delivery & Deposit Transfer"
+  },
+  {
+   "fieldname": "delivery_preference",
+   "fieldtype": "Select",
+   "label": "Delivery Preference",
+   "options": "Email\nPost\nPortal",
+   "default": "Email"
+  },
+  {
+   "default": "0",
+   "fieldname": "transfer_deposit_required",
+   "fieldtype": "Check",
+   "label": "Transfer Deposit from Existing Consent"
+  },
+  {
+   "depends_on": "transfer_deposit_required",
+   "fieldname": "transfer_deposit_consent_number",
+   "fieldtype": "Data",
+   "label": "Consent Number to Transfer From",
+   "mandatory_depends_on": "transfer_deposit_required"
   },
   {
    "collapsible": 1,
