@@ -4,6 +4,48 @@
     <p class="text-gray-600 mb-8">Describe your proposed activity in detail</p>
 
     <div class="space-y-6">
+      <!-- Brief Description -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Brief Description *
+        </label>
+        <textarea
+          v-model="localData.brief_description"
+          rows="2"
+          maxlength="200"
+          placeholder="Provide a short summary of your proposal (max 200 characters)"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          required
+        ></textarea>
+        <p class="mt-1 text-xs text-gray-500">
+          {{ localData.brief_description?.length || 0 }}/200 characters
+        </p>
+      </div>
+
+      <!-- Detailed Description -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Detailed Description *
+        </label>
+        <textarea
+          v-model="localData.detailed_description"
+          rows="6"
+          placeholder="Provide a comprehensive description of your proposal including scope, materials, dimensions, environmental considerations, and any other relevant information for the planner's assessment"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          required
+        ></textarea>
+        <p class="mt-1 text-xs text-gray-500">
+          Full description of the proposed work for planner assessment
+        </p>
+      </div>
+
+      <div class="border-t border-gray-200 pt-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Detailed Breakdown (Optional)</h3>
+        <p class="text-sm text-gray-600 mb-4">
+          Add specific details for different aspects of your proposal
+        </p>
+      </div>
+
       <!-- Add Proposal Detail Button -->
       <div class="flex justify-between items-center">
         <p class="text-sm text-gray-700">
@@ -275,7 +317,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue'
+import { defineProps, defineEmits, ref, watch } from 'vue'
 
 const props = defineProps({
   modelValue: {
@@ -285,6 +327,29 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue'])
+
+// Local data for brief and detailed descriptions
+const localData = ref({
+  brief_description: props.modelValue.brief_description || '',
+  detailed_description: props.modelValue.detailed_description || ''
+})
+
+// Watch for external changes
+watch(() => [props.modelValue.brief_description, props.modelValue.detailed_description],
+  ([newBrief, newDetailed]) => {
+    localData.value.brief_description = newBrief || ''
+    localData.value.detailed_description = newDetailed || ''
+  }
+)
+
+// Watch local changes and emit
+watch(localData, (newVal) => {
+  emit('update:modelValue', {
+    ...props.modelValue,
+    brief_description: newVal.brief_description,
+    detailed_description: newVal.detailed_description
+  })
+}, { deep: true })
 
 const addProposalDetail = () => {
   const updatedData = { ...props.modelValue }

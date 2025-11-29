@@ -70,8 +70,10 @@ export function useFormValidation(formData, currentStep, isResourceConsent) {
 
     // Step 8: Proposal Details (Resource Consent only)
     if (step === 8 && isResourceConsent.value) {
-      return formData.value.proposal_details?.length > 0 &&
-        formData.value.proposal_details.every(pd => pd.detail_type && pd.detail_value?.trim())
+      const hasBriefDescription = !!formData.value.brief_description?.trim()
+      const hasDetailedDescription = !!formData.value.detailed_description?.trim()
+      // Detailed breakdown (proposal_details) is optional
+      return hasBriefDescription && hasDetailedDescription
     }
 
     // Step 9: Site & Environment (Resource Consent only)
@@ -146,7 +148,8 @@ export function useFormValidation(formData, currentStep, isResourceConsent) {
     if (isResourceConsent.value) {
       const hasConsentTypes = formData.value.consent_types?.length > 0
       // Activity status is optional - council can determine this
-      const hasProposalDetails = formData.value.proposal_details?.length > 0
+      const hasBriefDescription = !!formData.value.brief_description?.trim()
+      const hasDetailedDescription = !!formData.value.detailed_description?.trim()
       const hasSiteDescription = !!formData.value.site_description
       const hasCurrentUse = !!formData.value.current_use
       const hasAEE = !!formData.value.aee_effects_description &&
@@ -158,7 +161,7 @@ export function useFormValidation(formData, currentStep, isResourceConsent) {
 
       return hasCouncil && hasRequestType && hasApplicantDetails &&
         hasPropertyAddress && hasDeliveryPreference && hasInvoiceTo &&
-        hasConsentTypes && hasProposalDetails &&
+        hasConsentTypes && hasBriefDescription && hasDetailedDescription &&
         hasSiteDescription && hasCurrentUse && hasAEE && hasDeclarations
     }
 
