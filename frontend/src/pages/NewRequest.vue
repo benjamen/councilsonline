@@ -202,31 +202,14 @@
           </div>
         </div>
 
-        <!-- Step 4: Property Details -->
+        <!-- Step 4: Applicant Details -->
         <div v-if="currentStep === 4">
-          <h2 class="text-2xl font-bold text-gray-900 mb-2">Property Details</h2>
-          <p class="text-gray-600 mb-8">Provide details about the property for this application</p>
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">Who is this application for?</h2>
+          <p class="text-gray-600 mb-8">Provide applicant and property owner information</p>
 
           <div class="space-y-6">
-            <!-- Property Search/Select -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Select Existing Property or Enter New
-              </label>
-              <select
-                v-model="formData.property"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                @change="onPropertySelect"
-              >
-                <option value="">-- Select a property or enter new --</option>
-                <option v-for="prop in properties.data" :key="prop.name" :value="prop.name">
-                  {{ prop.street_address }}, {{ prop.suburb }}{{ prop.legal_description ? ' - ' + prop.legal_description : '' }}
-                </option>
-              </select>
-            </div>
-
             <!-- Company Submission Selector -->
-            <div v-if="userCompanyAccount" class="border-t border-gray-200 pt-6 mt-6">
+            <div v-if="userCompanyAccount">
               <div class="mb-6">
                 <h3 class="text-sm font-semibold text-gray-900 mb-3">Submitting As</h3>
                 <div class="space-y-3">
@@ -422,6 +405,31 @@
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- Step 5: Property Details -->
+        <div v-if="currentStep === 5">
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">Property Details</h2>
+          <p class="text-gray-600 mb-8">Provide details about the property for this application</p>
+
+          <div class="space-y-6">
+            <!-- Property Search/Select -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Select Existing Property or Enter New
+              </label>
+              <select
+                v-model="formData.property"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                @change="onPropertySelect"
+              >
+                <option value="">-- Select a property or enter new --</option>
+                <option v-for="prop in properties.data" :key="prop.name" :value="prop.name">
+                  {{ prop.street_address }}, {{ prop.suburb }}{{ prop.legal_description ? ' - ' + prop.legal_description : '' }}
+                </option>
+              </select>
+            </div>
 
             <!-- Manual Property Entry with Autocomplete -->
             <div class="space-y-4">
@@ -595,8 +603,8 @@
           </div>
         </div>
 
-        <!-- Step 5: RC Details (Resource Consent Only) -->
-        <div v-if="currentStep === 5 && isResourceConsent">
+        <!-- Step 6: RC Details (Resource Consent Only) -->
+        <div v-if="currentStep === 6 && isResourceConsent">
           <h2 class="text-2xl font-bold text-gray-900 mb-2">Resource Consent Details</h2>
           <p class="text-gray-600 mb-8">Provide Resource Management Act (RMA) specific information</p>
 
@@ -5796,11 +5804,10 @@ const canProceed = () => {
       // Step 3: Process Info - always can proceed (just informational)
       return true
     case 4:
-      // Step 4: Property - Require either property link OR property_address, plus applicant fields
-      const hasProperty = formData.value.property || formData.value.property_address
+      // Step 4: Applicant Details - Require applicant info
       const hasApplicantInfo = formData.value.applicant_phone && formData.value.applicant_type && formData.value.applicant_name && formData.value.applicant_email
 
-      // NEW: Validate owner details if applicant is not the owner
+      // Validate owner details if applicant is not the owner
       const ownerDetailsValid = !formData.value.applicant_is_not_owner || (
         formData.value.owner_name &&
         formData.value.owner_email &&
@@ -5808,9 +5815,13 @@ const canProceed = () => {
         formData.value.owner_address
       )
 
-      return !!(hasProperty && hasApplicantInfo && ownerDetailsValid)
+      return !!(hasApplicantInfo && ownerDetailsValid)
     case 5:
-      // Step 5: RC Details (RC only) OR Review (non-RC)
+      // Step 5: Property Details - Require either property link OR property_address
+      const hasProperty = formData.value.property || formData.value.property_address
+      return !!hasProperty
+    case 6:
+      // Step 6: RC Details (RC only) OR Review (non-RC)
       if (isResourceConsent.value) {
         // RC Details step - validate required fields
 
@@ -5853,8 +5864,8 @@ const canProceed = () => {
         // This is Review step for non-RC requests - always allow
         return true
       }
-    case 6:
-      // Step 6: Review step (RC only) - always allow to proceed
+    case 7:
+      // Step 7: Review step (RC only) - always allow to proceed
       return true
     default:
       return true
