@@ -36,7 +36,7 @@ export function useFormValidation(formData, currentStep, isResourceConsent) {
       return true
     }
 
-    // Step 4: Applicant Details
+    // Step 4: Applicant Details & Delivery/Payment (merged)
     if (step === 4) {
       const hasApplicantName = !!formData.value.applicant_name?.trim()
       const hasApplicantEmail = !!formData.value.applicant_email?.trim()
@@ -46,18 +46,7 @@ export function useFormValidation(formData, currentStep, isResourceConsent) {
       const ownerInfoValid = !formData.value.applicant_is_not_owner ||
         (formData.value.applicant_is_not_owner && !!formData.value.owner_name?.trim())
 
-      return hasApplicantName && hasApplicantEmail && hasApplicantPhone &&
-        hasApplicantType && ownerInfoValid
-    }
-
-    // Step 5: Property Details
-    if (step === 5) {
-      return !!formData.value.property_address?.trim()
-    }
-
-    // Step 6: Delivery & Payment
-    if (step === 6) {
-      const hasDeliveryPref = !!formData.value.delivery_preference
+      // Delivery & Payment validation (merged into Step 4)
       const hasInvoiceTo = !!formData.value.invoice_to
 
       const invoiceDetailsValid = formData.value.invoice_to !== 'Other' ||
@@ -66,17 +55,23 @@ export function useFormValidation(formData, currentStep, isResourceConsent) {
       const depositValid = !formData.value.transfer_deposit_required ||
         !!formData.value.transfer_deposit_consent_number?.trim()
 
-      return hasDeliveryPref && hasInvoiceTo && invoiceDetailsValid && depositValid
+      return hasApplicantName && hasApplicantEmail && hasApplicantPhone &&
+        hasApplicantType && ownerInfoValid && hasInvoiceTo && invoiceDetailsValid && depositValid
     }
 
-    // Step 7: Consent Type (Resource Consent only)
-    if (step === 7 && isResourceConsent.value) {
+    // Step 5: Property Details
+    if (step === 5) {
+      return !!formData.value.property_address?.trim()
+    }
+
+    // Step 6: Consent Type (Resource Consent only)
+    if (step === 6 && isResourceConsent.value) {
       // Activity status is now optional - can proceed with just consent types
       return formData.value.consent_types?.length > 0
     }
 
-    // Step 8: Consent Details (Resource Consent only) - NEW STEP
-    if (step === 8 && isResourceConsent.value) {
+    // Step 7: Consent Details (Resource Consent only)
+    if (step === 7 && isResourceConsent.value) {
       // Duration validation - each consent type must have duration specified
       const consentTypes = formData.value.consent_types || []
       const hasDurations = consentTypes.every(ct => {
@@ -93,22 +88,22 @@ export function useFormValidation(formData, currentStep, isResourceConsent) {
       return hasDurations && consentNoticeValid
     }
 
-    // Step 9: Proposal Details (was Step 8)
-    if (step === 9 && isResourceConsent.value) {
+    // Step 8: Proposal Details
+    if (step === 8 && isResourceConsent.value) {
       const hasBriefDescription = !!formData.value.brief_description?.trim()
       const hasDetailedDescription = !!formData.value.detailed_description?.trim()
       // Detailed breakdown (proposal_details) is optional
       return hasBriefDescription && hasDetailedDescription
     }
 
-    // Step 10: Site & Environment (was Step 9)
-    if (step === 10 && isResourceConsent.value) {
+    // Step 9: Site & Environment
+    if (step === 9 && isResourceConsent.value) {
       return !!formData.value.site_description?.trim() &&
         !!formData.value.current_use?.trim()
     }
 
-    // Step 11: NES & Hazards (was Step 10) - with natural hazards validation for LUC/SC
-    if (step === 11 && isResourceConsent.value) {
+    // Step 10: NES & Hazards - with natural hazards validation for LUC/SC
+    if (step === 10 && isResourceConsent.value) {
       const requiresHazards = formData.value.consent_types?.some(ct =>
         ct.consent_type === 'Land Use' || ct.consent_type === 'Subdivision'
       )
@@ -126,42 +121,43 @@ export function useFormValidation(formData, currentStep, isResourceConsent) {
       return true // Optional for other consent types
     }
 
-    // Step 12: AEE (was Step 11)
-    if (step === 12 && isResourceConsent.value) {
+    // Step 11: AEE
+    if (step === 11 && isResourceConsent.value) {
       return !!formData.value.aee_effects_description?.trim() &&
         !!formData.value.aee_mitigation_measures?.trim() &&
         !!formData.value.aee_alternatives_considered?.trim()
     }
 
-    // Step 13: Plan Assessment (was Step 12)
+    // Step 12: Plan Assessment
+    if (step === 12 && isResourceConsent.value) {
+      return true // Optional
+    }
+
+    // Step 13: Affected Parties
     if (step === 13 && isResourceConsent.value) {
       return true // Optional
     }
 
-    // Step 14: Affected Parties (was Step 13)
+    // Step 14: Specialist Reports
     if (step === 14 && isResourceConsent.value) {
       return true // Optional
     }
 
-    // Step 15: Specialist Reports (was Step 14)
+    // Step 15: Proposed Conditions
     if (step === 15 && isResourceConsent.value) {
       return true // Optional
     }
 
-    // Step 16: Proposed Conditions (was Step 15)
+    // Step 16: Declarations
     if (step === 16 && isResourceConsent.value) {
-      return true // Optional
-    }
-
-    // Step 17: Declarations (was Step 16)
-    if (step === 17 && isResourceConsent.value) {
       return formData.value.declaration_rma_compliance &&
         formData.value.declaration_public_information &&
         formData.value.declaration_authorized
     }
 
-    // Step 18: Review (was Step 17)
-    if (step === 18) {
+    // Review step - always last (step number computed dynamically)
+    const isReviewStep = !isResourceConsent.value && step === 6 || isResourceConsent.value && step === 17
+    if (isReviewStep) {
       return true
     }
 
