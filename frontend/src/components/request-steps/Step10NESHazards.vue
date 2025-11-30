@@ -59,12 +59,54 @@
         </div>
       </div>
 
-      <!-- Natural Hazards (RMA s104) -->
+      <!-- Natural Hazards (RMA s104 & s106) -->
       <div class="border-t border-gray-200 pt-8">
-        <h3 class="text-xl font-semibold text-gray-900 mb-4">Natural Hazards (RMA s104)</h3>
+        <h3 class="text-xl font-semibold text-gray-900 mb-4">Natural Hazards (RMA s.104 & s.106)</h3>
+
+        <!-- Conditional importance notice for LUC/SC -->
+        <div v-if="requiresHazardsAssessment" class="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+          <div class="flex items-start">
+            <svg class="w-5 h-5 text-amber-600 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <div>
+              <h5 class="font-semibold text-amber-900 text-sm">Critical Assessment Required - s.106 RMA</h5>
+              <p class="text-amber-800 text-sm mt-1">
+                <strong>Important:</strong> Under s.106 RMA, councils <strong>must refuse</strong> Land Use and Subdivision consents if building on land subject to certain natural hazards would:
+              </p>
+              <ul class="text-amber-800 text-sm mt-2 ml-4 list-disc">
+                <li>Accelerate, worsen, or result in material damage</li>
+                <li>Create or worsen a natural hazard on the property or other property</li>
+              </ul>
+              <p class="text-amber-800 text-sm mt-2">
+                Please carefully identify all natural hazards affecting the site and detail mitigation measures.
+              </p>
+            </div>
+          </div>
+        </div>
+
         <p class="text-sm text-gray-600 mb-4">
-          Under s104(1)(c) RMA, councils must consider the risk of natural hazards. Identify any hazards that may affect the site.
+          Under s.104(1)(c) RMA, councils must consider the risk of natural hazards. Identify any hazards that may affect the site.
         </p>
+
+        <!-- "No hazards" confirmation checkbox for LUC/SC -->
+        <div v-if="requiresHazardsAssessment && (!localData.natural_hazards || localData.natural_hazards.length === 0)" class="mb-4">
+          <label class="flex items-start p-3 border-2 rounded-lg cursor-pointer bg-white transition-colors"
+            :class="localData.no_natural_hazards_confirmed ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-blue-300'"
+          >
+            <input
+              v-model="localData.no_natural_hazards_confirmed"
+              type="checkbox"
+              class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <div class="ml-3">
+              <span class="font-medium text-gray-900">I confirm there are no natural hazards affecting this site</span>
+              <p class="text-xs text-gray-600 mt-1">
+                By checking this box, I confirm that I have considered all potential natural hazards (flooding, erosion, landslip, earthquake, tsunami, etc.) and none are applicable to this site.
+              </p>
+            </div>
+          </label>
+        </div>
 
         <!-- Add Hazard Button -->
         <div class="flex justify-between items-center mb-4">
@@ -169,7 +211,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, computed, reactive } from 'vue'
+import { defineProps, defineEmits, computed, reactive, watch } from 'vue'
 
 const props = defineProps({
   modelValue: {
@@ -183,6 +225,26 @@ const emit = defineEmits(['update:modelValue'])
 const localData = computed({
   get: () => props.modelValue,
   set: (value) => emit('update:modelValue', value)
+})
+
+// Add consent type checks
+const hasConsentType = (type) => {
+  return props.modelValue.consent_types?.some(ct => ct.consent_type === type) || false
+}
+
+const requiresHazardsAssessment = computed(() => {
+  return hasConsentType('Land Use') || hasConsentType('Subdivision')
+})
+
+// Add no_natural_hazards_confirmed field handling
+watch(() => localData.value.no_natural_hazards_confirmed, (newVal) => {
+  if (newVal && requiresHazardsAssessment.value) {
+    // Clear any hazards if user confirms none
+    const updatedData = { ...props.modelValue }
+    updatedData.natural_hazards = []
+    updatedData.no_natural_hazards_confirmed = true
+    emit('update:modelValue', updatedData)
+  }
 })
 
 // NES Types matching backend schema

@@ -30,6 +30,7 @@ declare module 'vue' {
     Step4ApplicantDetails: typeof import('./src/components/request-steps/Step4ApplicantDetails.vue')['default']
     Step5PropertyDetails: typeof import('./src/components/request-steps/Step5PropertyDetails.vue')['default']
     Step6DeliveryPayment: typeof import('./src/components/request-steps/Step6DeliveryPayment.vue')['default']
+    Step7BConsentDetails: typeof import('./src/components/request-steps/Step7BConsentDetails.vue')['default']
     Step7ConsentType: typeof import('./src/components/request-steps/Step7ConsentType.vue')['default']
     Step8ProposalDetails: typeof import('./src/components/request-steps/Step8ProposalDetails.vue')['default']
     Step9SiteEnvironment: typeof import('./src/components/request-steps/Step9SiteEnvironment.vue')['default']

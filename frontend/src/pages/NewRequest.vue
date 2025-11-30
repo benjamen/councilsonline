@@ -102,45 +102,58 @@
         />
 
         <!-- Step 7: Consent Type & Activity Status (Resource Consent Only) -->
+        <!-- Step 7: Consent Type (Resource Consent Only) -->
         <div v-if="currentStep === 7 && isResourceConsent">
             <Step7ConsentType v-model="formData" />
         </div>
 
-        <!-- Step 8-15: RC-specific steps -->
+        <!-- Step 8: Consent Details (Resource Consent Only) - NEW STEP -->
         <div v-if="currentStep === 8 && isResourceConsent">
+            <Step7BConsentDetails v-model="formData" />
+        </div>
+
+        <!-- Step 9: Proposal Details (was Step 8) -->
+        <div v-if="currentStep === 9 && isResourceConsent">
             <Step8ProposalDetails v-model="formData" />
         </div>
 
-        <div v-if="currentStep === 9 && isResourceConsent">
+        <!-- Step 10: Site & Environment (was Step 9) -->
+        <div v-if="currentStep === 10 && isResourceConsent">
             <Step9SiteEnvironment v-model="formData" />
         </div>
 
-        <div v-if="currentStep === 10 && isResourceConsent">
+        <!-- Step 11: NES & Hazards (was Step 10) -->
+        <div v-if="currentStep === 11 && isResourceConsent">
             <Step10NESHazards v-model="formData" />
         </div>
 
-        <div v-if="currentStep === 11 && isResourceConsent">
+        <!-- Step 12: AEE (was Step 11) -->
+        <div v-if="currentStep === 12 && isResourceConsent">
             <Step11AEE v-model="formData" />
         </div>
 
-        <div v-if="currentStep === 12 && isResourceConsent">
+        <!-- Step 13: Plan Assessment (was Step 12) -->
+        <div v-if="currentStep === 13 && isResourceConsent">
             <Step12PlanAssessment v-model="formData" />
         </div>
 
-        <div v-if="currentStep === 13 && isResourceConsent">
+        <!-- Step 14: Affected Parties (was Step 13) -->
+        <div v-if="currentStep === 14 && isResourceConsent">
             <Step13AffectedParties v-model="formData" />
         </div>
 
-        <div v-if="currentStep === 14 && isResourceConsent">
+        <!-- Step 15: Specialist Reports (was Step 14) -->
+        <div v-if="currentStep === 15 && isResourceConsent">
             <Step14SpecialistReports v-model="formData" />
         </div>
 
-        <div v-if="currentStep === 15 && isResourceConsent">
+        <!-- Step 16: Proposed Conditions (was Step 15) -->
+        <div v-if="currentStep === 16 && isResourceConsent">
             <Step15ProposedConditions v-model="formData" />
         </div>
 
-        <!-- Step 16: Statutory Declarations (Resource Consent Only) -->
-        <div v-if="currentStep === 16 && isResourceConsent">
+        <!-- Step 17: Declarations (was Step 16) -->
+        <div v-if="currentStep === 17 && isResourceConsent">
             <Step16Declarations v-model="formData" />
         </div>
 
@@ -993,6 +1006,7 @@ import Step4ApplicantDetails from '../components/request-steps/Step4ApplicantDet
 import Step5PropertyDetails from '../components/request-steps/Step5PropertyDetails.vue'
 import Step6DeliveryPayment from '../components/request-steps/Step6DeliveryPayment.vue'
 import Step7ConsentType from '../components/request-steps/Step7ConsentType.vue'
+import Step7BConsentDetails from '../components/request-steps/Step7BConsentDetails.vue'
 import Step8ProposalDetails from '../components/request-steps/Step8ProposalDetails.vue'
 import Step9SiteEnvironment from '../components/request-steps/Step9SiteEnvironment.vue'
 import Step10NESHazards from '../components/request-steps/Step10NESHazards.vue'
@@ -1050,15 +1064,16 @@ const steps = computed(() => {
   // Add RC-specific steps (only for RC requests)
   if (isResourceConsent.value) {
     baseSteps.push({ title: 'Consent Type', number: 7 })
-    baseSteps.push({ title: 'Proposal', number: 8 })
-    baseSteps.push({ title: 'Site & Environment', number: 9 })
-    baseSteps.push({ title: 'NES & Hazards', number: 10 })
-    baseSteps.push({ title: 'AEE', number: 11 })
-    baseSteps.push({ title: 'Plan Assessment', number: 12 })
-    baseSteps.push({ title: 'Affected Parties', number: 13 })
-    baseSteps.push({ title: 'Reports', number: 14 })
-    baseSteps.push({ title: 'Conditions', number: 15 })
-    baseSteps.push({ title: 'Declarations', number: 16 })
+    baseSteps.push({ title: 'Consent Details', number: 8 }) // NEW STEP
+    baseSteps.push({ title: 'Proposal', number: 9 })
+    baseSteps.push({ title: 'Site & Environment', number: 10 })
+    baseSteps.push({ title: 'NES & Hazards', number: 11 })
+    baseSteps.push({ title: 'AEE', number: 12 })
+    baseSteps.push({ title: 'Plan Assessment', number: 13 })
+    baseSteps.push({ title: 'Affected Parties', number: 14 })
+    baseSteps.push({ title: 'Reports', number: 15 })
+    baseSteps.push({ title: 'Conditions', number: 16 })
+    baseSteps.push({ title: 'Declarations', number: 17 })
   }
 
   // Review step is always last
@@ -1574,6 +1589,35 @@ const hasFormChanges = computed(() => {
 // Computed property to check if Resource Consent request
 const isResourceConsent = computed(() => {
   return formData.value.request_category === 'Resource Consent'
+})
+
+// Consent type helpers
+const hasConsentType = (type) => {
+  return formData.value.consent_types?.some(ct => ct.consent_type === type) || false
+}
+
+const isLandUse = computed(() => hasConsentType('Land Use'))
+const isSubdivision = computed(() => hasConsentType('Subdivision'))
+const isWaterPermit = computed(() => hasConsentType('Water Permit'))
+const isDischargePermit = computed(() => hasConsentType('Discharge Permit'))
+const isCoastalPermit = computed(() => hasConsentType('Coastal Permit'))
+
+// Combined checks for common requirements
+const requiresNaturalHazardsAssessment = computed(() => {
+  return isLandUse.value || isSubdivision.value
+})
+
+const eligibleForFastTrack = computed(() => {
+  // Fast-track available for all except Subdivision, and only if Controlled activity
+  const isControlled = formData.value.activity_status === 'Controlled'
+  const notSubdivision = !isSubdivision.value
+  return isControlled && notSubdivision && isResourceConsent.value
+})
+
+const hasUnlimitedDuration = computed(() => {
+  // LUC and SC can have unlimited duration
+  return (isLandUse.value || isSubdivision.value) &&
+         !(isWaterPermit.value || isDischargePermit.value || isCoastalPermit.value)
 })
 
 // Activity status validation warning
