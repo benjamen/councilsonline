@@ -16,19 +16,23 @@
             :key="ct.consent_type"
             class="border border-gray-200 rounded-lg p-4 bg-gray-50"
           >
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label :for="getDurationInputId(ct.consent_type)" class="block text-sm font-medium text-gray-700 mb-2">
               {{ ct.consent_type }} Duration
             </label>
             <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:items-start">
               <div class="flex-1">
                 <div class="flex items-center gap-2">
                   <input
+                    :id="getDurationInputId(ct.consent_type)"
                     v-model.number="getDurationData(ct.consent_type).duration_years"
                     type="number"
                     :min="1"
                     :max="getMaxDuration(ct.consent_type)"
                     placeholder="e.g., 10"
                     :disabled="getDurationData(ct.consent_type).duration_unlimited"
+                    :aria-label="`Duration in years for ${ct.consent_type} consent`"
+                    :aria-describedby="getDurationHelpId(ct.consent_type)"
+                    :aria-invalid="!!getDurationError(ct.consent_type)"
                     :class="[
                       'flex-1 min-w-0 px-3 py-2 rounded-lg transition-colors',
                       'focus:ring-2 focus:ring-blue-500 focus:outline-none',
@@ -41,17 +45,18 @@
                 </div>
 
                 <!-- Real-time validation messages -->
-                <div class="mt-1.5 min-h-[20px]">
+                <div :id="getDurationHelpId(ct.consent_type)" class="mt-1.5 min-h-[20px]">
                   <p v-if="getDurationError(ct.consent_type)"
+                     role="alert"
                      class="text-xs text-red-600 flex items-center gap-1.5 font-medium">
-                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                       <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
                     </svg>
                     {{ getDurationError(ct.consent_type) }}
                   </p>
                   <p v-else-if="durationTouched[ct.consent_type] && getDurationData(ct.consent_type).duration_years && !getDurationData(ct.consent_type).duration_unlimited"
                      class="text-xs text-green-600 flex items-center gap-1.5 font-medium">
-                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                       <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                     </svg>
                     Valid duration
@@ -62,10 +67,13 @@
                 </div>
               </div>
               <label v-if="canBeUnlimited(ct.consent_type)"
+                     :for="getUnlimitedCheckboxId(ct.consent_type)"
                      class="flex items-center gap-2 whitespace-nowrap pl-4 sm:pl-0 border-l-2 sm:border-l-0 border-gray-200 sm:pt-2">
                 <input
+                  :id="getUnlimitedCheckboxId(ct.consent_type)"
                   v-model="getDurationData(ct.consent_type).duration_unlimited"
                   type="checkbox"
+                  :aria-label="`Unlimited duration for ${ct.consent_type} consent`"
                   class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   @change="onUnlimitedToggle(ct.consent_type)"
                 />
@@ -341,6 +349,19 @@ const getDurationError = (consentType) => {
 // Handle unlimited checkbox toggle
 const onUnlimitedToggle = (consentType) => {
   validateDuration(consentType)
+}
+
+// Accessibility helper functions - Generate unique IDs for ARIA
+const getDurationInputId = (consentType) => {
+  return `duration-${consentType.toLowerCase().replace(/\s+/g, '-')}`
+}
+
+const getDurationHelpId = (consentType) => {
+  return `duration-help-${consentType.toLowerCase().replace(/\s+/g, '-')}`
+}
+
+const getUnlimitedCheckboxId = (consentType) => {
+  return `unlimited-${consentType.toLowerCase().replace(/\s+/g, '-')}`
 }
 
 // Watch duration data and sync to modelValue

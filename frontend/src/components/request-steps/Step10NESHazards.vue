@@ -15,9 +15,15 @@
           <div
             v-for="nes in nesTypes"
             :key="nes.value"
-            class="border-2 rounded-lg p-4 cursor-pointer transition-all hover:shadow-md"
+            role="checkbox"
+            :aria-checked="getNESData(nes.value).applies"
+            :aria-label="`${nes.label} - Click to toggle applicability`"
+            :tabindex="0"
+            class="border-2 rounded-lg p-4 cursor-pointer transition-all hover:shadow-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
             :class="getNESData(nes.value).applies ? 'border-blue-600 bg-blue-50' : 'border-gray-200'"
             @click="toggleNES(nes.value)"
+            @keydown.space.prevent="toggleNES(nes.value)"
+            @keydown.enter.prevent="toggleNES(nes.value)"
           >
             <div class="flex items-start">
               <input
@@ -25,6 +31,7 @@
                 :checked="getNESData(nes.value).applies"
                 class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded pointer-events-none"
                 readonly
+                aria-hidden="true"
               />
               <div class="ml-3 flex-1">
                 <h4 class="text-base font-semibold text-gray-900">{{ nes.label }}</h4>
@@ -91,17 +98,19 @@
 
         <!-- "No hazards" confirmation checkbox for LUC/SC -->
         <div v-if="requiresHazardsAssessment && (!localData.natural_hazards || localData.natural_hazards.length === 0)" class="mb-4">
-          <label class="flex items-start p-3 border-2 rounded-lg cursor-pointer bg-white transition-colors"
+          <label for="no-hazards-confirmation" class="flex items-start p-3 border-2 rounded-lg cursor-pointer bg-white transition-colors"
             :class="localData.no_natural_hazards_confirmed ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-blue-300'"
           >
             <input
+              id="no-hazards-confirmation"
               v-model="localData.no_natural_hazards_confirmed"
               type="checkbox"
+              aria-describedby="no-hazards-description"
               class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
             />
             <div class="ml-3">
               <span class="font-medium text-gray-900">I confirm there are no natural hazards affecting this site</span>
-              <p class="text-xs text-gray-600 mt-1">
+              <p id="no-hazards-description" class="text-xs text-gray-600 mt-1">
                 By checking this box, I confirm that I have considered all potential natural hazards (flooding, erosion, landslip, earthquake, tsunami, etc.) and none are applicable to this site.
               </p>
             </div>
