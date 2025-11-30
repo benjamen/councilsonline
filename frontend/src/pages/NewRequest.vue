@@ -1943,11 +1943,16 @@ const canProceed = () => {
       return true
 
     case 9:
-      // Step 9: AEE (RC only) - REQUIRED
+      // Step 9: AEE (RC only) - REQUIRED: activity description, existing environment, assessment of effects
       if (isResourceConsent.value) {
-        return !!formData.value.aee_effects_description?.trim() &&
-          !!formData.value.aee_mitigation_measures?.trim() &&
-          !!formData.value.aee_alternatives_considered?.trim()
+        const hasAEE = !!formData.value.aee_activity_description?.trim() &&
+          !!formData.value.aee_existing_environment?.trim() &&
+          !!formData.value.assessment_of_effects?.trim()
+        console.log('[NewRequest] Step 9 - hasAEE:', hasAEE,
+          'activity:', !!formData.value.aee_activity_description,
+          'environment:', !!formData.value.aee_existing_environment,
+          'effects:', !!formData.value.assessment_of_effects)
+        return hasAEE
       }
       return true
 

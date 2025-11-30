@@ -122,11 +122,11 @@ export function useFormValidation(formData, currentStep, isResourceConsent) {
       return true // Optional for other consent types
     }
 
-    // Step 9: AEE
+    // Step 9: AEE - REQUIRED: activity description, existing environment, assessment of effects
     if (step === 9 && isResourceConsent.value) {
-      return !!formData.value.aee_effects_description?.trim() &&
-        !!formData.value.aee_mitigation_measures?.trim() &&
-        !!formData.value.aee_alternatives_considered?.trim()
+      return !!formData.value.aee_activity_description?.trim() &&
+        !!formData.value.aee_existing_environment?.trim() &&
+        !!formData.value.assessment_of_effects?.trim()
     }
 
     // Step 10: Plan Assessment
@@ -204,9 +204,9 @@ export function useFormValidation(formData, currentStep, isResourceConsent) {
       const hasBriefDescription = !!formData.value.brief_description?.trim()
       const hasDetailedDescription = !!formData.value.detailed_description?.trim()
       const hasCurrentUse = !!formData.value.current_use?.trim()
-      const hasAEE = !!formData.value.aee_effects_description &&
-        !!formData.value.aee_mitigation_measures &&
-        !!formData.value.aee_alternatives_considered
+      const hasAEE = !!formData.value.aee_activity_description?.trim() &&
+        !!formData.value.aee_existing_environment?.trim() &&
+        !!formData.value.assessment_of_effects?.trim()
       const hasDeclarations = formData.value.declaration_rma_compliance &&
         formData.value.declaration_public_information &&
         formData.value.declaration_authorized
