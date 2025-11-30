@@ -68,26 +68,34 @@ export function useFormValidation(formData, currentStep, isResourceConsent) {
     if (step === 6 && isResourceConsent.value) {
       // Consent types must be selected
       const hasConsentTypes = formData.value.consent_types?.length > 0
+      console.log('Step 6 Validation - hasConsentTypes:', hasConsentTypes, formData.value.consent_types)
       if (!hasConsentTypes) return false
 
       // Duration validation - each consent type must have duration specified
       const consentTypes = formData.value.consent_types || []
       const hasDurations = consentTypes.every(ct => {
         const durationData = formData.value.consent_type_durations?.find(d => d.consent_type === ct.consent_type)
+        console.log('Duration check for', ct.consent_type, ':', durationData)
         if (!durationData) return false
         return durationData.duration_unlimited || (durationData.duration_years && durationData.duration_years > 0)
       })
+      console.log('Step 6 Validation - hasDurations:', hasDurations)
 
       // Consent notice validation (Subdivision only)
       const consentNoticeValid = !hasSubdivision(formData.value) ||
         !formData.value.consent_notice_required ||
         !!formData.value.consent_notice_details?.trim()
+      console.log('Step 6 Validation - consentNoticeValid:', consentNoticeValid)
 
       // Proposal descriptions are required
       const hasBriefDescription = !!formData.value.brief_description?.trim()
       const hasDetailedDescription = !!formData.value.detailed_description?.trim()
+      console.log('Step 6 Validation - hasBriefDescription:', hasBriefDescription, 'hasDetailedDescription:', hasDetailedDescription)
+      console.log('Brief:', formData.value.brief_description, 'Detailed:', formData.value.detailed_description)
 
-      return hasDurations && consentNoticeValid && hasBriefDescription && hasDetailedDescription
+      const result = hasDurations && consentNoticeValid && hasBriefDescription && hasDetailedDescription
+      console.log('Step 6 Validation - FINAL RESULT:', result)
+      return result
     }
 
     // Step 7: Site & Environment

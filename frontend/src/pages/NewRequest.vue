@@ -1877,73 +1877,96 @@ const canProceed = () => {
       return !!hasProperty
 
     case 6:
-      // Step 6: Delivery & Payment - Validate delivery preference and invoice details
-      const hasDeliveryPreference = !!formData.value.delivery_preference
+      // Step 6: Consent Information (RC only) - MERGED: Type + Details + Proposal
+      if (isResourceConsent.value) {
+        // Consent types must be selected
+        const hasConsentTypes = formData.value.consent_types && formData.value.consent_types.length > 0
+        console.log('[NewRequest] Step 6 - hasConsentTypes:', hasConsentTypes, formData.value.consent_types)
+        if (!hasConsentTypes) return false
 
-      const hasInvoiceDetails = formData.value.invoice_to === 'Applicant' || (
-        formData.value.invoice_to === 'Other' &&
-        formData.value.invoice_name &&
-        formData.value.invoice_email &&
-        formData.value.invoice_address
-      )
+        // Duration validation - each consent type must have duration specified
+        const consentTypes = formData.value.consent_types || []
+        const hasDurations = consentTypes.every(ct => {
+          const durationData = formData.value.consent_type_durations?.find(d => d.consent_type === ct.consent_type)
+          console.log('[NewRequest] Step 6 - Duration check for', ct.consent_type, ':', durationData)
+          if (!durationData) return false
+          return durationData.duration_unlimited || (durationData.duration_years && durationData.duration_years > 0)
+        })
+        console.log('[NewRequest] Step 6 - hasDurations:', hasDurations)
 
-      const transferDepositValid = !formData.value.transfer_deposit_required ||
-        !!formData.value.transfer_deposit_consent_number
+        // Helper function to check if Subdivision consent is selected
+        const hasSubdivision = formData.value.consent_types?.some(ct => ct.consent_type === 'Subdivision') || false
 
-      return !!(hasDeliveryPreference && hasInvoiceDetails && transferDepositValid)
+        // Consent notice validation (Subdivision only)
+        const consentNoticeValid = !hasSubdivision ||
+          !formData.value.consent_notice_required ||
+          !!formData.value.consent_notice_details?.trim()
+        console.log('[NewRequest] Step 6 - consentNoticeValid:', consentNoticeValid)
+
+        // Proposal descriptions are required
+        const hasBriefDescription = !!formData.value.brief_description?.trim()
+        const hasDetailedDescription = !!formData.value.detailed_description?.trim()
+        console.log('[NewRequest] Step 6 - hasBriefDescription:', hasBriefDescription, 'hasDetailedDescription:', hasDetailedDescription)
+        console.log('[NewRequest] Step 6 - Brief:', formData.value.brief_description, 'Detailed:', formData.value.detailed_description)
+
+        const result = hasDurations && consentNoticeValid && hasBriefDescription && hasDetailedDescription
+        console.log('[NewRequest] Step 6 - FINAL RESULT:', result)
+        return result
+      }
+      // Non-RC applications skip this step
+      return true
 
     case 7:
-      // Step 7: Consent Type & Activity Status (RC only)
+      // Step 7: Site & Environment (RC only) - REQUIRED
       if (isResourceConsent.value) {
-        const hasConsentTypes = formData.value.consent_types && formData.value.consent_types.length > 0
-        const hasActivityStatus = !!formData.value.activity_status
-        return !!(hasConsentTypes && hasActivityStatus)
+        return !!formData.value.site_description?.trim() && !!formData.value.current_use?.trim()
       }
       return true
 
     case 8:
-      // Step 8: Proposal Details (RC only) - Optional, always can proceed
+      // Step 8: NES & Hazards (RC only) - Natural hazards validation for LUC/SC
+      if (isResourceConsent.value) {
+        const requiresHazards = formData.value.consent_types?.some(ct =>
+          ct.consent_type === 'Land Use' || ct.consent_type === 'Subdivision'
+        )
+        if (requiresHazards) {
+          const hasHazards = formData.value.natural_hazards && formData.value.natural_hazards.length > 0
+          const confirmedNoHazards = formData.value.no_natural_hazards_confirmed
+          if (!hasHazards && !confirmedNoHazards) {
+            return false
+          }
+        }
+        return true
+      }
       return true
 
     case 9:
-      // Step 9: Site & Environment (RC only) - Optional, always can proceed
+      // Step 9: AEE (RC only) - REQUIRED
+      if (isResourceConsent.value) {
+        return !!formData.value.aee_effects_description?.trim() &&
+          !!formData.value.aee_mitigation_measures?.trim() &&
+          !!formData.value.aee_alternatives_considered?.trim()
+      }
       return true
 
     case 10:
-      // Step 10: NES & Natural Hazards (RC only) - Optional, always can proceed
+      // Step 10: Plan Assessment (RC only) - Optional
       return true
 
     case 11:
-      // Step 11: Assessment of Environmental Effects (RC only) - REQUIRED core AEE fields
-      // TODO: Re-enable validation once Step 11 form is implemented
-      // if (isResourceConsent.value) {
-      //   const hasStructuredAEE = !!(
-      //     formData.value.aee_activity_description &&
-      //     formData.value.aee_existing_environment &&
-      //     formData.value.assessment_of_effects
-      //   )
-      //   return hasStructuredAEE
-      // }
-      return true  // Temporarily allow proceeding while step is placeholder
+      // Step 11: Affected Parties (RC only) - Optional
+      return true
 
     case 12:
-      // Step 12: Plan Assessment (RC only) - Optional, always can proceed
+      // Step 12: Specialist Reports (RC only) - Optional
       return true
 
     case 13:
-      // Step 13: Affected Parties (RC only) - Optional, always can proceed
+      // Step 13: Proposed Conditions (RC only) - Optional
       return true
 
     case 14:
-      // Step 14: Specialist Reports (RC only) - Optional, always can proceed
-      return true
-
-    case 15:
-      // Step 15: Proposed Conditions (RC only) - Optional, always can proceed
-      return true
-
-    case 16:
-      // Step 16: Statutory Declarations (RC only) - REQUIRED all 3 declarations
+      // Step 14: Declarations (RC only) - REQUIRED all 3 declarations
       if (isResourceConsent.value) {
         const hasDeclarations = !!(
           formData.value.declaration_rma_compliance &&
