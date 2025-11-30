@@ -32,6 +32,14 @@
   "column_break_consent_1",
   "consent_types",
   "activity_status",
+  "section_break_consent_details",
+  "consent_type_durations",
+  "lapsing_period_years",
+  "column_break_consent_details",
+  "consent_notice_required",
+  "consent_notice_details",
+  "coastal_occupation_charge_acknowledged",
+  "request_fast_track",
   "section_break_permitted_boundary",
   "permitted_boundary_activity",
   "boundary_description",
@@ -73,7 +81,9 @@
   "contamination_status_hail",
   "section_break_natural_hazards",
   "natural_hazards",
+  "no_natural_hazards_confirmed",
   "section_break_nes",
+  "nes_items",
   "nes_assessments",
   "section_break_hail",
   "hail_activities",
@@ -329,6 +339,58 @@
    "label": "Activity Status",
    "options": "Permitted\nControlled\nRestricted Discretionary\nDiscretionary\nNon-Complying\nProhibited\nPermitted Boundary Activity",
    "reqd": 1
+  },
+  {
+   "description": "Consent-type-specific administrative details per RMA requirements",
+   "fieldname": "section_break_consent_details",
+   "fieldtype": "Section Break",
+   "label": "Consent Details (s.123, s.221 RMA)"
+  },
+  {
+   "fieldname": "consent_type_durations",
+   "fieldtype": "Table",
+   "label": "Duration Per Consent Type",
+   "options": "Request Consent Type Duration",
+   "description": "Requested duration for each consent type (max 35 years for WP/DP/CP, unlimited for LUC/SC per s.123 RMA)"
+  },
+  {
+   "fieldname": "lapsing_period_years",
+   "fieldtype": "Int",
+   "label": "Lapsing Period (Years)",
+   "default": "5",
+   "description": "Time period before consent lapses if not given effect to (s.125 RMA)"
+  },
+  {
+   "fieldname": "column_break_consent_details",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "consent_notice_required",
+   "fieldtype": "Check",
+   "label": "Consent Notice Required (s.221 RMA)",
+   "default": "0",
+   "description": "For subdivision consents - whether a consent notice should be placed on the record of title"
+  },
+  {
+   "depends_on": "consent_notice_required",
+   "fieldname": "consent_notice_details",
+   "fieldtype": "Text",
+   "label": "Consent Notice Details",
+   "description": "Describe the matters to be included in the consent notice"
+  },
+  {
+   "fieldname": "coastal_occupation_charge_acknowledged",
+   "fieldtype": "Check",
+   "label": "Coastal Occupation Charge Acknowledged",
+   "default": "0",
+   "description": "For Coastal Permits - acknowledgment that occupation charge may apply"
+  },
+  {
+   "fieldname": "request_fast_track",
+   "fieldtype": "Check",
+   "label": "Request Fast-Track Processing (s.87AAB RMA)",
+   "default": "0",
+   "description": "Request fast-track processing for Controlled activities (subject to council availability)"
   },
   {
    "description": "Council determination of notification requirements and public submissions",
@@ -1010,11 +1072,25 @@
    "options": "RC Natural Hazard"
   },
   {
+   "fieldname": "no_natural_hazards_confirmed",
+   "fieldtype": "Check",
+   "label": "No Natural Hazards Confirmed",
+   "default": "0",
+   "description": "For LUC/SC - Confirmation that all potential natural hazards have been considered and none are applicable (s.106 RMA)"
+  },
+  {
    "collapsible": 1,
    "description": "National Environmental Standards compliance assessment",
    "fieldname": "section_break_nes",
    "fieldtype": "Section Break",
    "label": "National Environmental Standards"
+  },
+  {
+   "fieldname": "nes_items",
+   "fieldtype": "Table",
+   "label": "NES Items",
+   "options": "RC NES Item",
+   "description": "Applicant-provided NES assessments from frontend form (Step 11)"
   },
   {
    "fieldname": "nes_assessments",
@@ -1081,7 +1157,7 @@
    "link_fieldname": "resource_consent_application"
   }
  ],
- "modified": "2025-11-24 00:00:00.000000",
+ "modified": "2025-11-30 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "Lodgeick",
  "name": "Resource Consent Application",
