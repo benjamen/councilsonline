@@ -667,7 +667,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref, watch, computed, reactive } from 'vue'
+import { defineProps, defineEmits, ref, watch, computed, reactive, onMounted } from 'vue'
 
 const props = defineProps({
   modelValue: {
@@ -889,6 +889,24 @@ watch(() => localData.value.consent_types, (newConsentTypes) => {
     consent_type_durations: durations
   })
 }, { deep: true, immediate: true })
+
+// Initialize duration data on mount
+onMounted(() => {
+  // Initialize duration data for any existing consent types
+  if (localData.value.consent_types && localData.value.consent_types.length > 0) {
+    localData.value.consent_types.forEach(ct => {
+      getDurationData(ct.consent_type)
+    })
+    // Trigger initial sync
+    const durations = Object.values(durationData)
+    if (durations.length > 0) {
+      emit('update:modelValue', {
+        ...props.modelValue,
+        consent_type_durations: durations
+      })
+    }
+  }
+})
 
 // Fast-track eligibility and availability
 const eligibleForFastTrack = computed(() => {
