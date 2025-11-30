@@ -88,14 +88,45 @@
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">
           Lapsing Period
+          <button
+            type="button"
+            @click="showLapsingHelp = !showLapsingHelp"
+            class="ml-2 text-blue-600 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+            :aria-expanded="showLapsingHelp"
+            aria-label="Toggle lapsing period help"
+          >
+            <svg class="w-4 h-4 inline" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+            </svg>
+          </button>
         </label>
+
+        <!-- Expandable help panel -->
+        <div v-if="showLapsingHelp" class="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm">
+          <p class="font-medium text-blue-900 mb-2">How to choose lapsing period:</p>
+          <ul class="space-y-1.5 text-blue-800">
+            <li class="flex items-start gap-2">
+              <span class="text-blue-600 font-bold mt-0.5">•</span>
+              <span><strong>5 years:</strong> Standard for most consents - construction/use must begin within 5 years</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-blue-600 font-bold mt-0.5">•</span>
+              <span><strong>10 years:</strong> For renewable energy projects requiring longer development timelines (s.125(1A) RMA)</span>
+            </li>
+            <li v-if="isCoastalPermit" class="flex items-start gap-2">
+              <span class="text-blue-600 font-bold mt-0.5">•</span>
+              <span><strong>3 years:</strong> For aquaculture activities in coastal marine area</span>
+            </li>
+          </ul>
+        </div>
+
         <select
           v-model.number="localData.lapsing_period_years"
           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         >
-          <option :value="5">5 years (standard)</option>
-          <option :value="10">10 years (renewable energy)</option>
-          <option v-if="isCoastalPermit" :value="3">3 years (aquaculture)</option>
+          <option :value="5">5 years - Standard lapsing period</option>
+          <option :value="10">10 years - Renewable energy projects</option>
+          <option v-if="isCoastalPermit" :value="3">3 years - Aquaculture activities</option>
         </select>
         <p class="mt-1 text-xs text-gray-500">
           Time period before consent lapses if not given effect to (s.125 RMA)
@@ -395,6 +426,9 @@ const localData = ref({
   coastal_occupation_charge_acknowledged: props.modelValue.coastal_occupation_charge_acknowledged || false,
   request_fast_track: props.modelValue.request_fast_track || false
 })
+
+// UI state for help panel
+const showLapsingHelp = ref(false)
 
 // Watch for external changes
 watch(() => props.modelValue, (newVal) => {
