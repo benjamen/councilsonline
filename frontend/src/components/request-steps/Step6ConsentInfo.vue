@@ -876,6 +876,20 @@ watch(durationData, () => {
   })
 }, { deep: true })
 
+// Initialize duration data when consent types change
+watch(() => localData.value.consent_types, (newConsentTypes) => {
+  // Ensure all selected consent types have duration data initialized
+  newConsentTypes.forEach(ct => {
+    getDurationData(ct.consent_type)
+  })
+  // Trigger duration data sync
+  const durations = Object.values(durationData)
+  emit('update:modelValue', {
+    ...props.modelValue,
+    consent_type_durations: durations
+  })
+}, { deep: true, immediate: true })
+
 // Fast-track eligibility and availability
 const eligibleForFastTrack = computed(() => {
   const isControlled = localData.value.activity_status === 'Controlled'

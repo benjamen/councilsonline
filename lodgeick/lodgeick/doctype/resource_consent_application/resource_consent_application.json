@@ -337,8 +337,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Activity Status",
-   "options": "Permitted\nControlled\nRestricted Discretionary\nDiscretionary\nNon-Complying\nProhibited\nPermitted Boundary Activity",
-   "reqd": 1
+   "options": "Unsure\nPermitted\nControlled\nRestricted Discretionary\nDiscretionary\nNon-Complying\nProhibited\nPermitted Boundary Activity"
   },
   {
    "description": "Consent-type-specific administrative details per RMA requirements",
