@@ -19,31 +19,59 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">
               {{ ct.consent_type }} Duration
             </label>
-            <div class="flex gap-4 items-center">
+            <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:items-start">
               <div class="flex-1">
-                <input
-                  v-model.number="getDurationData(ct.consent_type).duration_years"
-                  type="number"
-                  :min="1"
-                  :max="getMaxDuration(ct.consent_type)"
-                  placeholder="e.g., 10"
-                  :disabled="getDurationData(ct.consent_type).duration_unlimited"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
+                <div class="flex items-center gap-2">
+                  <input
+                    v-model.number="getDurationData(ct.consent_type).duration_years"
+                    type="number"
+                    :min="1"
+                    :max="getMaxDuration(ct.consent_type)"
+                    placeholder="e.g., 10"
+                    :disabled="getDurationData(ct.consent_type).duration_unlimited"
+                    :class="[
+                      'flex-1 min-w-0 px-3 py-2 rounded-lg transition-colors',
+                      'focus:ring-2 focus:ring-blue-500 focus:outline-none',
+                      getDurationValidationClass(ct.consent_type)
+                    ]"
+                    @blur="validateDuration(ct.consent_type)"
+                    @input="validateDuration(ct.consent_type)"
+                  />
+                  <span class="text-gray-600 whitespace-nowrap">years</span>
+                </div>
+
+                <!-- Real-time validation messages -->
+                <div class="mt-1.5 min-h-[20px]">
+                  <p v-if="getDurationError(ct.consent_type)"
+                     class="text-xs text-red-600 flex items-center gap-1.5 font-medium">
+                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                    </svg>
+                    {{ getDurationError(ct.consent_type) }}
+                  </p>
+                  <p v-else-if="durationTouched[ct.consent_type] && getDurationData(ct.consent_type).duration_years && !getDurationData(ct.consent_type).duration_unlimited"
+                     class="text-xs text-green-600 flex items-center gap-1.5 font-medium">
+                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    Valid duration
+                  </p>
+                  <p v-else class="text-xs text-gray-500">
+                    {{ getDurationHelpText(ct.consent_type) }}
+                  </p>
+                </div>
               </div>
-              <span class="text-gray-600">years</span>
-              <label v-if="canBeUnlimited(ct.consent_type)" class="flex items-center gap-2">
+              <label v-if="canBeUnlimited(ct.consent_type)"
+                     class="flex items-center gap-2 whitespace-nowrap pl-4 sm:pl-0 border-l-2 sm:border-l-0 border-gray-200 sm:pt-2">
                 <input
                   v-model="getDurationData(ct.consent_type).duration_unlimited"
                   type="checkbox"
                   class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  @change="onUnlimitedToggle(ct.consent_type)"
                 />
-                <span class="text-sm">Unlimited</span>
+                <span class="text-sm font-medium">Unlimited</span>
               </label>
             </div>
-            <p class="mt-1 text-xs text-gray-500">
-              {{ getDurationHelpText(ct.consent_type) }}
-            </p>
           </div>
         </div>
       </div>
@@ -257,6 +285,62 @@ const getDurationData = (consentType) => {
     }
   }
   return durationData[consentType]
+}
+
+// Real-time validation state
+const durationTouched = reactive({})
+const durationErrors = reactive({})
+
+// Validate duration input
+const validateDuration = (consentType) => {
+  durationTouched[consentType] = true
+  const data = getDurationData(consentType)
+
+  // Clear error if unlimited is selected
+  if (data.duration_unlimited) {
+    durationErrors[consentType] = null
+    return
+  }
+
+  const max = getMaxDuration(consentType)
+  const years = data.duration_years
+
+  // Validation rules
+  if (!years || years < 1) {
+    durationErrors[consentType] = 'Duration must be at least 1 year'
+  } else if (years > max) {
+    if (canBeUnlimited(consentType)) {
+      durationErrors[consentType] = `Maximum ${max} years, or select "Unlimited" (s.123 RMA)`
+    } else {
+      durationErrors[consentType] = `${consentType} cannot exceed ${max} years (s.123 RMA)`
+    }
+  } else {
+    durationErrors[consentType] = null
+  }
+}
+
+// Get validation CSS class
+const getDurationValidationClass = (consentType) => {
+  if (!durationTouched[consentType]) {
+    return 'border border-gray-300 bg-white'
+  }
+  if (durationErrors[consentType]) {
+    return 'border-2 border-red-300 bg-red-50'
+  }
+  if (getDurationData(consentType).duration_years && !getDurationData(consentType).duration_unlimited) {
+    return 'border-2 border-green-300 bg-green-50'
+  }
+  return 'border border-gray-300 bg-white'
+}
+
+// Get validation error message
+const getDurationError = (consentType) => {
+  return durationErrors[consentType]
+}
+
+// Handle unlimited checkbox toggle
+const onUnlimitedToggle = (consentType) => {
+  validateDuration(consentType)
 }
 
 // Watch duration data and sync to modelValue
