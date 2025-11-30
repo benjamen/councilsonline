@@ -98,10 +98,9 @@ export function useFormValidation(formData, currentStep, isResourceConsent) {
       return result
     }
 
-    // Step 7: Site & Environment
+    // Step 7: Site & Environment - REQUIRED: current_use
     if (step === 7 && isResourceConsent.value) {
-      return !!formData.value.site_description?.trim() &&
-        !!formData.value.current_use?.trim()
+      return !!formData.value.current_use?.trim()
     }
 
     // Step 8: NES & Hazards - with natural hazards validation for LUC/SC
@@ -204,8 +203,7 @@ export function useFormValidation(formData, currentStep, isResourceConsent) {
       // Activity status is optional - council can determine this
       const hasBriefDescription = !!formData.value.brief_description?.trim()
       const hasDetailedDescription = !!formData.value.detailed_description?.trim()
-      const hasSiteDescription = !!formData.value.site_description
-      const hasCurrentUse = !!formData.value.current_use
+      const hasCurrentUse = !!formData.value.current_use?.trim()
       const hasAEE = !!formData.value.aee_effects_description &&
         !!formData.value.aee_mitigation_measures &&
         !!formData.value.aee_alternatives_considered
@@ -217,7 +215,7 @@ export function useFormValidation(formData, currentStep, isResourceConsent) {
         hasPropertyAddress && hasDeliveryPreference && hasInvoiceTo &&
         hasConsentTypes && hasDurations && hazardsValid &&
         hasBriefDescription && hasDetailedDescription &&
-        hasSiteDescription && hasCurrentUse && hasAEE && hasDeclarations
+        hasCurrentUse && hasAEE && hasDeclarations
     }
 
     // Non-Resource Consent validations

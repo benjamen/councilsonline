@@ -1917,9 +1917,11 @@ const canProceed = () => {
       return true
 
     case 7:
-      // Step 7: Site & Environment (RC only) - REQUIRED
+      // Step 7: Site & Environment (RC only) - REQUIRED: current_use
       if (isResourceConsent.value) {
-        return !!formData.value.site_description?.trim() && !!formData.value.current_use?.trim()
+        const hasCurrentUse = !!formData.value.current_use?.trim()
+        console.log('[NewRequest] Step 7 - hasCurrentUse:', hasCurrentUse, 'current_use:', formData.value.current_use)
+        return hasCurrentUse
       }
       return true
 
