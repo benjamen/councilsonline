@@ -64,14 +64,12 @@ export function useFormValidation(formData, currentStep, isResourceConsent) {
       return !!formData.value.property_address?.trim()
     }
 
-    // Step 6: Consent Type (Resource Consent only)
+    // Step 6: Consent Information (merged: Type + Details + Proposal) (Resource Consent only)
     if (step === 6 && isResourceConsent.value) {
-      // Activity status is now optional - can proceed with just consent types
-      return formData.value.consent_types?.length > 0
-    }
+      // Consent types must be selected
+      const hasConsentTypes = formData.value.consent_types?.length > 0
+      if (!hasConsentTypes) return false
 
-    // Step 7: Consent Details (Resource Consent only)
-    if (step === 7 && isResourceConsent.value) {
       // Duration validation - each consent type must have duration specified
       const consentTypes = formData.value.consent_types || []
       const hasDurations = consentTypes.every(ct => {
@@ -85,25 +83,21 @@ export function useFormValidation(formData, currentStep, isResourceConsent) {
         !formData.value.consent_notice_required ||
         !!formData.value.consent_notice_details?.trim()
 
-      return hasDurations && consentNoticeValid
-    }
-
-    // Step 8: Proposal Details
-    if (step === 8 && isResourceConsent.value) {
+      // Proposal descriptions are required
       const hasBriefDescription = !!formData.value.brief_description?.trim()
       const hasDetailedDescription = !!formData.value.detailed_description?.trim()
-      // Detailed breakdown (proposal_details) is optional
-      return hasBriefDescription && hasDetailedDescription
+
+      return hasDurations && consentNoticeValid && hasBriefDescription && hasDetailedDescription
     }
 
-    // Step 9: Site & Environment
-    if (step === 9 && isResourceConsent.value) {
+    // Step 7: Site & Environment
+    if (step === 7 && isResourceConsent.value) {
       return !!formData.value.site_description?.trim() &&
         !!formData.value.current_use?.trim()
     }
 
-    // Step 10: NES & Hazards - with natural hazards validation for LUC/SC
-    if (step === 10 && isResourceConsent.value) {
+    // Step 8: NES & Hazards - with natural hazards validation for LUC/SC
+    if (step === 8 && isResourceConsent.value) {
       const requiresHazards = formData.value.consent_types?.some(ct =>
         ct.consent_type === 'Land Use' || ct.consent_type === 'Subdivision'
       )
@@ -121,42 +115,42 @@ export function useFormValidation(formData, currentStep, isResourceConsent) {
       return true // Optional for other consent types
     }
 
-    // Step 11: AEE
-    if (step === 11 && isResourceConsent.value) {
+    // Step 9: AEE
+    if (step === 9 && isResourceConsent.value) {
       return !!formData.value.aee_effects_description?.trim() &&
         !!formData.value.aee_mitigation_measures?.trim() &&
         !!formData.value.aee_alternatives_considered?.trim()
     }
 
-    // Step 12: Plan Assessment
+    // Step 10: Plan Assessment
+    if (step === 10 && isResourceConsent.value) {
+      return true // Optional
+    }
+
+    // Step 11: Affected Parties
+    if (step === 11 && isResourceConsent.value) {
+      return true // Optional
+    }
+
+    // Step 12: Specialist Reports
     if (step === 12 && isResourceConsent.value) {
       return true // Optional
     }
 
-    // Step 13: Affected Parties
+    // Step 13: Proposed Conditions
     if (step === 13 && isResourceConsent.value) {
       return true // Optional
     }
 
-    // Step 14: Specialist Reports
+    // Step 14: Declarations
     if (step === 14 && isResourceConsent.value) {
-      return true // Optional
-    }
-
-    // Step 15: Proposed Conditions
-    if (step === 15 && isResourceConsent.value) {
-      return true // Optional
-    }
-
-    // Step 16: Declarations
-    if (step === 16 && isResourceConsent.value) {
       return formData.value.declaration_rma_compliance &&
         formData.value.declaration_public_information &&
         formData.value.declaration_authorized
     }
 
     // Review step - always last (step number computed dynamically)
-    const isReviewStep = !isResourceConsent.value && step === 6 || isResourceConsent.value && step === 17
+    const isReviewStep = !isResourceConsent.value && step === 6 || isResourceConsent.value && step === 15
     if (isReviewStep) {
       return true
     }

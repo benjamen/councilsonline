@@ -96,58 +96,48 @@
           @property-select="onPropertySelect"
         />
 
-        <!-- Step 6: Consent Type (Resource Consent Only) -->
+        <!-- Step 6: Consent Information (Resource Consent Only) -->
         <div v-if="currentStep === 6 && isResourceConsent">
-            <Step7ConsentType v-model="formData" />
+            <Step6ConsentInfo v-model="formData" />
         </div>
 
-        <!-- Step 7: Consent Details (Resource Consent Only) -->
+        <!-- Step 7: Site & Environment -->
         <div v-if="currentStep === 7 && isResourceConsent">
-            <Step7BConsentDetails v-model="formData" />
-        </div>
-
-        <!-- Step 8: Proposal Details -->
-        <div v-if="currentStep === 8 && isResourceConsent">
-            <Step8ProposalDetails v-model="formData" />
-        </div>
-
-        <!-- Step 9: Site & Environment -->
-        <div v-if="currentStep === 9 && isResourceConsent">
             <Step9SiteEnvironment v-model="formData" />
         </div>
 
-        <!-- Step 10: NES & Hazards -->
-        <div v-if="currentStep === 10 && isResourceConsent">
+        <!-- Step 8: NES & Hazards -->
+        <div v-if="currentStep === 8 && isResourceConsent">
             <Step10NESHazards v-model="formData" />
         </div>
 
-        <!-- Step 11: AEE -->
-        <div v-if="currentStep === 11 && isResourceConsent">
+        <!-- Step 9: AEE -->
+        <div v-if="currentStep === 9 && isResourceConsent">
             <Step11AEE v-model="formData" />
         </div>
 
-        <!-- Step 12: Plan Assessment -->
-        <div v-if="currentStep === 12 && isResourceConsent">
+        <!-- Step 10: Plan Assessment -->
+        <div v-if="currentStep === 10 && isResourceConsent">
             <Step12PlanAssessment v-model="formData" />
         </div>
 
-        <!-- Step 13: Affected Parties -->
-        <div v-if="currentStep === 13 && isResourceConsent">
+        <!-- Step 11: Affected Parties -->
+        <div v-if="currentStep === 11 && isResourceConsent">
             <Step13AffectedParties v-model="formData" />
         </div>
 
-        <!-- Step 14: Specialist Reports -->
-        <div v-if="currentStep === 14 && isResourceConsent">
+        <!-- Step 12: Specialist Reports -->
+        <div v-if="currentStep === 12 && isResourceConsent">
             <Step14SpecialistReports v-model="formData" />
         </div>
 
-        <!-- Step 15: Proposed Conditions -->
-        <div v-if="currentStep === 15 && isResourceConsent">
+        <!-- Step 13: Proposed Conditions -->
+        <div v-if="currentStep === 13 && isResourceConsent">
             <Step15ProposedConditions v-model="formData" />
         </div>
 
-        <!-- Step 16: Declarations -->
-        <div v-if="currentStep === 16 && isResourceConsent">
+        <!-- Step 14: Declarations -->
+        <div v-if="currentStep === 14 && isResourceConsent">
             <Step16Declarations v-model="formData" />
         </div>
 
@@ -998,9 +988,7 @@ import Step2RequestType from '../components/request-steps/Step2RequestType.vue'
 import Step3ProcessInfo from '../components/request-steps/Step3ProcessInfo.vue'
 import Step4ApplicantDetails from '../components/request-steps/Step4ApplicantDetails.vue'
 import Step5PropertyDetails from '../components/request-steps/Step5PropertyDetails.vue'
-import Step7ConsentType from '../components/request-steps/Step7ConsentType.vue'
-import Step7BConsentDetails from '../components/request-steps/Step7BConsentDetails.vue'
-import Step8ProposalDetails from '../components/request-steps/Step8ProposalDetails.vue'
+import Step6ConsentInfo from '../components/request-steps/Step6ConsentInfo.vue'
 import Step9SiteEnvironment from '../components/request-steps/Step9SiteEnvironment.vue'
 import Step10NESHazards from '../components/request-steps/Step10NESHazards.vue'
 import Step11AEE from '../components/request-steps/Step11AEE.vue'
@@ -1055,17 +1043,15 @@ const steps = computed(() => {
 
   // Add RC-specific steps (only for RC requests)
   if (isResourceConsent.value) {
-    baseSteps.push({ title: 'Consent Type', number: 6 })
-    baseSteps.push({ title: 'Consent Details', number: 7 })
-    baseSteps.push({ title: 'Proposal', number: 8 })
-    baseSteps.push({ title: 'Site & Environment', number: 9 })
-    baseSteps.push({ title: 'NES & Hazards', number: 10 })
-    baseSteps.push({ title: 'AEE', number: 11 })
-    baseSteps.push({ title: 'Plan Assessment', number: 12 })
-    baseSteps.push({ title: 'Affected Parties', number: 13 })
-    baseSteps.push({ title: 'Reports', number: 14 })
-    baseSteps.push({ title: 'Conditions', number: 15 })
-    baseSteps.push({ title: 'Declarations', number: 16 })
+    baseSteps.push({ title: 'Consent Info', number: 6 })
+    baseSteps.push({ title: 'Site & Environment', number: 7 })
+    baseSteps.push({ title: 'NES & Hazards', number: 8 })
+    baseSteps.push({ title: 'AEE', number: 9 })
+    baseSteps.push({ title: 'Plan Assessment', number: 10 })
+    baseSteps.push({ title: 'Affected Parties', number: 11 })
+    baseSteps.push({ title: 'Reports', number: 12 })
+    baseSteps.push({ title: 'Conditions', number: 13 })
+    baseSteps.push({ title: 'Declarations', number: 14 })
   }
 
   // Review step is always last
