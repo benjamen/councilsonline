@@ -1831,19 +1831,14 @@ const canProceed = computed(() => {
   switch (currentStep.value) {
     case 1:
       // Step 1: Council selection
-      const canProceedStep1 = !!formData.value.council
-      console.log('[NewRequest] canProceed Step 1 (Council):', canProceedStep1, 'council:', formData.value.council)
-      return canProceedStep1
+      return !!formData.value.council
 
     case 2:
       // Step 2: Request type selection
-      const canProceedStep2 = !!formData.value.request_type
-      console.log('[NewRequest] canProceed Step 2 (Type):', canProceedStep2, 'request_type:', formData.value.request_type)
-      return canProceedStep2
+      return !!formData.value.request_type
 
     case 3:
       // Step 3: Process Info - always can proceed (just informational)
-      console.log('[NewRequest] canProceed Step 3 (Process Info): always true')
       return true
 
     case 4:
@@ -1868,22 +1863,28 @@ const canProceed = computed(() => {
         const hasConsentTypes = consentTypes && consentTypes.length > 0
 
         // Duration validation - use extracted values to avoid reactive loops
-        let hasDurations = true
-        if (hasConsentTypes && consentDurations) {
-          hasDurations = consentTypes.every(ct => {
-            const durationData = consentDurations.find(d => d.consent_type === ct.consent_type)
-            return durationData && (durationData.duration_unlimited || durationData.duration_years > 0)
-          })
-        } else if (hasConsentTypes) {
-          hasDurations = false
+        let hasDurations = false
+        if (hasConsentTypes && consentDurations && Array.isArray(consentTypes) && Array.isArray(consentDurations)) {
+          // Check if arrays are not empty and won't cause infinite loops
+          if (consentTypes.length > 0 && consentTypes.length < 100) {
+            hasDurations = true
+            for (let i = 0; i < consentTypes.length; i++) {
+              const ct = consentTypes[i]
+              if (!ct || !ct.consent_type) {
+                hasDurations = false
+                break
+              }
+              const durationData = consentDurations.find(d => d && d.consent_type === ct.consent_type)
+              if (!durationData || (!durationData.duration_unlimited && !durationData.duration_years)) {
+                hasDurations = false
+                break
+              }
+            }
+          }
         }
 
         // Description validation
         const hasDescriptions = !!brief?.trim() && !!detailed?.trim()
-
-        console.log('[NewRequest] Step 4 (FRD):', {
-          hasApplicant, hasProperty, hasConsentTypes, hasDurations, hasDescriptions
-        })
 
         return hasApplicant && hasProperty && hasConsentTypes && hasDurations && hasDescriptions
       }
@@ -1947,10 +1948,6 @@ const canProceed = computed(() => {
         const hasSignature = !!formData.value.applicant_signature_first_name?.trim() &&
           !!formData.value.applicant_signature_last_name?.trim() &&
           !!formData.value.applicant_signature_date
-
-        console.log('[NewRequest] Step 11 (FRD Submission):', {
-          hasDeclarations, hasSignature
-        })
 
         return hasDeclarations && hasSignature
       }
