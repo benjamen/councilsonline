@@ -82,64 +82,55 @@
             />
         </div>
 
-        <Step4ApplicantDetails
-          v-if="currentStep === 4"
+        <!-- FRD Step 1: Applicant & Proposal Details (consolidates old Steps 4,5,6) -->
+        <Step1ApplicantProposal
+          v-if="currentStep === 4 && isResourceConsent"
           v-model="formData"
           :user-profile="userProfile"
-          :user-company-account="userCompanyAccount"
-        />
-
-        <Step5PropertyDetails
-          v-if="currentStep === 5"
-          v-model="formData"
           :properties="properties"
-          @property-select="onPropertySelect"
         />
 
-        <!-- Step 6: Consent Information (Resource Consent Only) -->
-        <div v-if="currentStep === 6 && isResourceConsent">
-            <Step6ConsentInfo v-model="formData" />
-        </div>
+        <!-- FRD Step 2: Natural Hazards Assessment -->
+        <Step2NaturalHazards
+          v-if="currentStep === 5 && isResourceConsent"
+          v-model="formData"
+        />
 
-        <!-- Step 7: Site & Environment -->
-        <div v-if="currentStep === 7 && isResourceConsent">
-            <Step9SiteEnvironment v-model="formData" />
-        </div>
+        <!-- FRD Step 3: NES Assessment -->
+        <Step3NESAssessment
+          v-if="currentStep === 6 && isResourceConsent"
+          v-model="formData"
+        />
 
-        <!-- Step 8: NES & Hazards -->
-        <div v-if="currentStep === 8 && isResourceConsent">
-            <Step10NESHazards v-model="formData" />
-        </div>
+        <!-- FRD Step 4: Boundary Approvals & Affected Parties -->
+        <Step4Approvals
+          v-if="currentStep === 7 && isResourceConsent"
+          v-model="formData"
+        />
 
-        <!-- Step 9: AEE -->
-        <div v-if="currentStep === 9 && isResourceConsent">
-            <Step11AEE v-model="formData" />
-        </div>
+        <!-- FRD Step 5: Consultation with Other Parties -->
+        <Step5Consultation
+          v-if="currentStep === 8 && isResourceConsent"
+          v-model="formData"
+        />
 
-        <!-- Step 10: Plan Assessment -->
-        <div v-if="currentStep === 10 && isResourceConsent">
-            <Step12PlanAssessment v-model="formData" />
-        </div>
+        <!-- FRD Step 6: Plans & Documents Upload -->
+        <Step6Documents
+          v-if="currentStep === 9 && isResourceConsent"
+          v-model="formData"
+        />
 
-        <!-- Step 11: Affected Parties -->
-        <div v-if="currentStep === 11 && isResourceConsent">
-            <Step13AffectedParties v-model="formData" />
-        </div>
+        <!-- FRD Step 7: Assessment of Environmental Effects (AEE) -->
+        <Step7AEE
+          v-if="currentStep === 10 && isResourceConsent"
+          v-model="formData"
+        />
 
-        <!-- Step 12: Specialist Reports -->
-        <div v-if="currentStep === 12 && isResourceConsent">
-            <Step14SpecialistReports v-model="formData" />
-        </div>
-
-        <!-- Step 13: Proposed Conditions -->
-        <div v-if="currentStep === 13 && isResourceConsent">
-            <Step15ProposedConditions v-model="formData" />
-        </div>
-
-        <!-- Step 14: Declarations -->
-        <div v-if="currentStep === 14 && isResourceConsent">
-            <Step16Declarations v-model="formData" />
-        </div>
+        <!-- FRD Step 9: Declaration & Submission -->
+        <Step9Submission
+          v-if="currentStep === 11 && isResourceConsent"
+          v-model="formData"
+        />
 
         <!-- Review Step (Final Step for all request types) -->
         <div v-if="currentStep === totalSteps">
@@ -986,17 +977,15 @@ import CouncilSelector from '../components/CouncilSelector.vue'
 import Step1CouncilSelection from '../components/request-steps/Step1CouncilSelection.vue'
 import Step2RequestType from '../components/request-steps/Step2RequestType.vue'
 import Step3ProcessInfo from '../components/request-steps/Step3ProcessInfo.vue'
-import Step4ApplicantDetails from '../components/request-steps/Step4ApplicantDetails.vue'
-import Step5PropertyDetails from '../components/request-steps/Step5PropertyDetails.vue'
-import Step6ConsentInfo from '../components/request-steps/Step6ConsentInfo.vue'
-import Step9SiteEnvironment from '../components/request-steps/Step9SiteEnvironment.vue'
-import Step10NESHazards from '../components/request-steps/Step10NESHazards.vue'
-import Step11AEE from '../components/request-steps/Step11AEE.vue'
-import Step12PlanAssessment from '../components/request-steps/Step12PlanAssessment.vue'
-import Step13AffectedParties from '../components/request-steps/Step13AffectedParties.vue'
-import Step14SpecialistReports from '../components/request-steps/Step14SpecialistReports.vue'
-import Step15ProposedConditions from '../components/request-steps/Step15ProposedConditions.vue'
-import Step16Declarations from '../components/request-steps/Step16Declarations.vue'
+// FRD-compliant step components
+import Step1ApplicantProposal from '../components/request-steps/Step1ApplicantProposal.vue'
+import Step2NaturalHazards from '../components/request-steps/Step2NaturalHazards.vue'
+import Step3NESAssessment from '../components/request-steps/Step3NESAssessment.vue'
+import Step4Approvals from '../components/request-steps/Step4Approvals.vue'
+import Step5Consultation from '../components/request-steps/Step5Consultation.vue'
+import Step6Documents from '../components/request-steps/Step6Documents.vue'
+import Step7AEE from '../components/request-steps/Step7AEE.vue'
+import Step9Submission from '../components/request-steps/Step9Submission.vue'
 import Step17Review from '../components/request-steps/Step17Review.vue'
 import { useCouncilStore } from '../stores/councilStore'
 import { session } from '../data/session'
@@ -1036,22 +1025,19 @@ const steps = computed(() => {
   const baseSteps = [
     { title: 'Council', number: 1 },
     { title: 'Type', number: 2 },
-    { title: 'Process Info', number: 3 },
-    { title: 'Applicant', number: 4 },
-    { title: 'Property', number: 5 }
+    { title: 'Process Info', number: 3 }
   ]
 
-  // Add RC-specific steps (only for RC requests)
+  // Add RC-specific steps (FRD 9-step structure)
   if (isResourceConsent.value) {
-    baseSteps.push({ title: 'Consent Info', number: 6 })
-    baseSteps.push({ title: 'Site & Environment', number: 7 })
-    baseSteps.push({ title: 'NES & Hazards', number: 8 })
-    baseSteps.push({ title: 'AEE', number: 9 })
-    baseSteps.push({ title: 'Plan Assessment', number: 10 })
-    baseSteps.push({ title: 'Affected Parties', number: 11 })
-    baseSteps.push({ title: 'Reports', number: 12 })
-    baseSteps.push({ title: 'Conditions', number: 13 })
-    baseSteps.push({ title: 'Declarations', number: 14 })
+    baseSteps.push({ title: 'Applicant & Proposal', number: 4 })  // FRD Step 1
+    baseSteps.push({ title: 'Natural Hazards', number: 5 })        // FRD Step 2
+    baseSteps.push({ title: 'NES Assessment', number: 6 })         // FRD Step 3
+    baseSteps.push({ title: 'Approvals', number: 7 })              // FRD Step 4
+    baseSteps.push({ title: 'Consultation', number: 8 })           // FRD Step 5
+    baseSteps.push({ title: 'Documents', number: 9 })              // FRD Step 6
+    baseSteps.push({ title: 'AEE', number: 10 })                   // FRD Step 7
+    baseSteps.push({ title: 'Submission', number: 11 })            // FRD Step 9
   }
 
   // Review step is always last
@@ -1857,76 +1843,36 @@ const canProceed = () => {
       return true
 
     case 4:
-      // Step 4: Applicant Details - Require applicant info
-      const hasApplicantInfo = formData.value.applicant_phone && formData.value.applicant_type && formData.value.applicant_name && formData.value.applicant_email
+      // Step 4: Applicant & Proposal (FRD Step 1) - Consolidated validation
+      if (isResourceConsent.value) {
+        // Basic applicant validation
+        const hasApplicant = !!formData.value.applicant_phone && !!formData.value.applicant_type
 
-      // Validate owner details if applicant is not the owner
-      const ownerDetailsValid = !formData.value.applicant_is_not_owner || (
-        formData.value.owner_name &&
-        formData.value.owner_email &&
-        formData.value.owner_phone &&
-        formData.value.owner_address
-      )
+        // Property validation
+        const hasProperty = !!formData.value.property
 
-      return !!(hasApplicantInfo && ownerDetailsValid)
+        // Consent types validation
+        const hasConsentTypes = formData.value.consent_types && formData.value.consent_types.length > 0
+
+        // Duration validation
+        const hasDurations = formData.value.consent_types?.every(ct => {
+          const durationData = formData.value.consent_type_durations?.find(d => d.consent_type === ct.consent_type)
+          return durationData && (durationData.duration_unlimited || durationData.duration_years > 0)
+        })
+
+        // Description validation
+        const hasDescriptions = !!formData.value.brief_description?.trim() && !!formData.value.detailed_description?.trim()
+
+        console.log('[NewRequest] Step 4 (FRD):', {
+          hasApplicant, hasProperty, hasConsentTypes, hasDurations, hasDescriptions
+        })
+
+        return hasApplicant && hasProperty && hasConsentTypes && hasDurations && hasDescriptions
+      }
+      return true
 
     case 5:
-      // Step 5: Property Details - REQUIRED: Must select a property
-      const hasProperty = formData.value.property || formData.value.property_address
-      console.log('[NewRequest] canProceed Step 5 (Property):', !!hasProperty, 'property:', formData.value.property, 'address:', formData.value.property_address)
-      return !!hasProperty
-
-    case 6:
-      // Step 6: Consent Information (RC only) - MERGED: Type + Details + Proposal
-      if (isResourceConsent.value) {
-        // Consent types must be selected
-        const hasConsentTypes = formData.value.consent_types && formData.value.consent_types.length > 0
-        console.log('[NewRequest] Step 6 - hasConsentTypes:', hasConsentTypes, formData.value.consent_types)
-        if (!hasConsentTypes) return false
-
-        // Duration validation - each consent type must have duration specified
-        const consentTypes = formData.value.consent_types || []
-        const hasDurations = consentTypes.every(ct => {
-          const durationData = formData.value.consent_type_durations?.find(d => d.consent_type === ct.consent_type)
-          console.log('[NewRequest] Step 6 - Duration check for', ct.consent_type, ':', durationData)
-          if (!durationData) return false
-          return durationData.duration_unlimited || (durationData.duration_years && durationData.duration_years > 0)
-        })
-        console.log('[NewRequest] Step 6 - hasDurations:', hasDurations)
-
-        // Helper function to check if Subdivision consent is selected
-        const hasSubdivision = formData.value.consent_types?.some(ct => ct.consent_type === 'Subdivision') || false
-
-        // Consent notice validation (Subdivision only)
-        const consentNoticeValid = !hasSubdivision ||
-          !formData.value.consent_notice_required ||
-          !!formData.value.consent_notice_details?.trim()
-        console.log('[NewRequest] Step 6 - consentNoticeValid:', consentNoticeValid)
-
-        // Proposal descriptions are required
-        const hasBriefDescription = !!formData.value.brief_description?.trim()
-        const hasDetailedDescription = !!formData.value.detailed_description?.trim()
-        console.log('[NewRequest] Step 6 - hasBriefDescription:', hasBriefDescription, 'hasDetailedDescription:', hasDetailedDescription)
-        console.log('[NewRequest] Step 6 - Brief:', formData.value.brief_description, 'Detailed:', formData.value.detailed_description)
-
-        const result = hasDurations && consentNoticeValid && hasBriefDescription && hasDetailedDescription
-        console.log('[NewRequest] Step 6 - FINAL RESULT:', result)
-        return result
-      }
-      // Non-RC applications skip this step
-      return true
-
-    case 7:
-      // Step 7: Site & Environment (RC only) - REQUIRED: current_use
-      if (isResourceConsent.value) {
-        const hasCurrentUse = !!formData.value.current_use?.trim()
-        console.log('[NewRequest] Step 7 - hasCurrentUse:', hasCurrentUse, 'current_use:', formData.value.current_use)
-        return hasCurrentUse
-      }
-      return true
-
-    case 8:
-      // Step 8: NES & Hazards (RC only) - Natural hazards validation for LUC/SC
+      // Step 5: Natural Hazards (FRD Step 2) - Required for Land Use/Subdivision only
       if (isResourceConsent.value) {
         const requiresHazards = formData.value.consent_types?.some(ct =>
           ct.consent_type === 'Land Use' || ct.consent_type === 'Subdivision'
@@ -1934,53 +1880,58 @@ const canProceed = () => {
         if (requiresHazards) {
           const hasHazards = formData.value.natural_hazards && formData.value.natural_hazards.length > 0
           const confirmedNoHazards = formData.value.no_natural_hazards_confirmed
-          if (!hasHazards && !confirmedNoHazards) {
-            return false
-          }
+          return hasHazards || confirmedNoHazards
         }
         return true
       }
       return true
 
+    case 6:
+      // Step 6: NES Assessment (FRD Step 3) - Optional (can have "no NES confirmed")
+      return true
+
+    case 7:
+      // Step 7: Approvals (FRD Step 4) - Optional
+      return true
+
+    case 8:
+      // Step 8: Consultation (FRD Step 5) - Optional
+      return true
+
     case 9:
-      // Step 9: AEE (RC only) - REQUIRED: activity description, existing environment, assessment of effects
-      if (isResourceConsent.value) {
-        const hasAEE = !!formData.value.aee_activity_description?.trim() &&
-          !!formData.value.aee_existing_environment?.trim() &&
-          !!formData.value.assessment_of_effects?.trim()
-        console.log('[NewRequest] Step 9 - hasAEE:', hasAEE,
-          'activity:', !!formData.value.aee_activity_description,
-          'environment:', !!formData.value.aee_existing_environment,
-          'effects:', !!formData.value.assessment_of_effects)
-        return hasAEE
-      }
+      // Step 9: Documents (FRD Step 6) - Optional (but recommended)
       return true
 
     case 10:
-      // Step 10: Plan Assessment (RC only) - Optional
+      // Step 10: AEE (FRD Step 7) - REQUIRED based on completion method
+      if (isResourceConsent.value) {
+        if (formData.value.aee_completion_method === 'upload') {
+          return !!formData.value.aee_document && !!formData.value.aee_document_confirmed
+        } else {
+          // Inline method - require key fields
+          return !!formData.value.aee_activity_description?.trim() &&
+            !!formData.value.aee_existing_environment?.trim() &&
+            !!formData.value.assessment_of_effects?.trim() &&
+            !!formData.value.aee_inline_confirmed
+        }
+      }
       return true
 
     case 11:
-      // Step 11: Affected Parties (RC only) - Optional
-      return true
-
-    case 12:
-      // Step 12: Specialist Reports (RC only) - Optional
-      return true
-
-    case 13:
-      // Step 13: Proposed Conditions (RC only) - Optional
-      return true
-
-    case 14:
-      // Step 14: Declarations (RC only) - REQUIRED all 3 declarations
+      // Step 11: Submission (FRD Step 9) - REQUIRED all 3 declarations and signature
       if (isResourceConsent.value) {
-        const hasDeclarations = !!(
-          formData.value.declaration_rma_compliance &&
+        const hasDeclarations = formData.value.declaration_rma_compliance &&
           formData.value.declaration_public_information &&
           formData.value.declaration_authorized
-        )
-        return hasDeclarations
+        const hasSignature = !!formData.value.applicant_signature_first_name?.trim() &&
+          !!formData.value.applicant_signature_last_name?.trim() &&
+          !!formData.value.applicant_signature_date
+
+        console.log('[NewRequest] Step 11 (FRD Submission):', {
+          hasDeclarations, hasSignature
+        })
+
+        return hasDeclarations && hasSignature
       }
       return true
 

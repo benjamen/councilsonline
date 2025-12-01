@@ -40,6 +40,70 @@
   "consent_notice_details",
   "coastal_occupation_charge_acknowledged",
   "request_fast_track",
+  "section_break_additional_consents",
+  "additional_consents",
+  "section_break_related_applications",
+  "pim_applied",
+  "pim_number",
+  "column_break_building",
+  "building_consent_applied",
+  "building_consent_number",
+  "section_break_site_visit",
+  "site_visit_locked_gates",
+  "site_visit_dogs_present",
+  "site_visit_health_safety_issues",
+  "site_visit_notice_required",
+  "site_visit_details",
+  "section_break_agent",
+  "agent_required",
+  "agent_id",
+  "section_break_pre_app",
+  "pre_app_meeting_required",
+  "pre_app_meeting_id",
+  "section_break_correspondence",
+  "correspondence_recipient",
+  "column_break_invoice",
+  "invoice_responsible_party",
+  "section_break_additional_contacts",
+  "additional_contact_persons",
+  "section_break_inundation",
+  "inundation_advice_document",
+  "section_break_pba",
+  "pba_approval_required",
+  "pba_status",
+  "pba_details",
+  "pba_contacts",
+  "pba_documents",
+  "section_break_consultation",
+  "consultation_undertaken",
+  "no_consultation_reason",
+  "consulted_organizations",
+  "consultation_summary",
+  "section_break_documents",
+  "application_documents",
+  "section_break_aee_method",
+  "aee_completion_method",
+  "aee_document_confirmed",
+  "aee_inline_confirmed",
+  "aee_positive_effects",
+  "aee_alternatives_considered",
+  "aee_monitoring_proposed",
+  "section_break_soil_investigation",
+  "soil_investigation_completed",
+  "soil_investigation_summary",
+  "soil_investigation_document",
+  "no_nes_confirmed",
+  "section_break_payment",
+  "lodgement_fees_paid",
+  "lodgement_payments",
+  "section_break_signatures",
+  "applicant_signature_first_name",
+  "applicant_signature_last_name",
+  "applicant_signature_date",
+  "column_break_agent_signature",
+  "agent_signature_first_name",
+  "agent_signature_last_name",
+  "agent_signature_date",
   "section_break_permitted_boundary",
   "permitted_boundary_activity",
   "boundary_description",
@@ -297,7 +361,7 @@
   {
    "fieldname": "site_area_display",
    "fieldtype": "Float",
-   "label": "Site Area (m²)",
+   "label": "Site Area (m\u00b2)",
    "fetch_from": "request.site_area",
    "read_only": 1,
    "precision": "2"
@@ -505,7 +569,7 @@
    "description": "Site area in square meters (optional)",
    "fieldname": "aee_site_area",
    "fieldtype": "Float",
-   "label": "Site Area (m²)"
+   "label": "Site Area (m\u00b2)"
   },
   {
    "description": "Current use of the site (optional)",
@@ -840,7 +904,7 @@
   {
    "fieldname": "building_floor_area",
    "fieldtype": "Float",
-   "label": "Total Floor Area (m²)",
+   "label": "Total Floor Area (m\u00b2)",
    "precision": "2"
   },
   {
@@ -850,7 +914,7 @@
   {
    "fieldname": "earthworks_volume",
    "fieldtype": "Float",
-   "label": "Earthworks Volume (m³)",
+   "label": "Earthworks Volume (m\u00b3)",
    "precision": "2"
   },
   {
@@ -1130,6 +1194,358 @@
    "fieldname": "confidential_information_reason",
    "fieldtype": "Text Editor",
    "label": "Justification for Confidentiality"
+  },
+  {
+   "fieldname": "section_break_additional_consents",
+   "fieldtype": "Section Break",
+   "label": "Additional Consents (FRD 3.4)"
+  },
+  {
+   "fieldname": "additional_consents",
+   "fieldtype": "Table",
+   "label": "Additional Consents",
+   "options": "Resource Consent Additional Consent",
+   "description": "List any other consents required or applied for"
+  },
+  {
+   "fieldname": "section_break_related_applications",
+   "fieldtype": "Section Break",
+   "label": "Related Applications (FRD 3.5)"
+  },
+  {
+   "fieldname": "pim_applied",
+   "fieldtype": "Check",
+   "label": "PIM Applied For"
+  },
+  {
+   "fieldname": "pim_number",
+   "fieldtype": "Data",
+   "label": "PIM Reference Number",
+   "depends_on": "eval:doc.pim_applied"
+  },
+  {
+   "fieldname": "column_break_building",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "building_consent_applied",
+   "fieldtype": "Check",
+   "label": "Building Consent Applied For"
+  },
+  {
+   "fieldname": "building_consent_number",
+   "fieldtype": "Data",
+   "label": "Building Consent Reference Number",
+   "depends_on": "eval:doc.building_consent_applied"
+  },
+  {
+   "fieldname": "section_break_site_visit",
+   "fieldtype": "Section Break",
+   "label": "Site Visit Information (FRD 3.6)"
+  },
+  {
+   "fieldname": "site_visit_locked_gates",
+   "fieldtype": "Check",
+   "label": "Locked Gates Present"
+  },
+  {
+   "fieldname": "site_visit_dogs_present",
+   "fieldtype": "Check",
+   "label": "Dogs Present on Site"
+  },
+  {
+   "fieldname": "site_visit_health_safety_issues",
+   "fieldtype": "Check",
+   "label": "Health & Safety Issues"
+  },
+  {
+   "fieldname": "site_visit_notice_required",
+   "fieldtype": "Check",
+   "label": "Notice Required Before Visit"
+  },
+  {
+   "fieldname": "site_visit_details",
+   "fieldtype": "Small Text",
+   "label": "Site Visit Details"
+  },
+  {
+   "fieldname": "section_break_agent",
+   "fieldtype": "Section Break",
+   "label": "Agent Details (FRD 3.7)"
+  },
+  {
+   "fieldname": "agent_required",
+   "fieldtype": "Check",
+   "label": "Agent Engaged"
+  },
+  {
+   "fieldname": "agent_id",
+   "fieldtype": "Link",
+   "label": "Agent",
+   "options": "User",
+   "depends_on": "eval:doc.agent_required"
+  },
+  {
+   "fieldname": "section_break_pre_app",
+   "fieldtype": "Section Break",
+   "label": "Pre-Application Meeting (FRD 3.8)"
+  },
+  {
+   "fieldname": "pre_app_meeting_required",
+   "fieldtype": "Check",
+   "label": "Pre-Application Meeting Requested"
+  },
+  {
+   "fieldname": "pre_app_meeting_id",
+   "fieldtype": "Data",
+   "label": "Meeting Reference",
+   "depends_on": "eval:doc.pre_app_meeting_required"
+  },
+  {
+   "fieldname": "section_break_correspondence",
+   "fieldtype": "Section Break",
+   "label": "Correspondence Preferences (FRD 3.9)"
+  },
+  {
+   "fieldname": "correspondence_recipient",
+   "fieldtype": "Select",
+   "label": "Send Correspondence To",
+   "options": "Applicant\nAgent\nBoth",
+   "default": "Applicant"
+  },
+  {
+   "fieldname": "column_break_invoice",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "invoice_responsible_party",
+   "fieldtype": "Select",
+   "label": "Invoice To",
+   "options": "Applicant\nAgent",
+   "default": "Applicant"
+  },
+  {
+   "fieldname": "section_break_additional_contacts",
+   "fieldtype": "Section Break",
+   "label": "Additional Contact Persons (FRD 3.10)"
+  },
+  {
+   "fieldname": "additional_contact_persons",
+   "fieldtype": "Table",
+   "label": "Additional Contacts",
+   "options": "Resource Consent Additional Contact"
+  },
+  {
+   "fieldname": "section_break_inundation",
+   "fieldtype": "Section Break",
+   "label": "Inundation Advice (FRD 4.1)"
+  },
+  {
+   "fieldname": "inundation_advice_document",
+   "fieldtype": "Attach",
+   "label": "Inundation Advice Document"
+  },
+  {
+   "fieldname": "section_break_pba",
+   "fieldtype": "Section Break",
+   "label": "Permitted Boundary Activity (FRD 6.1)"
+  },
+  {
+   "fieldname": "pba_approval_required",
+   "fieldtype": "Check",
+   "label": "PBA Approval Required"
+  },
+  {
+   "fieldname": "pba_status",
+   "fieldtype": "Select",
+   "label": "PBA Status",
+   "options": "\nApproval sought but not obtained\nApproval obtained from some neighbors\nApproval obtained from all neighbors\nApproval not sought",
+   "depends_on": "eval:doc.pba_approval_required"
+  },
+  {
+   "fieldname": "pba_details",
+   "fieldtype": "Small Text",
+   "label": "PBA Details",
+   "depends_on": "eval:doc.pba_approval_required"
+  },
+  {
+   "fieldname": "pba_contacts",
+   "fieldtype": "Table",
+   "label": "PBA Affected Neighbors",
+   "options": "Resource Consent PBA Contact",
+   "depends_on": "eval:doc.pba_approval_required"
+  },
+  {
+   "fieldname": "pba_documents",
+   "fieldtype": "Small Text",
+   "label": "PBA Documents",
+   "description": "JSON array of uploaded PBA documents",
+   "depends_on": "eval:doc.pba_approval_required"
+  },
+  {
+   "fieldname": "section_break_consultation",
+   "fieldtype": "Section Break",
+   "label": "Consultation (FRD 7)"
+  },
+  {
+   "fieldname": "consultation_undertaken",
+   "fieldtype": "Check",
+   "label": "Consultation Undertaken"
+  },
+  {
+   "fieldname": "no_consultation_reason",
+   "fieldtype": "Small Text",
+   "label": "Reason for No Consultation",
+   "depends_on": "eval:!doc.consultation_undertaken"
+  },
+  {
+   "fieldname": "consulted_organizations",
+   "fieldtype": "Table",
+   "label": "Consulted Organizations",
+   "options": "Resource Consent Consulted Organization",
+   "depends_on": "eval:doc.consultation_undertaken"
+  },
+  {
+   "fieldname": "consultation_summary",
+   "fieldtype": "Text",
+   "label": "Overall Consultation Summary",
+   "depends_on": "eval:doc.consultation_undertaken"
+  },
+  {
+   "fieldname": "section_break_documents",
+   "fieldtype": "Section Break",
+   "label": "Application Documents (FRD 8)"
+  },
+  {
+   "fieldname": "application_documents",
+   "fieldtype": "Table",
+   "label": "Documents",
+   "options": "Resource Consent Application Document"
+  },
+  {
+   "fieldname": "section_break_aee_method",
+   "fieldtype": "Section Break",
+   "label": "AEE Completion Method (FRD 9)"
+  },
+  {
+   "fieldname": "aee_completion_method",
+   "fieldtype": "Select",
+   "label": "AEE Completion Method",
+   "options": "inline\nupload",
+   "default": "inline"
+  },
+  {
+   "fieldname": "aee_document_confirmed",
+   "fieldtype": "Check",
+   "label": "AEE Document Addresses Schedule 4",
+   "depends_on": "eval:doc.aee_completion_method=='upload'"
+  },
+  {
+   "fieldname": "aee_inline_confirmed",
+   "fieldtype": "Check",
+   "label": "AEE Inline Completion Confirmed",
+   "depends_on": "eval:doc.aee_completion_method=='inline'"
+  },
+  {
+   "fieldname": "aee_positive_effects",
+   "fieldtype": "Text",
+   "label": "Positive Effects"
+  },
+  {
+   "fieldname": "aee_alternatives_considered",
+   "fieldtype": "Text",
+   "label": "Alternatives Considered"
+  },
+  {
+   "fieldname": "aee_monitoring_proposed",
+   "fieldtype": "Text",
+   "label": "Monitoring Proposed"
+  },
+  {
+   "fieldname": "section_break_soil_investigation",
+   "fieldtype": "Section Break",
+   "label": "Soil Investigation (FRD 5)"
+  },
+  {
+   "fieldname": "soil_investigation_completed",
+   "fieldtype": "Check",
+   "label": "PSI/DSI Completed"
+  },
+  {
+   "fieldname": "soil_investigation_summary",
+   "fieldtype": "Text",
+   "label": "Investigation Summary",
+   "depends_on": "eval:doc.soil_investigation_completed"
+  },
+  {
+   "fieldname": "soil_investigation_document",
+   "fieldtype": "Attach",
+   "label": "Investigation Report",
+   "depends_on": "eval:doc.soil_investigation_completed"
+  },
+  {
+   "fieldname": "no_nes_confirmed",
+   "fieldtype": "Check",
+   "label": "No NES Apply (Confirmed)"
+  },
+  {
+   "fieldname": "section_break_payment",
+   "fieldtype": "Section Break",
+   "label": "Lodgement Fees (FRD 11.1)"
+  },
+  {
+   "fieldname": "lodgement_fees_paid",
+   "fieldtype": "Check",
+   "label": "Lodgement Fees Paid"
+  },
+  {
+   "fieldname": "lodgement_payments",
+   "fieldtype": "Table",
+   "label": "Payment Records",
+   "options": "Resource Consent Lodgement Payment",
+   "depends_on": "eval:doc.lodgement_fees_paid"
+  },
+  {
+   "fieldname": "section_break_signatures",
+   "fieldtype": "Section Break",
+   "label": "Signatures (FRD 11.2-11.4)"
+  },
+  {
+   "fieldname": "applicant_signature_first_name",
+   "fieldtype": "Data",
+   "label": "Applicant First Name"
+  },
+  {
+   "fieldname": "applicant_signature_last_name",
+   "fieldtype": "Data",
+   "label": "Applicant Last Name"
+  },
+  {
+   "fieldname": "applicant_signature_date",
+   "fieldtype": "Date",
+   "label": "Signature Date"
+  },
+  {
+   "fieldname": "column_break_agent_signature",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "agent_signature_first_name",
+   "fieldtype": "Data",
+   "label": "Agent First Name",
+   "depends_on": "eval:doc.agent_required"
+  },
+  {
+   "fieldname": "agent_signature_last_name",
+   "fieldtype": "Data",
+   "label": "Agent Last Name",
+   "depends_on": "eval:doc.agent_required"
+  },
+  {
+   "fieldname": "agent_signature_date",
+   "fieldtype": "Date",
+   "label": "Agent Signature Date",
+   "depends_on": "eval:doc.agent_required"
   }
  ],
  "index_web_pages_for_search": 1,
