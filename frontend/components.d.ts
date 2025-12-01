@@ -11,6 +11,7 @@ declare module 'vue' {
     CouncilSelector: typeof import('./src/components/CouncilSelector.vue')['default']
     FeatureCard: typeof import('./src/components/FeatureCard.vue')['default']
     ProcessStep: typeof import('./src/components/ProcessStep.vue')['default']
+    PropertyManager: typeof import('./src/components/registration/PropertyManager.vue')['default']
     ResourceConsentDetails: typeof import('./src/components/ResourceConsentDetails.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

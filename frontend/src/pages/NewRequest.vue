@@ -158,8 +158,9 @@
             </button>
             <div v-else></div>
 
+            <!-- Next button hidden on Step 3 - Process Info has its own continue button -->
             <button
-                v-if="currentStep < totalSteps"
+                v-if="currentStep < totalSteps && currentStep !== 3"
                 @click="handleNext"
                 :disabled="!canProceed()"
                 class="px-6 py-3 font-medium rounded-lg transition-colors flex items-center"
