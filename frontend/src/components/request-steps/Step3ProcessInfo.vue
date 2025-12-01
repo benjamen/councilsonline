@@ -65,6 +65,7 @@
 
       <div class="flex justify-center pt-4">
         <button
+          type="button"
           @click="emit('continue')"
           class="px-8 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
         >

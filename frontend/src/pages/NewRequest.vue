@@ -160,6 +160,7 @@
 
             <!-- Next button: Show on all steps except the last step -->
             <button
+                type="button"
                 v-if="currentStep < totalSteps"
                 @click="handleNext"
                 :disabled="!canProceed()"
