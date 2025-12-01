@@ -163,9 +163,9 @@
                 type="button"
                 v-if="currentStep < totalSteps"
                 @click="handleNext"
-                :disabled="!canProceed()"
+                :disabled="!canProceed"
                 class="px-6 py-3 font-medium rounded-lg transition-colors flex items-center"
-                :class="canProceed()
+                :class="canProceed
                     ? 'bg-blue-600 text-white hover:bg-blue-700'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'"
             >
@@ -1827,7 +1827,7 @@ const clearPropertyAddress = () => {
   console.log('[PropertySearch] Cleared property data for new search')
 }
 
-const canProceed = () => {
+const canProceed = computed(() => {
   switch (currentStep.value) {
     case 1:
       // Step 1: Council selection
@@ -1943,12 +1943,12 @@ const canProceed = () => {
       // Review step and any other steps - always allow
       return true
   }
-}
+})
 
 const nextStep = () => {
   const totalStepsValue = totalSteps.value
   const currentStepValue = currentStep.value
-  const canProceedValue = canProceed()
+  const canProceedValue = canProceed.value
 
   console.log('[NewRequest] nextStep called', {
     canProceed: canProceedValue,
@@ -2041,7 +2041,7 @@ const getApplicationFee = () => {
 
 // Navigation handlers
 const handleNext = () => {
-  if (canProceed()) {
+  if (canProceed.value) {
     currentStep.value++
   }
 }
