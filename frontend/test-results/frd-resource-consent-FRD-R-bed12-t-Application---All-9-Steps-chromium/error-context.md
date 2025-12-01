@@ -1,0 +1,83 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e4]:
+  - banner [ref=e5]:
+    - generic [ref=e7]:
+      - generic [ref=e8]:
+        - button [ref=e9] [cursor=pointer]:
+          - img [ref=e10]
+        - generic [ref=e12]:
+          - heading "New Application" [level=1] [ref=e13]
+          - paragraph [ref=e14]: Step 4 of 4
+      - button "Save Draft" [ref=e15] [cursor=pointer]:
+        - generic [ref=e16]: Save Draft
+  - generic [ref=e19]:
+    - generic [ref=e21]:
+      - generic [ref=e23]: ✓
+      - generic [ref=e24]: Council
+    - generic [ref=e27]:
+      - generic [ref=e29]: ✓
+      - generic [ref=e30]: Type
+    - generic [ref=e33]:
+      - generic [ref=e35]: ✓
+      - generic [ref=e36]: Process Info
+    - generic [ref=e39]:
+      - generic [ref=e41]: "4"
+      - generic [ref=e42]: Review
+  - main [ref=e43]:
+    - generic [ref=e46]:
+      - heading "Review & Submit" [level=2] [ref=e47]
+      - paragraph [ref=e48]: Review your application details before submitting
+      - generic [ref=e49]:
+        - generic [ref=e51]:
+          - generic [ref=e52]:
+            - heading "N/A" [level=3] [ref=e53]
+            - paragraph [ref=e54]: Auckland Council
+          - generic [ref=e55]:
+            - generic [ref=e56]: Application Fee
+            - generic [ref=e57]: TBD
+        - generic [ref=e58]:
+          - heading "Applicant Details" [level=3] [ref=e60]
+          - generic [ref=e62]:
+            - generic [ref=e63]:
+              - text: "Name:"
+              - paragraph [ref=e64]: Administrator
+            - generic [ref=e65]:
+              - text: "Email:"
+              - paragraph [ref=e66]: admin@example.com
+            - generic [ref=e67]:
+              - text: "Phone:"
+              - paragraph [ref=e68]: "34324343"
+        - generic [ref=e69]:
+          - heading "Property Details" [level=3] [ref=e71]
+          - paragraph [ref=e73]: No property selected
+        - generic [ref=e74]:
+          - heading "Delivery & Payment" [level=3] [ref=e76]
+          - generic [ref=e77]:
+            - generic [ref=e78]:
+              - text: "Delivery Preference:"
+              - paragraph [ref=e79]: Not selected
+            - generic [ref=e80]:
+              - text: "Invoice To:"
+              - paragraph [ref=e81]: Applicant
+        - generic [ref=e83]:
+          - img [ref=e84]
+          - generic [ref=e86]:
+            - heading "Before You Submit" [level=4] [ref=e87]
+            - list [ref=e88]:
+              - listitem [ref=e89]: Review all information carefully for accuracy and completeness
+              - listitem [ref=e90]: Ensure all required fields are completed
+              - listitem [ref=e91]: For Resource Consent applications, verify all statutory declarations are confirmed
+              - listitem [ref=e92]: Once submitted, you cannot edit the application (you may need to withdraw and resubmit)
+        - generic [ref=e94]:
+          - img [ref=e95]
+          - generic [ref=e97]:
+            - heading "Application Incomplete" [level=5] [ref=e98]
+            - paragraph [ref=e99]: Please complete all required sections before submitting. Use the Previous button to go back and fill in missing information.
+    - generic [ref=e100]:
+      - button "Previous" [ref=e101] [cursor=pointer]:
+        - img [ref=e102]
+        - text: Previous
+      - button "Submit Application" [ref=e104] [cursor=pointer]
+```
