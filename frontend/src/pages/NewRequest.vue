@@ -158,7 +158,7 @@
             </button>
             <div v-else></div>
 
-            <!-- Next button hidden on Step 3 - Process Info has its own continue button -->
+            <!-- Next button: Show on all steps except Step 3 (which has custom continue button) and last step -->
             <button
                 v-if="currentStep < totalSteps && currentStep !== 3"
                 @click="handleNext"
@@ -174,8 +174,9 @@
                 </svg>
             </button>
 
+            <!-- Submit button: Only show on the last step -->
             <button
-                v-else
+                v-if="currentStep === totalSteps"
                 @click="handleSubmit"
                 :disabled="!canSubmit || submitting"
                 class="px-6 py-3 font-medium rounded-lg transition-colors"
@@ -186,6 +187,9 @@
                 <span v-if="submitting">Submitting...</span>
                 <span v-else>Submit Application</span>
             </button>
+
+            <!-- Step 3: No button here - uses custom continue button inside Step3ProcessInfo component -->
+            <div v-if="currentStep === 3"></div>
         </div>
 </main>
 
