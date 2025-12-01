@@ -2,17 +2,39 @@ import { test, expect } from '@playwright/test'
 
 test.describe('FRD Resource Consent Application Flow', () => {
   test.beforeEach(async ({ page }) => {
-    // Navigate to the application
+    // Navigate to the frontend app
     await page.goto('http://localhost:8090/frontend')
     await page.waitForLoadState('networkidle')
+    await page.waitForTimeout(1000)
 
-    // Login if required
-    const loginButton = page.locator('button:has-text("Login")')
-    if (await loginButton.isVisible()) {
-      await page.fill('input[type="email"]', 'administrator@example.com')
-      await page.fill('input[type="password"]', 'admin')
-      await page.click('button:has-text("Login")')
+    // Check if we're already logged in by looking for "New Request" button
+    const newRequestButton = page.locator('button:has-text("New Request")')
+    const isLoggedIn = await newRequestButton.isVisible().catch(() => false)
+
+    if (!isLoggedIn) {
+      // We need to log in - look for Sign In button or Log In link
+      const signInButton = page.locator('button:has-text("Sign In")')
+      const logInLink = page.locator('a:has-text("Log In"), button:has-text("Log In")')
+
+      if (await signInButton.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await signInButton.click()
+        await page.waitForLoadState('networkidle')
+      } else if (await logInLink.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await logInLink.click()
+        await page.waitForLoadState('networkidle')
+      }
+
+      // Fill in the login form
+      await page.fill('input[type="email"], input[type="text"], input[placeholder*="email"], input[placeholder*="username"]', 'Administrator')
+      await page.fill('input[type="password"], input[placeholder*="password"]', 'admin123')
+
+      // Click Sign In button
+      await page.click('button:has-text("Sign In")')
       await page.waitForLoadState('networkidle')
+      await page.waitForTimeout(2000)
+
+      // Verify login was successful
+      await page.waitForSelector('button:has-text("New Request")', { timeout: 10000 })
     }
   })
 
