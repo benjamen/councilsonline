@@ -10,16 +10,29 @@ test('Test Step 3 Navigation', async ({ page }) => {
   const isLoggedIn = await newRequestButton.isVisible().catch(() => false)
 
   if (!isLoggedIn) {
+    // Look for Sign In button or Log In link
     const signInButton = page.locator('button:has-text("Sign In")')
+    const logInLink = page.locator('a:has-text("Log In"), button:has-text("Log In")')
+
     if (await signInButton.isVisible({ timeout: 2000 }).catch(() => false)) {
       await signInButton.click()
       await page.waitForLoadState('networkidle')
+    } else if (await logInLink.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await logInLink.click()
+      await page.waitForLoadState('networkidle')
     }
+
+    // Fill in the login form
     await page.fill('input[type="email"], input[type="text"], input[placeholder*="email"], input[placeholder*="username"]', 'Administrator')
     await page.fill('input[type="password"], input[placeholder*="password"]', 'admin123')
+
+    // Click Sign In button
     await page.click('button:has-text("Sign In")')
     await page.waitForLoadState('networkidle')
     await page.waitForTimeout(2000)
+
+    // Verify login was successful
+    await page.waitForSelector('button:has-text("New Request")', { timeout: 10000 })
   }
 
   // Click New Request
