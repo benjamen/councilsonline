@@ -1849,23 +1849,37 @@ const canProceed = computed(() => {
     case 4:
       // Step 4: Applicant & Proposal (FRD Step 1) - Consolidated validation
       if (isResourceConsent.value) {
+        // Extract values once to avoid nested reactive tracking
+        const phone = formData.value.applicant_phone
+        const type = formData.value.applicant_type
+        const property = formData.value.property
+        const consentTypes = formData.value.consent_types
+        const consentDurations = formData.value.consent_type_durations
+        const brief = formData.value.brief_description
+        const detailed = formData.value.detailed_description
+
         // Basic applicant validation
-        const hasApplicant = !!formData.value.applicant_phone && !!formData.value.applicant_type
+        const hasApplicant = !!phone && !!type
 
         // Property validation
-        const hasProperty = !!formData.value.property
+        const hasProperty = !!property
 
         // Consent types validation
-        const hasConsentTypes = formData.value.consent_types && formData.value.consent_types.length > 0
+        const hasConsentTypes = consentTypes && consentTypes.length > 0
 
-        // Duration validation
-        const hasDurations = formData.value.consent_types?.every(ct => {
-          const durationData = formData.value.consent_type_durations?.find(d => d.consent_type === ct.consent_type)
-          return durationData && (durationData.duration_unlimited || durationData.duration_years > 0)
-        })
+        // Duration validation - use extracted values to avoid reactive loops
+        let hasDurations = true
+        if (hasConsentTypes && consentDurations) {
+          hasDurations = consentTypes.every(ct => {
+            const durationData = consentDurations.find(d => d.consent_type === ct.consent_type)
+            return durationData && (durationData.duration_unlimited || durationData.duration_years > 0)
+          })
+        } else if (hasConsentTypes) {
+          hasDurations = false
+        }
 
         // Description validation
-        const hasDescriptions = !!formData.value.brief_description?.trim() && !!formData.value.detailed_description?.trim()
+        const hasDescriptions = !!brief?.trim() && !!detailed?.trim()
 
         console.log('[NewRequest] Step 4 (FRD):', {
           hasApplicant, hasProperty, hasConsentTypes, hasDurations, hasDescriptions
@@ -1878,13 +1892,16 @@ const canProceed = computed(() => {
     case 5:
       // Step 5: Natural Hazards (FRD Step 2) - Required for Land Use/Subdivision only
       if (isResourceConsent.value) {
-        const requiresHazards = formData.value.consent_types?.some(ct =>
+        // Extract to avoid reactive tracking issues
+        const consentTypes = formData.value.consent_types
+        const requiresHazards = consentTypes?.some(ct =>
           ct.consent_type === 'Land Use' || ct.consent_type === 'Subdivision'
         )
         if (requiresHazards) {
-          const hasHazards = formData.value.natural_hazards && formData.value.natural_hazards.length > 0
-          const confirmedNoHazards = formData.value.no_natural_hazards_confirmed
-          return hasHazards || confirmedNoHazards
+          const hazards = formData.value.natural_hazards
+          const confirmed = formData.value.no_natural_hazards_confirmed
+          const hasHazards = hazards && hazards.length > 0
+          return hasHazards || confirmed
         }
         return true
       }
