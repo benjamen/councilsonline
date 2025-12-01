@@ -1842,6 +1842,7 @@ const canProceed = () => {
 
     case 3:
       // Step 3: Process Info - always can proceed (just informational)
+      console.log('[NewRequest] canProceed Step 3 (Process Info): always true')
       return true
 
     case 4:
