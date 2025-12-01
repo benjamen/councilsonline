@@ -1,11 +1,14 @@
 # Step 3 Navigation - VERIFIED WORKING ✅
 
 **Date:** December 2, 2025
-**Status:** ✅ **CONFIRMED WORKING**
+**Status:** ✅ **CONFIRMED WORKING - ALL ISSUES RESOLVED**
 
 ## Summary
 
-Step 3 navigation has been **thoroughly tested and verified as working correctly**. The original issue reported ("i can't move past step 3") was caused by **API 403 Forbidden errors**, which have been resolved.
+Step 3 navigation has been **thoroughly tested and verified as working correctly**. Multiple issues were identified and resolved:
+1. ✅ **API 403 Forbidden errors** - Fixed by restarting server
+2. ✅ **Page refresh on button click** - Fixed by adding `type="button"`
+3. ✅ **Infinite reactivity loop causing page freeze** - Fixed by converting `canProceed` to computed property
 
 ## Test Results
 
@@ -61,6 +64,8 @@ The **REAL cause** was:
 
 ## How It Was Fixed
 
+### Fix 1: API Whitelist (Initial Issue)
+
 1. **Restarted Frappe Server**
    ```bash
    pkill -f "bench start"
@@ -73,10 +78,24 @@ The **REAL cause** was:
    - Server reload recognized the whitelisted functions
    - No more 403 errors in server logs
 
-3. **Simplified Button Logic**
-   - Removed special-case handling for Step 3
-   - Step 3 now uses standard Next button (lines 161-189 in [NewRequest.vue](frontend/src/pages/NewRequest.vue))
-   - Validation returns `true` for Step 3 (line 1843-1846)
+### Fix 2: Button Form Submission (Page Refresh Issue)
+
+**Problem:** Buttons without `type` attribute default to `type="submit"`, causing form submission and page refresh.
+
+**Solution:**
+- Added `type="button"` to custom continue button in [Step3ProcessInfo.vue:68](frontend/src/components/request-steps/Step3ProcessInfo.vue#L68)
+- Added `type="button"` to Next button in [NewRequest.vue:163](frontend/src/pages/NewRequest.vue#L163)
+
+### Fix 3: Infinite Reactivity Loop (Page Freeze Issue)
+
+**Problem:** `canProceed()` function was being called repeatedly in Vue template bindings. When Step 4 validation accessed `formData.value.consent_types`, it triggered Vue's reactivity system, causing a re-render which called `canProceed()` again → infinite loop.
+
+**Solution:**
+- Converted `canProceed` from function to computed property in [NewRequest.vue:1830](frontend/src/pages/NewRequest.vue#L1830)
+- Changed `const canProceed = () => {` to `const canProceed = computed(() => {`
+- Updated template bindings from `canProceed()` to `canProceed`
+- Updated function calls from `canProceed()` to `canProceed.value`
+- Computed properties properly cache results and prevent infinite reactivity cycles
 
 ## Evidence
 
