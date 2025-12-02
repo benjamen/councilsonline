@@ -304,3 +304,208 @@ def has_permission(doc, ptype, user):
 		return True
 
 	return False
+
+
+# API Methods for planner workflow
+
+@frappe.whitelist()
+def accept_time_slot(meeting_id, slot_index):
+	"""
+	Planner accepts one of the applicant's preferred time slots
+
+	Args:
+		meeting_id: Pre-Application Meeting ID
+		slot_index: Index of the time slot to accept (0-based)
+
+	Returns:
+		dict: Success status and updated meeting data
+	"""
+	meeting = frappe.get_doc("Pre-Application Meeting", meeting_id)
+
+	if not meeting.preferred_time_slots or len(meeting.preferred_time_slots) <= slot_index:
+		frappe.throw("Invalid time slot index")
+
+	# Get the selected slot
+	selected_slot = meeting.preferred_time_slots[slot_index]
+
+	# Update the slot response
+	selected_slot.planner_response = "Accepted"
+
+	# Schedule the meeting with the accepted time
+	meeting.scheduled_start = selected_slot.preferred_start
+	meeting.scheduled_end = selected_slot.preferred_end
+	meeting.scheduled_by = frappe.session.user
+	meeting.scheduled_date = now_datetime()
+	meeting.status = "Scheduled"
+
+	# Decline other slots
+	for i, slot in enumerate(meeting.preferred_time_slots):
+		if i != slot_index:
+			slot.planner_response = "Declined"
+			slot.planner_notes = "Another time slot was accepted"
+
+	meeting.save(ignore_permissions=True)
+	meeting.send_meeting_confirmation()
+
+	return {
+		"success": True,
+		"message": "Time slot accepted and meeting scheduled",
+		"meeting": meeting.as_dict()
+	}
+
+
+@frappe.whitelist()
+def decline_time_slot(meeting_id, slot_index, planner_notes=None):
+	"""
+	Planner declines a specific time slot
+
+	Args:
+		meeting_id: Pre-Application Meeting ID
+		slot_index: Index of the time slot to decline (0-based)
+		planner_notes: Optional notes explaining the decline
+
+	Returns:
+		dict: Success status and updated meeting data
+	"""
+	meeting = frappe.get_doc("Pre-Application Meeting", meeting_id)
+
+	if not meeting.preferred_time_slots or len(meeting.preferred_time_slots) <= slot_index:
+		frappe.throw("Invalid time slot index")
+
+	# Update the slot response
+	slot = meeting.preferred_time_slots[slot_index]
+	slot.planner_response = "Declined"
+	if planner_notes:
+		slot.planner_notes = planner_notes
+
+	meeting.save(ignore_permissions=True)
+
+	# Check if all slots are declined
+	all_declined = all(s.planner_response == "Declined" for s in meeting.preferred_time_slots)
+
+	return {
+		"success": True,
+		"message": "Time slot declined",
+		"all_declined": all_declined,
+		"meeting": meeting.as_dict()
+	}
+
+
+@frappe.whitelist()
+def propose_alternative_time(meeting_id, slot_index, alternative_start, alternative_end, planner_notes=None):
+	"""
+	Planner proposes an alternative time for a specific slot
+
+	Args:
+		meeting_id: Pre-Application Meeting ID
+		slot_index: Index of the time slot (0-based)
+		alternative_start: Alternative start datetime
+		alternative_end: Alternative end datetime
+		planner_notes: Optional notes explaining the alternative
+
+	Returns:
+		dict: Success status and updated meeting data
+	"""
+	meeting = frappe.get_doc("Pre-Application Meeting", meeting_id)
+
+	if not meeting.preferred_time_slots or len(meeting.preferred_time_slots) <= slot_index:
+		frappe.throw("Invalid time slot index")
+
+	# Update the slot with alternative time
+	slot = meeting.preferred_time_slots[slot_index]
+	slot.planner_response = "Proposed Alternative"
+	slot.alternative_start = alternative_start
+	slot.alternative_end = alternative_end
+	if planner_notes:
+		slot.planner_notes = planner_notes
+
+	meeting.save(ignore_permissions=True)
+
+	# Send notification to applicant
+	send_alternative_time_notification(meeting, slot_index)
+
+	return {
+		"success": True,
+		"message": "Alternative time proposed",
+		"meeting": meeting.as_dict()
+	}
+
+
+@frappe.whitelist()
+def accept_alternative_time(meeting_id, slot_index):
+	"""
+	Applicant accepts the planner's proposed alternative time
+
+	Args:
+		meeting_id: Pre-Application Meeting ID
+		slot_index: Index of the time slot with alternative (0-based)
+
+	Returns:
+		dict: Success status and updated meeting data
+	"""
+	meeting = frappe.get_doc("Pre-Application Meeting", meeting_id)
+
+	if not meeting.preferred_time_slots or len(meeting.preferred_time_slots) <= slot_index:
+		frappe.throw("Invalid time slot index")
+
+	slot = meeting.preferred_time_slots[slot_index]
+
+	if slot.planner_response != "Proposed Alternative" or not slot.alternative_start:
+		frappe.throw("No alternative time available for this slot")
+
+	# Schedule meeting with alternative time
+	meeting.scheduled_start = slot.alternative_start
+	meeting.scheduled_end = slot.alternative_end
+	meeting.scheduled_by = frappe.session.user
+	meeting.scheduled_date = now_datetime()
+	meeting.status = "Scheduled"
+
+	# Update slot status
+	slot.planner_response = "Accepted"
+
+	meeting.save(ignore_permissions=True)
+	meeting.send_meeting_confirmation()
+
+	return {
+		"success": True,
+		"message": "Alternative time accepted and meeting scheduled",
+		"meeting": meeting.as_dict()
+	}
+
+
+def send_alternative_time_notification(meeting, slot_index):
+	"""Send email notification when planner proposes alternative time"""
+	if not meeting.applicant_email:
+		return
+
+	try:
+		slot = meeting.preferred_time_slots[slot_index]
+		request_doc = frappe.get_doc("Request", meeting.request)
+
+		message = f"""
+		<p>Dear {meeting.applicant_name},</p>
+		<p>The planner has proposed an alternative time for your {meeting.meeting_type} for application {request_doc.request_number}.</p>
+
+		<h3>Original Request:</h3>
+		<p>{frappe.utils.format_datetime(slot.preferred_start, "dd MMM yyyy, hh:mm a")} - {frappe.utils.format_datetime(slot.preferred_end, "hh:mm a")}</p>
+
+		<h3>Proposed Alternative:</h3>
+		<p>{frappe.utils.format_datetime(slot.alternative_start, "dd MMM yyyy, hh:mm a")} - {frappe.utils.format_datetime(slot.alternative_end, "hh:mm a")}</p>
+
+		{f"<p><strong>Planner's Notes:</strong> {slot.planner_notes}</p>" if slot.planner_notes else ""}
+
+		<p>Please log in to your account to accept or propose another time.</p>
+
+		<p>Best regards,<br>{frappe.db.get_value("Council", meeting.council, "council_name")}</p>
+		"""
+
+		frappe.sendmail(
+			recipients=[meeting.applicant_email],
+			subject=f"Alternative Meeting Time Proposed - {request_doc.request_number}",
+			message=message,
+			reference_doctype=meeting.doctype,
+			reference_name=meeting.name
+		)
+
+	except Exception as e:
+		frappe.log_error(f"Error sending alternative time notification: {str(e)}", "Meeting Notification Error")

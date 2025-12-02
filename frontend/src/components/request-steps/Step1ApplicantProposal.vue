@@ -834,6 +834,7 @@ import Step4ApplicantDetails from './Step4ApplicantDetails.vue'
 import Step5PropertyDetailsMulti from './Step5PropertyDetailsMulti.vue'
 import Step6ConsentInfo from './Step6ConsentInfo.vue'
 import RFQModal from '../modals/RFQModal.vue'
+import { updateRFQ, sendRFQToAgent as sendRFQToAgentAPI, engageAgent as engageAgentAPI } from '../../api/rfq'
 
 const props = defineProps({
   modelValue: {
@@ -1032,44 +1033,81 @@ const closeRFQModal = () => {
 }
 
 const saveRFQ = async (rfqData) => {
-  // Update the RFQ in the list
-  if (currentRFQIndex.value !== null) {
-    localData.value.agent_rfqs[currentRFQIndex.value] = { ...rfqData }
+  try {
+    // Only update if RFQ has an ID (already created in backend)
+    if (rfqData.name || rfqData.rfq_id) {
+      const rfqId = rfqData.name || rfqData.rfq_id
+      await updateRFQ(rfqId, {
+        rfq_message: rfqData.rfq_message
+      })
+    }
+
+    // Update the RFQ in the list
+    if (currentRFQIndex.value !== null) {
+      localData.value.agent_rfqs[currentRFQIndex.value] = { ...rfqData }
+    }
+
+    closeRFQModal()
+  } catch (error) {
+    console.error('Failed to save RFQ:', error)
+    alert('Failed to save RFQ changes. Please try again.')
   }
-  // TODO: Call backend API to persist RFQ changes
-  console.log('Saving RFQ:', rfqData)
-  closeRFQModal()
 }
 
 const sendRFQToAgent = async ({ rfq, agent }) => {
-  // TODO: Call backend API to send RFQ to agent
-  console.log('Sending RFQ to agent:', agent, rfq)
+  try {
+    const rfqId = rfq.name || rfq.rfq_id
+    if (!rfqId) {
+      throw new Error('RFQ ID not found')
+    }
 
-  // Update status
-  if (currentRFQIndex.value !== null) {
-    localData.value.agent_rfqs[currentRFQIndex.value].status = 'Sent to Agent'
-    localData.value.agent_rfqs[currentRFQIndex.value].agent = agent
+    // Call backend API to send RFQ to agent
+    await sendRFQToAgentAPI(rfqId, agent)
+
+    // Update status in local data
+    if (currentRFQIndex.value !== null) {
+      localData.value.agent_rfqs[currentRFQIndex.value].status = 'Sent to Agent'
+      localData.value.agent_rfqs[currentRFQIndex.value].agent = agent
+      localData.value.agent_rfqs[currentRFQIndex.value].sent_date = new Date().toISOString()
+    }
+
+    closeRFQModal()
+  } catch (error) {
+    console.error('Failed to send RFQ to agent:', error)
+    alert('Failed to send RFQ to agent. Please try again.')
   }
-
-  closeRFQModal()
 }
 
 const engageAgentFromRFQ = async (rfqData) => {
-  // TODO: Call backend API to engage agent and lock application
-  console.log('Engaging agent from RFQ:', rfqData)
+  try {
+    const rfqId = rfqData.name || rfqData.rfq_id
+    if (!rfqId) {
+      throw new Error('RFQ ID not found')
+    }
 
-  // Update status and lock application
-  if (currentRFQIndex.value !== null) {
-    localData.value.agent_rfqs[currentRFQIndex.value].status = 'Agent Engaged'
-    localData.value.agent_rfqs[currentRFQIndex.value].agent_engaged = true
-    localData.value.agent_rfqs[currentRFQIndex.value].agent_engaged_date = new Date().toISOString()
+    // Call backend API to engage agent (this will lock the request)
+    await engageAgentAPI(rfqId, rfqData.quote_amount, rfqData.quote_details)
+
+    // Update status and lock application in local data
+    if (currentRFQIndex.value !== null) {
+      localData.value.agent_rfqs[currentRFQIndex.value].status = 'Agent Engaged'
+      localData.value.agent_rfqs[currentRFQIndex.value].agent_engaged = true
+      localData.value.agent_rfqs[currentRFQIndex.value].agent_engaged_date = new Date().toISOString()
+    }
+
+    // Lock the application
+    localData.value.locked_for_editing = true
+    localData.value.locked_reason = 'Agent engaged'
+    localData.value.agent_engaged = true
+
+    closeRFQModal()
+
+    // Show success message
+    alert('Agent successfully engaged. This application is now locked for editing.')
+  } catch (error) {
+    console.error('Failed to engage agent:', error)
+    alert('Failed to engage agent. Please try again.')
   }
-
-  // Lock the application
-  localData.value.locked_for_editing = true
-  localData.value.locked_reason = 'Agent engaged'
-
-  closeRFQModal()
 }
 
 // Pre-Application Meeting modal management

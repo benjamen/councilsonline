@@ -15,6 +15,8 @@
   "requested_date",
   "scheduled_by",
   "scheduled_date",
+  "preferred_times_section",
+  "preferred_time_slots",
   "scheduling_section",
   "event",
   "scheduled_start",
@@ -30,7 +32,7 @@
   "applicant_phone",
   "column_break_attendees",
   "council_planner",
-  "additional_attendees",
+  "meeting_attendees",
   "meeting_content_section",
   "meeting_purpose",
   "discussion_points",
@@ -117,6 +119,20 @@
    "fieldtype": "Datetime",
    "label": "Scheduled Date",
    "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "eval:doc.status==\"Requested\"",
+   "fieldname": "preferred_times_section",
+   "fieldtype": "Section Break",
+   "label": "Preferred Time Slots"
+  },
+  {
+   "description": "Applicant's preferred meeting times (up to 3 options)",
+   "fieldname": "preferred_time_slots",
+   "fieldtype": "Table",
+   "label": "Preferred Time Slots",
+   "options": "Meeting Preferred Time Slot"
   },
   {
    "collapsible": 1,
@@ -210,10 +226,11 @@
    "options": "User"
   },
   {
-   "description": "Additional attendees (one per line)",
-   "fieldname": "additional_attendees",
-   "fieldtype": "Small Text",
-   "label": "Additional Attendees"
+   "description": "Additional meeting attendees (contacts)",
+   "fieldname": "meeting_attendees",
+   "fieldtype": "Table",
+   "label": "Additional Attendees",
+   "options": "Meeting Attendee"
   },
   {
    "collapsible": 1,

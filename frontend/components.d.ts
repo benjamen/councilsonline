@@ -9,7 +9,9 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AddressLookup: typeof import('./src/components/AddressLookup.vue')['default']
+    ContactSelector: typeof import('./src/components/common/ContactSelector.vue')['default']
     CouncilSelector: typeof import('./src/components/CouncilSelector.vue')['default']
+    DateTimePicker: typeof import('./src/components/common/DateTimePicker.vue')['default']
     FeatureCard: typeof import('./src/components/FeatureCard.vue')['default']
     ProcessStep: typeof import('./src/components/ProcessStep.vue')['default']
     PropertyManager: typeof import('./src/components/registration/PropertyManager.vue')['default']

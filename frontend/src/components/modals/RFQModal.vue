@@ -201,7 +201,8 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, onMounted } from 'vue'
+import { getAvailableAgents } from '../../api/rfq'
 
 const props = defineProps({
   isOpen: {
@@ -224,12 +225,57 @@ const emit = defineEmits(['close', 'save', 'send-to-agent', 'engage-agent'])
 const rfqData = ref({ ...props.rfq })
 const selectedAgent = ref(props.rfq.agent || '')
 const saving = ref(false)
-const availableAgents = ref([
-  { value: 'agent-1', label: 'Smith Planning Consultants Ltd' },
-  { value: 'agent-2', label: 'Jones Resource Consent Services' },
-  { value: 'agent-3', label: 'Wellington Planning Professionals' },
-  // TODO: Load from API
-])
+const availableAgents = ref([])
+const loadingAgents = ref(false)
+
+// Load available agents on component mount
+onMounted(async () => {
+  await loadAvailableAgents()
+})
+
+const loadAvailableAgents = async () => {
+  try {
+    loadingAgents.value = true
+    const resource = getAvailableAgents()
+
+    // Wait for the resource to load
+    await new Promise((resolve) => {
+      const checkLoaded = setInterval(() => {
+        if (resource.data) {
+          clearInterval(checkLoaded)
+          resolve()
+        }
+      }, 100)
+
+      // Timeout after 5 seconds
+      setTimeout(() => {
+        clearInterval(checkLoaded)
+        resolve()
+      }, 5000)
+    })
+
+    if (resource.data && Array.isArray(resource.data)) {
+      availableAgents.value = resource.data
+    } else {
+      // Fallback to hardcoded agents if API fails
+      availableAgents.value = [
+        { value: 'agent-1', label: 'Smith Planning Consultants Ltd' },
+        { value: 'agent-2', label: 'Jones Resource Consent Services' },
+        { value: 'agent-3', label: 'Wellington Planning Professionals' }
+      ]
+    }
+  } catch (error) {
+    console.error('Failed to load available agents:', error)
+    // Use fallback agents
+    availableAgents.value = [
+      { value: 'agent-1', label: 'Smith Planning Consultants Ltd' },
+      { value: 'agent-2', label: 'Jones Resource Consent Services' },
+      { value: 'agent-3', label: 'Wellington Planning Professionals' }
+    ]
+  } finally {
+    loadingAgents.value = false
+  }
+}
 
 // Watch for prop changes
 watch(() => props.rfq, (newRfq) => {
@@ -241,6 +287,10 @@ watch(() => props.isOpen, (isOpen) => {
   if (isOpen) {
     rfqData.value = { ...props.rfq }
     selectedAgent.value = props.rfq.agent || ''
+    // Reload agents when modal opens
+    if (availableAgents.value.length === 0) {
+      loadAvailableAgents()
+    }
   }
 })
 

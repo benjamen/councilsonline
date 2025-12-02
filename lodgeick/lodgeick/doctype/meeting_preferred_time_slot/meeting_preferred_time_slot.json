@@ -1,0 +1,84 @@
+{
+ "actions": [],
+ "creation": "2025-12-03 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "preference_order",
+  "preferred_start",
+  "preferred_end",
+  "column_break_1",
+  "planner_response",
+  "planner_notes",
+  "alternative_start",
+  "alternative_end"
+ ],
+ "fields": [
+  {
+   "fieldname": "preference_order",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Preference #",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "preferred_start",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Preferred Start",
+   "reqd": 1
+  },
+  {
+   "fieldname": "preferred_end",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Preferred End",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Pending",
+   "fieldname": "planner_response",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Planner Response",
+   "options": "Pending\nAccepted\nDeclined\nProposed Alternative",
+   "read_only": 1
+  },
+  {
+   "fieldname": "planner_notes",
+   "fieldtype": "Small Text",
+   "label": "Planner Notes"
+  },
+  {
+   "depends_on": "eval:doc.planner_response==\"Proposed Alternative\"",
+   "fieldname": "alternative_start",
+   "fieldtype": "Datetime",
+   "label": "Alternative Start"
+  },
+  {
+   "depends_on": "eval:doc.planner_response==\"Proposed Alternative\"",
+   "fieldname": "alternative_end",
+   "fieldtype": "Datetime",
+   "label": "Alternative End"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-12-03 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Meeting Preferred Time Slot",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
