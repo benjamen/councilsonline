@@ -191,13 +191,13 @@
             <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
               Phone Number <span class="text-red-500">*</span>
             </label>
-            <Input
+            <input
               id="phone"
               v-model="formData.phone"
               type="tel"
               required
               placeholder="021 234 5678 or 09 123 4567"
-              class="w-full"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               @blur="validatePhoneField"
             />
             <p v-if="phoneError" class="mt-1 text-xs text-red-600">{{ phoneError }}</p>
