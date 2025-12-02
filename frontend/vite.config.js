@@ -40,11 +40,17 @@ export default defineConfig({
 		port: 8080,
 		proxy: {
 			'^/(app|api|assets|files)': {
-				target: 'http://localhost:8000',
+				target: 'http://127.0.0.1:8000',
 				ws: true,
-				router: function (req) {
-					const site_name = req.headers.host.split(':')[0];
-					return `http://${site_name}:8000`;
+				changeOrigin: true,
+				secure: false,
+				configure: (proxy, options) => {
+					proxy.on('proxyReq', (proxyReq, req, res) => {
+						// Set the Host header to lodgeick.localhost for Frappe site routing
+						proxyReq.setHeader('Host', 'lodgeick.localhost');
+						// Forward cookies properly
+						proxyReq.setHeader('X-Frappe-Site-Name', 'lodgeick.localhost');
+					});
 				},
 			},
 		},

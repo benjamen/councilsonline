@@ -13,19 +13,19 @@
         />
       </div>
 
-      <!-- SECTION 2: Property Details (nested component) -->
-      <div class="border-b border-gray-200 pb-8">
-        <Step5PropertyDetails
-          v-model="localData"
-          :properties="properties"
-          @property-select="handlePropertySelect"
-        />
-      </div>
-
-      <!-- SECTION 3: Consent Information (nested component) -->
+      <!-- SECTION 2: Consent Information / Proposal Details (nested component) -->
       <div class="border-b border-gray-200 pb-8">
         <Step6ConsentInfo
           v-model="localData"
+        />
+      </div>
+
+      <!-- SECTION 3: Property Details (nested component) -->
+      <div class="border-b border-gray-200 pb-8">
+        <Step5PropertyDetailsMulti
+          v-model="localData"
+          :properties="properties"
+          @property-select="handlePropertySelect"
         />
       </div>
 
@@ -270,29 +270,74 @@
       <div class="border-b border-gray-200 pb-8">
         <h3 class="text-xl font-semibold text-gray-900 mb-4">Agent Details</h3>
         <p class="text-sm text-gray-600 mb-4">
-          You may contact Resource Consent Planning Professionals or Agents from list available in eRCS to obtain quotes from and engage them to help you prepare and lodge your application by selecting the Engage Agent button.
+          You may contact Resource Consent Planning Professionals or Agents from the list available in eRCS to obtain quotes from and engage them to help you prepare and lodge your application by selecting the Engage Agent button.
         </p>
         <p class="text-sm text-orange-600 mb-4 font-medium">
           Please note: You will not be able to make any more changes or complete this application once you engage an Agent.
         </p>
 
-        <div class="flex items-center gap-4">
-          <label class="flex items-center cursor-pointer">
-            <input
-              v-model="localData.agent_required"
-              type="checkbox"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            />
-            <span class="ml-2 text-sm font-medium text-gray-700">No Agent Required</span>
-          </label>
-          <button
-            type="button"
-            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
-            disabled
-            title="Agent engagement feature coming soon"
-          >
-            Engage Agent (Coming Soon)
-          </button>
+        <div class="space-y-4">
+          <div class="flex items-center space-x-4">
+            <label class="flex items-center cursor-pointer">
+              <input
+                type="radio"
+                :value="false"
+                v-model="agentRequired"
+                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+              />
+              <span class="ml-2 text-sm font-medium text-gray-700">No Agent Required</span>
+            </label>
+            <label class="flex items-center cursor-pointer opacity-50">
+              <input
+                type="radio"
+                :value="true"
+                v-model="agentRequired"
+                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                disabled
+              />
+              <span class="ml-2 text-sm font-medium text-gray-700">Engage Agent (Coming Soon)</span>
+            </label>
+          </div>
+
+          <!-- RFQ List (if any exist) -->
+          <div v-if="localData.agent_rfqs && localData.agent_rfqs.length > 0" class="mt-6">
+            <h4 class="text-sm font-semibold text-gray-700 mb-2">Agent Requests for Quote</h4>
+            <div class="space-y-2">
+              <div
+                v-for="(rfq, index) in localData.agent_rfqs"
+                :key="index"
+                class="p-3 bg-gray-50 border border-gray-200 rounded-lg flex items-center justify-between"
+              >
+                <div class="flex-1">
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm font-medium text-gray-900">RFQ {{ rfq.rfq_id || `#${index + 1}` }}</span>
+                    <span
+                      :class="[
+                        'px-2 py-1 text-xs rounded-full',
+                        rfq.status === 'Draft' ? 'bg-gray-100 text-gray-800' :
+                        rfq.status === 'Sent to Agent' ? 'bg-blue-100 text-blue-800' :
+                        rfq.status === 'Quote Received' ? 'bg-yellow-100 text-yellow-800' :
+                        rfq.status === 'Agent Engaged' ? 'bg-green-100 text-green-800' :
+                        'bg-gray-100 text-gray-800'
+                      ]"
+                    >
+                      {{ rfq.status || 'Draft' }}
+                    </span>
+                  </div>
+                  <div v-if="rfq.agent_name" class="text-xs text-gray-600 mt-1">
+                    Agent: {{ rfq.agent_name }}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  @click="viewRFQ(index)"
+                  class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                >
+                  View Details
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -309,7 +354,7 @@
         <div class="flex items-center gap-4">
           <label class="flex items-center cursor-pointer">
             <input
-              v-model="localData.pre_app_meeting_required"
+              v-model="localData.pre_app_meeting_not_required"
               type="checkbox"
               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
             />
@@ -317,12 +362,56 @@
           </label>
           <button
             type="button"
-            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
-            disabled
-            title="Pre-application meeting feature coming soon"
+            @click="showPreAppMeetingModal = true"
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
-            View / Request Pre-Application Meeting (Coming Soon)
+            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            Request Pre-Application Meeting
           </button>
+        </div>
+
+        <!-- Pre-Application Meeting List -->
+        <div v-if="localData.pre_app_meetings && localData.pre_app_meetings.length > 0" class="mt-4">
+          <h4 class="text-sm font-semibold text-gray-700 mb-2">Scheduled Meetings</h4>
+          <div class="space-y-2">
+            <div
+              v-for="(meeting, index) in localData.pre_app_meetings"
+              :key="index"
+              class="p-3 bg-gray-50 border border-gray-200 rounded-lg flex items-center justify-between"
+            >
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <span class="text-sm font-medium text-gray-900">{{ meeting.meeting_type || 'Pre-Application Meeting' }}</span>
+                  <span
+                    :class="[
+                      'px-2 py-1 text-xs rounded-full',
+                      meeting.status === 'Scheduled' ? 'bg-blue-100 text-blue-800' :
+                      meeting.status === 'Confirmed' ? 'bg-green-100 text-green-800' :
+                      meeting.status === 'Completed' ? 'bg-gray-100 text-gray-800' :
+                      'bg-yellow-100 text-yellow-800'
+                    ]"
+                  >
+                    {{ meeting.status || 'Requested' }}
+                  </span>
+                </div>
+                <div v-if="meeting.scheduled_start" class="text-xs text-gray-600 mt-1">
+                  <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  {{ new Date(meeting.scheduled_start).toLocaleString() }}
+                </div>
+              </div>
+              <button
+                type="button"
+                @click="editPreAppMeeting(index)"
+                class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+              >
+                View Details
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -595,14 +684,156 @@
         </div>
       </div>
     </div>
+
+    <!-- Pre-Application Meeting Modal -->
+    <div
+      v-if="showPreAppMeetingModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      @click.self="closePreAppMeetingModal"
+    >
+      <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+        <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+          <h3 class="text-xl font-bold text-gray-900">Request Pre-Application Meeting</h3>
+          <button
+            @click="closePreAppMeetingModal"
+            class="text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="overflow-y-auto max-h-[calc(90vh-140px)] px-6 py-4">
+          <div class="space-y-4">
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <p class="text-sm text-blue-900">
+                A pre-application meeting allows you to discuss your proposal with council planners before formally submitting your application. This can help clarify requirements and identify potential issues early.
+              </p>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Meeting Type *</label>
+              <select
+                v-model="currentPreAppMeeting.meeting_type"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
+              >
+                <option value="Pre-Application Meeting">Pre-Application Meeting</option>
+                <option value="Site Visit">Site Visit</option>
+                <option value="Technical Review">Technical Review</option>
+                <option value="Follow-up Meeting">Follow-up Meeting</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Meeting Format *</label>
+              <select
+                v-model="currentPreAppMeeting.meeting_format"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
+              >
+                <option value="In Person">In Person</option>
+                <option value="Video Call">Video Call</option>
+                <option value="Phone Call">Phone Call</option>
+                <option value="Hybrid">Hybrid</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Meeting Purpose *</label>
+              <textarea
+                v-model="currentPreAppMeeting.meeting_purpose"
+                rows="3"
+                placeholder="Describe the purpose of this meeting and what you'd like to discuss..."
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
+              ></textarea>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Discussion Points</label>
+              <textarea
+                v-model="currentPreAppMeeting.discussion_points"
+                rows="4"
+                placeholder="List key topics you'd like to discuss (one per line)"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              ></textarea>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Preferred Meeting Times</label>
+              <textarea
+                v-model="currentPreAppMeeting.preferred_times"
+                rows="2"
+                placeholder="Suggest a few preferred dates and times (e.g., Monday 2nd Dec, 10am-12pm)"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              ></textarea>
+              <p class="text-xs text-gray-500 mt-1">The council will confirm the actual meeting time</p>
+            </div>
+
+            <div v-if="currentPreAppMeeting.meeting_format === 'In Person' || currentPreAppMeeting.meeting_format === 'Hybrid'">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Preferred Location</label>
+              <input
+                v-model="currentPreAppMeeting.meeting_location"
+                type="text"
+                placeholder="e.g., Council offices, or site address"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Additional Attendees</label>
+              <textarea
+                v-model="currentPreAppMeeting.additional_attendees"
+                rows="2"
+                placeholder="List any additional people who will attend (one per line)"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="sticky bottom-0 bg-gray-50 px-6 py-4 flex justify-end gap-3 border-t border-gray-200">
+          <button
+            @click="closePreAppMeetingModal"
+            type="button"
+            class="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            @click="savePreAppMeeting"
+            type="button"
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            :disabled="!currentPreAppMeeting.meeting_type || !currentPreAppMeeting.meeting_format || !currentPreAppMeeting.meeting_purpose"
+          >
+            {{ editingPreAppMeetingIndex !== null ? 'Update' : 'Request' }} Meeting
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RFQ Modal -->
+    <RFQModal
+      :is-open="isRFQModalOpen"
+      :rfq="currentRFQ"
+      :request-id="localData.name"
+      @close="closeRFQModal"
+      @save="saveRFQ"
+      @send-to-agent="sendRFQToAgent"
+      @engage-agent="engageAgentFromRFQ"
+    />
   </div>
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref, watch, computed } from 'vue'
+import { defineProps, defineEmits, ref, watch, computed, toRaw } from 'vue'
 import Step4ApplicantDetails from './Step4ApplicantDetails.vue'
-import Step5PropertyDetails from './Step5PropertyDetails.vue'
+import Step5PropertyDetailsMulti from './Step5PropertyDetailsMulti.vue'
 import Step6ConsentInfo from './Step6ConsentInfo.vue'
+import RFQModal from '../modals/RFQModal.vue'
 
 const props = defineProps({
   modelValue: {
@@ -626,39 +857,60 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'property-select'])
 
 // Local data with all FRD fields
+// CRITICAL FIX: Use toRaw() to break reactive chain and prevent infinite reactivity loops
+// This prevents the browser freeze issue when navigating to Step 4
+const rawModelValue = toRaw(props.modelValue)
+console.log('[Step1ApplicantProposal] Using toRaw to prevent freeze - fix v2.0')
 const localData = ref({
-  ...props.modelValue,
+  ...rawModelValue,
   // Additional Consents (FRD 3.4)
-  additional_consents: props.modelValue.additional_consents || [],
+  additional_consents: rawModelValue.additional_consents || [],
   // PIM & Building Consent (FRD 3.5)
-  pim_applied: props.modelValue.pim_applied || false,
-  pim_number: props.modelValue.pim_number || '',
-  building_consent_applied: props.modelValue.building_consent_applied || false,
-  building_consent_number: props.modelValue.building_consent_number || '',
+  pim_applied: rawModelValue.pim_applied || false,
+  pim_number: rawModelValue.pim_number || '',
+  building_consent_applied: rawModelValue.building_consent_applied || false,
+  building_consent_number: rawModelValue.building_consent_number || '',
   // Site Visit (FRD 3.6)
-  site_visit_locked_gates: props.modelValue.site_visit_locked_gates || false,
-  site_visit_dogs_present: props.modelValue.site_visit_dogs_present || false,
-  site_visit_health_safety_issues: props.modelValue.site_visit_health_safety_issues || false,
-  site_visit_notice_required: props.modelValue.site_visit_notice_required || false,
-  site_visit_details: props.modelValue.site_visit_details || '',
+  site_visit_locked_gates: rawModelValue.site_visit_locked_gates || false,
+  site_visit_dogs_present: rawModelValue.site_visit_dogs_present || false,
+  site_visit_health_safety_issues: rawModelValue.site_visit_health_safety_issues || false,
+  site_visit_notice_required: rawModelValue.site_visit_notice_required || false,
+  site_visit_details: rawModelValue.site_visit_details || '',
   // Agent Details (FRD 3.7)
-  agent_required: props.modelValue.agent_required || false,
-  agent_id: props.modelValue.agent_id || null,
+  agent_required: rawModelValue.agent_required || false,
+  agent_id: rawModelValue.agent_id || null,
+  agent_rfqs: rawModelValue.agent_rfqs || [],
   // Pre-App Meeting (FRD 3.8)
-  pre_app_meeting_required: props.modelValue.pre_app_meeting_required || false,
-  pre_app_meeting_id: props.modelValue.pre_app_meeting_id || null,
+  pre_app_meeting_not_required: rawModelValue.pre_app_meeting_not_required || false,
+  pre_app_meetings: rawModelValue.pre_app_meetings || [],
   // Correspondence (FRD 3.9)
-  correspondence_recipient: props.modelValue.correspondence_recipient || 'Applicant',
-  invoice_responsible_party: props.modelValue.invoice_responsible_party || 'Applicant',
+  correspondence_recipient: rawModelValue.correspondence_recipient || 'Applicant',
+  invoice_responsible_party: rawModelValue.invoice_responsible_party || 'Applicant',
   // Additional Contacts (FRD 3.10)
-  additional_contact_persons: props.modelValue.additional_contact_persons || []
+  additional_contact_persons: rawModelValue.additional_contact_persons || []
 })
 
 // Additional consents management
-const additionalConsentsRequired = computed({
-  get: () => localData.value.additional_consents && localData.value.additional_consents.length > 0,
-  set: (value) => {
-    if (!value) {
+// Initialize based on existing data
+const additionalConsentsRequired = ref(
+  localData.value.additional_consents && localData.value.additional_consents.length > 0
+)
+
+// Watch for changes to additional_consents array to update the radio button
+watch(() => localData.value.additional_consents, (newVal) => {
+  if (newVal && newVal.length > 0) {
+    additionalConsentsRequired.value = true
+  }
+}, { deep: true })
+
+// When user selects "Yes", we need to show the section even if empty
+watch(additionalConsentsRequired, (newVal) => {
+  if (!newVal) {
+    // User selected "No" - clear the consents
+    localData.value.additional_consents = []
+  } else {
+    // User selected "Yes" - ensure array exists (but keep it empty to show empty state)
+    if (!localData.value.additional_consents) {
       localData.value.additional_consents = []
     }
   }
@@ -761,36 +1013,122 @@ const removeAdditionalContact = (index) => {
   }
 }
 
+// Agent RFQ management
+const agentRequired = ref(false)
+const isRFQModalOpen = ref(false)
+const currentRFQ = ref({})
+const currentRFQIndex = ref(null)
+
+const viewRFQ = (index) => {
+  currentRFQIndex.value = index
+  currentRFQ.value = { ...localData.value.agent_rfqs[index] }
+  isRFQModalOpen.value = true
+}
+
+const closeRFQModal = () => {
+  isRFQModalOpen.value = false
+  currentRFQIndex.value = null
+  currentRFQ.value = {}
+}
+
+const saveRFQ = async (rfqData) => {
+  // Update the RFQ in the list
+  if (currentRFQIndex.value !== null) {
+    localData.value.agent_rfqs[currentRFQIndex.value] = { ...rfqData }
+  }
+  // TODO: Call backend API to persist RFQ changes
+  console.log('Saving RFQ:', rfqData)
+  closeRFQModal()
+}
+
+const sendRFQToAgent = async ({ rfq, agent }) => {
+  // TODO: Call backend API to send RFQ to agent
+  console.log('Sending RFQ to agent:', agent, rfq)
+
+  // Update status
+  if (currentRFQIndex.value !== null) {
+    localData.value.agent_rfqs[currentRFQIndex.value].status = 'Sent to Agent'
+    localData.value.agent_rfqs[currentRFQIndex.value].agent = agent
+  }
+
+  closeRFQModal()
+}
+
+const engageAgentFromRFQ = async (rfqData) => {
+  // TODO: Call backend API to engage agent and lock application
+  console.log('Engaging agent from RFQ:', rfqData)
+
+  // Update status and lock application
+  if (currentRFQIndex.value !== null) {
+    localData.value.agent_rfqs[currentRFQIndex.value].status = 'Agent Engaged'
+    localData.value.agent_rfqs[currentRFQIndex.value].agent_engaged = true
+    localData.value.agent_rfqs[currentRFQIndex.value].agent_engaged_date = new Date().toISOString()
+  }
+
+  // Lock the application
+  localData.value.locked_for_editing = true
+  localData.value.locked_reason = 'Agent engaged'
+
+  closeRFQModal()
+}
+
+// Pre-Application Meeting modal management
+const showPreAppMeetingModal = ref(false)
+const editingPreAppMeetingIndex = ref(null)
+const currentPreAppMeeting = ref({
+  meeting_type: 'Pre-Application Meeting',
+  meeting_format: 'In Person',
+  meeting_purpose: '',
+  discussion_points: '',
+  preferred_times: '',
+  meeting_location: '',
+  additional_attendees: '',
+  status: 'Requested'
+})
+
+const editPreAppMeeting = (index) => {
+  editingPreAppMeetingIndex.value = index
+  currentPreAppMeeting.value = { ...localData.value.pre_app_meetings[index] }
+  showPreAppMeetingModal.value = true
+}
+
+const closePreAppMeetingModal = () => {
+  showPreAppMeetingModal.value = false
+  editingPreAppMeetingIndex.value = null
+  currentPreAppMeeting.value = {
+    meeting_type: 'Pre-Application Meeting',
+    meeting_format: 'In Person',
+    meeting_purpose: '',
+    discussion_points: '',
+    preferred_times: '',
+    meeting_location: '',
+    additional_attendees: '',
+    status: 'Requested'
+  }
+}
+
+const savePreAppMeeting = () => {
+  if (!localData.value.pre_app_meetings) {
+    localData.value.pre_app_meetings = []
+  }
+
+  if (editingPreAppMeetingIndex.value !== null) {
+    localData.value.pre_app_meetings[editingPreAppMeetingIndex.value] = { ...currentPreAppMeeting.value }
+  } else {
+    localData.value.pre_app_meetings.push({ ...currentPreAppMeeting.value })
+  }
+
+  closePreAppMeetingModal()
+}
+
 // Property select handler
 const handlePropertySelect = () => {
   emit('property-select')
 }
 
-// Watch for external changes
-watch(() => props.modelValue, (newVal) => {
-  localData.value = {
-    ...newVal,
-    additional_consents: newVal.additional_consents || [],
-    pim_applied: newVal.pim_applied || false,
-    pim_number: newVal.pim_number || '',
-    building_consent_applied: newVal.building_consent_applied || false,
-    building_consent_number: newVal.building_consent_number || '',
-    site_visit_locked_gates: newVal.site_visit_locked_gates || false,
-    site_visit_dogs_present: newVal.site_visit_dogs_present || false,
-    site_visit_health_safety_issues: newVal.site_visit_health_safety_issues || false,
-    site_visit_notice_required: newVal.site_visit_notice_required || false,
-    site_visit_details: newVal.site_visit_details || '',
-    agent_required: newVal.agent_required || false,
-    agent_id: newVal.agent_id || null,
-    pre_app_meeting_required: newVal.pre_app_meeting_required || false,
-    pre_app_meeting_id: newVal.pre_app_meeting_id || null,
-    correspondence_recipient: newVal.correspondence_recipient || 'Applicant',
-    invoice_responsible_party: newVal.invoice_responsible_party || 'Applicant',
-    additional_contact_persons: newVal.additional_contact_persons || []
-  }
-}, { deep: true })
-
 // Watch local changes and emit
+// NOTE: We do NOT watch props.modelValue because that creates an infinite loop
+// The component initializes from props once, then localData changes flow up via emit
 watch(localData, (newVal) => {
   emit('update:modelValue', { ...newVal })
 }, { deep: true })

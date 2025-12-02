@@ -78,7 +78,7 @@
             <Step3ProcessInfo
                 :request-type-details="selectedRequestTypeDetails"
                 :council-name="getCouncilName()"
-                @continue="currentStep++"
+                @continue="handleNext"
             />
         </div>
 
@@ -1828,7 +1828,9 @@ const clearPropertyAddress = () => {
 }
 
 const canProceed = computed(() => {
-  switch (currentStep.value) {
+  const step = currentStep.value
+
+  switch (step) {
     case 1:
       // Step 1: Council selection
       return !!formData.value.council
@@ -1842,52 +1844,8 @@ const canProceed = computed(() => {
       return true
 
     case 4:
-      // Step 4: Applicant & Proposal (FRD Step 1) - Consolidated validation
-      if (isResourceConsent.value) {
-        // Extract values once to avoid nested reactive tracking
-        const phone = formData.value.applicant_phone
-        const type = formData.value.applicant_type
-        const property = formData.value.property
-        const consentTypes = formData.value.consent_types
-        const consentDurations = formData.value.consent_type_durations
-        const brief = formData.value.brief_description
-        const detailed = formData.value.detailed_description
-
-        // Basic applicant validation
-        const hasApplicant = !!phone && !!type
-
-        // Property validation
-        const hasProperty = !!property
-
-        // Consent types validation
-        const hasConsentTypes = consentTypes && consentTypes.length > 0
-
-        // Duration validation - use extracted values to avoid reactive loops
-        let hasDurations = false
-        if (hasConsentTypes && consentDurations && Array.isArray(consentTypes) && Array.isArray(consentDurations)) {
-          // Check if arrays are not empty and won't cause infinite loops
-          if (consentTypes.length > 0 && consentTypes.length < 100) {
-            hasDurations = true
-            for (let i = 0; i < consentTypes.length; i++) {
-              const ct = consentTypes[i]
-              if (!ct || !ct.consent_type) {
-                hasDurations = false
-                break
-              }
-              const durationData = consentDurations.find(d => d && d.consent_type === ct.consent_type)
-              if (!durationData || (!durationData.duration_unlimited && !durationData.duration_years)) {
-                hasDurations = false
-                break
-              }
-            }
-          }
-        }
-
-        // Description validation
-        const hasDescriptions = !!brief?.trim() && !!detailed?.trim()
-
-        return hasApplicant && hasProperty && hasConsentTypes && hasDurations && hasDescriptions
-      }
+      // Step 4: Applicant & Proposal (FRD) - always can proceed
+      // toRaw() is used in Step1ApplicantProposal to prevent reactive loops
       return true
 
     case 5:

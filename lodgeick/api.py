@@ -4,6 +4,45 @@
 import frappe
 from frappe import _
 from frappe.utils import cint
+import re
+
+
+def validate_nz_phone_number(phone):
+    """
+    Validate New Zealand phone number format
+    Accepts: mobile (02x), landline (03-09), with or without spaces/hyphens
+    """
+    if not phone:
+        return False, "Phone number is required"
+
+    # Remove spaces, hyphens, parentheses
+    cleaned = re.sub(r'[\s\-()]', '', phone)
+
+    # Remove international prefix if present
+    if cleaned.startswith('+64'):
+        cleaned = '0' + cleaned[3:]
+    elif cleaned.startswith('0064'):
+        cleaned = '0' + cleaned[4:]
+
+    # Check if only digits
+    if not cleaned.isdigit():
+        return False, "Phone number should contain only numbers"
+
+    # Mobile validation (021, 022, 027, 028, 029)
+    if re.match(r'^0(2[1278]|29)[0-9]{6,8}$', cleaned):
+        return True, ""
+
+    # Landline validation (03-09)
+    if re.match(r'^0[3-9][0-9]{7,8}$', cleaned):
+        return True, ""
+
+    # Invalid format
+    if len(cleaned) < 9:
+        return False, "Phone number is too short. NZ phone numbers are 9-10 digits."
+    if len(cleaned) > 11:
+        return False, "Phone number is too long. NZ phone numbers are 9-10 digits."
+
+    return False, "Invalid NZ phone number. Mobile numbers start with 02, landlines with 03-09."
 
 
 @frappe.whitelist(allow_guest=True)
@@ -13,34 +52,55 @@ def register_user(
     last_name,
     phone,
     password,
-    account_type="ratepayer",
+    user_role="applicant",
+    applicant_type="Individual",
     property_address=None,
-    company_name=None,
+    property_street=None,
+    property_suburb=None,
+    property_city=None,
+    property_postcode=None,
+    property_id=None,
+    address_id=None,
+    organization_name=None,
     company_number=None,
+    trust_name=None,
     council_code=None
 ):
     """
-    Register a new user for Lodgeick
+    Register a new APPLICANT for Lodgeick
 
     Args:
         email: User's email address
         first_name: First name
         last_name: Last name
-        phone: Phone number
+        phone: Phone number (NZ format required)
         password: Password
-        account_type: Type of account (ratepayer, civilian, supplier)
-        property_address: Property address (for ratepayers)
-        company_name: Company name (for suppliers)
-        company_number: Company registration number (for suppliers)
-        council_code: Council code for default council (optional)
+        user_role: Always 'applicant' for this endpoint
+        applicant_type: Individual, Company, Trust, or Organisation
+        property_address: Full property address
+        property_street: Street address
+        property_suburb: Suburb/locality
+        property_city: City
+        property_postcode: Postcode
+        property_id: Property ID from database
+        address_id: Address ID from LINZ
+        organization_name: Company or Organisation name
+        company_number: Company registration number
+        trust_name: Trust name
+        council_code: Default council code
 
     Returns:
         dict: Success message and user info
     """
 
     # Validate required fields
-    if not email or not first_name or not last_name or not password:
-        frappe.throw(_("Email, first name, last name, and password are required"))
+    if not email or not first_name or not last_name or not password or not phone:
+        frappe.throw(_("Email, first name, last name, phone, and password are required"))
+
+    # Validate phone number
+    phone_valid, phone_error = validate_nz_phone_number(phone)
+    if not phone_valid:
+        frappe.throw(_(phone_error))
 
     # Check if user already exists
     if frappe.db.exists("User", email):
@@ -60,28 +120,48 @@ def register_user(
             "user_type": "Website User"
         })
 
-        # Set account type and default roles
-        if account_type == "ratepayer":
-            user.account_type = "Applicant"
-            user.applicant_type = "Individual"
-            user.append("roles", {"role": "Applicant"})
-        elif account_type == "civilian":
-            user.account_type = "Applicant"
-            user.applicant_type = "Individual"
-            user.append("roles", {"role": "Applicant"})
-        elif account_type == "supplier":
-            user.account_type = "Agent"
-            user.applicant_type = "Company"
-            user.append("roles", {"role": "Applicant"})
-            user.append("roles", {"role": "Agent"})
+        # Add Applicant role
+        user.append("roles", {"role": "Applicant"})
 
         # Save user
         user.flags.ignore_permissions = True
         user.insert()
 
+        # Create User Profile Extended
+        try:
+            profile = frappe.get_doc({
+                "doctype": "User Profile Extended",
+                "user": email,
+                "full_name": f"{first_name} {last_name}",
+                "phone": phone,
+                "user_role": "Individual",  # For applicants, user_role is Individual (not Agent)
+            })
+
+            # Add address for Individual applicants
+            if applicant_type == "Individual" and property_address:
+                profile.postal_street = property_street or property_address
+                profile.postal_suburb = property_suburb
+                profile.postal_city = property_city
+                profile.postal_postcode = property_postcode
+
+            # Add property to properties child table if provided
+            if property_address and (property_street or property_address):
+                profile.append("properties", {
+                    "street": property_street or property_address,
+                    "suburb": property_suburb,
+                    "city": property_city,
+                    "postcode": property_postcode,
+                    "ownership_status": "Sole Owner",  # Default for individual registration
+                    "is_default": 1  # Mark as default property
+                })
+
+            profile.flags.ignore_permissions = True
+            profile.insert()
+        except Exception as e:
+            frappe.log_error(f"Error creating user profile: {str(e)}")
+
         # Set default council if provided
         if council_code:
-            # Validate council exists and is active
             council = frappe.db.get_value(
                 "Council",
                 {"council_code": council_code, "is_active": 1},
@@ -92,41 +172,202 @@ def register_user(
                 user.default_council = council.name
                 user.save(ignore_permissions=True)
 
-        # Create additional profile information if needed
-        # You might want to create a custom doctype for extended user profile
-        if property_address:
-            # Store in user bio or custom field
-            user.bio = f"Property: {property_address}"
-            user.save(ignore_permissions=True)
+        # Create organization record for Company/Organisation/Trust applicants
+        if applicant_type in ["Company", "Organisation", "Trust"]:
+            org_name = organization_name or trust_name
+            if org_name:
+                try:
+                    org = frappe.get_doc({
+                        "doctype": "Organization",
+                        "organization_name": org_name,
+                        "organization_type": applicant_type,
+                        "contact_email": email,
+                        "contact_phone": phone,
+                        "company_number": company_number if applicant_type == "Company" else None
+                    })
+                    org.flags.ignore_permissions = True
+                    org.insert()
 
-        if company_name:
-            # Create organization record
-            org = frappe.get_doc({
-                "doctype": "Organization",
-                "organization_name": company_name,
-                "organization_type": "Supplier",
-                "contact_email": email,
-                "contact_phone": phone,
-                "company_number": company_number
-            })
-            org.flags.ignore_permissions = True
-            org.insert()
-
-            # Link user to organization (you might need to add a custom field)
-            user.organization = org.name
-            user.save(ignore_permissions=True)
+                    # Link user to organization
+                    user.organization = org.name
+                    user.save(ignore_permissions=True)
+                except Exception as e:
+                    frappe.log_error(f"Error creating organization: {str(e)}")
 
         frappe.db.commit()
 
         return {
             "success": True,
-            "message": _("User registered successfully. Please check your email to verify your account."),
+            "message": _("Applicant account created successfully. Please check your email to verify your account."),
             "user": email
         }
 
     except Exception as e:
         frappe.db.rollback()
-        frappe.log_error(f"User Registration Error: {str(e)}")
+        frappe.log_error(f"Applicant Registration Error: {str(e)}")
+        frappe.throw(_("Registration failed. Please try again or contact support."))
+
+
+@frappe.whitelist(allow_guest=True)
+def register_agent(
+    email,
+    first_name,
+    last_name,
+    phone,
+    password,
+    user_role="agent",
+    agent_type="Sole Trader",
+    company_name=None,
+    company_number=None,
+    nzbn=None,
+    trading_name=None,
+    business_address=None,
+    business_street=None,
+    business_suburb=None,
+    business_city=None,
+    business_postcode=None,
+    council_code=None
+):
+    """
+    Register a new AGENT (Planning Consultant) for Lodgeick
+
+    Args:
+        email: User's email address
+        first_name: First name
+        last_name: Last name
+        phone: Phone number (NZ format required)
+        password: Password
+        user_role: Always 'agent' for this endpoint
+        agent_type: 'Sole Trader' or 'Company'
+        company_name: Company name (if agent_type is Company)
+        company_number: Company registration number
+        nzbn: New Zealand Business Number (13 digits)
+        trading_name: Trading name (if Sole Trader)
+        business_address: Business address
+        business_street: Business street
+        business_suburb: Business suburb
+        business_city: Business city
+        business_postcode: Business postcode
+        council_code: Default council code
+
+    Returns:
+        dict: Success message and user info
+    """
+
+    # Validate required fields
+    if not email or not first_name or not last_name or not password or not phone:
+        frappe.throw(_("Email, first name, last name, phone, and password are required"))
+
+    # Validate phone number
+    phone_valid, phone_error = validate_nz_phone_number(phone)
+    if not phone_valid:
+        frappe.throw(_(phone_error))
+
+    # Validate NZBN if provided
+    if nzbn:
+        cleaned_nzbn = re.sub(r'[\s\-]', '', nzbn)
+        if not re.match(r'^\d{13}$', cleaned_nzbn):
+            frappe.throw(_("NZBN must be exactly 13 digits"))
+
+    # Check if user already exists
+    if frappe.db.exists("User", email):
+        frappe.throw(_("User with this email already exists"))
+
+    try:
+        # Create user
+        user = frappe.get_doc({
+            "doctype": "User",
+            "email": email,
+            "first_name": first_name,
+            "last_name": last_name,
+            "phone": phone,
+            "enabled": 1,
+            "send_welcome_email": 1,
+            "new_password": password,
+            "user_type": "Website User"
+        })
+
+        # Add Agent role (Agents can also create applications, so add Applicant role too)
+        user.append("roles", {"role": "Agent"})
+        user.append("roles", {"role": "Applicant"})
+
+        # Save user
+        user.flags.ignore_permissions = True
+        user.insert()
+
+        # Create User Profile Extended with Agent role
+        try:
+            profile = frappe.get_doc({
+                "doctype": "User Profile Extended",
+                "user": email,
+                "full_name": f"{first_name} {last_name}",
+                "phone": phone,
+                "user_role": "Agent",  # This is an Agent profile
+            })
+
+            # Add business details
+            if agent_type == "Company" and company_name:
+                profile.company_name = company_name
+                profile.company_number = company_number
+                profile.business_type = "Limited Company"
+            else:
+                profile.business_type = "Sole Trader"
+
+            # Add business address
+            if business_address:
+                profile.business_street = business_street or business_address
+                profile.business_suburb = business_suburb
+                profile.business_city = business_city
+                profile.business_postcode = business_postcode
+
+            profile.flags.ignore_permissions = True
+            profile.insert()
+        except Exception as e:
+            frappe.log_error(f"Error creating agent profile: {str(e)}")
+
+        # Set default council if provided
+        if council_code:
+            council = frappe.db.get_value(
+                "Council",
+                {"council_code": council_code, "is_active": 1},
+                ["name", "council_name"],
+                as_dict=True
+            )
+            if council:
+                user.default_council = council.name
+                user.save(ignore_permissions=True)
+
+        # Create organization record for Company agents
+        if agent_type == "Company" and company_name:
+            try:
+                org = frappe.get_doc({
+                    "doctype": "Organization",
+                    "organization_name": company_name,
+                    "organization_type": "Agent",
+                    "contact_email": email,
+                    "contact_phone": phone,
+                    "company_number": company_number
+                })
+                org.flags.ignore_permissions = True
+                org.insert()
+
+                # Link user to organization
+                user.organization = org.name
+                user.save(ignore_permissions=True)
+            except Exception as e:
+                frappe.log_error(f"Error creating agent organization: {str(e)}")
+
+        frappe.db.commit()
+
+        return {
+            "success": True,
+            "message": _("Agent account created successfully. Please check your email to verify your account."),
+            "user": email
+        }
+
+    except Exception as e:
+        frappe.db.rollback()
+        frappe.log_error(f"Agent Registration Error: {str(e)}")
         frappe.throw(_("Registration failed. Please try again or contact support."))
 
 
@@ -1529,6 +1770,27 @@ def search_property_address(query):
             message=str(e)
         )
         return {"results": []}
+
+
+@frappe.whitelist(allow_guest=True)
+def search_property_addresses(query):
+    """
+    Alias for search_property_address to match AddressLookup component API call
+
+    Args:
+        query: Address search string
+
+    Returns:
+        list: Array of address results in standardized format
+    """
+    result = search_property_address(query)
+
+    # If the result has a 'results' key, return it directly
+    if isinstance(result, dict) and 'results' in result:
+        return result['results']
+
+    # Otherwise return the result as-is
+    return result if isinstance(result, list) else []
 
 
 @frappe.whitelist()

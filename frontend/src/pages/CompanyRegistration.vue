@@ -5,11 +5,24 @@
       <div class="text-center mb-8">
         <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4 shadow-lg">
           <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
           </svg>
         </div>
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">Register Company Account</h1>
-        <p class="text-gray-600">Create a company account to manage applications on behalf of your organization</p>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Register as Agent</h1>
+        <p class="text-gray-600">Planning consultants who assist applicants with resource consent applications</p>
+      </div>
+
+      <!-- Info Banner -->
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8">
+        <div class="flex items-start">
+          <svg class="w-5 h-5 text-blue-600 mr-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div class="text-sm text-blue-800">
+            <p class="font-medium">You are registering as an Agent</p>
+            <p class="mt-1">Agents are planning consultants who assist applicants with resource consent applications. You can be a sole trader or represent a company.</p>
+          </div>
+        </div>
       </div>
 
       <!-- Progress Steps -->
@@ -17,7 +30,6 @@
         <div class="flex items-center justify-between">
           <div v-for="(step, index) in steps" :key="index" class="flex-1">
             <div class="flex items-center">
-              <!-- Step Circle -->
               <div class="flex items-center flex-col flex-1">
                 <div
                   :class="[
@@ -36,14 +48,13 @@
                 </div>
                 <span
                   :class="[
-                    'text-xs mt-2 font-medium',
+                    'text-xs mt-2 font-medium text-center',
                     currentStep >= index ? 'text-blue-600' : 'text-gray-400'
                   ]"
                 >
                   {{ step.label }}
                 </span>
               </div>
-              <!-- Connector Line -->
               <div
                 v-if="index < steps.length - 1"
                 :class="[
@@ -59,72 +70,193 @@
       <!-- Registration Card -->
       <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
         <form @submit.prevent="handleSubmit">
-          <!-- Step 1: Company Details -->
+          <!-- Step 1: Agent Type & Personal Details -->
           <div v-show="currentStep === 0" class="space-y-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">Company Details</h2>
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Agent Type & Your Details</h2>
 
-            <div class="grid md:grid-cols-2 gap-4">
-              <div>
-                <label for="company_name" class="block text-sm font-medium text-gray-700 mb-2">
-                  Company Name <span class="text-red-500">*</span>
-                </label>
-                <Input
-                  id="company_name"
-                  v-model="formData.company_name"
-                  type="text"
-                  required
-                  placeholder="ABC Construction Ltd"
-                  class="w-full"
-                />
-              </div>
-              <div>
-                <label for="legal_name" class="block text-sm font-medium text-gray-700 mb-2">
-                  Legal Name <span class="text-red-500">*</span>
-                </label>
-                <Input
-                  id="legal_name"
-                  v-model="formData.legal_name"
-                  type="text"
-                  required
-                  placeholder="ABC Construction Limited"
-                  class="w-full"
-                />
-              </div>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-4">
-              <div>
-                <label for="trading_name" class="block text-sm font-medium text-gray-700 mb-2">
-                  Trading Name (Optional)
-                </label>
-                <Input
-                  id="trading_name"
-                  v-model="formData.trading_name"
-                  type="text"
-                  placeholder="ABC Construction"
-                  class="w-full"
-                />
-              </div>
-              <div>
-                <label for="company_type" class="block text-sm font-medium text-gray-700 mb-2">
-                  Company Type <span class="text-red-500">*</span>
-                </label>
-                <select
-                  id="company_type"
-                  v-model="formData.company_type"
-                  required
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            <!-- Agent Business Type -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-3">
+                Agent Type <span class="text-red-500">*</span>
+              </label>
+              <div class="grid grid-cols-2 gap-4">
+                <button
+                  type="button"
+                  @click="formData.agent_type = 'Sole Trader'"
+                  :class="[
+                    'p-4 border-2 rounded-lg text-center transition',
+                    formData.agent_type === 'Sole Trader'
+                      ? 'border-blue-600 bg-blue-50'
+                      : 'border-gray-200 hover:border-gray-300'
+                  ]"
                 >
-                  <option value="Limited Liability Company">Limited Liability Company</option>
-                  <option value="Sole Trader">Sole Trader</option>
-                  <option value="Partnership">Partnership</option>
-                  <option value="Trust">Trust</option>
-                  <option value="Other">Other</option>
-                </select>
+                  <svg class="w-8 h-8 mx-auto mb-2" :class="formData.agent_type === 'Sole Trader' ? 'text-blue-600' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <div class="text-sm font-medium" :class="formData.agent_type === 'Sole Trader' ? 'text-blue-900' : 'text-gray-700'">
+                    Sole Trader
+                  </div>
+                  <div class="text-xs text-gray-500 mt-1">Individual consultant</div>
+                </button>
+                <button
+                  type="button"
+                  @click="formData.agent_type = 'Company'"
+                  :class="[
+                    'p-4 border-2 rounded-lg text-center transition',
+                    formData.agent_type === 'Company'
+                      ? 'border-blue-600 bg-blue-50'
+                      : 'border-gray-200 hover:border-gray-300'
+                  ]"
+                >
+                  <svg class="w-8 h-8 mx-auto mb-2" :class="formData.agent_type === 'Company' ? 'text-blue-600' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                  </svg>
+                  <div class="text-sm font-medium" :class="formData.agent_type === 'Company' ? 'text-blue-900' : 'text-gray-700'">
+                    Company
+                  </div>
+                  <div class="text-xs text-gray-500 mt-1">Consulting firm</div>
+                </button>
               </div>
             </div>
 
+            <!-- Personal Information -->
             <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label for="first_name" class="block text-sm font-medium text-gray-700 mb-2">
+                  First Name <span class="text-red-500">*</span>
+                </label>
+                <Input
+                  id="first_name"
+                  v-model="formData.first_name"
+                  type="text"
+                  required
+                  placeholder="John"
+                  class="w-full"
+                />
+              </div>
+              <div>
+                <label for="last_name" class="block text-sm font-medium text-gray-700 mb-2">
+                  Last Name <span class="text-red-500">*</span>
+                </label>
+                <Input
+                  id="last_name"
+                  v-model="formData.last_name"
+                  type="text"
+                  required
+                  placeholder="Doe"
+                  class="w-full"
+                />
+              </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                  Email Address <span class="text-red-500">*</span>
+                </label>
+                <Input
+                  id="email"
+                  v-model="formData.email"
+                  type="email"
+                  required
+                  placeholder="you@example.com"
+                  class="w-full"
+                  @blur="validateEmailField"
+                />
+                <p v-if="emailError" class="mt-1 text-xs text-red-600">{{ emailError }}</p>
+              </div>
+              <div>
+                <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
+                  Phone Number <span class="text-red-500">*</span>
+                </label>
+                <Input
+                  id="phone"
+                  v-model="formData.phone"
+                  type="tel"
+                  required
+                  placeholder="021 234 5678"
+                  class="w-full"
+                  @blur="validatePhoneField"
+                />
+                <p v-if="phoneError" class="mt-1 text-xs text-red-600">{{ phoneError }}</p>
+                <p v-else class="mt-1 text-xs text-gray-500">NZ mobile (02x) or landline (03-09)</p>
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                  Password <span class="text-red-500">*</span>
+                </label>
+                <Input
+                  id="password"
+                  v-model="formData.password"
+                  type="password"
+                  required
+                  placeholder="Min. 8 characters"
+                  class="w-full"
+                  @input="validatePasswordField"
+                />
+                <p v-if="passwordError" class="mt-1 text-xs text-red-600">{{ passwordError }}</p>
+                <p v-else-if="passwordStrength" class="mt-1 text-xs" :class="passwordStrengthClass">
+                  Password strength: {{ passwordStrength }}
+                </p>
+              </div>
+              <div>
+                <label for="confirm_password" class="block text-sm font-medium text-gray-700 mb-2">
+                  Confirm Password <span class="text-red-500">*</span>
+                </label>
+                <Input
+                  id="confirm_password"
+                  v-model="formData.confirm_password"
+                  type="password"
+                  required
+                  placeholder="Repeat password"
+                  class="w-full"
+                  @blur="validatePasswordMatch"
+                />
+                <p v-if="confirmPasswordError" class="mt-1 text-xs text-red-600">{{ confirmPasswordError }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Business Details (if Company) -->
+          <div v-show="currentStep === 1" class="space-y-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">
+              {{ formData.agent_type === 'Company' ? 'Company Details' : 'Business Details' }}
+            </h2>
+
+            <div v-if="formData.agent_type === 'Company'" class="space-y-4">
+              <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label for="company_name" class="block text-sm font-medium text-gray-700 mb-2">
+                    Company Name <span class="text-red-500">*</span>
+                  </label>
+                  <Input
+                    id="company_name"
+                    v-model="formData.company_name"
+                    type="text"
+                    :required="formData.agent_type === 'Company'"
+                    placeholder="ABC Planning Consultants Ltd"
+                    class="w-full"
+                  />
+                </div>
+                <div>
+                  <label for="company_number" class="block text-sm font-medium text-gray-700 mb-2">
+                    Company Number (Optional)
+                  </label>
+                  <Input
+                    id="company_number"
+                    v-model="formData.company_number"
+                    type="text"
+                    placeholder="1234567"
+                    class="w-full"
+                  />
+                </div>
+              </div>
+
               <div>
                 <label for="nzbn" class="block text-sm font-medium text-gray-700 mb-2">
                   NZBN (Optional)
@@ -136,212 +268,52 @@
                   maxlength="13"
                   placeholder="1234567890123"
                   class="w-full"
+                  @blur="validateNZBNField"
                 />
-                <p class="mt-1 text-xs text-gray-500">New Zealand Business Number (13 digits)</p>
+                <p v-if="nzbnError" class="mt-1 text-xs text-red-600">{{ nzbnError }}</p>
+                <p v-else class="mt-1 text-xs text-gray-500">New Zealand Business Number (13 digits)</p>
               </div>
+            </div>
+
+            <div v-else>
               <div>
-                <label for="company_number" class="block text-sm font-medium text-gray-700 mb-2">
-                  Company Number (Optional)
+                <label for="trading_name" class="block text-sm font-medium text-gray-700 mb-2">
+                  Trading Name (Optional)
                 </label>
                 <Input
-                  id="company_number"
-                  v-model="formData.company_number"
+                  id="trading_name"
+                  v-model="formData.trading_name"
                   type="text"
-                  placeholder="1234567"
+                  placeholder="e.g., Smith Planning Services"
                   class="w-full"
                 />
+                <p class="mt-1 text-xs text-gray-500">If you trade under a business name</p>
               </div>
             </div>
 
+            <!-- Business Address -->
             <div>
-              <label for="website" class="block text-sm font-medium text-gray-700 mb-2">
-                Website (Optional)
-              </label>
-              <Input
-                id="website"
-                v-model="formData.website"
-                type="url"
-                placeholder="https://www.example.co.nz"
-                class="w-full"
+              <AddressLookup
+                v-model="selectedBusinessAddress"
+                id="business_address"
+                label="Business Address"
+                placeholder="Start typing your business address..."
+                description="Your business/office address"
+                :required="false"
+                @address-selected="handleBusinessAddressSelected"
               />
             </div>
           </div>
 
-          <!-- Step 2: Contact Information -->
-          <div v-show="currentStep === 1" class="space-y-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">Contact Information</h2>
-
-            <div>
-              <label for="registered_office_address" class="block text-sm font-medium text-gray-700 mb-2">
-                Registered Office Address <span class="text-red-500">*</span>
-              </label>
-              <textarea
-                id="registered_office_address"
-                v-model="formData.registered_office_address"
-                required
-                rows="3"
-                placeholder="123 Main Street, Auckland 1010"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            <div>
-              <label for="postal_address" class="block text-sm font-medium text-gray-700 mb-2">
-                Postal Address (Optional)
-              </label>
-              <div class="flex items-center mb-2">
-                <input
-                  id="same_as_registered"
-                  type="checkbox"
-                  v-model="sameAsRegistered"
-                  @change="togglePostalAddress"
-                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-                <label for="same_as_registered" class="ml-2 text-sm text-gray-700">
-                  Same as registered office address
-                </label>
-              </div>
-              <textarea
-                v-if="!sameAsRegistered"
-                id="postal_address"
-                v-model="formData.postal_address"
-                rows="3"
-                placeholder="PO Box 123, Auckland 1140"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-4">
-              <div>
-                <label for="primary_email" class="block text-sm font-medium text-gray-700 mb-2">
-                  Primary Email <span class="text-red-500">*</span>
-                </label>
-                <Input
-                  id="primary_email"
-                  v-model="formData.primary_email"
-                  type="email"
-                  required
-                  placeholder="info@example.co.nz"
-                  class="w-full"
-                />
-              </div>
-              <div>
-                <label for="primary_phone" class="block text-sm font-medium text-gray-700 mb-2">
-                  Primary Phone <span class="text-red-500">*</span>
-                </label>
-                <Input
-                  id="primary_phone"
-                  v-model="formData.primary_phone"
-                  type="tel"
-                  required
-                  placeholder="+64 9 123 4567"
-                  class="w-full"
-                />
-              </div>
-            </div>
-          </div>
-
-          <!-- Step 3: Banking & Billing -->
+          <!-- Step 3: Default Settings -->
           <div v-show="currentStep === 2" class="space-y-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">Banking & Billing (Optional)</h2>
-            <p class="text-sm text-gray-600 mb-4">
-              Add banking details for faster invoice processing. You can skip this step and add it later.
-            </p>
-
-            <div class="grid md:grid-cols-2 gap-4">
-              <div>
-                <label for="bank_name" class="block text-sm font-medium text-gray-700 mb-2">
-                  Bank Name
-                </label>
-                <Input
-                  id="bank_name"
-                  v-model="formData.bank_name"
-                  type="text"
-                  placeholder="ANZ Bank"
-                  class="w-full"
-                />
-              </div>
-              <div>
-                <label for="bank_account_number" class="block text-sm font-medium text-gray-700 mb-2">
-                  Bank Account Number
-                </label>
-                <Input
-                  id="bank_account_number"
-                  v-model="formData.bank_account_number"
-                  type="text"
-                  placeholder="12-3456-7890123-00"
-                  class="w-full"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label for="billing_contact_name" class="block text-sm font-medium text-gray-700 mb-2">
-                Billing Contact Name
-              </label>
-              <Input
-                id="billing_contact_name"
-                v-model="formData.billing_contact_name"
-                type="text"
-                placeholder="John Doe"
-                class="w-full"
-              />
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-4">
-              <div>
-                <label for="billing_contact_email" class="block text-sm font-medium text-gray-700 mb-2">
-                  Billing Contact Email
-                </label>
-                <Input
-                  id="billing_contact_email"
-                  v-model="formData.billing_contact_email"
-                  type="email"
-                  placeholder="billing@example.co.nz"
-                  class="w-full"
-                />
-              </div>
-              <div>
-                <label for="billing_contact_phone" class="block text-sm font-medium text-gray-700 mb-2">
-                  Billing Contact Phone
-                </label>
-                <Input
-                  id="billing_contact_phone"
-                  v-model="formData.billing_contact_phone"
-                  type="tel"
-                  placeholder="+64 9 123 4567"
-                  class="w-full"
-                />
-              </div>
-            </div>
-          </div>
-
-          <!-- Step 4: Admin User Details -->
-          <div v-show="currentStep === 3" class="space-y-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">Your Details (Admin User)</h2>
-            <p class="text-sm text-gray-600 mb-4">
-              You will be set up as the first administrator of this company account with full permissions.
-            </p>
-
-            <div>
-              <label for="user_designation" class="block text-sm font-medium text-gray-700 mb-2">
-                Your Designation/Role <span class="text-red-500">*</span>
-              </label>
-              <Input
-                id="user_designation"
-                v-model="formData.user_designation"
-                type="text"
-                required
-                placeholder="Director, Manager, CEO, etc."
-                class="w-full"
-              />
-            </div>
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Default Settings</h2>
 
             <div>
               <CouncilSelector
                 v-model="formData.default_council"
                 label="Default Council (Optional)"
-                description="Select your preferred council for submitting applications. This can be changed later."
+                description="Select your primary council for applications. You can work with multiple councils."
                 display-mode="dropdown"
                 :required="false"
                 :show-clear-button="true"
@@ -349,33 +321,50 @@
             </div>
 
             <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <h3 class="text-sm font-medium text-blue-900 mb-2">Admin Permissions</h3>
+              <h3 class="text-sm font-medium text-blue-900 mb-2">Agent Permissions</h3>
               <ul class="text-sm text-blue-800 space-y-1">
                 <li class="flex items-start">
                   <svg class="w-4 h-4 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                   </svg>
-                  Edit company profile and settings
+                  Create and submit applications on behalf of clients
                 </li>
                 <li class="flex items-start">
                   <svg class="w-4 h-4 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                   </svg>
-                  Invite and remove users
+                  Manage multiple client applications
                 </li>
                 <li class="flex items-start">
                   <svg class="w-4 h-4 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                   </svg>
-                  Create, edit, and submit applications
+                  Receive notifications on application progress
                 </li>
                 <li class="flex items-start">
                   <svg class="w-4 h-4 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                   </svg>
-                  Manage billing and payment information
+                  Professional dashboard for tracking all applications
                 </li>
               </ul>
+            </div>
+
+            <!-- Terms and Conditions -->
+            <div class="flex items-start">
+              <input
+                id="terms"
+                v-model="formData.terms"
+                type="checkbox"
+                required
+                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mt-1"
+              />
+              <label for="terms" class="ml-2 block text-sm text-gray-700">
+                I agree to the
+                <a href="#" class="text-blue-600 hover:text-blue-700 font-medium">Terms of Service</a>
+                and
+                <a href="#" class="text-blue-600 hover:text-blue-700 font-medium">Privacy Policy</a>
+              </label>
             </div>
           </div>
 
@@ -425,7 +414,7 @@
               class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2"
             >
               <template v-if="!isLoading">
-                Create Company Account
+                Create Agent Account
               </template>
               <template v-else>
                 Creating...
@@ -438,9 +427,9 @@
       <!-- Back to Register -->
       <div class="text-center mt-6">
         <p class="text-sm text-gray-600">
-          Want to create an individual account instead?
+          Want to register as an applicant instead?
           <router-link :to="{ name: 'Register' }" class="font-medium text-blue-600 hover:text-blue-700">
-            Register as individual
+            Register as applicant
           </router-link>
         </p>
       </div>
@@ -459,72 +448,138 @@
 </template>
 
 <script setup>
-import { ref } from "vue"
+import { ref, computed } from "vue"
 import { useRouter } from "vue-router"
 import { Input, Button } from "frappe-ui"
 import CouncilSelector from "../components/CouncilSelector.vue"
+import AddressLookup from "../components/AddressLookup.vue"
+import { validateNZPhoneNumber, validateEmail, validatePassword, validateNZBN } from "../utils/validation"
 
 const router = useRouter()
 
 const steps = [
-  { label: 'Company Details' },
-  { label: 'Contact Info' },
-  { label: 'Banking' },
-  { label: 'Admin User' }
+  { label: 'Your Details' },
+  { label: 'Business Info' },
+  { label: 'Settings' }
 ]
 
 const currentStep = ref(0)
 const isLoading = ref(false)
 const errorMessage = ref('')
-const sameAsRegistered = ref(false)
+const selectedBusinessAddress = ref(null)
 
 const formData = ref({
+  agent_type: 'Sole Trader', // Sole Trader or Company
+  first_name: '',
+  last_name: '',
+  email: '',
+  phone: '',
+  password: '',
+  confirm_password: '',
   company_name: '',
-  legal_name: '',
-  trading_name: '',
-  company_type: 'Limited Liability Company',
-  nzbn: '',
   company_number: '',
-  website: '',
-  registered_office_address: '',
-  postal_address: '',
-  primary_email: '',
-  primary_phone: '',
-  bank_name: '',
-  bank_account_number: '',
-  billing_contact_name: '',
-  billing_contact_email: '',
-  billing_contact_phone: '',
-  user_designation: '',
-  default_council: null
+  nzbn: '',
+  trading_name: '',
+  default_council: null,
+  terms: false
 })
 
-function togglePostalAddress() {
-  if (sameAsRegistered.value) {
-    formData.value.postal_address = formData.value.registered_office_address
+// Validation errors
+const phoneError = ref('')
+const emailError = ref('')
+const passwordError = ref('')
+const confirmPasswordError = ref('')
+const nzbnError = ref('')
+const passwordStrength = ref('')
+
+const passwordStrengthClass = computed(() => {
+  if (passwordStrength.value === 'strong') return 'text-green-600'
+  if (passwordStrength.value === 'medium') return 'text-yellow-600'
+  return 'text-red-600'
+})
+
+// Validation functions
+const validatePhoneField = () => {
+  const validation = validateNZPhoneNumber(formData.value.phone)
+  if (!validation.isValid) {
+    phoneError.value = validation.message
+  } else {
+    phoneError.value = ''
+    formData.value.phone = validation.formatted
   }
+  return validation.isValid
+}
+
+const validateEmailField = () => {
+  const validation = validateEmail(formData.value.email)
+  if (!validation.isValid) {
+    emailError.value = validation.message
+  } else {
+    emailError.value = ''
+  }
+  return validation.isValid
+}
+
+const validatePasswordField = () => {
+  const validation = validatePassword(formData.value.password)
+  if (!validation.isValid) {
+    passwordError.value = validation.message
+    passwordStrength.value = ''
+  } else {
+    passwordError.value = ''
+    passwordStrength.value = validation.strength
+  }
+  return validation.isValid
+}
+
+const validatePasswordMatch = () => {
+  if (formData.value.password !== formData.value.confirm_password) {
+    confirmPasswordError.value = 'Passwords do not match'
+    return false
+  }
+  confirmPasswordError.value = ''
+  return true
+}
+
+const validateNZBNField = () => {
+  const validation = validateNZBN(formData.value.nzbn)
+  if (!validation.isValid) {
+    nzbnError.value = validation.message
+  } else {
+    nzbnError.value = ''
+  }
+  return validation.isValid
+}
+
+const handleBusinessAddressSelected = (address) => {
+  selectedBusinessAddress.value = address
 }
 
 function nextStep() {
   // Validate current step before proceeding
   if (currentStep.value === 0) {
-    if (!formData.value.company_name || !formData.value.legal_name) {
+    // Validate personal details
+    const isPhoneValid = validatePhoneField()
+    const isEmailValid = validateEmailField()
+    const isPasswordValid = validatePasswordField()
+    const isPasswordMatch = validatePasswordMatch()
+
+    if (!formData.value.first_name || !formData.value.last_name) {
       errorMessage.value = 'Please fill in all required fields'
       return
     }
-    // Validate NZBN format if provided
-    if (formData.value.nzbn && !/^\d{13}$/.test(formData.value.nzbn)) {
-      errorMessage.value = 'NZBN must be 13 digits'
+
+    if (!isPhoneValid || !isEmailValid || !isPasswordValid || !isPasswordMatch) {
+      errorMessage.value = 'Please correct the errors above'
       return
     }
   } else if (currentStep.value === 1) {
-    if (!formData.value.registered_office_address || !formData.value.primary_email || !formData.value.primary_phone) {
-      errorMessage.value = 'Please fill in all required fields'
+    // Validate business details
+    if (formData.value.agent_type === 'Company' && !formData.value.company_name) {
+      errorMessage.value = 'Company name is required'
       return
     }
-  } else if (currentStep.value === 3) {
-    if (!formData.value.user_designation) {
-      errorMessage.value = 'Please enter your designation/role'
+    if (formData.value.nzbn && !validateNZBNField()) {
       return
     }
   }
@@ -540,48 +595,74 @@ function previousStep() {
 
 function handleSubmit() {
   // Final validation
-  if (!formData.value.user_designation) {
-    errorMessage.value = 'Please enter your designation/role'
+  if (!formData.value.terms) {
+    errorMessage.value = 'You must agree to the Terms of Service and Privacy Policy'
     return
   }
 
   errorMessage.value = ''
   isLoading.value = true
 
-  // Prepare company data for API
-  const companyData = {
-    ...formData.value,
-    // If same as registered, copy the address
-    postal_address: sameAsRegistered.value ? formData.value.registered_office_address : formData.value.postal_address
+  // Prepare agent data for API
+  const userData = {
+    email: formData.value.email,
+    first_name: formData.value.first_name,
+    last_name: formData.value.last_name,
+    phone: formData.value.phone,
+    password: formData.value.password,
+    user_role: 'agent', // This is an AGENT registration
+    agent_type: formData.value.agent_type, // Sole Trader or Company
+  }
+
+  // Add business data
+  if (formData.value.agent_type === 'Company') {
+    userData.company_name = formData.value.company_name
+    userData.company_number = formData.value.company_number
+    userData.nzbn = formData.value.nzbn
+  } else {
+    userData.trading_name = formData.value.trading_name
+  }
+
+  // Add business address if selected
+  if (selectedBusinessAddress.value) {
+    userData.business_address = selectedBusinessAddress.value.full_address
+    userData.business_street = selectedBusinessAddress.value.street_address
+    userData.business_suburb = selectedBusinessAddress.value.suburb
+    userData.business_city = selectedBusinessAddress.value.city
+    userData.business_postcode = selectedBusinessAddress.value.postcode
+  }
+
+  // Add default council if selected
+  if (formData.value.default_council) {
+    userData.council_code = formData.value.default_council
   }
 
   // Call registration API
-  fetch('/api/method/lodgeick.api.register_company_account', {
+  fetch('/api/method/lodgeick.api.register_agent', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'X-Frappe-CSRF-Token': window.csrf_token
     },
-    body: JSON.stringify({ company_data: companyData })
+    body: JSON.stringify(userData)
   })
   .then(response => response.json())
   .then(data => {
     isLoading.value = false
 
     if (data.message && data.message.success) {
-      // Success - redirect to dashboard with success message
+      // Success - redirect to login
       router.push({
-        name: 'Dashboard',
-        query: { company_registered: 'true' }
+        name: 'Login',
+        query: { registered: 'true', type: 'agent' }
       })
     } else if (data.exc || data._server_messages) {
-      // Server error
       const serverMessages = data._server_messages ? JSON.parse(data._server_messages) : []
       const errorMsg = serverMessages.length > 0
         ? JSON.parse(serverMessages[0]).message
         : 'Registration failed. Please try again.'
       errorMessage.value = errorMsg
-      console.error('Company registration error:', data.exc || data._server_messages)
+      console.error('Agent registration error:', data.exc || data._server_messages)
     } else {
       errorMessage.value = 'Registration failed. Please try again.'
     }
@@ -589,7 +670,7 @@ function handleSubmit() {
   .catch(error => {
     isLoading.value = false
     errorMessage.value = 'Network error. Please check your connection and try again.'
-    console.error('Company registration error:', error)
+    console.error('Agent registration error:', error)
   })
 }
 </script>

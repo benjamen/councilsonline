@@ -8,11 +8,13 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AddressLookup: typeof import('./src/components/AddressLookup.vue')['default']
     CouncilSelector: typeof import('./src/components/CouncilSelector.vue')['default']
     FeatureCard: typeof import('./src/components/FeatureCard.vue')['default']
     ProcessStep: typeof import('./src/components/ProcessStep.vue')['default']
     PropertyManager: typeof import('./src/components/registration/PropertyManager.vue')['default']
     ResourceConsentDetails: typeof import('./src/components/ResourceConsentDetails.vue')['default']
+    RFQModal: typeof import('./src/components/modals/RFQModal.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     StatCard: typeof import('./src/components/StatCard.vue')['default']
@@ -35,6 +37,7 @@ declare module 'vue' {
     Step4Approvals: typeof import('./src/components/request-steps/Step4Approvals.vue')['default']
     Step5Consultation: typeof import('./src/components/request-steps/Step5Consultation.vue')['default']
     Step5PropertyDetails: typeof import('./src/components/request-steps/Step5PropertyDetails.vue')['default']
+    Step5PropertyDetailsMulti: typeof import('./src/components/request-steps/Step5PropertyDetailsMulti.vue')['default']
     Step6ConsentInfo: typeof import('./src/components/request-steps/Step6ConsentInfo.vue')['default']
     Step6DeliveryPayment: typeof import('./src/components/request-steps/Step6DeliveryPayment.vue')['default']
     Step6Documents: typeof import('./src/components/request-steps/Step6Documents.vue')['default']
