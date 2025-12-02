@@ -705,42 +705,119 @@
         </div>
 
         <div class="overflow-y-auto max-h-[calc(90vh-140px)] px-6 py-4">
-          <div class="space-y-4">
-            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+          <div class="space-y-6">
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <p class="text-sm text-blue-900">
                 A pre-application meeting allows you to discuss your proposal with council planners before formally submitting your application. This can help clarify requirements and identify potential issues early.
               </p>
             </div>
 
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Meeting Type *</label>
-              <select
-                v-model="currentPreAppMeeting.meeting_type"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                required
-              >
-                <option value="Pre-Application Meeting">Pre-Application Meeting</option>
-                <option value="Site Visit">Site Visit</option>
-                <option value="Technical Review">Technical Review</option>
-                <option value="Follow-up Meeting">Follow-up Meeting</option>
-                <option value="Other">Other</option>
-              </select>
+            <!-- Meeting Type & Format -->
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Meeting Type *</label>
+                <select
+                  v-model="currentPreAppMeeting.meeting_type"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  required
+                >
+                  <option value="Pre-Application Meeting">Pre-Application Meeting</option>
+                  <option value="Site Visit">Site Visit</option>
+                  <option value="Technical Review">Technical Review</option>
+                  <option value="Follow-up Meeting">Follow-up Meeting</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Meeting Format *</label>
+                <select
+                  v-model="currentPreAppMeeting.meeting_format"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  required
+                >
+                  <option value="In Person">In Person</option>
+                  <option value="Video Call">Video Call</option>
+                  <option value="Phone Call">Phone Call</option>
+                  <option value="Hybrid">Hybrid</option>
+                </select>
+              </div>
             </div>
 
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Meeting Format *</label>
-              <select
-                v-model="currentPreAppMeeting.meeting_format"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                required
-              >
-                <option value="In Person">In Person</option>
-                <option value="Video Call">Video Call</option>
-                <option value="Phone Call">Phone Call</option>
-                <option value="Hybrid">Hybrid</option>
-              </select>
+            <!-- Preferred Time Slots -->
+            <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+              <div class="flex items-center justify-between mb-3">
+                <h4 class="text-sm font-semibold text-gray-900">Preferred Meeting Times *</h4>
+                <span class="text-xs text-gray-600">Select up to 3 time slots</span>
+              </div>
+              <p class="text-xs text-gray-600 mb-4">
+                Select your 3 preferred times. The planner will accept one of these times or propose an alternative.
+              </p>
+
+              <div class="space-y-4">
+                <!-- Time Slot 1 -->
+                <div class="bg-white p-4 rounded-lg border border-gray-200">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-medium text-gray-700">1st Preference</span>
+                    <button
+                      v-if="currentPreAppMeeting.preferred_time_slot_1_start"
+                      @click="clearTimeSlot(1)"
+                      type="button"
+                      class="text-xs text-red-600 hover:text-red-800"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                  <DateTimePicker
+                    v-model="currentPreAppMeeting.preferred_time_slot_1_start"
+                    label="Start Time"
+                    :required="true"
+                  />
+                </div>
+
+                <!-- Time Slot 2 -->
+                <div class="bg-white p-4 rounded-lg border border-gray-200">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-medium text-gray-700">2nd Preference</span>
+                    <button
+                      v-if="currentPreAppMeeting.preferred_time_slot_2_start"
+                      @click="clearTimeSlot(2)"
+                      type="button"
+                      class="text-xs text-red-600 hover:text-red-800"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                  <DateTimePicker
+                    v-model="currentPreAppMeeting.preferred_time_slot_2_start"
+                    label="Start Time"
+                    :required="true"
+                  />
+                </div>
+
+                <!-- Time Slot 3 -->
+                <div class="bg-white p-4 rounded-lg border border-gray-200">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-medium text-gray-700">3rd Preference</span>
+                    <button
+                      v-if="currentPreAppMeeting.preferred_time_slot_3_start"
+                      @click="clearTimeSlot(3)"
+                      type="button"
+                      class="text-xs text-red-600 hover:text-red-800"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                  <DateTimePicker
+                    v-model="currentPreAppMeeting.preferred_time_slot_3_start"
+                    label="Start Time"
+                    :required="true"
+                  />
+                </div>
+              </div>
             </div>
 
+            <!-- Meeting Purpose & Discussion Points -->
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Meeting Purpose *</label>
               <textarea
@@ -757,22 +834,12 @@
               <textarea
                 v-model="currentPreAppMeeting.discussion_points"
                 rows="4"
-                placeholder="List key topics you'd like to discuss (one per line)"
+                placeholder="List key topics you'd like to discuss (bullet points or list format)"
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               ></textarea>
             </div>
 
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Preferred Meeting Times</label>
-              <textarea
-                v-model="currentPreAppMeeting.preferred_times"
-                rows="2"
-                placeholder="Suggest a few preferred dates and times (e.g., Monday 2nd Dec, 10am-12pm)"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              ></textarea>
-              <p class="text-xs text-gray-500 mt-1">The council will confirm the actual meeting time</p>
-            </div>
-
+            <!-- Location (if In Person) -->
             <div v-if="currentPreAppMeeting.meeting_format === 'In Person' || currentPreAppMeeting.meeting_format === 'Hybrid'">
               <label class="block text-sm font-medium text-gray-700 mb-2">Preferred Location</label>
               <input
@@ -783,17 +850,54 @@
               />
             </div>
 
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Additional Attendees</label>
-              <textarea
-                v-model="currentPreAppMeeting.additional_attendees"
-                rows="2"
-                placeholder="List any additional people who will attend (one per line)"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              ></textarea>
+            <!-- Additional Attendees -->
+            <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+              <div class="flex items-center justify-between mb-3">
+                <h4 class="text-sm font-semibold text-gray-900">Additional Attendees</h4>
+                <button
+                  @click="openContactSelectorForMeeting"
+                  type="button"
+                  class="px-3 py-1.5 text-xs bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  + Add Attendee
+                </button>
+              </div>
+
+              <div v-if="currentPreAppMeeting.meeting_attendees && currentPreAppMeeting.meeting_attendees.length > 0" class="space-y-2">
+                <div
+                  v-for="(attendee, index) in currentPreAppMeeting.meeting_attendees"
+                  :key="index"
+                  class="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-200"
+                >
+                  <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-900">{{ attendee.attendee_name }}</p>
+                    <p class="text-xs text-gray-600">{{ attendee.attendee_email }}</p>
+                    <p v-if="attendee.organization" class="text-xs text-gray-500">{{ attendee.organization }}</p>
+                  </div>
+                  <button
+                    @click="removeMeetingAttendee(index)"
+                    type="button"
+                    class="text-red-600 hover:text-red-800 ml-2"
+                  >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <p v-else class="text-sm text-gray-500 italic">No additional attendees added yet</p>
             </div>
           </div>
         </div>
+
+        <!-- Contact Selector Modal -->
+        <ContactSelector
+          :is-open="showContactSelectorForMeeting"
+          :existing-contacts="existingContacts"
+          @close="showContactSelectorForMeeting = false"
+          @select="addMeetingAttendee"
+        />
 
         <div class="sticky bottom-0 bg-gray-50 px-6 py-4 flex justify-end gap-3 border-t border-gray-200">
           <button
@@ -834,6 +938,8 @@ import Step4ApplicantDetails from './Step4ApplicantDetails.vue'
 import Step5PropertyDetailsMulti from './Step5PropertyDetailsMulti.vue'
 import Step6ConsentInfo from './Step6ConsentInfo.vue'
 import RFQModal from '../modals/RFQModal.vue'
+import DateTimePicker from '../common/DateTimePicker.vue'
+import ContactSelector from '../common/ContactSelector.vue'
 import { updateRFQ, sendRFQToAgent as sendRFQToAgentAPI, engageAgent as engageAgentAPI } from '../../api/rfq'
 
 const props = defineProps({
@@ -1113,14 +1219,19 @@ const engageAgentFromRFQ = async (rfqData) => {
 // Pre-Application Meeting modal management
 const showPreAppMeetingModal = ref(false)
 const editingPreAppMeetingIndex = ref(null)
+const showContactSelectorForMeeting = ref(false)
+const existingContacts = ref([])  // TODO: Load from backend
+
 const currentPreAppMeeting = ref({
   meeting_type: 'Pre-Application Meeting',
   meeting_format: 'In Person',
   meeting_purpose: '',
   discussion_points: '',
-  preferred_times: '',
   meeting_location: '',
-  additional_attendees: '',
+  preferred_time_slot_1_start: '',
+  preferred_time_slot_2_start: '',
+  preferred_time_slot_3_start: '',
+  meeting_attendees: [],
   status: 'Requested'
 })
 
@@ -1138,25 +1249,108 @@ const closePreAppMeetingModal = () => {
     meeting_format: 'In Person',
     meeting_purpose: '',
     discussion_points: '',
-    preferred_times: '',
     meeting_location: '',
-    additional_attendees: '',
+    preferred_time_slot_1_start: '',
+    preferred_time_slot_2_start: '',
+    preferred_time_slot_3_start: '',
+    meeting_attendees: [],
     status: 'Requested'
   }
 }
 
 const savePreAppMeeting = () => {
+  // Validate at least one time slot is selected
+  if (!currentPreAppMeeting.value.preferred_time_slot_1_start &&
+      !currentPreAppMeeting.value.preferred_time_slot_2_start &&
+      !currentPreAppMeeting.value.preferred_time_slot_3_start) {
+    alert('Please select at least one preferred meeting time')
+    return
+  }
+
   if (!localData.value.pre_app_meetings) {
     localData.value.pre_app_meetings = []
   }
 
+  // Prepare meeting data with time slots
+  const meetingData = {
+    ...currentPreAppMeeting.value,
+    preferred_time_slots: []
+  }
+
+  // Add time slots in order
+  if (currentPreAppMeeting.value.preferred_time_slot_1_start) {
+    meetingData.preferred_time_slots.push({
+      preference_order: 1,
+      preferred_start: currentPreAppMeeting.value.preferred_time_slot_1_start,
+      preferred_end: calculateEndTime(currentPreAppMeeting.value.preferred_time_slot_1_start),
+      planner_response: 'Pending'
+    })
+  }
+  if (currentPreAppMeeting.value.preferred_time_slot_2_start) {
+    meetingData.preferred_time_slots.push({
+      preference_order: 2,
+      preferred_start: currentPreAppMeeting.value.preferred_time_slot_2_start,
+      preferred_end: calculateEndTime(currentPreAppMeeting.value.preferred_time_slot_2_start),
+      planner_response: 'Pending'
+    })
+  }
+  if (currentPreAppMeeting.value.preferred_time_slot_3_start) {
+    meetingData.preferred_time_slots.push({
+      preference_order: 3,
+      preferred_start: currentPreAppMeeting.value.preferred_time_slot_3_start,
+      preferred_end: calculateEndTime(currentPreAppMeeting.value.preferred_time_slot_3_start),
+      planner_response: 'Pending'
+    })
+  }
+
   if (editingPreAppMeetingIndex.value !== null) {
-    localData.value.pre_app_meetings[editingPreAppMeetingIndex.value] = { ...currentPreAppMeeting.value }
+    localData.value.pre_app_meetings[editingPreAppMeetingIndex.value] = meetingData
   } else {
-    localData.value.pre_app_meetings.push({ ...currentPreAppMeeting.value })
+    localData.value.pre_app_meetings.push(meetingData)
   }
 
   closePreAppMeetingModal()
+}
+
+// Helper function to calculate end time (1 hour after start by default)
+const calculateEndTime = (startTime) => {
+  if (!startTime) return ''
+  const start = new Date(startTime)
+  const end = new Date(start.getTime() + 60 * 60 * 1000) // Add 1 hour
+  return end.toISOString()
+}
+
+// Clear a specific time slot
+const clearTimeSlot = (slotNumber) => {
+  currentPreAppMeeting.value[`preferred_time_slot_${slotNumber}_start`] = ''
+}
+
+// Contact selector for meeting attendees
+const openContactSelectorForMeeting = () => {
+  showContactSelectorForMeeting.value = true
+}
+
+const addMeetingAttendee = (contact) => {
+  if (!currentPreAppMeeting.value.meeting_attendees) {
+    currentPreAppMeeting.value.meeting_attendees = []
+  }
+
+  // Add the contact as a meeting attendee
+  currentPreAppMeeting.value.meeting_attendees.push({
+    attendee_name: contact.name,
+    attendee_email: contact.email,
+    attendee_phone: contact.phone || '',
+    organization: contact.organization || '',
+    role: contact.role || ''
+  })
+
+  showContactSelectorForMeeting.value = false
+}
+
+const removeMeetingAttendee = (index) => {
+  if (confirm('Remove this attendee?')) {
+    currentPreAppMeeting.value.meeting_attendees.splice(index, 1)
+  }
 }
 
 // Property select handler
