@@ -6,6 +6,7 @@ import frappe
 
 def setup_taytay_council():
 	"""Create TayTay Council record for Philippines"""
+	from frappe.utils import nowdate, add_months
 
 	# Check if council already exists
 	if frappe.db.exists("Council", "TAYTAY-PH"):
@@ -17,17 +18,33 @@ def setup_taytay_council():
 		"council_code": "TAYTAY-PH",
 		"council_name": "TayTay Council",
 		"official_name": "Municipal Government of Taytay, Rizal",
-		"timezone": "Asia/Manila",
-		"primary_color": "#0066CC",
-		"is_active": 1,
-		"subscription_tier": "Premium",
 		"contact_email": "info@taytay.gov.ph",
 		"contact_phone": "+63 2 8123 4567",
 		"website": "https://taytay.gov.ph",
-		"address": "Municipal Hall, Taytay, Rizal, Philippines"
+		"address_line_1": "Municipal Hall",
+		"city": "Taytay, Rizal",
+		"postal_code": "1920",
+		"timezone": "Asia/Manila",
+		"primary_color": "#0066CC",
+		"secondary_color": "#1E40AF",
+		"is_active": 1,
+		"license_start_date": nowdate(),
+		"license_expiry_date": add_months(nowdate(), 12),
+		"max_requests_per_month": 500,
+		"subscription_tier": "Premium",
+		"default_sla_days": 30
 	})
 
-	council.insert(ignore_permissions=True)
+	# Get all request types and enable them for this council
+	request_types = frappe.get_all("Request Type", fields=["name", "type_name"])
+	for request_type in request_types:
+		council.append("enabled_request_types", {
+			"request_type": request_type.name,
+			"is_enabled": 1
+		})
+
+	council.flags.ignore_permissions = True
+	council.insert()
 	print(f"Created TayTay Council: {council.name}")
 	return council
 

@@ -1395,7 +1395,8 @@ def get_active_councils():
         "Council",
         filters={"is_active": 1},
         fields=["council_code", "council_name", "logo", "website", "primary_color", "secondary_color", "is_active"],
-        order_by="council_name"
+        order_by="council_name",
+        limit_page_length=0  # No limit - return all active councils from database
     )
 
     return councils

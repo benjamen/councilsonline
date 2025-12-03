@@ -27,19 +27,9 @@
   "zoning_display",
   "site_area_display",
   "section_break_consent",
-  "applicant_reference_number",
-  "pim_reference",
   "column_break_consent_1",
   "consent_types",
   "activity_status",
-  "section_break_consent_details",
-  "consent_type_durations",
-  "lapsing_period_years",
-  "column_break_consent_details",
-  "consent_notice_required",
-  "consent_notice_details",
-  "coastal_occupation_charge_acknowledged",
-  "request_fast_track",
   "section_break_additional_consents",
   "additional_consents",
   "section_break_related_applications",
@@ -48,24 +38,12 @@
   "column_break_building",
   "building_consent_applied",
   "building_consent_number",
-  "section_break_site_visit",
-  "site_visit_locked_gates",
-  "site_visit_dogs_present",
-  "site_visit_health_safety_issues",
-  "site_visit_notice_required",
-  "site_visit_details",
   "section_break_agent",
   "agent_required",
   "agent_id",
-  "section_break_pre_app",
-  "pre_app_meeting_required",
-  "pre_app_meeting_id",
   "section_break_correspondence",
-  "correspondence_recipient",
   "column_break_invoice",
   "invoice_responsible_party",
-  "section_break_additional_contacts",
-  "additional_contact_persons",
   "section_break_inundation",
   "inundation_advice_document",
   "section_break_pba",
@@ -105,7 +83,6 @@
   "agent_signature_last_name",
   "agent_signature_date",
   "section_break_permitted_boundary",
-  "permitted_boundary_activity",
   "boundary_description",
   "column_break_pba",
   "boundary_activity_description",
@@ -146,9 +123,6 @@
   "section_break_natural_hazards",
   "natural_hazards",
   "no_natural_hazards_confirmed",
-  "section_break_nes",
-  "nes_items",
-  "nes_assessments",
   "section_break_hail",
   "hail_activities",
   "assessment_of_effects_tab",
@@ -158,12 +132,6 @@
   "aee_activity_description",
   "aee_activity_status",
   "aee_existing_environment",
-  "aee_site_area",
-  "aee_current_use",
-  "aee_zoning",
-  "aee_overlays",
-  "aee_designations",
-  "aee_part2_assessment",
   "effects_on_people",
   "physical_effects",
   "earthworks_effects",
@@ -171,11 +139,6 @@
   "ecosystem_effects",
   "hazard_risk_assessment",
   "cultural_effects",
-  "section_break_plan_assessment",
-  "aee_plan_rules",
-  "aee_compliance_standards",
-  "aee_written_approvals",
-  "aee_proposed_conditions",
   "section_break_parties_tab",
   "section_break_parties",
   "affected_parties",
@@ -192,8 +155,6 @@
   "specialist_reports",
   "planning_assessment_tab",
   "section_break_planning",
-  "planning_assessment",
-  "rma_part2_assessment",
   "alternatives_considered",
   "mitigation_proposed",
   "hearing",
@@ -205,7 +166,6 @@
   "proposed_conditions_tab",
   "section_break_conditions",
   "proposed_conditions",
-  "declarations_tab",
   "section_break_declarations",
   "declaration_rma_compliance",
   "declaration_public_information",
@@ -250,31 +210,31 @@
    "label": "Request Information"
   },
   {
+   "fetch_from": "request.request_number",
    "fieldname": "request_number_display",
    "fieldtype": "Data",
    "label": "Request Number",
-   "fetch_from": "request.request_number",
    "read_only": 1
   },
   {
+   "fetch_from": "request.status",
    "fieldname": "request_status_display",
    "fieldtype": "Data",
    "label": "Request Status",
-   "fetch_from": "request.status",
    "read_only": 1
   },
   {
+   "fetch_from": "request.submitted_date",
    "fieldname": "submitted_date_display",
    "fieldtype": "Date",
    "label": "Submitted Date",
-   "fetch_from": "request.submitted_date",
    "read_only": 1
   },
   {
+   "fetch_from": "request.acknowledged_date",
    "fieldname": "acknowledged_date_display",
    "fieldtype": "Date",
    "label": "Acknowledged Date",
-   "fetch_from": "request.acknowledged_date",
    "read_only": 1
   },
   {
@@ -282,31 +242,31 @@
    "fieldtype": "Column Break"
   },
   {
+   "fetch_from": "request.applicant_name",
    "fieldname": "applicant_display",
    "fieldtype": "Data",
    "label": "Applicant Name",
-   "fetch_from": "request.applicant_name",
    "read_only": 1
   },
   {
+   "fetch_from": "request.applicant_email",
    "fieldname": "applicant_email_display",
    "fieldtype": "Data",
    "label": "Applicant Email",
-   "fetch_from": "request.applicant_email",
    "read_only": 1
   },
   {
+   "fetch_from": "request.applicant_phone",
    "fieldname": "applicant_phone_display",
    "fieldtype": "Data",
    "label": "Applicant Phone",
-   "fetch_from": "request.applicant_phone",
    "read_only": 1
   },
   {
+   "fetch_from": "request.applicant_type",
    "fieldname": "applicant_type_display",
    "fieldtype": "Data",
    "label": "Applicant Type",
-   "fetch_from": "request.applicant_type",
    "read_only": 1
   },
   {
@@ -314,17 +274,17 @@
    "fieldtype": "Column Break"
   },
   {
+   "fetch_from": "request.agent_name",
    "fieldname": "agent_display",
    "fieldtype": "Data",
    "label": "Agent Name",
-   "fetch_from": "request.agent_name",
    "read_only": 1
   },
   {
+   "fetch_from": "request.agent_email",
    "fieldname": "agent_email_display",
    "fieldtype": "Data",
    "label": "Agent Email",
-   "fetch_from": "request.agent_email",
    "read_only": 1
   },
   {
@@ -334,17 +294,17 @@
    "label": "Property Information"
   },
   {
+   "fetch_from": "request.property_address",
    "fieldname": "property_address_display",
    "fieldtype": "Small Text",
    "label": "Property Address",
-   "fetch_from": "request.property_address",
    "read_only": 1
   },
   {
+   "fetch_from": "request.legal_description",
    "fieldname": "legal_description_display",
    "fieldtype": "Small Text",
    "label": "Legal Description",
-   "fetch_from": "request.legal_description",
    "read_only": 1
   },
   {
@@ -352,19 +312,19 @@
    "fieldtype": "Column Break"
   },
   {
+   "fetch_from": "request.zoning",
    "fieldname": "zoning_display",
    "fieldtype": "Data",
    "label": "Zoning",
-   "fetch_from": "request.zoning",
    "read_only": 1
   },
   {
+   "fetch_from": "request.site_area",
    "fieldname": "site_area_display",
    "fieldtype": "Float",
    "label": "Site Area (m\u00b2)",
-   "fetch_from": "request.site_area",
-   "read_only": 1,
-   "precision": "2"
+   "precision": "2",
+   "read_only": 1
   },
   {
    "description": "Core consent information provided by the applicant",
@@ -373,25 +333,12 @@
    "label": "Consent Type & Activity Status"
   },
   {
-   "fieldname": "applicant_reference_number",
-   "fieldtype": "Data",
-   "label": "Applicant Reference Number",
-   "description": "Your own reference number for tracking this application"
-  },
-  {
-   "fieldname": "pim_reference",
-   "fieldtype": "Data",
-   "label": "PIM Reference",
-   "description": "Property Information Memorandum reference number if applicable"
-  },
-  {
    "fieldname": "column_break_consent_1",
    "fieldtype": "Column Break"
   },
   {
    "fieldname": "consent_types",
    "fieldtype": "Table",
-   "in_list_view": 1,
    "label": "Consent Types",
    "options": "RC Consent Type",
    "reqd": 1
@@ -402,58 +349,6 @@
    "in_list_view": 1,
    "label": "Activity Status",
    "options": "Unsure\nPermitted\nControlled\nRestricted Discretionary\nDiscretionary\nNon-Complying\nProhibited\nPermitted Boundary Activity"
-  },
-  {
-   "description": "Consent-type-specific administrative details per RMA requirements",
-   "fieldname": "section_break_consent_details",
-   "fieldtype": "Section Break",
-   "label": "Consent Details (s.123, s.221 RMA)"
-  },
-  {
-   "fieldname": "consent_type_durations",
-   "fieldtype": "Table",
-   "label": "Duration Per Consent Type",
-   "options": "Request Consent Type Duration",
-   "description": "Requested duration for each consent type (max 35 years for WP/DP/CP, unlimited for LUC/SC per s.123 RMA)"
-  },
-  {
-   "fieldname": "lapsing_period_years",
-   "fieldtype": "Int",
-   "label": "Lapsing Period (Years)",
-   "default": "5",
-   "description": "Time period before consent lapses if not given effect to (s.125 RMA)"
-  },
-  {
-   "fieldname": "column_break_consent_details",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "consent_notice_required",
-   "fieldtype": "Check",
-   "label": "Consent Notice Required (s.221 RMA)",
-   "default": "0",
-   "description": "For subdivision consents - whether a consent notice should be placed on the record of title"
-  },
-  {
-   "depends_on": "consent_notice_required",
-   "fieldname": "consent_notice_details",
-   "fieldtype": "Text",
-   "label": "Consent Notice Details",
-   "description": "Describe the matters to be included in the consent notice"
-  },
-  {
-   "fieldname": "coastal_occupation_charge_acknowledged",
-   "fieldtype": "Check",
-   "label": "Coastal Occupation Charge Acknowledged",
-   "default": "0",
-   "description": "For Coastal Permits - acknowledgment that occupation charge may apply"
-  },
-  {
-   "fieldname": "request_fast_track",
-   "fieldtype": "Check",
-   "label": "Request Fast-Track Processing (s.87AAB RMA)",
-   "default": "0",
-   "description": "Request fast-track processing for Controlled activities (subject to council availability)"
   },
   {
    "description": "Council determination of notification requirements and public submissions",
@@ -566,42 +461,6 @@
    "label": "Existing Environment"
   },
   {
-   "description": "Site area in square meters (optional)",
-   "fieldname": "aee_site_area",
-   "fieldtype": "Float",
-   "label": "Site Area (m\u00b2)"
-  },
-  {
-   "description": "Current use of the site (optional)",
-   "fieldname": "aee_current_use",
-   "fieldtype": "Data",
-   "label": "Current Use"
-  },
-  {
-   "description": "Planning zone (optional)",
-   "fieldname": "aee_zoning",
-   "fieldtype": "Data",
-   "label": "Zoning"
-  },
-  {
-   "description": "Plan overlays that apply to the site (optional)",
-   "fieldname": "aee_overlays",
-   "fieldtype": "Small Text",
-   "label": "Overlays"
-  },
-  {
-   "description": "Plan designations that apply to the site (optional)",
-   "fieldname": "aee_designations",
-   "fieldtype": "Small Text",
-   "label": "Designations"
-  },
-  {
-   "description": "3. Assessment against Part 2 of the RMA (sustainable management principles)",
-   "fieldname": "aee_part2_assessment",
-   "fieldtype": "Text Editor",
-   "label": "Part 2 Assessment"
-  },
-  {
    "fieldname": "effects_on_people",
    "fieldtype": "Text Editor",
    "label": "Effects on People"
@@ -622,55 +481,10 @@
    "label": "Cultural/Heritage"
   },
   {
-   "description": "District/Unitary Plan rules and compliance assessment",
-   "fieldname": "section_break_plan_assessment",
-   "fieldtype": "Section Break",
-   "label": "Plan Assessment"
-  },
-  {
-   "description": "Relevant plan rules that trigger consent requirement",
-   "fieldname": "aee_plan_rules",
-   "fieldtype": "Table",
-   "label": "Plan Rules",
-   "options": "RC Plan Rule"
-  },
-  {
-   "description": "Assessment against plan standards and performance criteria",
-   "fieldname": "aee_compliance_standards",
-   "fieldtype": "Table",
-   "label": "Compliance Standards",
-   "options": "RC Compliance Standard"
-  },
-  {
-   "description": "Written approvals obtained from affected parties",
-   "fieldname": "aee_written_approvals",
-   "fieldtype": "Table",
-   "label": "Written Approvals",
-   "options": "RC Written Approval"
-  },
-  {
-   "description": "Proposed conditions of consent",
-   "fieldname": "aee_proposed_conditions",
-   "fieldtype": "Table",
-   "label": "Proposed Conditions",
-   "options": "RC Proposed Condition"
-  },
-  {
    "description": "Planning assessment and mitigation measures proposed by applicant",
    "fieldname": "section_break_planning",
    "fieldtype": "Section Break",
    "label": "Planning Assessment"
-  },
-  {
-   "fieldname": "planning_assessment",
-   "fieldtype": "Text Editor",
-   "label": "Planning Assessment",
-   "reqd": 1
-  },
-  {
-   "fieldname": "rma_part2_assessment",
-   "fieldtype": "Text Editor",
-   "label": "RMA Part 2 Assessment"
   },
   {
    "fieldname": "alternatives_considered",
@@ -751,11 +565,11 @@
    "label": "Proposed Conditions"
   },
   {
+   "description": "Conditions proposed by applicant - select from standard templates or create custom",
    "fieldname": "proposed_conditions",
    "fieldtype": "Table",
    "label": "Proposed Conditions",
-   "options": "Resource Consent Condition",
-   "description": "Conditions proposed by applicant - select from standard templates or create custom"
+   "options": "Resource Consent Condition"
   },
   {
    "description": "Required statutory declarations under the Resource Management Act 1991",
@@ -1081,12 +895,6 @@
    "label": "Permitted Boundary Activity (s87BA)"
   },
   {
-   "default": "0",
-   "fieldname": "permitted_boundary_activity",
-   "fieldtype": "Check",
-   "label": "Permitted Boundary Activity"
-  },
-  {
    "depends_on": "permitted_boundary_activity",
    "fieldname": "boundary_description",
    "fieldtype": "Small Text",
@@ -1135,31 +943,11 @@
    "options": "RC Natural Hazard"
   },
   {
+   "default": "0",
+   "description": "For LUC/SC - Confirmation that all potential natural hazards have been considered and none are applicable (s.106 RMA)",
    "fieldname": "no_natural_hazards_confirmed",
    "fieldtype": "Check",
-   "label": "No Natural Hazards Confirmed",
-   "default": "0",
-   "description": "For LUC/SC - Confirmation that all potential natural hazards have been considered and none are applicable (s.106 RMA)"
-  },
-  {
-   "collapsible": 1,
-   "description": "National Environmental Standards compliance assessment",
-   "fieldname": "section_break_nes",
-   "fieldtype": "Section Break",
-   "label": "National Environmental Standards"
-  },
-  {
-   "fieldname": "nes_items",
-   "fieldtype": "Table",
-   "label": "NES Items",
-   "options": "RC NES Item",
-   "description": "Applicant-provided NES assessments from frontend form (Step 11)"
-  },
-  {
-   "fieldname": "nes_assessments",
-   "fieldtype": "Table",
-   "label": "NES Assessments",
-   "options": "RC NES Item"
+   "label": "No Natural Hazards Confirmed"
   },
   {
    "collapsible": 1,
@@ -1201,11 +989,11 @@
    "label": "Additional Consents (FRD 3.4)"
   },
   {
+   "description": "List any other consents required or applied for",
    "fieldname": "additional_consents",
    "fieldtype": "Table",
    "label": "Additional Consents",
-   "options": "Resource Consent Additional Consent",
-   "description": "List any other consents required or applied for"
+   "options": "Resource Consent Additional Consent"
   },
   {
    "fieldname": "section_break_related_applications",
@@ -1213,60 +1001,32 @@
    "label": "Related Applications (FRD 3.5)"
   },
   {
+   "default": "0",
    "fieldname": "pim_applied",
    "fieldtype": "Check",
    "label": "PIM Applied For"
   },
   {
+   "depends_on": "eval:doc.pim_applied",
    "fieldname": "pim_number",
    "fieldtype": "Data",
-   "label": "PIM Reference Number",
-   "depends_on": "eval:doc.pim_applied"
+   "label": "PIM Reference Number"
   },
   {
    "fieldname": "column_break_building",
    "fieldtype": "Column Break"
   },
   {
+   "default": "0",
    "fieldname": "building_consent_applied",
    "fieldtype": "Check",
    "label": "Building Consent Applied For"
   },
   {
+   "depends_on": "eval:doc.building_consent_applied",
    "fieldname": "building_consent_number",
    "fieldtype": "Data",
-   "label": "Building Consent Reference Number",
-   "depends_on": "eval:doc.building_consent_applied"
-  },
-  {
-   "fieldname": "section_break_site_visit",
-   "fieldtype": "Section Break",
-   "label": "Site Visit Information (FRD 3.6)"
-  },
-  {
-   "fieldname": "site_visit_locked_gates",
-   "fieldtype": "Check",
-   "label": "Locked Gates Present"
-  },
-  {
-   "fieldname": "site_visit_dogs_present",
-   "fieldtype": "Check",
-   "label": "Dogs Present on Site"
-  },
-  {
-   "fieldname": "site_visit_health_safety_issues",
-   "fieldtype": "Check",
-   "label": "Health & Safety Issues"
-  },
-  {
-   "fieldname": "site_visit_notice_required",
-   "fieldtype": "Check",
-   "label": "Notice Required Before Visit"
-  },
-  {
-   "fieldname": "site_visit_details",
-   "fieldtype": "Small Text",
-   "label": "Site Visit Details"
+   "label": "Building Consent Reference Number"
   },
   {
    "fieldname": "section_break_agent",
@@ -1274,32 +1034,17 @@
    "label": "Agent Details (FRD 3.7)"
   },
   {
+   "default": "0",
    "fieldname": "agent_required",
    "fieldtype": "Check",
    "label": "Agent Engaged"
   },
   {
+   "depends_on": "eval:doc.agent_required",
    "fieldname": "agent_id",
    "fieldtype": "Link",
    "label": "Agent",
-   "options": "User",
-   "depends_on": "eval:doc.agent_required"
-  },
-  {
-   "fieldname": "section_break_pre_app",
-   "fieldtype": "Section Break",
-   "label": "Pre-Application Meeting (FRD 3.8)"
-  },
-  {
-   "fieldname": "pre_app_meeting_required",
-   "fieldtype": "Check",
-   "label": "Pre-Application Meeting Requested"
-  },
-  {
-   "fieldname": "pre_app_meeting_id",
-   "fieldtype": "Data",
-   "label": "Meeting Reference",
-   "depends_on": "eval:doc.pre_app_meeting_required"
+   "options": "User"
   },
   {
    "fieldname": "section_break_correspondence",
@@ -1307,33 +1052,15 @@
    "label": "Correspondence Preferences (FRD 3.9)"
   },
   {
-   "fieldname": "correspondence_recipient",
-   "fieldtype": "Select",
-   "label": "Send Correspondence To",
-   "options": "Applicant\nAgent\nBoth",
-   "default": "Applicant"
-  },
-  {
    "fieldname": "column_break_invoice",
    "fieldtype": "Column Break"
   },
   {
+   "default": "Applicant",
    "fieldname": "invoice_responsible_party",
    "fieldtype": "Select",
    "label": "Invoice To",
-   "options": "Applicant\nAgent",
-   "default": "Applicant"
-  },
-  {
-   "fieldname": "section_break_additional_contacts",
-   "fieldtype": "Section Break",
-   "label": "Additional Contact Persons (FRD 3.10)"
-  },
-  {
-   "fieldname": "additional_contact_persons",
-   "fieldtype": "Table",
-   "label": "Additional Contacts",
-   "options": "Resource Consent Additional Contact"
+   "options": "Applicant\nAgent"
   },
   {
    "fieldname": "section_break_inundation",
@@ -1351,36 +1078,37 @@
    "label": "Permitted Boundary Activity (FRD 6.1)"
   },
   {
+   "default": "0",
    "fieldname": "pba_approval_required",
    "fieldtype": "Check",
    "label": "PBA Approval Required"
   },
   {
+   "depends_on": "eval:doc.pba_approval_required",
    "fieldname": "pba_status",
    "fieldtype": "Select",
    "label": "PBA Status",
-   "options": "\nApproval sought but not obtained\nApproval obtained from some neighbors\nApproval obtained from all neighbors\nApproval not sought",
-   "depends_on": "eval:doc.pba_approval_required"
+   "options": "\nApproval sought but not obtained\nApproval obtained from some neighbors\nApproval obtained from all neighbors\nApproval not sought"
   },
   {
+   "depends_on": "eval:doc.pba_approval_required",
    "fieldname": "pba_details",
    "fieldtype": "Small Text",
-   "label": "PBA Details",
-   "depends_on": "eval:doc.pba_approval_required"
+   "label": "PBA Details"
   },
   {
+   "depends_on": "eval:doc.pba_approval_required",
    "fieldname": "pba_contacts",
    "fieldtype": "Table",
    "label": "PBA Affected Neighbors",
-   "options": "Resource Consent PBA Contact",
-   "depends_on": "eval:doc.pba_approval_required"
+   "options": "Resource Consent PBA Contact"
   },
   {
+   "depends_on": "eval:doc.pba_approval_required",
+   "description": "JSON array of uploaded PBA documents",
    "fieldname": "pba_documents",
    "fieldtype": "Small Text",
-   "label": "PBA Documents",
-   "description": "JSON array of uploaded PBA documents",
-   "depends_on": "eval:doc.pba_approval_required"
+   "label": "PBA Documents"
   },
   {
    "fieldname": "section_break_consultation",
@@ -1388,28 +1116,29 @@
    "label": "Consultation (FRD 7)"
   },
   {
+   "default": "0",
    "fieldname": "consultation_undertaken",
    "fieldtype": "Check",
    "label": "Consultation Undertaken"
   },
   {
+   "depends_on": "eval:!doc.consultation_undertaken",
    "fieldname": "no_consultation_reason",
    "fieldtype": "Small Text",
-   "label": "Reason for No Consultation",
-   "depends_on": "eval:!doc.consultation_undertaken"
+   "label": "Reason for No Consultation"
   },
   {
+   "depends_on": "eval:doc.consultation_undertaken",
    "fieldname": "consulted_organizations",
    "fieldtype": "Table",
    "label": "Consulted Organizations",
-   "options": "Resource Consent Consulted Organization",
-   "depends_on": "eval:doc.consultation_undertaken"
+   "options": "Resource Consent Consulted Organization"
   },
   {
+   "depends_on": "eval:doc.consultation_undertaken",
    "fieldname": "consultation_summary",
    "fieldtype": "Text",
-   "label": "Overall Consultation Summary",
-   "depends_on": "eval:doc.consultation_undertaken"
+   "label": "Overall Consultation Summary"
   },
   {
    "fieldname": "section_break_documents",
@@ -1428,23 +1157,25 @@
    "label": "AEE Completion Method (FRD 9)"
   },
   {
+   "default": "inline",
    "fieldname": "aee_completion_method",
    "fieldtype": "Select",
    "label": "AEE Completion Method",
-   "options": "inline\nupload",
-   "default": "inline"
+   "options": "inline\nupload"
   },
   {
+   "default": "0",
+   "depends_on": "eval:doc.aee_completion_method=='upload'",
    "fieldname": "aee_document_confirmed",
    "fieldtype": "Check",
-   "label": "AEE Document Addresses Schedule 4",
-   "depends_on": "eval:doc.aee_completion_method=='upload'"
+   "label": "AEE Document Addresses Schedule 4"
   },
   {
+   "default": "0",
+   "depends_on": "eval:doc.aee_completion_method=='inline'",
    "fieldname": "aee_inline_confirmed",
    "fieldtype": "Check",
-   "label": "AEE Inline Completion Confirmed",
-   "depends_on": "eval:doc.aee_completion_method=='inline'"
+   "label": "AEE Inline Completion Confirmed"
   },
   {
    "fieldname": "aee_positive_effects",
@@ -1467,23 +1198,25 @@
    "label": "Soil Investigation (FRD 5)"
   },
   {
+   "default": "0",
    "fieldname": "soil_investigation_completed",
    "fieldtype": "Check",
    "label": "PSI/DSI Completed"
   },
   {
+   "depends_on": "eval:doc.soil_investigation_completed",
    "fieldname": "soil_investigation_summary",
    "fieldtype": "Text",
-   "label": "Investigation Summary",
-   "depends_on": "eval:doc.soil_investigation_completed"
+   "label": "Investigation Summary"
   },
   {
+   "depends_on": "eval:doc.soil_investigation_completed",
    "fieldname": "soil_investigation_document",
    "fieldtype": "Attach",
-   "label": "Investigation Report",
-   "depends_on": "eval:doc.soil_investigation_completed"
+   "label": "Investigation Report"
   },
   {
+   "default": "0",
    "fieldname": "no_nes_confirmed",
    "fieldtype": "Check",
    "label": "No NES Apply (Confirmed)"
@@ -1494,16 +1227,17 @@
    "label": "Lodgement Fees (FRD 11.1)"
   },
   {
+   "default": "0",
    "fieldname": "lodgement_fees_paid",
    "fieldtype": "Check",
    "label": "Lodgement Fees Paid"
   },
   {
+   "depends_on": "eval:doc.lodgement_fees_paid",
    "fieldname": "lodgement_payments",
    "fieldtype": "Table",
    "label": "Payment Records",
-   "options": "Resource Consent Lodgement Payment",
-   "depends_on": "eval:doc.lodgement_fees_paid"
+   "options": "Resource Consent Lodgement Payment"
   },
   {
    "fieldname": "section_break_signatures",
@@ -1530,22 +1264,22 @@
    "fieldtype": "Column Break"
   },
   {
+   "depends_on": "eval:doc.agent_required",
    "fieldname": "agent_signature_first_name",
    "fieldtype": "Data",
-   "label": "Agent First Name",
-   "depends_on": "eval:doc.agent_required"
+   "label": "Agent First Name"
   },
   {
+   "depends_on": "eval:doc.agent_required",
    "fieldname": "agent_signature_last_name",
    "fieldtype": "Data",
-   "label": "Agent Last Name",
-   "depends_on": "eval:doc.agent_required"
+   "label": "Agent Last Name"
   },
   {
+   "depends_on": "eval:doc.agent_required",
    "fieldname": "agent_signature_date",
    "fieldtype": "Date",
-   "label": "Agent Signature Date",
-   "depends_on": "eval:doc.agent_required"
+   "label": "Agent Signature Date"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -1572,7 +1306,7 @@
    "link_fieldname": "resource_consent_application"
   }
  ],
- "modified": "2025-11-30 00:00:00.000000",
+ "modified": "2025-12-03 15:46:26.570131",
  "modified_by": "Administrator",
  "module": "Lodgeick",
  "name": "Resource Consent Application",
