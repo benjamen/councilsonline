@@ -15,9 +15,14 @@
               <p class="text-sm text-gray-500">Step {{ currentStep }} of {{ totalSteps }}</p>
             </div>
           </div>
-          <Button @click="saveDraft" variant="outline" theme="gray" :loading="savingDraft">
-            Save Draft
-          </Button>
+          <div class="flex items-center gap-2">
+            <Button @click="saveDraft(false)" variant="outline" theme="gray" :loading="savingDraft">
+              Save Draft
+            </Button>
+            <Button @click="saveDraft(true)" variant="outline" theme="gray" :loading="savingDraft">
+              Save Draft & Close
+            </Button>
+          </div>
         </div>
       </div>
     </header>
@@ -78,6 +83,7 @@
             <Step3ProcessInfo
                 :request-type-details="selectedRequestTypeDetails"
                 :council-name="getCouncilName()"
+                v-model="formData"
                 @continue="handleNext"
             />
         </div>
@@ -974,7 +980,7 @@
 
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { createResource, Input, Button, call } from 'frappe-ui'
 import CouncilSelector from '../components/CouncilSelector.vue'
 import Step1CouncilSelection from '../components/request-steps/Step1CouncilSelection.vue'
@@ -997,6 +1003,7 @@ import { useStepNavigation } from '../composables/useStepNavigation'
 import { formatFileSize } from '../utils/fileHelpers'
 
 const router = useRouter()
+const route = useRoute()
 const councilStore = useCouncilStore()
 
 // User profile data
@@ -1949,7 +1956,39 @@ const previousStep = () => {
   }
 }
 
-const saveDraft = async () => {
+const loadDraft = async (requestId) => {
+  try {
+    const response = await fetch('/api/method/lodgeick.api.load_draft_request', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Frappe-CSRF-Token': window.csrf_token
+      },
+      body: JSON.stringify({
+        request_id: requestId
+      })
+    })
+
+    const result = await response.json()
+
+    if (result.message && result.message.success) {
+      // Load the form data
+      formData.value = result.message.form_data || {}
+
+      // Redirect to the saved step
+      currentStep.value = result.message.current_step || 1
+
+      console.log(`Draft loaded successfully. Resuming at step ${currentStep.value}`)
+    } else {
+      throw new Error(result.message || 'Failed to load draft')
+    }
+  } catch (error) {
+    console.error('Error loading draft:', error)
+    alert('Failed to load draft. Starting new application.')
+  }
+}
+
+const saveDraft = async (closeAfterSave = false) => {
   savingDraft.value = true
   try {
     const response = await fetch('/api/method/lodgeick.api.create_draft_request', {
@@ -1959,14 +1998,27 @@ const saveDraft = async () => {
         'X-Frappe-CSRF-Token': window.csrf_token
       },
       body: JSON.stringify({
-        data: formData.value
+        data: formData.value,
+        current_step: currentStep.value,
+        total_steps: totalSteps.value
       })
     })
 
     const result = await response.json()
 
     if (result.message && result.message.success) {
+      // Store the request ID in formData for future updates
+      if (result.message.request_id && !formData.value.request_id) {
+        formData.value.request_id = result.message.request_id
+      }
+
       alert(`Draft saved successfully! Request ID: ${result.message.request_number}`)
+
+      // If closeAfterSave, redirect to dashboard
+      if (closeAfterSave) {
+        router.push({ name: 'Dashboard' })
+      }
+
       // Return the result for use by other functions
       return result.message
     } else {
@@ -2823,6 +2875,12 @@ onMounted(async () => {
 
   // Load company account if user has one
   await loadCompanyAccount()
+
+  // Check if we're loading a draft
+  const draftId = route.params.id || route.query.draft_id
+  if (draftId) {
+    await loadDraft(draftId)
+  }
 
   // Check if council was preselected via URL or user default
   if (councilStore.preselectedFromUrl) {

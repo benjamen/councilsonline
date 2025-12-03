@@ -507,7 +507,7 @@
         <div class="flex justify-between items-center mb-4">
           <h4 class="text-base font-semibold text-gray-900">Additional Contacts</h4>
           <button
-            @click="openAdditionalContactModal()"
+            @click="openContactSelectorForContactPersons"
             type="button"
             class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
           >
@@ -519,41 +519,25 @@
         </div>
 
         <!-- Contacts List -->
-        <div v-if="localData.additional_contact_persons && localData.additional_contact_persons.length > 0" class="space-y-3">
+        <div v-if="localData.additional_contact_persons && localData.additional_contact_persons.length > 0" class="space-y-2">
           <div
             v-for="(contact, index) in localData.additional_contact_persons"
             :key="index"
-            class="flex items-start justify-between p-4 border border-gray-200 rounded-lg bg-white"
+            class="p-3 bg-white border border-gray-200 rounded-lg flex items-center justify-between"
           >
             <div class="flex-1">
-              <div class="font-medium text-gray-900">{{ contact.first_name }} {{ contact.last_name }}</div>
-              <div class="text-sm text-gray-600 mt-1">
-                <p>{{ contact.email }}</p>
-                <p>{{ contact.phone }}</p>
-              </div>
+              <p class="text-sm font-medium text-gray-900">{{ contact.attendee_name }}</p>
+              <p class="text-xs text-gray-600">{{ contact.attendee_email }}</p>
+              <p v-if="contact.attendee_phone" class="text-xs text-gray-500">{{ contact.attendee_phone }}</p>
+              <p v-if="contact.organization" class="text-xs text-gray-500">{{ contact.organization }}</p>
             </div>
-            <div class="flex items-center gap-2 ml-4">
-              <button
-                @click="openAdditionalContactModal(index)"
-                type="button"
-                class="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors"
-                title="Edit"
-              >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-              </button>
-              <button
-                @click="removeAdditionalContact(index)"
-                type="button"
-                class="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
-                title="Remove"
-              >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </button>
-            </div>
+            <button
+              @click="removeContactPerson(index)"
+              type="button"
+              class="text-red-600 hover:text-red-800 text-sm"
+            >
+              Remove
+            </button>
           </div>
         </div>
 
@@ -641,85 +625,13 @@
       </div>
     </div>
 
-    <!-- Additional Contact Modal -->
-    <div v-if="showAdditionalContactModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div class="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-        <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-          <h3 class="text-lg font-semibold text-gray-900">
-            {{ editingContactIndex !== null ? 'Edit' : 'Add' }} Contact Person
-          </h3>
-          <button @click="closeAdditionalContactModal" class="text-gray-400 hover:text-gray-600">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
-        <div class="p-6 space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">First Name *</label>
-            <input
-              v-model="currentContact.first_name"
-              type="text"
-              placeholder="John"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Last Name *</label>
-            <input
-              v-model="currentContact.last_name"
-              type="text"
-              placeholder="Smith"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
-            <input
-              v-model="currentContact.email"
-              type="email"
-              placeholder="john@example.com"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number *</label>
-            <input
-              v-model="currentContact.phone"
-              type="tel"
-              placeholder="021 123 4567"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
-          </div>
-        </div>
-
-        <div class="sticky bottom-0 bg-gray-50 px-6 py-4 flex justify-end gap-3 border-t border-gray-200">
-          <button
-            @click="closeAdditionalContactModal"
-            type="button"
-            class="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            @click="saveAdditionalContact"
-            type="button"
-            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            :disabled="!currentContact.first_name || !currentContact.last_name || !currentContact.email || !currentContact.phone"
-          >
-            {{ editingContactIndex !== null ? 'Update' : 'Add' }} Contact
-          </button>
-        </div>
-      </div>
-    </div>
+    <!-- Contact Selector for Additional Contact Persons -->
+    <ContactSelector
+      :is-open="showContactSelectorForContactPersons"
+      :existing-contacts="existingContacts"
+      @close="showContactSelectorForContactPersons = false"
+      @select="addContactPerson"
+    />
 
     <!-- Pre-Application Meeting Modal -->
     <div
@@ -1033,6 +945,27 @@ const localData = ref({
   additional_contact_persons: rawModelValue.additional_contact_persons || []
 })
 
+// Migrate old contact persons data format to new standardized format
+// Old format: { first_name, last_name, email, phone }
+// New format: { attendee_name, attendee_email, attendee_phone, organization }
+if (localData.value.additional_contact_persons && localData.value.additional_contact_persons.length > 0) {
+  localData.value.additional_contact_persons = localData.value.additional_contact_persons.map(contact => {
+    // Check if already in new format
+    if (contact.attendee_name || contact.attendee_email) {
+      return contact
+    }
+    // Convert old format to new format
+    return {
+      attendee_name: contact.first_name && contact.last_name
+        ? `${contact.first_name} ${contact.last_name}`
+        : contact.first_name || contact.last_name || '',
+      attendee_email: contact.email || '',
+      attendee_phone: contact.phone || '',
+      organization: contact.organization || ''
+    }
+  })
+}
+
 // Additional consents management
 // Initialize based on existing data
 const additionalConsentsRequired = ref(
@@ -1106,51 +1039,29 @@ const removeAdditionalConsent = (index) => {
   }
 }
 
-// Additional contacts management
-const showAdditionalContactModal = ref(false)
-const editingContactIndex = ref(null)
-const currentContact = ref({
-  first_name: '',
-  last_name: '',
-  email: '',
-  phone: ''
-})
+// Additional contacts management - using ContactSelector
+const showContactSelectorForContactPersons = ref(false)
 
-const openAdditionalContactModal = (index = null) => {
-  editingContactIndex.value = index
-  if (index !== null) {
-    currentContact.value = { ...localData.value.additional_contact_persons[index] }
-  } else {
-    currentContact.value = {
-      first_name: '',
-      last_name: '',
-      email: '',
-      phone: ''
-    }
-  }
-  showAdditionalContactModal.value = true
+const openContactSelectorForContactPersons = () => {
+  showContactSelectorForContactPersons.value = true
 }
 
-const closeAdditionalContactModal = () => {
-  showAdditionalContactModal.value = false
-  editingContactIndex.value = null
-}
-
-const saveAdditionalContact = () => {
+const addContactPerson = (contact) => {
   if (!localData.value.additional_contact_persons) {
     localData.value.additional_contact_persons = []
   }
 
-  if (editingContactIndex.value !== null) {
-    localData.value.additional_contact_persons[editingContactIndex.value] = { ...currentContact.value }
-  } else {
-    localData.value.additional_contact_persons.push({ ...currentContact.value })
-  }
+  localData.value.additional_contact_persons.push({
+    attendee_name: contact.name,
+    attendee_email: contact.email,
+    attendee_phone: contact.phone || '',
+    organization: contact.organization || ''
+  })
 
-  closeAdditionalContactModal()
+  showContactSelectorForContactPersons.value = false
 }
 
-const removeAdditionalContact = (index) => {
+const removeContactPerson = (index) => {
   if (confirm('Remove this contact person?')) {
     localData.value.additional_contact_persons.splice(index, 1)
   }
