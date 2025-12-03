@@ -35,13 +35,19 @@ def setup_taytay_council():
 		"default_sla_days": 30
 	})
 
-	# Get all request types and enable them for this council
-	request_types = frappe.get_all("Request Type", fields=["name", "type_name"])
-	for request_type in request_types:
-		council.append("enabled_request_types", {
-			"request_type": request_type.name,
-			"is_enabled": 1
-		})
+	# Enable only Philippines Social Assistance request types for this council
+	philippines_request_types = [
+		"Social Pension for Indigent Senior Citizens (SPISC)",
+		"Local Senior Assistance / Financial Aid for Elderly",
+		"Burial / Medical Support for Seniors"
+	]
+
+	for request_type_name in philippines_request_types:
+		if frappe.db.exists("Request Type", request_type_name):
+			council.append("enabled_request_types", {
+				"request_type": request_type_name,
+				"is_enabled": 1
+			})
 
 	council.flags.ignore_permissions = True
 	council.insert()
