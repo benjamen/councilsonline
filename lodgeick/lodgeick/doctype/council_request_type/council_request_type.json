@@ -14,6 +14,8 @@
   "brief_description",
   "section_break_process",
   "process_description",
+  "section_break_step_overrides",
+  "step_overrides",
   "section_break_notes",
   "notes"
  ],
@@ -70,6 +72,19 @@
    "fieldtype": "Text Editor",
    "label": "Process Description",
    "description": "Detailed HTML description of the council's process for this request type (shown to applicants)"
+  },
+  {
+   "fieldname": "section_break_step_overrides",
+   "fieldtype": "Section Break",
+   "label": "Step Overrides",
+   "description": "Override step configuration for this council's version of the request type"
+  },
+  {
+   "fieldname": "step_overrides",
+   "fieldtype": "Table",
+   "label": "Step Overrides",
+   "options": "Council Request Type Step Override",
+   "description": "Customize which steps appear for this request type in this council"
   },
   {
    "fieldname": "section_break_notes",

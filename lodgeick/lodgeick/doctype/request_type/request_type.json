@@ -27,6 +27,8 @@
   "form_template",
   "required_documents",
   "help_text",
+  "section_break_step_configs",
+  "step_configs",
   "section_break_notifications",
   "notification_template",
   "section_break_status",
@@ -151,6 +153,19 @@
    "fieldname": "help_text",
    "fieldtype": "Text Editor",
    "label": "Help Text"
+  },
+  {
+   "fieldname": "section_break_step_configs",
+   "fieldtype": "Section Break",
+   "label": "Step Configuration",
+   "description": "Configure which steps and sections appear for this request type. Leave empty to use hardcoded step flow."
+  },
+  {
+   "fieldname": "step_configs",
+   "fieldtype": "Table",
+   "label": "Step Configurations",
+   "options": "Request Type Step Config",
+   "description": "Define the steps that applicants will complete for this request type"
   },
   {
    "fieldname": "section_break_notifications",

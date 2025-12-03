@@ -3476,3 +3476,260 @@ def get_company_users(company_name):
 		})
 
 	return users
+
+# ================================
+# Step Configuration APIs
+# ================================
+
+@frappe.whitelist()
+def get_request_type_steps(request_type, council_code=None):
+	"""
+	Get step configuration for a request type, with optional council overrides
+	
+	Args:
+		request_type: Name of Request Type
+		council_code: Optional council code to apply council-specific overrides
+	
+	Returns:
+		dict: Steps configuration with sections and fields
+	"""
+	try:
+		# Get request type document
+		rt_doc = frappe.get_doc("Request Type", request_type)
+		
+		# If no step_configs, return empty (fallback to hardcoded flow)
+		if not rt_doc.step_configs:
+			return {
+				"steps": [],
+				"uses_config": False,
+				"message": "No step configuration found. Using default hardcoded flow."
+			}
+		
+		steps = []
+		
+		# Load base step configuration
+		for step_config in rt_doc.step_configs:
+			if not step_config.is_enabled:
+				continue
+			
+			step_data = {
+				"step_number": step_config.step_number,
+				"step_code": step_config.step_code,
+				"step_title": step_config.step_title,
+				"step_component": step_config.step_component or "DynamicStepRenderer",
+				"is_enabled": step_config.is_enabled,
+				"is_required": step_config.is_required,
+				"show_on_review": step_config.show_on_review,
+				"depends_on": step_config.depends_on,
+				"sections": []
+			}
+			
+			# Load sections for this step
+			sections = frappe.get_all("Request Type Step Section",
+									 filters={"parent": step_config.name, "is_enabled": 1},
+									 fields=["*"],
+									 order_by="sequence asc")
+			
+			for section in sections:
+				section_data = {
+					"section_code": section.section_code,
+					"section_title": section.section_title,
+					"section_type": section.section_type,
+					"sequence": section.sequence,
+					"is_enabled": section.is_enabled,
+					"is_required": section.is_required,
+					"show_on_review": section.show_on_review,
+					"depends_on": section.depends_on,
+					"fields": []
+				}
+				
+				# Load fields for this section
+				fields = frappe.get_all("Request Type Step Field",
+									   filters={"parent": section.name},
+									   fields=["*"],
+									   order_by="idx asc")
+				
+				for field in fields:
+					field_data = {
+						"field_name": field.field_name,
+						"field_label": field.field_label,
+						"field_type": field.field_type,
+						"is_required": field.is_required,
+						"options": field.options,
+						"default_value": field.default_value,
+						"depends_on": field.depends_on,
+						"validation": field.validation,
+						"show_on_review": field.show_on_review,
+						"review_label": field.review_label or field.field_label
+					}
+					section_data["fields"].append(field_data)
+				
+				step_data["sections"].append(section_data)
+			
+			steps.append(step_data)
+		
+		# Apply council-specific overrides if provided
+		if council_code:
+			steps = apply_council_step_overrides(steps, request_type, council_code)
+		
+		# Sort by step_number
+		steps = sorted(steps, key=lambda x: x.get("step_number", 999))
+		
+		return {
+			"steps": steps,
+			"uses_config": True,
+			"request_type": request_type,
+			"council_code": council_code
+		}
+	
+	except Exception as e:
+		frappe.log_error(f"Get Request Type Steps Error: {str(e)}")
+		return {
+			"steps": [],
+			"uses_config": False,
+			"error": str(e)
+		}
+
+
+def apply_council_step_overrides(steps, request_type, council_code):
+	"""
+	Apply council-specific step overrides
+	
+	Args:
+		steps: List of step configurations
+		request_type: Request Type name
+		council_code: Council code
+	
+	Returns:
+		list: Steps with council overrides applied
+	"""
+	try:
+		# Get council request type configuration
+		council_rt = frappe.db.get_value("Council Request Type",
+										filters={
+											"parent": council_code,
+											"request_type": request_type
+										},
+										fieldname="name")
+		
+		if not council_rt:
+			return steps
+		
+		# Get step overrides for this council
+		overrides = frappe.get_all("Council Request Type Step Override",
+								  filters={"parent": council_rt},
+								  fields=["*"])
+		
+		if not overrides:
+			return steps
+		
+		# Apply overrides
+		for step in steps:
+			for override in overrides:
+				if override.step_code == step["step_code"]:
+					# Override step-level settings
+					if override.custom_title:
+						step["step_title"] = override.custom_title
+					if override.sequence_override:
+						step["step_number"] = override.sequence_override
+					step["is_enabled"] = override.is_enabled
+					step["is_required"] = override.is_required
+					
+					# Apply section overrides
+					section_overrides = frappe.get_all("Council Step Section Override",
+													  filters={"parent": override.name},
+													  fields=["*"])
+					
+					for section in step.get("sections", []):
+						for sec_override in section_overrides:
+							if sec_override.section_code == section["section_code"]:
+								if sec_override.custom_title:
+									section["section_title"] = sec_override.custom_title
+								section["is_enabled"] = sec_override.is_enabled
+								section["is_required"] = sec_override.is_required
+		
+		# Filter out disabled steps
+		steps = [s for s in steps if s.get("is_enabled", True)]
+		
+		return steps
+	
+	except Exception as e:
+		frappe.log_error(f"Apply Council Step Overrides Error: {str(e)}")
+		return steps
+
+
+@frappe.whitelist()
+def validate_step_data(request_type, council_code, step_code, data):
+	"""
+	Validate data for a specific step based on configuration
+	
+	Args:
+		request_type: Name of Request Type
+		council_code: Council code
+		step_code: Step code to validate
+		data: Form data (JSON string or dict)
+	
+	Returns:
+		dict: Validation result with errors
+	"""
+	try:
+		import json
+		if isinstance(data, str):
+			data = json.loads(data)
+		
+		# Get step configuration
+		result = get_request_type_steps(request_type, council_code)
+		
+		if not result.get("uses_config"):
+			return {
+				"valid": True,
+				"message": "No step configuration found. Skipping validation."
+			}
+		
+		# Find the step
+		step = next((s for s in result["steps"] if s["step_code"] == step_code), None)
+		
+		if not step:
+			return {
+				"valid": False,
+				"errors": {"step": f"Step {step_code} not found in configuration"}
+			}
+		
+		errors = {}
+		
+		# Validate each section
+		for section in step.get("sections", []):
+			if not section.get("is_enabled"):
+				continue
+			
+			# Validate each field
+			for field in section.get("fields", []):
+				field_name = field["field_name"]
+				field_value = data.get(field_name)
+				
+				# Check required fields
+				if field["is_required"]:
+					if field_value is None or field_value == "":
+						errors[field_name] = f"{field['field_label']} is required"
+				
+				# Run custom validation if provided
+				if field.get("validation") and field_value:
+					try:
+						# Execute custom validation (would need sandbox evaluation)
+						# For now, skip custom validation for security
+						pass
+					except Exception as e:
+						errors[field_name] = f"Validation error: {str(e)}"
+		
+		return {
+			"valid": len(errors) == 0,
+			"errors": errors,
+			"message": "Validation successful" if len(errors) == 0 else f"Found {len(errors)} validation error(s)"
+		}
+	
+	except Exception as e:
+		frappe.log_error(f"Validate Step Data Error: {str(e)}")
+		return {
+			"valid": False,
+			"errors": {"system": str(e)}
+		}

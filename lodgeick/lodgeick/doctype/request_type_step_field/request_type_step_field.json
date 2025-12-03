@@ -1,0 +1,127 @@
+{
+ "actions": [],
+ "creation": "2025-12-04 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "field_name",
+  "field_label",
+  "field_type",
+  "column_break_1",
+  "is_required",
+  "show_on_review",
+  "section_break_options",
+  "options",
+  "default_value",
+  "section_break_validation",
+  "depends_on",
+  "validation",
+  "section_break_review",
+  "review_label"
+ ],
+ "fields": [
+  {
+   "fieldname": "field_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Field Name",
+   "reqd": 1,
+   "description": "Database field name (e.g., 'applicant_name', 'property_address')"
+  },
+  {
+   "fieldname": "field_label",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Field Label",
+   "reqd": 1,
+   "description": "Display label shown to users (e.g., 'Applicant Name')"
+  },
+  {
+   "fieldname": "field_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Field Type",
+   "options": "Data\nSelect\nCheck\nText\nText Editor\nAttach\nAttach Image\nLink\nTable\nDate\nDatetime\nInt\nFloat\nCurrency",
+   "default": "Data",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_required",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Required"
+  },
+  {
+   "default": "1",
+   "fieldname": "show_on_review",
+   "fieldtype": "Check",
+   "label": "Show on Review Screen"
+  },
+  {
+   "fieldname": "section_break_options",
+   "fieldtype": "Section Break",
+   "label": "Field Options"
+  },
+  {
+   "fieldname": "options",
+   "fieldtype": "Text",
+   "label": "Options",
+   "description": "For Select fields: newline-separated options. For Link fields: target DocType name"
+  },
+  {
+   "fieldname": "default_value",
+   "fieldtype": "Data",
+   "label": "Default Value",
+   "description": "Default value when field is first displayed"
+  },
+  {
+   "fieldname": "section_break_validation",
+   "fieldtype": "Section Break",
+   "label": "Validation & Conditional Logic"
+  },
+  {
+   "fieldname": "depends_on",
+   "fieldtype": "Code",
+   "label": "Conditional Logic (depends_on)",
+   "description": "JavaScript expression to conditionally show this field",
+   "options": "JavaScript"
+  },
+  {
+   "fieldname": "validation",
+   "fieldtype": "Code",
+   "label": "Custom Validation",
+   "description": "JavaScript validation function (optional)",
+   "options": "JavaScript"
+  },
+  {
+   "fieldname": "section_break_review",
+   "fieldtype": "Section Break",
+   "label": "Review Screen Configuration"
+  },
+  {
+   "fieldname": "review_label",
+   "fieldtype": "Data",
+   "label": "Review Screen Label",
+   "description": "Custom label for review screen (defaults to field_label if not set)"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-12-04 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Request Type Step Field",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "ASC",
+ "states": [],
+ "track_changes": 1
+}
