@@ -1509,8 +1509,9 @@ def get_request_types_for_council(council_code):
                     "sla_days": rt.sla_days_override if rt.sla_days_override else request_type_doc.processing_sla_days,
                     "fee_calculation_method": request_type_doc.fee_calculation_method,
                     "process_description": rt.process_description or "",
-                    "requires_property": request_type_doc.requires_property if hasattr(request_type_doc, 'requires_property') else True,
-                    "requires_payment": request_type_doc.requires_payment if hasattr(request_type_doc, 'requires_payment') else True
+                    # Smart defaults based on category
+                    "requires_property": request_type_doc.requires_property if hasattr(request_type_doc, 'requires_property') else (request_type_doc.category != "Social Assistance"),
+                    "requires_payment": request_type_doc.requires_payment if hasattr(request_type_doc, 'requires_payment') else (request_type_doc.base_fee > 0)
                 })
 
         return enabled_types
