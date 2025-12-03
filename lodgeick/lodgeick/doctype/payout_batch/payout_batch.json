@@ -1,0 +1,282 @@
+{
+ "actions": [],
+ "autoname": "format:BATCH-{YYYY}-{MM}-{####}",
+ "creation": "2025-12-03 00:00:00",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "primary_section",
+  "batch_name",
+  "batch_type",
+  "request_type",
+  "column_break_primary",
+  "batch_status",
+  "batch_date",
+  "period_section",
+  "period_start",
+  "period_end",
+  "column_break_period",
+  "council",
+  "statistics_section",
+  "total_payouts",
+  "total_amount",
+  "column_break_stats",
+  "completed_count",
+  "failed_count",
+  "processing_section",
+  "created_by",
+  "created_date",
+  "column_break_processing",
+  "approved_by",
+  "approval_date",
+  "file_section",
+  "bank_file",
+  "bank_file_format",
+  "column_break_file",
+  "file_generated_date",
+  "notes_section",
+  "batch_notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "primary_section",
+   "fieldtype": "Section Break",
+   "label": "Primary Information"
+  },
+  {
+   "fieldname": "batch_name",
+   "fieldtype": "Data",
+   "label": "Batch Name",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "batch_type",
+   "fieldtype": "Select",
+   "label": "Batch Type",
+   "options": "Monthly Pension\nOne-time Assistance\nEmergency Aid\nBurial/Medical",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "request_type",
+   "fieldtype": "Link",
+   "label": "Request Type",
+   "options": "Request Type",
+   "description": "Filter payouts by request type"
+  },
+  {
+   "fieldname": "column_break_primary",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "batch_status",
+   "fieldtype": "Select",
+   "label": "Batch Status",
+   "options": "Draft\nPending Approval\nApproved\nProcessing\nCompleted\nPartially Failed",
+   "default": "Draft",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "batch_date",
+   "fieldtype": "Date",
+   "label": "Batch Date",
+   "default": "Today",
+   "reqd": 1
+  },
+  {
+   "fieldname": "period_section",
+   "fieldtype": "Section Break",
+   "label": "Payout Period"
+  },
+  {
+   "fieldname": "period_start",
+   "fieldtype": "Date",
+   "label": "Period Start"
+  },
+  {
+   "fieldname": "period_end",
+   "fieldtype": "Date",
+   "label": "Period End"
+  },
+  {
+   "fieldname": "column_break_period",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "council",
+   "fieldtype": "Link",
+   "label": "Council",
+   "options": "Council",
+   "reqd": 1
+  },
+  {
+   "fieldname": "statistics_section",
+   "fieldtype": "Section Break",
+   "label": "Batch Statistics"
+  },
+  {
+   "fieldname": "total_payouts",
+   "fieldtype": "Int",
+   "label": "Total Payouts",
+   "read_only": 1,
+   "default": "0"
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "label": "Total Amount",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_stats",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "completed_count",
+   "fieldtype": "Int",
+   "label": "Completed Count",
+   "read_only": 1,
+   "default": "0"
+  },
+  {
+   "fieldname": "failed_count",
+   "fieldtype": "Int",
+   "label": "Failed Count",
+   "read_only": 1,
+   "default": "0"
+  },
+  {
+   "fieldname": "processing_section",
+   "fieldtype": "Section Break",
+   "label": "Processing"
+  },
+  {
+   "fieldname": "created_by",
+   "fieldtype": "Link",
+   "label": "Created By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "created_date",
+   "fieldtype": "Datetime",
+   "label": "Created Date",
+   "read_only": 1,
+   "default": "now"
+  },
+  {
+   "fieldname": "column_break_processing",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "approved_by",
+   "fieldtype": "Link",
+   "label": "Approved By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "approval_date",
+   "fieldtype": "Datetime",
+   "label": "Approval Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "file_section",
+   "fieldtype": "Section Break",
+   "label": "Bank File"
+  },
+  {
+   "fieldname": "bank_file",
+   "fieldtype": "Attach",
+   "label": "Bank File",
+   "description": "Generated bank file for bulk transfer"
+  },
+  {
+   "fieldname": "bank_file_format",
+   "fieldtype": "Select",
+   "label": "Bank File Format",
+   "options": "CSV\nExcel\nUnionBank Format\nBDO Format"
+  },
+  {
+   "fieldname": "column_break_file",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "file_generated_date",
+   "fieldtype": "Datetime",
+   "label": "File Generated Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "notes_section",
+   "fieldtype": "Section Break",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "batch_notes",
+   "fieldtype": "Text Editor",
+   "label": "Batch Notes"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-12-03 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Payout Batch",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Social Worker"
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Social Services Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Finance Officer",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "batch_name,batch_status,batch_type",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "title_field": "batch_name"
+}

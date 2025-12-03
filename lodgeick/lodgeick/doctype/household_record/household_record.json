@@ -1,0 +1,374 @@
+{
+ "actions": [],
+ "autoname": "format:HOUSEHOLD-{####}",
+ "creation": "2025-12-03 00:00:00",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "primary_section",
+  "head_of_household",
+  "household_id",
+  "registration_date",
+  "column_break_primary",
+  "household_status",
+  "last_updated",
+  "location_section",
+  "barangay",
+  "municipality",
+  "province",
+  "column_break_location",
+  "address",
+  "housing_type",
+  "economic_section",
+  "total_monthly_income",
+  "primary_income_source",
+  "employment_type",
+  "column_break_economic",
+  "poverty_threshold_status",
+  "fourps_beneficiary",
+  "fourps_household_id",
+  "living_conditions_section",
+  "electricity_access",
+  "water_source",
+  "toilet_facility",
+  "column_break_living",
+  "cooking_fuel",
+  "vulnerability_section",
+  "has_pwd_member",
+  "has_senior_citizen",
+  "has_solo_parent",
+  "column_break_vulnerability",
+  "has_indigenous_person",
+  "disaster_affected",
+  "health_crisis",
+  "verification_section",
+  "verified_by_barangay",
+  "barangay_verification_date",
+  "column_break_verification",
+  "barangay_official",
+  "verification_notes",
+  "members_section",
+  "household_members"
+ ],
+ "fields": [
+  {
+   "fieldname": "primary_section",
+   "fieldtype": "Section Break",
+   "label": "Primary Information"
+  },
+  {
+   "fieldname": "head_of_household",
+   "fieldtype": "Link",
+   "label": "Head of Household",
+   "options": "User",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "household_id",
+   "fieldtype": "Data",
+   "label": "Household ID",
+   "read_only": 1,
+   "unique": 1,
+   "description": "Auto-generated unique household identifier"
+  },
+  {
+   "fieldname": "registration_date",
+   "fieldtype": "Date",
+   "label": "Registration Date",
+   "default": "Today",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_primary",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "household_status",
+   "fieldtype": "Select",
+   "label": "Household Status",
+   "options": "Active\nInactive\nMoved",
+   "default": "Active",
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "last_updated",
+   "fieldtype": "Datetime",
+   "label": "Last Updated",
+   "read_only": 1
+  },
+  {
+   "fieldname": "location_section",
+   "fieldtype": "Section Break",
+   "label": "Location"
+  },
+  {
+   "fieldname": "barangay",
+   "fieldtype": "Data",
+   "label": "Barangay",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "municipality",
+   "fieldtype": "Data",
+   "label": "Municipality/City",
+   "reqd": 1
+  },
+  {
+   "fieldname": "province",
+   "fieldtype": "Data",
+   "label": "Province",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_location",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Small Text",
+   "label": "Address",
+   "reqd": 1
+  },
+  {
+   "fieldname": "housing_type",
+   "fieldtype": "Select",
+   "label": "Housing Type",
+   "options": "Own\nRented\nShared\nInformal Settlement"
+  },
+  {
+   "fieldname": "economic_section",
+   "fieldtype": "Section Break",
+   "label": "Economic Information"
+  },
+  {
+   "fieldname": "total_monthly_income",
+   "fieldtype": "Currency",
+   "label": "Total Monthly Income",
+   "precision": "2"
+  },
+  {
+   "fieldname": "primary_income_source",
+   "fieldtype": "Select",
+   "label": "Primary Income Source",
+   "options": "Employment\nBusiness\nPension\nRemittance\nNone\nOther"
+  },
+  {
+   "fieldname": "employment_type",
+   "fieldtype": "Select",
+   "label": "Employment Type",
+   "options": "Full-time\nPart-time\nInformal\nUnemployed\nRetired"
+  },
+  {
+   "fieldname": "column_break_economic",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "poverty_threshold_status",
+   "fieldtype": "Select",
+   "label": "Poverty Threshold Status",
+   "options": "Below\nAt\nAbove",
+   "description": "Calculated based on income vs regional poverty threshold"
+  },
+  {
+   "fieldname": "fourps_beneficiary",
+   "fieldtype": "Check",
+   "label": "4Ps Beneficiary",
+   "default": "0",
+   "description": "Pantawid Pamilyang Pilipino Program beneficiary"
+  },
+  {
+   "fieldname": "fourps_household_id",
+   "fieldtype": "Data",
+   "label": "4Ps Household ID",
+   "depends_on": "eval:doc.fourps_beneficiary"
+  },
+  {
+   "fieldname": "living_conditions_section",
+   "fieldtype": "Section Break",
+   "label": "Living Conditions"
+  },
+  {
+   "fieldname": "electricity_access",
+   "fieldtype": "Check",
+   "label": "Electricity Access",
+   "default": "0"
+  },
+  {
+   "fieldname": "water_source",
+   "fieldtype": "Select",
+   "label": "Water Source",
+   "options": "Tap\nWell\nSpring\nWater Delivery\nOther"
+  },
+  {
+   "fieldname": "toilet_facility",
+   "fieldtype": "Select",
+   "label": "Toilet Facility",
+   "options": "Own Flush\nShared\nPit Latrine\nNone"
+  },
+  {
+   "fieldname": "column_break_living",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cooking_fuel",
+   "fieldtype": "Select",
+   "label": "Cooking Fuel",
+   "options": "LPG\nCharcoal\nWood\nOther"
+  },
+  {
+   "fieldname": "vulnerability_section",
+   "fieldtype": "Section Break",
+   "label": "Vulnerability Indicators"
+  },
+  {
+   "fieldname": "has_pwd_member",
+   "fieldtype": "Check",
+   "label": "Has PWD Member",
+   "default": "0",
+   "description": "Person with Disability in household"
+  },
+  {
+   "fieldname": "has_senior_citizen",
+   "fieldtype": "Check",
+   "label": "Has Senior Citizen (60+)",
+   "default": "0"
+  },
+  {
+   "fieldname": "has_solo_parent",
+   "fieldtype": "Check",
+   "label": "Has Solo Parent",
+   "default": "0"
+  },
+  {
+   "fieldname": "column_break_vulnerability",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "has_indigenous_person",
+   "fieldtype": "Check",
+   "label": "Has Indigenous Person",
+   "default": "0"
+  },
+  {
+   "fieldname": "disaster_affected",
+   "fieldtype": "Check",
+   "label": "Disaster Affected",
+   "default": "0"
+  },
+  {
+   "fieldname": "health_crisis",
+   "fieldtype": "Check",
+   "label": "Health Crisis",
+   "default": "0"
+  },
+  {
+   "fieldname": "verification_section",
+   "fieldtype": "Section Break",
+   "label": "Barangay Verification"
+  },
+  {
+   "fieldname": "verified_by_barangay",
+   "fieldtype": "Check",
+   "label": "Verified by Barangay",
+   "default": "0"
+  },
+  {
+   "fieldname": "barangay_verification_date",
+   "fieldtype": "Date",
+   "label": "Barangay Verification Date",
+   "depends_on": "eval:doc.verified_by_barangay"
+  },
+  {
+   "fieldname": "column_break_verification",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "barangay_official",
+   "fieldtype": "Data",
+   "label": "Barangay Official",
+   "depends_on": "eval:doc.verified_by_barangay"
+  },
+  {
+   "fieldname": "verification_notes",
+   "fieldtype": "Text",
+   "label": "Verification Notes"
+  },
+  {
+   "fieldname": "members_section",
+   "fieldtype": "Section Break",
+   "label": "Household Members"
+  },
+  {
+   "fieldname": "household_members",
+   "fieldtype": "Table",
+   "label": "Household Members",
+   "options": "Household Member"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-12-03 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Household Record",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "Social Services Applicant",
+   "write": 1,
+   "if_owner": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Social Worker",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Social Services Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Barangay Social Services",
+   "write": 1
+  }
+ ],
+ "search_fields": "head_of_household,barangay,municipality,household_status",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "title_field": "head_of_household"
+}

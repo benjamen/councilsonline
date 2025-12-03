@@ -16,6 +16,7 @@
   "workflow_template",
   "default_assessment_template",
   "fast_track_available",
+  "pre_app_meeting_available",
   "section_break_conditions",
   "condition_templates",
   "section_break_fees",
@@ -50,7 +51,7 @@
    "fieldname": "category",
    "fieldtype": "Select",
    "label": "Category",
-   "options": "Resource Consent\nBuilding Consent\nService Request\nLicense\nComplaint",
+   "options": "Resource Consent\nBuilding Consent\nService Request\nLicense\nComplaint\nSocial Assistance",
    "reqd": 1
   },
   {
@@ -90,6 +91,13 @@
    "label": "Fast-Track Available (s.87AAB RMA)",
    "default": "0",
    "description": "Enable fast-track processing option for Controlled activities (Resource Consent only)"
+  },
+  {
+   "fieldname": "pre_app_meeting_available",
+   "fieldtype": "Check",
+   "label": "Pre-Application Meeting Available",
+   "default": "1",
+   "description": "Allow applicants to schedule pre-application meetings during the application process"
   },
   {
    "fieldname": "section_break_conditions",

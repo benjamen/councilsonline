@@ -1,0 +1,226 @@
+{
+ "actions": [],
+ "creation": "2025-12-03 00:00:00",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "member_user",
+  "full_name",
+  "relationship_to_head",
+  "birth_date",
+  "age",
+  "column_break_1",
+  "sex",
+  "civil_status",
+  "status_section",
+  "is_senior_citizen",
+  "is_pwd",
+  "is_pregnant",
+  "is_lactating",
+  "column_break_status",
+  "is_indigenous",
+  "economic_section",
+  "is_employed",
+  "monthly_income",
+  "column_break_economic",
+  "occupation",
+  "health_section",
+  "has_chronic_illness",
+  "chronic_illness_details",
+  "column_break_health",
+  "disability_type",
+  "requires_assistance",
+  "education_section",
+  "enrolled_in_school",
+  "school_level"
+ ],
+ "fields": [
+  {
+   "fieldname": "member_user",
+   "fieldtype": "Link",
+   "label": "Member User",
+   "options": "User",
+   "description": "Link to User if registered"
+  },
+  {
+   "fieldname": "full_name",
+   "fieldtype": "Data",
+   "label": "Full Name",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "relationship_to_head",
+   "fieldtype": "Select",
+   "label": "Relationship to Head",
+   "options": "Self\nSpouse\nChild\nParent\nSibling\nGrandchild\nGrandparent\nOther Relative\nNon-Relative",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "birth_date",
+   "fieldtype": "Date",
+   "label": "Birth Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "age",
+   "fieldtype": "Int",
+   "label": "Age",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sex",
+   "fieldtype": "Select",
+   "label": "Sex",
+   "options": "Male\nFemale",
+   "reqd": 1
+  },
+  {
+   "fieldname": "civil_status",
+   "fieldtype": "Select",
+   "label": "Civil Status",
+   "options": "Single\nMarried\nWidowed\nSeparated\nCommon-law"
+  },
+  {
+   "fieldname": "status_section",
+   "fieldtype": "Section Break",
+   "label": "Status Flags"
+  },
+  {
+   "fieldname": "is_senior_citizen",
+   "fieldtype": "Check",
+   "label": "Is Senior Citizen (60+)",
+   "default": "0",
+   "read_only": 1,
+   "description": "Auto-calculated from age"
+  },
+  {
+   "fieldname": "is_pwd",
+   "fieldtype": "Check",
+   "label": "Is PWD",
+   "default": "0",
+   "description": "Person with Disability"
+  },
+  {
+   "fieldname": "is_pregnant",
+   "fieldtype": "Check",
+   "label": "Is Pregnant",
+   "default": "0"
+  },
+  {
+   "fieldname": "is_lactating",
+   "fieldtype": "Check",
+   "label": "Is Lactating",
+   "default": "0"
+  },
+  {
+   "fieldname": "column_break_status",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "is_indigenous",
+   "fieldtype": "Check",
+   "label": "Is Indigenous",
+   "default": "0"
+  },
+  {
+   "fieldname": "economic_section",
+   "fieldtype": "Section Break",
+   "label": "Economic Contribution"
+  },
+  {
+   "fieldname": "is_employed",
+   "fieldtype": "Check",
+   "label": "Is Employed",
+   "default": "0"
+  },
+  {
+   "fieldname": "monthly_income",
+   "fieldtype": "Currency",
+   "label": "Monthly Income",
+   "precision": "2",
+   "depends_on": "eval:doc.is_employed"
+  },
+  {
+   "fieldname": "column_break_economic",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "occupation",
+   "fieldtype": "Data",
+   "label": "Occupation",
+   "depends_on": "eval:doc.is_employed"
+  },
+  {
+   "fieldname": "health_section",
+   "fieldtype": "Section Break",
+   "label": "Health Status"
+  },
+  {
+   "fieldname": "has_chronic_illness",
+   "fieldtype": "Check",
+   "label": "Has Chronic Illness",
+   "default": "0"
+  },
+  {
+   "fieldname": "chronic_illness_details",
+   "fieldtype": "Text",
+   "label": "Chronic Illness Details",
+   "depends_on": "eval:doc.has_chronic_illness"
+  },
+  {
+   "fieldname": "column_break_health",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "disability_type",
+   "fieldtype": "Data",
+   "label": "Disability Type",
+   "depends_on": "eval:doc.is_pwd"
+  },
+  {
+   "fieldname": "requires_assistance",
+   "fieldtype": "Check",
+   "label": "Requires Assistance",
+   "default": "0"
+  },
+  {
+   "fieldname": "education_section",
+   "fieldtype": "Section Break",
+   "label": "Education (if child/youth)"
+  },
+  {
+   "fieldname": "enrolled_in_school",
+   "fieldtype": "Check",
+   "label": "Enrolled in School",
+   "default": "0"
+  },
+  {
+   "fieldname": "school_level",
+   "fieldtype": "Select",
+   "label": "School Level",
+   "options": "Elementary\nHigh School\nSenior High\nCollege\nNot Attending",
+   "depends_on": "eval:doc.enrolled_in_school"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-12-03 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Household Member",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

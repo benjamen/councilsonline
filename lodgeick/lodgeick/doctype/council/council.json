@@ -161,7 +161,7 @@
    "fieldname": "timezone",
    "fieldtype": "Select",
    "label": "Timezone",
-   "options": "Pacific/Auckland\nPacific/Chatham"
+   "options": "Pacific/Auckland\nPacific/Chatham\nAsia/Manila"
   },
   {
    "default": "20",

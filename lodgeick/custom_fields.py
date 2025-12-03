@@ -6,92 +6,66 @@ from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
 
 def create_lodgeick_custom_fields():
-	"""Create custom fields for WB Task and Request doctypes"""
+	"""Create custom fields for Request and User doctypes"""
 
 	custom_fields = {
-		# WB Task custom fields for costing
-		"WB Task": [
-			{
-				"fieldname": "lodgeick_costing_section",
-				"fieldtype": "Section Break",
-				"label": "Lodgeick Costing",
-				"insert_after": "wb_task_checklist_details",
-				"collapsible": 0
-			},
-			{
-				"fieldname": "request",
-				"fieldtype": "Link",
-				"label": "Request",
-				"options": "Request",
-				"insert_after": "lodgeick_costing_section",
-				"in_list_view": 0
-			},
-			{
-				"fieldname": "activity_type",
-				"fieldtype": "Link",
-				"label": "Activity Type",
-				"options": "Activity Type",
-				"insert_after": "request"
-			},
-			{
-				"fieldname": "column_break_costing1",
-				"fieldtype": "Column Break",
-				"insert_after": "activity_type"
-			},
-			{
-				"fieldname": "assigned_role",
-				"fieldtype": "Link",
-				"label": "Assigned Role",
-				"options": "Role",
-				"insert_after": "column_break_costing1"
-			},
-			{
-				"fieldname": "section_break_hours",
-				"fieldtype": "Section Break",
-				"label": "Time Tracking",
-				"insert_after": "assigned_role",
-				"collapsible": 0
-			},
-			{
-				"fieldname": "estimated_hours",
-				"fieldtype": "Float",
-				"label": "Estimated Hours",
-				"insert_after": "section_break_hours",
-				"precision": "2"
-			},
-			{
-				"fieldname": "actual_hours",
-				"fieldtype": "Float",
-				"label": "Actual Hours",
-				"insert_after": "estimated_hours",
-				"precision": "2"
-			},
-			{
-				"fieldname": "column_break_costing2",
-				"fieldtype": "Column Break",
-				"insert_after": "actual_hours"
-			},
-			{
-				"fieldname": "hourly_rate",
-				"fieldtype": "Currency",
-				"label": "Hourly Rate",
-				"insert_after": "column_break_costing2",
-				"read_only": 1,
-				"description": "Auto-fetched from Role Rate"
-			},
-			{
-				"fieldname": "total_cost",
-				"fieldtype": "Currency",
-				"label": "Total Cost",
-				"insert_after": "hourly_rate",
-				"read_only": 1,
-				"bold": 1,
-				"description": "Calculated as Actual Hours × Hourly Rate"
-			}
-		],
-
-		# Request custom fields for disbursements and total costing
+		# Request custom fields for draft metadata, disbursements and total costing
 		"Request": [
+			{
+				"fieldname": "draft_metadata_section",
+				"label": "Draft Metadata",
+				"fieldtype": "Section Break",
+				"insert_after": "amended_from",
+				"collapsible": 1,
+				"hidden": 0,
+				"depends_on": "eval:doc.status=='Draft'"
+			},
+			{
+				"fieldname": "draft_current_step",
+				"label": "Current Step (Draft)",
+				"fieldtype": "Int",
+				"insert_after": "draft_metadata_section",
+				"read_only": 1,
+				"default": "1",
+				"description": "The step number where the draft was last saved (1-indexed)"
+			},
+			{
+				"fieldname": "draft_total_steps",
+				"label": "Total Steps (Draft)",
+				"fieldtype": "Int",
+				"insert_after": "draft_current_step",
+				"read_only": 1,
+				"description": "Total number of steps in the request form"
+			},
+			{
+				"fieldname": "column_break_draft",
+				"fieldtype": "Column Break",
+				"insert_after": "draft_total_steps"
+			},
+			{
+				"fieldname": "draft_created_at",
+				"label": "Draft Created At",
+				"fieldtype": "Datetime",
+				"insert_after": "column_break_draft",
+				"read_only": 1,
+				"default": "now"
+			},
+			{
+				"fieldname": "draft_updated_at",
+				"label": "Draft Last Updated",
+				"fieldtype": "Datetime",
+				"insert_after": "draft_created_at",
+				"read_only": 1
+			},
+			{
+				"fieldname": "draft_full_data",
+				"label": "Draft Full Data (JSON)",
+				"fieldtype": "Long Text",
+				"insert_after": "draft_updated_at",
+				"read_only": 1,
+				"hidden": 1,
+				"description": "Complete form data stored as JSON for draft resumption"
+			},
 			{
 				"fieldname": "lodgeick_company_section",
 				"fieldtype": "Section Break",
@@ -250,6 +224,46 @@ def create_lodgeick_custom_fields():
 				"options": "Council",
 				"insert_after": "lodgeick_council_section",
 				"description": "Your preferred council for new requests"
+			},
+			{
+				"fieldname": "lodgeick_philippines_section",
+				"fieldtype": "Section Break",
+				"label": "Philippines Information",
+				"insert_after": "default_council",
+				"collapsible": 1,
+				"depends_on": "eval:doc.country_of_residence=='Philippines'"
+			},
+			{
+				"fieldname": "country_of_residence",
+				"fieldtype": "Select",
+				"label": "Country of Residence",
+				"options": "\nNew Zealand\nPhilippines\nOther",
+				"insert_after": "default_council",
+				"description": "Country where you currently reside"
+			},
+			{
+				"fieldname": "philippines_barangay",
+				"fieldtype": "Data",
+				"label": "Barangay",
+				"insert_after": "lodgeick_philippines_section",
+				"depends_on": "eval:doc.country_of_residence=='Philippines'",
+				"description": "Smallest administrative division in Philippines"
+			},
+			{
+				"fieldname": "philippines_municipality",
+				"fieldtype": "Data",
+				"label": "Municipality/City",
+				"insert_after": "philippines_barangay",
+				"depends_on": "eval:doc.country_of_residence=='Philippines'",
+				"description": "Municipality or city in Philippines"
+			},
+			{
+				"fieldname": "philippines_province",
+				"fieldtype": "Data",
+				"label": "Province",
+				"insert_after": "philippines_municipality",
+				"depends_on": "eval:doc.country_of_residence=='Philippines'",
+				"description": "Province in Philippines"
 			}
 		]
 	}
