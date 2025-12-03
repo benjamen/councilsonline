@@ -34,26 +34,6 @@ def seed_sample_councils():
             "default_sla_days": 20
         },
         {
-            "council_code": "WGN",
-            "council_name": "Wellington City Council",
-            "official_name": "Wellington City Council",
-            "contact_email": "building.consents@wcc.govt.nz",
-            "contact_phone": "04 499 4444",
-            "website": "https://wellington.govt.nz",
-            "address_line_1": "113 The Terrace",
-            "city": "Wellington",
-            "postal_code": "6011",
-            "timezone": "Pacific/Auckland",
-            "primary_color": "#FFB81C",
-            "secondary_color": "#002B5C",
-            "is_active": 1,
-            "license_start_date": nowdate(),
-            "license_expiry_date": add_months(nowdate(), 12),
-            "max_requests_per_month": 500,
-            "subscription_tier": "Premium",
-            "default_sla_days": 20
-        },
-        {
             "council_code": "CHC",
             "council_name": "Christchurch City Council",
             "official_name": "Christchurch City Council",
