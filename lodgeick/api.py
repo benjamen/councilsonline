@@ -3506,12 +3506,12 @@ def get_request_type_steps(request_type, council_code=None):
 			}
 		
 		steps = []
-		
+
 		# Load base step configuration
 		for step_config in rt_doc.step_configs:
 			if not step_config.is_enabled:
 				continue
-			
+
 			step_data = {
 				"step_number": step_config.step_number,
 				"step_code": step_config.step_code,
@@ -3523,14 +3523,12 @@ def get_request_type_steps(request_type, council_code=None):
 				"depends_on": step_config.depends_on,
 				"sections": []
 			}
-			
-			# Load sections for this step
-			sections = frappe.get_all("Request Type Step Section",
-									 filters={"parent": step_config.name, "is_enabled": 1},
-									 fields=["*"],
-									 order_by="sequence asc")
-			
-			for section in sections:
+
+			# Load sections directly from step_config (already loaded)
+			for section in step_config.sections:
+				if not section.is_enabled:
+					continue
+
 				section_data = {
 					"section_code": section.section_code,
 					"section_title": section.section_title,
@@ -3542,14 +3540,9 @@ def get_request_type_steps(request_type, council_code=None):
 					"depends_on": section.depends_on,
 					"fields": []
 				}
-				
-				# Load fields for this section
-				fields = frappe.get_all("Request Type Step Field",
-									   filters={"parent": section.name},
-									   fields=["*"],
-									   order_by="idx asc")
-				
-				for field in fields:
+
+				# Load fields directly from section (already loaded)
+				for field in section.fields:
 					field_data = {
 						"field_name": field.field_name,
 						"field_label": field.field_label,
