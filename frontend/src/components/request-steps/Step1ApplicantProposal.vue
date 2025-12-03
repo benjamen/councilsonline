@@ -266,11 +266,11 @@
         </div>
       </div>
 
-      <!-- SECTION 7: Agent Details (FRD 3.7) -->
-      <div class="border-b border-gray-200 pb-8">
+      <!-- SECTION 7: Agent Details (FRD 3.7) - Only for non-individual applicants or those acting on behalf -->
+      <div v-if="showAgentSection" class="border-b border-gray-200 pb-8">
         <h3 class="text-xl font-semibold text-gray-900 mb-4">Agent Details</h3>
         <p class="text-sm text-gray-600 mb-4">
-          You may contact Resource Consent Planning Professionals or Agents from the list available in eRCS to obtain quotes from and engage them to help you prepare and lodge your application by selecting the Engage Agent button.
+          You may contact Resource Consent Planning Professionals or Agents from the list available in eRCS to obtain quotes from and engage them to help you prepare and lodge your application by selecting the Request Quote button.
         </p>
         <p class="text-sm text-orange-600 mb-4 font-medium">
           Please note: You will not be able to make any more changes or complete this application once you engage an Agent.
@@ -278,25 +278,16 @@
 
         <div class="space-y-4">
           <div class="flex items-center space-x-4">
-            <label class="flex items-center cursor-pointer">
-              <input
-                type="radio"
-                :value="false"
-                v-model="agentRequired"
-                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-              />
-              <span class="ml-2 text-sm font-medium text-gray-700">No Agent Required</span>
-            </label>
-            <label class="flex items-center cursor-pointer opacity-50">
-              <input
-                type="radio"
-                :value="true"
-                v-model="agentRequired"
-                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                disabled
-              />
-              <span class="ml-2 text-sm font-medium text-gray-700">Engage Agent (Coming Soon)</span>
-            </label>
+            <button
+              type="button"
+              @click="openRFQModal"
+              class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              Request Quote from Agent
+            </button>
           </div>
 
           <!-- RFQ List (if any exist) -->
@@ -306,37 +297,61 @@
               <div
                 v-for="(rfq, index) in localData.agent_rfqs"
                 :key="index"
-                class="p-3 bg-gray-50 border border-gray-200 rounded-lg flex items-center justify-between"
+                class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
               >
-                <div class="flex-1">
-                  <div class="flex items-center gap-2">
-                    <span class="text-sm font-medium text-gray-900">RFQ {{ rfq.rfq_id || `#${index + 1}` }}</span>
-                    <span
-                      :class="[
-                        'px-2 py-1 text-xs rounded-full',
-                        rfq.status === 'Draft' ? 'bg-gray-100 text-gray-800' :
-                        rfq.status === 'Sent to Agent' ? 'bg-blue-100 text-blue-800' :
-                        rfq.status === 'Quote Received' ? 'bg-yellow-100 text-yellow-800' :
-                        rfq.status === 'Agent Engaged' ? 'bg-green-100 text-green-800' :
-                        'bg-gray-100 text-gray-800'
-                      ]"
-                    >
-                      {{ rfq.status || 'Draft' }}
-                    </span>
+                <div class="flex items-center justify-between">
+                  <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                      <span class="text-sm font-semibold text-gray-900">RFQ #{{ rfq.rfq_id || (index + 1) }}</span>
+                      <span
+                        :class="[
+                          'px-2 py-1 text-xs font-medium rounded-full',
+                          rfq.status === 'Draft' ? 'bg-gray-100 text-gray-800' :
+                          rfq.status === 'Sent to Agent' ? 'bg-blue-100 text-blue-800' :
+                          rfq.status === 'Quote Received' ? 'bg-yellow-100 text-yellow-800' :
+                          rfq.status === 'Quote Accepted' ? 'bg-purple-100 text-purple-800' :
+                          rfq.status === 'Agent Engaged' ? 'bg-green-100 text-green-800' :
+                          rfq.status === 'Cancelled' ? 'bg-red-100 text-red-800' :
+                          'bg-gray-100 text-gray-800'
+                        ]"
+                      >
+                        {{ rfq.status || 'Draft' }}
+                      </span>
+                    </div>
+                    <div v-if="rfq.agent_name" class="text-sm text-gray-600 mb-1">
+                      <span class="font-medium">Agent:</span> {{ rfq.agent_name }}
+                    </div>
+                    <div v-if="rfq.agent_quote_amount" class="text-sm text-gray-600">
+                      <span class="font-medium">Quote:</span> ${{ Number(rfq.agent_quote_amount).toFixed(2) }}
+                    </div>
+                    <div v-if="rfq.sent_date" class="text-xs text-gray-500 mt-1">
+                      Sent: {{ new Date(rfq.sent_date).toLocaleDateString() }}
+                    </div>
                   </div>
-                  <div v-if="rfq.agent_name" class="text-xs text-gray-600 mt-1">
-                    Agent: {{ rfq.agent_name }}
+                  <div class="flex gap-2">
+                    <button
+                      type="button"
+                      @click="viewRFQ(index)"
+                      class="px-3 py-1.5 text-blue-600 hover:text-blue-800 text-sm font-medium border border-blue-600 rounded hover:bg-blue-50 transition-colors"
+                    >
+                      View Details
+                    </button>
+                    <button
+                      v-if="rfq.status === 'Quote Received' || rfq.status === 'Quote Accepted'"
+                      type="button"
+                      @click="acceptQuote(index)"
+                      class="px-3 py-1.5 bg-green-600 text-white text-sm font-medium rounded hover:bg-green-700 transition-colors"
+                      :disabled="rfq.status === 'Agent Engaged'"
+                    >
+                      {{ rfq.status === 'Agent Engaged' ? 'Engaged' : 'Accept Quote' }}
+                    </button>
                   </div>
                 </div>
-                <button
-                  type="button"
-                  @click="viewRFQ(index)"
-                  class="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                >
-                  View Details
-                </button>
               </div>
             </div>
+          </div>
+          <div v-else class="mt-4 p-4 bg-gray-50 border border-gray-200 rounded-lg text-center">
+            <p class="text-sm text-gray-600">No agent quotes requested yet. Click "Request Quote from Agent" to get started.</p>
           </div>
         </div>
       </div>
@@ -419,7 +434,7 @@
       <div class="border-b border-gray-200 pb-8">
         <h3 class="text-xl font-semibold text-gray-900 mb-4">Correspondences and Invoices</h3>
         <p class="text-sm text-gray-600 mb-4">
-          All correspondence and notifications will be sent to the Applicant. If an Applicant engages an Agent, they will be sent to both parties.
+          {{ showAgentSection ? 'All correspondence and notifications will be sent to the Applicant. If an Applicant engages an Agent, they will be sent to both parties.' : 'All correspondence and notifications will be sent to the Applicant and any additional contacts you specify.' }}
         </p>
 
         <div class="space-y-4">
@@ -439,7 +454,9 @@
                 />
                 <span class="ml-3 font-medium text-gray-900">Applicant</span>
               </label>
-              <label class="flex items-center p-3 border-2 rounded-lg cursor-pointer transition-colors"
+
+              <!-- Agent option - only show for non-individual applicants or those acting on behalf -->
+              <label v-if="showAgentSection" class="flex items-center p-3 border-2 rounded-lg cursor-pointer transition-colors"
                 :class="localData.invoice_responsible_party === 'Agent' ? 'border-blue-600 bg-blue-50' : 'border-gray-200'"
               >
                 <input
@@ -454,6 +471,25 @@
                   <p v-if="!localData.agent_id" class="text-xs text-gray-500 mt-1">
                     Only available when an agent is engaged
                   </p>
+                </div>
+              </label>
+
+              <!-- Contact option - show list of added contacts -->
+              <label
+                v-for="(contact, index) in localData.additional_contacts"
+                :key="`contact-${index}`"
+                class="flex items-center p-3 border-2 rounded-lg cursor-pointer transition-colors"
+                :class="localData.invoice_responsible_party === `Contact-${contact.contact_id || index}` ? 'border-blue-600 bg-blue-50' : 'border-gray-200'"
+              >
+                <input
+                  v-model="localData.invoice_responsible_party"
+                  type="radio"
+                  :value="`Contact-${contact.contact_id || index}`"
+                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                />
+                <div class="ml-3">
+                  <span class="font-medium text-gray-900">{{ contact.contact_name }}</span>
+                  <p class="text-xs text-gray-500 mt-1">{{ contact.contact_email }}</p>
                 </div>
               </label>
             </div>
@@ -1125,11 +1161,55 @@ const agentRequired = ref(false)
 const isRFQModalOpen = ref(false)
 const currentRFQ = ref({})
 const currentRFQIndex = ref(null)
+const showRFQModal = ref(false)
+
+// Computed property to determine if agent section should be shown
+// Only show for non-individual applicants or those acting on behalf of others
+const showAgentSection = computed(() => {
+  // Check if applicant_type exists in modelValue (from parent)
+  const applicantType = props.modelValue?.applicant_type || props.userProfile?.applicant_type
+  const actingOnBehalf = props.modelValue?.acting_on_behalf || false
+
+  // Show agent section if:
+  // 1. Acting on behalf of someone else, OR
+  // 2. Applicant type is NOT Individual (i.e., Company, Trust, Organisation)
+  return actingOnBehalf || (applicantType && applicantType !== 'Individual')
+})
+
+const openRFQModal = () => {
+  // Create a new RFQ
+  currentRFQ.value = {
+    rfq_id: null,
+    status: 'Draft',
+    created_date: new Date().toISOString(),
+    selected_agent: null,
+    agent_name: null,
+    agent_email: null,
+    agent_quote_amount: null,
+    agent_quote_details: '',
+    rfq_message: 'You may contact Resource Consent Planning Professionals or Agents from the list available in eRCS to obtain quotes from and engage them to help you prepare and lodge your application by selecting the Engage Agent button.\n\nPlease note: You will not be able to make any more changes or complete this application once you engage an Agent.'
+  }
+  currentRFQIndex.value = null
+  isRFQModalOpen.value = true
+}
 
 const viewRFQ = (index) => {
   currentRFQIndex.value = index
   currentRFQ.value = { ...localData.value.agent_rfqs[index] }
   isRFQModalOpen.value = true
+}
+
+const acceptQuote = async (index) => {
+  const rfq = localData.value.agent_rfqs[index]
+
+  if (confirm(`Accept quote from ${rfq.agent_name} for $${Number(rfq.agent_quote_amount).toFixed(2)}?`)) {
+    rfq.status = 'Agent Engaged'
+    rfq.agent_engaged_date = new Date().toISOString()
+    localData.value.agent_id = rfq.selected_agent
+
+    // TODO: Call backend API to engage agent
+    alert('Agent engaged successfully!')
+  }
 }
 
 const closeRFQModal = () => {
