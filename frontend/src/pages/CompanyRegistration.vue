@@ -303,6 +303,143 @@
                 @address-selected="handleBusinessAddressSelected"
               />
             </div>
+
+            <!-- Properties Section -->
+            <div class="space-y-4 mt-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="text-sm font-medium text-gray-900">Properties</h3>
+                  <p class="text-xs text-gray-500 mt-1">Add properties you own or manage (optional)</p>
+                </div>
+                <button
+                  type="button"
+                  @click="openAddPropertyModal"
+                  class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  Add Property
+                </button>
+              </div>
+
+              <!-- Properties List -->
+              <div v-if="properties.length > 0" class="space-y-2">
+                <div
+                  v-for="(property, index) in properties"
+                  :key="index"
+                  class="border border-gray-200 rounded-lg p-4 bg-gray-50 hover:bg-gray-100 transition"
+                >
+                  <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                      <div class="flex items-center gap-2">
+                        <h4 class="text-sm font-semibold text-gray-900">{{ property.property_name }}</h4>
+                        <span v-if="property.is_default" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                          Default
+                        </span>
+                      </div>
+                      <p class="text-sm text-gray-600 mt-1">{{ property.street }}</p>
+                      <p class="text-xs text-gray-500">{{ property.suburb }}{{ property.suburb && property.city ? ', ' : '' }}{{ property.city }} {{ property.postcode }}</p>
+                    </div>
+                    <div class="flex items-center gap-2 ml-4">
+                      <button
+                        v-if="!property.is_default && properties.length > 1"
+                        type="button"
+                        @click="setDefaultProperty(index)"
+                        class="text-xs text-blue-600 hover:text-blue-800"
+                      >
+                        Set as Default
+                      </button>
+                      <button
+                        type="button"
+                        @click="removeProperty(index)"
+                        class="text-red-600 hover:text-red-800"
+                      >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div v-else class="text-center py-6 border-2 border-dashed border-gray-300 rounded-lg">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                <p class="mt-2 text-sm text-gray-500">No properties added yet</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Add Property Modal -->
+          <div v-if="showAddPropertyModal" class="fixed inset-0 z-50 overflow-y-auto">
+            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+              <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" @click="closeAddPropertyModal"></div>
+
+              <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                  <h3 class="text-lg font-medium text-gray-900 mb-4">Add Property</h3>
+
+                  <div class="space-y-4">
+                    <div>
+                      <label for="property_name_agent" class="block text-sm font-medium text-gray-700 mb-2">
+                        Property Name <span class="text-red-500">*</span>
+                      </label>
+                      <input
+                        id="property_name_agent"
+                        v-model="currentProperty.property_name"
+                        type="text"
+                        required
+                        placeholder="e.g., Office, Client Property A, Development Site"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+
+                    <div>
+                      <AddressLookup
+                        v-model="selectedPropertyAddress"
+                        id="property_address_modal_agent"
+                        label="Property Address"
+                        placeholder="Start typing the property address..."
+                        description="Search for the property address in New Zealand"
+                        :required="true"
+                        @address-selected="handlePropertyAddressSelected"
+                      />
+                    </div>
+
+                    <div>
+                      <label class="flex items-center">
+                        <input
+                          v-model="currentProperty.is_default"
+                          type="checkbox"
+                          class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        />
+                        <span class="ml-2 text-sm text-gray-700">Set as default property</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
+                  <button
+                    type="button"
+                    @click="addProperty"
+                    class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
+                  >
+                    Add Property
+                  </button>
+                  <button
+                    type="button"
+                    @click="closeAddPropertyModal"
+                    class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:w-auto sm:text-sm"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Step 3: Default Settings -->
@@ -498,6 +635,95 @@ const passwordStrengthClass = computed(() => {
   return 'text-red-600'
 })
 
+// Properties management
+const properties = ref([])
+const showAddPropertyModal = ref(false)
+const selectedPropertyAddress = ref(null)
+const currentProperty = ref({
+  property_name: '',
+  street: '',
+  suburb: '',
+  city: '',
+  postcode: '',
+  is_default: false
+})
+
+const openAddPropertyModal = () => {
+  currentProperty.value = {
+    property_name: '',
+    street: '',
+    suburb: '',
+    city: '',
+    postcode: '',
+    is_default: properties.value.length === 0 // First property is default
+  }
+  selectedPropertyAddress.value = null
+  showAddPropertyModal.value = true
+}
+
+const closeAddPropertyModal = () => {
+  showAddPropertyModal.value = false
+  currentProperty.value = {
+    property_name: '',
+    street: '',
+    suburb: '',
+    city: '',
+    postcode: '',
+    is_default: false
+  }
+  selectedPropertyAddress.value = null
+}
+
+const addProperty = () => {
+  if (!currentProperty.value.property_name) {
+    alert('Please enter a property name')
+    return
+  }
+
+  if (!selectedPropertyAddress.value) {
+    alert('Please select a property address')
+    return
+  }
+
+  // If this property is set as default, remove default from others
+  if (currentProperty.value.is_default) {
+    properties.value.forEach(p => p.is_default = false)
+  }
+
+  properties.value.push({
+    property_name: currentProperty.value.property_name,
+    street: selectedPropertyAddress.value.street_address || selectedPropertyAddress.value.full_address,
+    suburb: selectedPropertyAddress.value.suburb || '',
+    city: selectedPropertyAddress.value.city || '',
+    postcode: selectedPropertyAddress.value.postcode || '',
+    is_default: currentProperty.value.is_default
+  })
+
+  closeAddPropertyModal()
+}
+
+const removeProperty = (index) => {
+  if (confirm('Are you sure you want to remove this property?')) {
+    const wasDefault = properties.value[index].is_default
+    properties.value.splice(index, 1)
+
+    // If we removed the default and have other properties, set the first one as default
+    if (wasDefault && properties.value.length > 0) {
+      properties.value[0].is_default = true
+    }
+  }
+}
+
+const setDefaultProperty = (index) => {
+  properties.value.forEach((p, i) => {
+    p.is_default = i === index
+  })
+}
+
+const handlePropertyAddressSelected = (address) => {
+  selectedPropertyAddress.value = address
+}
+
 // Validation functions
 const validatePhoneField = () => {
   const validation = validateNZPhoneNumber(formData.value.phone)
@@ -612,6 +838,7 @@ function handleSubmit() {
     password: formData.value.password,
     user_role: 'agent', // This is an AGENT registration
     agent_type: formData.value.agent_type, // Sole Trader or Company
+    properties: properties.value // Send all properties
   }
 
   // Add business data
