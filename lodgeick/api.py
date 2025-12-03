@@ -403,12 +403,19 @@ def create_draft_request(data, current_step=None, total_steps=None):
 
         # Get request type to determine category
         request_type = data.get("request_type")
-        if not request_type:
-            frappe.throw(_("Request Type is required"))
 
-        # Get category from request type
-        request_type_doc = frappe.get_doc("Request Type", request_type)
-        category = request_type_doc.category or "Service Request"
+        # For drafts, request_type is optional (user may not have selected one yet)
+        category = "Service Request"  # Default category
+        if request_type:
+            # Get category from request type if provided
+            request_type_doc = frappe.get_doc("Request Type", request_type)
+            category = request_type_doc.category or "Service Request"
+        elif not request_type and current_step and int(current_step) < 3:
+            # If we're in early steps (before request type selection), allow draft without request type
+            request_type = None
+        else:
+            # If we're past step 3 and still no request type, that's an error
+            frappe.throw(_("Request Type is required to save draft at this step"))
 
         # If property_address is provided but no property link, create a property record
         property_link = data.get("property")
@@ -439,9 +446,31 @@ def create_draft_request(data, current_step=None, total_steps=None):
         import json
         full_data_json = json.dumps(data, default=str)
 
+        # Generate draft request number
+        # Format: DRAFT-YYYY-XXXX (e.g., DRAFT-2025-0001)
+        from frappe.utils import nowdate
+        year = nowdate()[:4]
+        # Get the last draft number for this year
+        last_draft = frappe.db.sql("""
+            SELECT request_number
+            FROM `tabRequest`
+            WHERE request_number LIKE 'DRAFT-{year}-%'
+            ORDER BY creation DESC
+            LIMIT 1
+        """.format(year=year), as_dict=True)
+
+        if last_draft:
+            # Extract number and increment
+            last_num = int(last_draft[0]['request_number'].split('-')[-1])
+            draft_number = f"DRAFT-{year}-{str(last_num + 1).zfill(4)}"
+        else:
+            # First draft of the year
+            draft_number = f"DRAFT-{year}-0001"
+
         # Create request document
         request_doc = frappe.get_doc({
             "doctype": "Request",
+            "request_number": draft_number,
             "request_type": request_type,
             "request_category": category,
             "brief_description": data.get("brief_description"),

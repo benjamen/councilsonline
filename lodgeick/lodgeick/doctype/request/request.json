@@ -43,7 +43,6 @@
   "ct_reference",
   "certificate_of_title_document",
   "zoning",
-  "activity_zone",
   "column_break_3",
   "site_area",
   "property_coordinates",
@@ -56,10 +55,6 @@
   "target_completion_date",
   "actual_completion_date",
   "column_break_4",
-  "statutory_clock_started",
-  "statutory_clock_stopped",
-  "working_days_elapsed",
-  "working_days_remaining",
   "section_break_assignment",
   "assigned_to",
   "assigned_team",
@@ -71,10 +66,6 @@
   "column_break_assessment",
   "assessment_template",
   "assessment_owner",
-  "section_break_declarations",
-  "declaration_rma_compliance",
-  "declaration_public_information",
-  "declaration_authorized",
   "section_break_attachments",
   "attachments",
   "section_break_fees",
@@ -93,8 +84,6 @@
   "purchase_order_number",
   "section_break_delivery",
   "delivery_preference",
-  "transfer_deposit_required",
-  "transfer_deposit_consent_number",
   "section_break_history",
   "status_history",
   "section_break_related",
@@ -114,7 +103,7 @@
    "fieldtype": "Link",
    "label": "Request Type",
    "options": "Request Type",
-   "reqd": 1
+   "mandatory_depends_on": "eval:doc.status!='Draft'"
   },
   {
    "fieldname": "council",
@@ -337,13 +326,6 @@
    "read_only": 1
   },
   {
-   "fieldname": "activity_zone",
-   "fieldtype": "Select",
-   "label": "Activity Zone",
-   "options": "\nPermitted\nControlled\nRestricted Discretionary\nDiscretionary\nNon-Complying\nProhibited",
-   "description": "Activity status of the proposal under the district plan"
-  },
-  {
    "fieldname": "column_break_3",
    "fieldtype": "Column Break"
   },
@@ -351,7 +333,7 @@
    "fetch_from": "property.site_area",
    "fieldname": "site_area",
    "fieldtype": "Float",
-   "label": "Site Area (m²)",
+   "label": "Site Area (m\u00b2)",
    "read_only": 1
   },
   {
@@ -415,38 +397,6 @@
   {
    "fieldname": "column_break_4",
    "fieldtype": "Column Break"
-  },
-  {
-   "allow_on_submit": 1,
-   "description": "DEPRECATED: Moved to Resource Consent Application. Date and time when the statutory timeframe clock begins. Automatically set when the request is acknowledged by council staff.",
-   "fieldname": "statutory_clock_started",
-   "fieldtype": "Datetime",
-   "hidden": 1,
-   "label": "Clock Started (Deprecated)"
-  },
-  {
-   "allow_on_submit": 1,
-   "description": "DEPRECATED: Moved to Resource Consent Application. Date and time when the clock was paused (e.g., when an RFI was issued). The clock restarts when the RFI response is received. This field is cleared when the clock resumes.",
-   "fieldname": "statutory_clock_stopped",
-   "fieldtype": "Datetime",
-   "hidden": 1,
-   "label": "Clock Stopped (Deprecated)"
-  },
-  {
-   "description": "DEPRECATED: Moved to Resource Consent Application. Number of working days that have elapsed on the statutory clock, excluding weekends, public holidays, and periods when the clock was stopped for RFIs.",
-   "fieldname": "working_days_elapsed",
-   "fieldtype": "Int",
-   "hidden": 1,
-   "label": "Working Days Elapsed (Deprecated)",
-   "read_only": 1
-  },
-  {
-   "description": "DEPRECATED: Moved to Resource Consent Application.",
-   "fieldname": "working_days_remaining",
-   "fieldtype": "Int",
-   "hidden": 1,
-   "label": "Days Remaining (Deprecated)",
-   "read_only": 1
   },
   {
    "fieldname": "section_break_assignment",
@@ -519,33 +469,6 @@
    "label": "Assessment Owner",
    "options": "User",
    "read_only": 1
-  },
-  {
-   "description": "Statutory declarations required under the Resource Management Act 1991. All declarations must be confirmed to submit this application.",
-   "fieldname": "section_break_declarations",
-   "fieldtype": "Section Break",
-   "label": "Statutory Declarations"
-  },
-  {
-   "default": "0",
-   "description": "I confirm this application contains all information required under Section 88 of the RMA 1991",
-   "fieldname": "declaration_rma_compliance",
-   "fieldtype": "Check",
-   "label": "RMA Section 88 Compliance"
-  },
-  {
-   "default": "0",
-   "description": "I understand this information will be publicly available (unless marked as confidential)",
-   "fieldname": "declaration_public_information",
-   "fieldtype": "Check",
-   "label": "Public Information Acknowledgment"
-  },
-  {
-   "default": "0",
-   "description": "I am authorized to submit this application on behalf of the applicant/owner",
-   "fieldname": "declaration_authorized",
-   "fieldtype": "Check",
-   "label": "Authorization Confirmation"
   },
   {
    "collapsible": 1,
@@ -660,19 +583,6 @@
    "label": "Delivery Preference",
    "options": "Email\nPost\nPortal",
    "default": "Email"
-  },
-  {
-   "default": "0",
-   "fieldname": "transfer_deposit_required",
-   "fieldtype": "Check",
-   "label": "Transfer Deposit from Existing Consent"
-  },
-  {
-   "depends_on": "transfer_deposit_required",
-   "fieldname": "transfer_deposit_consent_number",
-   "fieldtype": "Data",
-   "label": "Consent Number to Transfer From",
-   "mandatory_depends_on": "transfer_deposit_required"
   },
   {
    "collapsible": 1,
