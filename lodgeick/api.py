@@ -3524,10 +3524,15 @@ def get_request_type_steps(request_type, council_code=None):
 				"sections": []
 			}
 
-			# Query sections separately (nested child tables aren't auto-loaded)
+			# FLATTENED STRUCTURE: Query sections by parent_step_code instead of nested parent
+			# Sections are now stored directly under Request Type with a parent_step_code link
 			sections = frappe.get_all(
 				"Request Type Step Section",
-				filters={"parent": step_config.name},
+				filters={
+					"parent": rt_doc.name,  # Parent is now Request Type, not Step Config
+					"parenttype": "Request Type",
+					"parent_step_code": step_config.step_code  # Link via step_code
+				},
 				fields=["name", "section_code", "section_title", "section_type", "sequence",
 				        "is_enabled", "is_required", "show_on_review", "depends_on"],
 				order_by="sequence asc"
@@ -3549,10 +3554,15 @@ def get_request_type_steps(request_type, council_code=None):
 					"fields": []
 				}
 
-				# Query fields separately (nested child tables aren't auto-loaded)
+				# FLATTENED STRUCTURE: Query fields by parent_section_code instead of nested parent
+				# Fields are now stored directly under Request Type with a parent_section_code link
 				fields = frappe.get_all(
 					"Request Type Step Field",
-					filters={"parent": section.name},
+					filters={
+						"parent": rt_doc.name,  # Parent is now Request Type, not Section
+						"parenttype": "Request Type",
+						"parent_section_code": section.section_code  # Link via section_code
+					},
 					fields=["field_name", "field_label", "field_type", "is_required", "options",
 					        "default_value", "depends_on", "validation", "show_on_review", "review_label"]
 				)
@@ -3573,7 +3583,7 @@ def get_request_type_steps(request_type, council_code=None):
 					section_data["fields"].append(field_data)
 
 				step_data["sections"].append(section_data)
-			
+
 			steps.append(step_data)
 		
 		# Apply council-specific overrides if provided
