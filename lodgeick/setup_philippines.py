@@ -203,25 +203,39 @@ if __name__ == "__main__":
 
 
 def configure_spisc_steps():
-	"""Configure 5-step flow for SPISC request type"""
-	
+	"""
+	Configure 5-step flow for SPISC request type
+
+	WORKAROUND: Frappe doesn't support nested child tables (3 levels deep).
+	We need to:
+	1. Save Request Type with step_configs only (no sections/fields)
+	2. Manually insert sections into database using step config row names as parents
+	3. Manually insert fields into database using section row names as parents
+	"""
+
 	request_type_name = "Social Pension for Indigent Senior Citizens (SPISC)"
-	
+
 	if not frappe.db.exists("Request Type", request_type_name):
 		print(f"Request Type {request_type_name} not found. Please create it first.")
 		return
-	
+
 	request_type = frappe.get_doc("Request Type", request_type_name)
-	
-	# Clear existing step configs
+
+	# Clear existing configurations
 	request_type.step_configs = []
-	
+	frappe.db.delete("Request Type Step Config", {"parent": request_type_name})
+	frappe.db.delete("Request Type Step Section", {"parenttype": "Request Type Step Config"})
+	frappe.db.delete("Request Type Step Field", {"parenttype": "Request Type Step Section"})
+	frappe.db.commit()
+
 	print(f"\nConfiguring steps for {request_type_name}...")
-	
+
 	# ============================================================
+	# PHASE 1: Create steps only
+	# ============================================================
+
 	# STEP 1: Personal Information
-	# ============================================================
-	step1 = request_type.append("step_configs", {
+	request_type.append("step_configs", {
 		"step_number": 1,
 		"step_code": "personal_info",
 		"step_title": "Personal Information",
@@ -230,131 +244,9 @@ def configure_spisc_steps():
 		"is_required": 1,
 		"show_on_review": 1
 	})
-	
-	# Section: Basic Details
-	section1_1 = step1.append("sections", {
-		"section_code": "basic_details",
-		"section_title": "Basic Details",
-		"section_type": "Section",
-		"sequence": 1,
-		"is_enabled": 1,
-		"is_required": 1,
-		"show_on_review": 1
-	})
-	
-	section1_1.append("fields", {
-		"field_name": "full_name",
-		"field_label": "Full Name",
-		"field_type": "Data",
-		"is_required": 1,
-		"show_on_review": 1
-	})
-	
-	section1_1.append("fields", {
-		"field_name": "birth_date",
-		"field_label": "Date of Birth",
-		"field_type": "Date",
-		"is_required": 1,
-		"show_on_review": 1,
-		"review_label": "Age / Date of Birth"
-	})
-	
-	section1_1.append("fields", {
-		"field_name": "sex",
-		"field_label": "Sex",
-		"field_type": "Select",
-		"options": "Male\nFemale",
-		"is_required": 1,
-		"show_on_review": 1
-	})
-	
-	section1_1.append("fields", {
-		"field_name": "civil_status",
-		"field_label": "Civil Status",
-		"field_type": "Select",
-		"options": "Single\nMarried\nWidowed\nSeparated",
-		"is_required": 1,
-		"show_on_review": 1
-	})
-	
-	# Section: Contact Information
-	section1_2 = step1.append("sections", {
-		"section_code": "contact_info",
-		"section_title": "Contact Information",
-		"section_type": "Section",
-		"sequence": 2,
-		"is_enabled": 1,
-		"is_required": 1,
-		"show_on_review": 1
-	})
-	
-	section1_2.append("fields", {
-		"field_name": "mobile_number",
-		"field_label": "Mobile Number",
-		"field_type": "Data",
-		"is_required": 1,
-		"show_on_review": 1
-	})
-	
-	section1_2.append("fields", {
-		"field_name": "email",
-		"field_label": "Email Address",
-		"field_type": "Data",
-		"is_required": 0,
-		"show_on_review": 1
-	})
-	
-	# Section: Address
-	section1_3 = step1.append("sections", {
-		"section_code": "address",
-		"section_title": "Residential Address",
-		"section_type": "Section",
-		"sequence": 3,
-		"is_enabled": 1,
-		"is_required": 1,
-		"show_on_review": 1
-	})
-	
-	section1_3.append("fields", {
-		"field_name": "address_line",
-		"field_label": "Street / House Number",
-		"field_type": "Data",
-		"is_required": 1,
-		"show_on_review": 1
-	})
-	
-	section1_3.append("fields", {
-		"field_name": "barangay",
-		"field_label": "Barangay",
-		"field_type": "Data",
-		"is_required": 1,
-		"show_on_review": 1
-	})
-	
-	section1_3.append("fields", {
-		"field_name": "municipality",
-		"field_label": "Municipality",
-		"field_type": "Data",
-		"default_value": "Taytay",
-		"is_required": 1,
-		"show_on_review": 1
-	})
-	
-	section1_3.append("fields", {
-		"field_name": "province",
-		"field_label": "Province",
-		"field_type": "Data",
-		"default_value": "Rizal",
-		"is_required": 1,
-		"show_on_review": 1
-	})
-	
-	print("  ✓ Step 1: Personal Information configured")
-	
-	# ============================================================
+
 	# STEP 2: Household Information
-	# ============================================================
-	step2 = request_type.append("step_configs", {
+	request_type.append("step_configs", {
 		"step_number": 2,
 		"step_code": "household_info",
 		"step_title": "Household Information",
@@ -363,78 +255,9 @@ def configure_spisc_steps():
 		"is_required": 1,
 		"show_on_review": 1
 	})
-	
-	# Section: Household Composition
-	section2_1 = step2.append("sections", {
-		"section_code": "household_composition",
-		"section_title": "Household Composition",
-		"section_type": "Section",
-		"sequence": 1,
-		"is_enabled": 1,
-		"is_required": 1,
-		"show_on_review": 1
-	})
-	
-	section2_1.append("fields", {
-		"field_name": "household_size",
-		"field_label": "Number of Household Members",
-		"field_type": "Int",
-		"is_required": 1,
-		"show_on_review": 1
-	})
-	
-	section2_1.append("fields", {
-		"field_name": "living_arrangement",
-		"field_label": "Living Arrangement",
-		"field_type": "Select",
-		"options": "Living alone\nLiving with spouse\nLiving with children\nLiving with relatives\nOther",
-		"is_required": 1,
-		"show_on_review": 1
-	})
-	
-	# Section: Economic Status
-	section2_2 = step2.append("sections", {
-		"section_code": "economic_status",
-		"section_title": "Economic Status",
-		"section_type": "Section",
-		"sequence": 2,
-		"is_enabled": 1,
-		"is_required": 1,
-		"show_on_review": 1
-	})
-	
-	section2_2.append("fields", {
-		"field_name": "monthly_income",
-		"field_label": "Total Monthly Household Income (PHP)",
-		"field_type": "Currency",
-		"is_required": 1,
-		"show_on_review": 1
-	})
-	
-	section2_2.append("fields", {
-		"field_name": "income_source",
-		"field_label": "Main Source of Income",
-		"field_type": "Select",
-		"options": "None\nFamily Support\nPension\nOccasional Work\nOther",
-		"is_required": 1,
-		"show_on_review": 1
-	})
-	
-	section2_2.append("fields", {
-		"field_name": "housing_type",
-		"field_label": "Housing Type",
-		"field_type": "Select",
-		"options": "Own House\nRented\nLiving with Family\nInformal Settler",
-		"is_required": 1,
-		"show_on_review": 1
-	})
-	
-	print("  ✓ Step 2: Household Information configured")
-	
-	# ============================================================
+
 	# STEP 3: Identity Verification
-	# ============================================================
-	step3 = request_type.append("step_configs", {
+	request_type.append("step_configs", {
 		"step_number": 3,
 		"step_code": "identity_verification",
 		"step_title": "Identity Verification",
@@ -443,142 +266,20 @@ def configure_spisc_steps():
 		"is_required": 1,
 		"show_on_review": 1
 	})
-	
-	# Section: National IDs
-	section3_1 = step3.append("sections", {
-		"section_code": "national_ids",
-		"section_title": "National Identification",
-		"section_type": "Section",
-		"sequence": 1,
-		"is_enabled": 1,
-		"is_required": 1,
-		"show_on_review": 1
-	})
-	
-	section3_1.append("fields", {
-		"field_name": "philsys_id",
-		"field_label": "PhilSys ID Number",
-		"field_type": "Data",
-		"is_required": 0,
-		"show_on_review": 1
-	})
-	
-	section3_1.append("fields", {
-		"field_name": "sss_number",
-		"field_label": "SSS Number",
-		"field_type": "Data",
-		"is_required": 0,
-		"show_on_review": 1
-	})
-	
-	section3_1.append("fields", {
-		"field_name": "gsis_number",
-		"field_label": "GSIS Number (if applicable)",
-		"field_type": "Data",
-		"is_required": 0,
-		"show_on_review": 0
-	})
-	
-	section3_1.append("fields", {
-		"field_name": "has_existing_pension",
-		"field_label": "Do you currently receive any government pension?",
-		"field_type": "Check",
-		"is_required": 1,
-		"show_on_review": 1,
-		"review_label": "Currently Receiving Pension"
-	})
-	
-	print("  ✓ Step 3: Identity Verification configured")
-	
-	# ============================================================
+
 	# STEP 4: Supporting Documents
-	# ============================================================
-	step4 = request_type.append("step_configs", {
+	request_type.append("step_configs", {
 		"step_number": 4,
 		"step_code": "supporting_documents",
 		"step_title": "Supporting Documents",
 		"step_component": "DynamicStepRenderer",
 		"is_enabled": 1,
 		"is_required": 1,
-		"show_on_review": 1
-	})
-	
-	# Section: Required Documents
-	section4_1 = step4.append("sections", {
-		"section_code": "required_documents",
-		"section_title": "Required Documents",
-		"section_type": "Section",
-		"sequence": 1,
-		"is_enabled": 1,
-		"is_required": 1,
-		"show_on_review": 1
-	})
-	
-	section4_1.append("fields", {
-		"field_name": "valid_id",
-		"field_label": "Valid Government-Issued ID",
-		"field_type": "Attach Image",
-		"is_required": 1,
-		"show_on_review": 1
-	})
-	
-	section4_1.append("fields", {
-		"field_name": "barangay_certificate",
-		"field_label": "Barangay Certificate of Residency",
-		"field_type": "Attach",
-		"is_required": 1,
-		"show_on_review": 1
-	})
-	
-	section4_1.append("fields", {
-		"field_name": "birth_certificate",
-		"field_label": "Birth Certificate or Baptismal Certificate",
-		"field_type": "Attach",
-		"is_required": 1,
-		"show_on_review": 1
-	})
-	
-	section4_1.append("fields", {
-		"field_name": "recent_photo",
-		"field_label": "Recent 2x2 Photo",
-		"field_type": "Attach Image",
-		"is_required": 1,
 		"show_on_review": 0
 	})
-	
-	# Section: Optional Documents
-	section4_2 = step4.append("sections", {
-		"section_code": "optional_documents",
-		"section_title": "Optional Supporting Documents",
-		"section_type": "Section",
-		"sequence": 2,
-		"is_enabled": 1,
-		"is_required": 0,
-		"show_on_review": 0
-	})
-	
-	section4_2.append("fields", {
-		"field_name": "medical_certificate",
-		"field_label": "Medical Certificate (if frail/sickly/disabled)",
-		"field_type": "Attach",
-		"is_required": 0,
-		"show_on_review": 0
-	})
-	
-	section4_2.append("fields", {
-		"field_name": "indigency_certificate",
-		"field_label": "Certificate of Indigency",
-		"field_type": "Attach",
-		"is_required": 0,
-		"show_on_review": 0
-	})
-	
-	print("  ✓ Step 4: Supporting Documents configured")
-	
-	# ============================================================
+
 	# STEP 5: Declaration & Submission
-	# ============================================================
-	step5 = request_type.append("step_configs", {
+	request_type.append("step_configs", {
 		"step_number": 5,
 		"step_code": "declaration",
 		"step_title": "Declaration & Submission",
@@ -587,9 +288,142 @@ def configure_spisc_steps():
 		"is_required": 1,
 		"show_on_review": 1
 	})
-	
-	# Section: Declaration
-	section5_1 = step5.append("sections", {
+
+	# Save request type to generate step_config row names
+	request_type.save(ignore_permissions=True)
+	frappe.db.commit()
+
+	print("  ✓ Created 5 steps")
+
+	# ============================================================
+	# PHASE 2: Manually insert sections using direct SQL
+	# ============================================================
+
+	# Reload to get the auto-generated row names
+	request_type.reload()
+
+	sections_data = []
+
+	# Step 1 Sections
+	step1_name = request_type.step_configs[0].name
+	sections_data.extend([
+		{
+			"parent": step1_name,
+			"parenttype": "Request Type Step Config",
+			"parentfield": "sections",
+			"section_code": "basic_details",
+			"section_title": "Basic Details",
+			"section_type": "Section",
+			"sequence": 1,
+			"is_enabled": 1,
+			"is_required": 1,
+			"show_on_review": 1
+		},
+		{
+			"parent": step1_name,
+			"parenttype": "Request Type Step Config",
+			"parentfield": "sections",
+			"section_code": "contact_info",
+			"section_title": "Contact Information",
+			"section_type": "Section",
+			"sequence": 2,
+			"is_enabled": 1,
+			"is_required": 1,
+			"show_on_review": 1
+		},
+		{
+			"parent": step1_name,
+			"parenttype": "Request Type Step Config",
+			"parentfield": "sections",
+			"section_code": "address",
+			"section_title": "Residential Address",
+			"section_type": "Section",
+			"sequence": 3,
+			"is_enabled": 1,
+			"is_required": 1,
+			"show_on_review": 1
+		}
+	])
+
+	# Step 2 Sections
+	step2_name = request_type.step_configs[1].name
+	sections_data.extend([
+		{
+			"parent": step2_name,
+			"parenttype": "Request Type Step Config",
+			"parentfield": "sections",
+			"section_code": "household_composition",
+			"section_title": "Household Composition",
+			"section_type": "Section",
+			"sequence": 1,
+			"is_enabled": 1,
+			"is_required": 1,
+			"show_on_review": 1
+		},
+		{
+			"parent": step2_name,
+			"parenttype": "Request Type Step Config",
+			"parentfield": "sections",
+			"section_code": "economic_status",
+			"section_title": "Economic Status",
+			"section_type": "Section",
+			"sequence": 2,
+			"is_enabled": 1,
+			"is_required": 1,
+			"show_on_review": 1
+		}
+	])
+
+	# Step 3 Sections
+	step3_name = request_type.step_configs[2].name
+	sections_data.append({
+		"parent": step3_name,
+		"parenttype": "Request Type Step Config",
+		"parentfield": "sections",
+		"section_code": "identity_documents",
+		"section_title": "Identity Documents",
+		"section_type": "Section",
+		"sequence": 1,
+		"is_enabled": 1,
+		"is_required": 1,
+		"show_on_review": 1
+	})
+
+	# Step 4 Sections
+	step4_name = request_type.step_configs[3].name
+	sections_data.extend([
+		{
+			"parent": step4_name,
+			"parenttype": "Request Type Step Config",
+			"parentfield": "sections",
+			"section_code": "required_documents",
+			"section_title": "Required Documents",
+			"section_type": "Section",
+			"sequence": 1,
+			"is_enabled": 1,
+			"is_required": 1,
+			"show_on_review": 0
+		},
+		{
+			"parent": step4_name,
+			"parenttype": "Request Type Step Config",
+			"parentfield": "sections",
+			"section_code": "optional_documents",
+			"section_title": "Optional Supporting Documents",
+			"section_type": "Section",
+			"sequence": 2,
+			"is_enabled": 1,
+			"is_required": 0,
+			"show_on_review": 0
+		}
+	])
+
+	# Step 5 Sections
+	step5_name = request_type.step_configs[4].name
+	sections_data.append({
+		"parent": step5_name,
+		"parenttype": "Request Type Step Config",
+		"parentfield": "sections",
 		"section_code": "declaration",
 		"section_title": "Applicant Declaration",
 		"section_type": "Section",
@@ -598,57 +432,391 @@ def configure_spisc_steps():
 		"is_required": 1,
 		"show_on_review": 1
 	})
-	
-	section5_1.append("fields", {
-		"field_name": "declaration_truth",
-		"field_label": "I declare that all information provided in this application is true and correct",
-		"field_type": "Check",
-		"is_required": 1,
-		"show_on_review": 1,
-		"review_label": "Truth Declaration"
-	})
-	
-	section5_1.append("fields", {
-		"field_name": "declaration_consent",
-		"field_label": "I consent to the collection, processing, and verification of my personal information in accordance with RA 10173 (Data Privacy Act)",
-		"field_type": "Check",
-		"is_required": 1,
-		"show_on_review": 1,
-		"review_label": "Data Privacy Consent"
-	})
-	
-	section5_1.append("fields", {
-		"field_name": "signature",
-		"field_label": "Signature or Thumbmark",
-		"field_type": "Attach Image",
-		"is_required": 1,
-		"show_on_review": 1
-	})
-	
-	section5_1.append("fields", {
-		"field_name": "signature_date",
-		"field_label": "Date Signed",
-		"field_type": "Date",
-		"default_value": "Today",
-		"is_required": 1,
-		"show_on_review": 1
-	})
-	
-	print("  ✓ Step 5: Declaration & Submission configured")
-	
-	# Save the request type
-	request_type.save(ignore_permissions=True)
+
+	# Insert all sections
+	section_names = {}  # Map section_code to generated name
+	for section_data in sections_data:
+		section_doc = frappe.get_doc({
+			"doctype": "Request Type Step Section",
+			**section_data
+		})
+		section_doc.insert(ignore_permissions=True)
+		section_names[f"{section_data['parent']}_{section_data['section_code']}"] = section_doc.name
+
 	frappe.db.commit()
-	
+	print(f"  ✓ Created {len(sections_data)} sections")
+
+	# ============================================================
+	# PHASE 3: Manually insert fields
+	# ============================================================
+
+	fields_data = []
+
+	# Step 1 - Section 1 Fields (Basic Details)
+	section1_1_name = section_names[f"{step1_name}_basic_details"]
+	fields_data.extend([
+		{
+			"parent": section1_1_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "full_name",
+			"field_label": "Full Name",
+			"field_type": "Data",
+			"is_required": 1,
+			"show_on_review": 1
+		},
+		{
+			"parent": section1_1_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "birth_date",
+			"field_label": "Date of Birth",
+			"field_type": "Date",
+			"is_required": 1,
+			"show_on_review": 1,
+			"review_label": "Age / Date of Birth"
+		},
+		{
+			"parent": section1_1_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "sex",
+			"field_label": "Sex",
+			"field_type": "Select",
+			"options": "Male\nFemale",
+			"is_required": 1,
+			"show_on_review": 1
+		},
+		{
+			"parent": section1_1_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "civil_status",
+			"field_label": "Civil Status",
+			"field_type": "Select",
+			"options": "Single\nMarried\nWidowed\nSeparated",
+			"is_required": 1,
+			"show_on_review": 1
+		}
+	])
+
+	# Step 1 - Section 2 Fields (Contact Info)
+	section1_2_name = section_names[f"{step1_name}_contact_info"]
+	fields_data.extend([
+		{
+			"parent": section1_2_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "mobile_number",
+			"field_label": "Mobile Number",
+			"field_type": "Data",
+			"is_required": 1,
+			"show_on_review": 1
+		},
+		{
+			"parent": section1_2_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "email",
+			"field_label": "Email Address",
+			"field_type": "Data",
+			"is_required": 0,
+			"show_on_review": 1
+		}
+	])
+
+	# Step 1 - Section 3 Fields (Address)
+	section1_3_name = section_names[f"{step1_name}_address"]
+	fields_data.extend([
+		{
+			"parent": section1_3_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "address_line",
+			"field_label": "Street / House Number",
+			"field_type": "Data",
+			"is_required": 1,
+			"show_on_review": 1
+		},
+		{
+			"parent": section1_3_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "barangay",
+			"field_label": "Barangay",
+			"field_type": "Data",
+			"is_required": 1,
+			"show_on_review": 1
+		},
+		{
+			"parent": section1_3_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "municipality",
+			"field_label": "Municipality",
+			"field_type": "Data",
+			"default_value": "Taytay",
+			"is_required": 1,
+			"show_on_review": 1
+		},
+		{
+			"parent": section1_3_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "province",
+			"field_label": "Province",
+			"field_type": "Data",
+			"default_value": "Rizal",
+			"is_required": 1,
+			"show_on_review": 1
+		}
+	])
+
+	# Step 2 - Section 1 Fields (Household Composition)
+	section2_1_name = section_names[f"{step2_name}_household_composition"]
+	fields_data.extend([
+		{
+			"parent": section2_1_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "household_size",
+			"field_label": "Number of Household Members",
+			"field_type": "Int",
+			"is_required": 1,
+			"show_on_review": 1
+		},
+		{
+			"parent": section2_1_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "living_arrangement",
+			"field_label": "Living Arrangement",
+			"field_type": "Select",
+			"options": "Living alone\nLiving with spouse\nLiving with children\nLiving with relatives\nOther",
+			"is_required": 1,
+			"show_on_review": 1
+		}
+	])
+
+	# Step 2 - Section 2 Fields (Economic Status)
+	section2_2_name = section_names[f"{step2_name}_economic_status"]
+	fields_data.extend([
+		{
+			"parent": section2_2_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "monthly_income",
+			"field_label": "Monthly Income (PHP)",
+			"field_type": "Currency",
+			"is_required": 1,
+			"show_on_review": 1
+		},
+		{
+			"parent": section2_2_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "income_source",
+			"field_label": "Source of Income",
+			"field_type": "Select",
+			"options": "No income\nFamily support\nPension\nSmall business\nOther",
+			"is_required": 1,
+			"show_on_review": 1
+		},
+		{
+			"parent": section2_2_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "is_4ps_beneficiary",
+			"field_label": "Are you a 4Ps beneficiary?",
+			"field_type": "Check",
+			"is_required": 0,
+			"show_on_review": 1,
+			"review_label": "4Ps Beneficiary"
+		}
+	])
+
+	# Step 3 - Section 1 Fields (Identity Documents)
+	section3_1_name = section_names[f"{step3_name}_identity_documents"]
+	fields_data.extend([
+		{
+			"parent": section3_1_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "philsys_id",
+			"field_label": "PhilSys ID Number (National ID)",
+			"field_type": "Data",
+			"is_required": 0,
+			"show_on_review": 1
+		},
+		{
+			"parent": section3_1_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "sss_number",
+			"field_label": "SSS/GSIS Number",
+			"field_type": "Data",
+			"is_required": 0,
+			"show_on_review": 1
+		},
+		{
+			"parent": section3_1_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "osca_id",
+			"field_label": "OSCA ID Number",
+			"field_type": "Data",
+			"is_required": 0,
+			"show_on_review": 1,
+			"review_label": "Senior Citizen ID"
+		},
+		{
+			"parent": section3_1_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "other_id",
+			"field_label": "Other Valid ID",
+			"field_type": "Data",
+			"is_required": 0,
+			"show_on_review": 1
+		}
+	])
+
+	# Step 4 - Section 1 Fields (Required Documents)
+	section4_1_name = section_names[f"{step4_name}_required_documents"]
+	fields_data.extend([
+		{
+			"parent": section4_1_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "barangay_cert_indigency",
+			"field_label": "Barangay Certificate of Indigency",
+			"field_type": "Attach",
+			"is_required": 1,
+			"show_on_review": 0
+		},
+		{
+			"parent": section4_1_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "birth_certificate",
+			"field_label": "Birth Certificate or Baptismal Certificate",
+			"field_type": "Attach",
+			"is_required": 1,
+			"show_on_review": 0
+		},
+		{
+			"parent": section4_1_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "valid_id_copy",
+			"field_label": "Photocopy of Valid ID",
+			"field_type": "Attach",
+			"is_required": 1,
+			"show_on_review": 0
+		},
+		{
+			"parent": section4_1_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "recent_photo",
+			"field_label": "Recent 2x2 Photo",
+			"field_type": "Attach Image",
+			"is_required": 1,
+			"show_on_review": 0
+		}
+	])
+
+	# Step 4 - Section 2 Fields (Optional Documents)
+	section4_2_name = section_names[f"{step4_name}_optional_documents"]
+	fields_data.extend([
+		{
+			"parent": section4_2_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "medical_certificate",
+			"field_label": "Medical Certificate (if frail/sickly/disabled)",
+			"field_type": "Attach",
+			"is_required": 0,
+			"show_on_review": 0
+		},
+		{
+			"parent": section4_2_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "indigency_certificate",
+			"field_label": "Certificate of Indigency",
+			"field_type": "Attach",
+			"is_required": 0,
+			"show_on_review": 0
+		}
+	])
+
+	# Step 5 - Section 1 Fields (Declaration)
+	section5_1_name = section_names[f"{step5_name}_declaration"]
+	fields_data.extend([
+		{
+			"parent": section5_1_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "declaration_truth",
+			"field_label": "I declare that all information provided in this application is true and correct",
+			"field_type": "Check",
+			"is_required": 1,
+			"show_on_review": 1,
+			"review_label": "Truth Declaration"
+		},
+		{
+			"parent": section5_1_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "declaration_consent",
+			"field_label": "I consent to the collection, processing, and verification of my personal information in accordance with RA 10173 (Data Privacy Act)",
+			"field_type": "Check",
+			"is_required": 1,
+			"show_on_review": 1,
+			"review_label": "Data Privacy Consent"
+		},
+		{
+			"parent": section5_1_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "signature",
+			"field_label": "Signature or Thumbmark",
+			"field_type": "Attach Image",
+			"is_required": 1,
+			"show_on_review": 1
+		},
+		{
+			"parent": section5_1_name,
+			"parenttype": "Request Type Step Section",
+			"parentfield": "fields",
+			"field_name": "signature_date",
+			"field_label": "Date Signed",
+			"field_type": "Date",
+			"default_value": "Today",
+			"is_required": 1,
+			"show_on_review": 1
+		}
+	])
+
+	# Insert all fields
+	for field_data in fields_data:
+		field_doc = frappe.get_doc({
+			"doctype": "Request Type Step Field",
+			**field_data
+		})
+		field_doc.insert(ignore_permissions=True)
+
+	frappe.db.commit()
+	print(f"  ✓ Created {len(fields_data)} fields")
+
 	print(f"\n✅ Successfully configured 5-step flow for {request_type_name}")
-	print(f"   Total steps: {len(request_type.step_configs)}")
-	
-	# Print summary
-	for step in request_type.step_configs:
-		section_count = len(step.sections) if hasattr(step, 'sections') else 0
-		print(f"   - Step {step.step_number}: {step.step_title} ({section_count} sections)")
-
-
+	print(f"   Total: 5 steps, {len(sections_data)} sections, {len(fields_data)} fields")
+	print(f"   - Step 1: Personal Information (3 sections, 10 fields)")
+	print(f"   - Step 2: Household Information (2 sections, 5 fields)")
+	print(f"   - Step 3: Identity Verification (1 section, 4 fields)")
+	print(f"   - Step 4: Supporting Documents (2 sections, 6 fields)")
+	print(f"   - Step 5: Declaration & Submission (1 section, 4 fields)")
 def configure_all_philippines_steps():
 	"""Configure steps for all Philippines request types"""
 	

@@ -3524,8 +3524,16 @@ def get_request_type_steps(request_type, council_code=None):
 				"sections": []
 			}
 
-			# Load sections directly from step_config (already loaded)
-			for section in step_config.sections:
+			# Query sections separately (nested child tables aren't auto-loaded)
+			sections = frappe.get_all(
+				"Request Type Step Section",
+				filters={"parent": step_config.name},
+				fields=["name", "section_code", "section_title", "section_type", "sequence",
+				        "is_enabled", "is_required", "show_on_review", "depends_on"],
+				order_by="sequence asc"
+			)
+
+			for section in sections:
 				if not section.is_enabled:
 					continue
 
@@ -3541,8 +3549,15 @@ def get_request_type_steps(request_type, council_code=None):
 					"fields": []
 				}
 
-				# Load fields directly from section (already loaded)
-				for field in section.fields:
+				# Query fields separately (nested child tables aren't auto-loaded)
+				fields = frappe.get_all(
+					"Request Type Step Field",
+					filters={"parent": section.name},
+					fields=["field_name", "field_label", "field_type", "is_required", "options",
+					        "default_value", "depends_on", "validation", "show_on_review", "review_label"]
+				)
+
+				for field in fields:
 					field_data = {
 						"field_name": field.field_name,
 						"field_label": field.field_label,
@@ -3556,7 +3571,7 @@ def get_request_type_steps(request_type, council_code=None):
 						"review_label": field.review_label or field.field_label
 					}
 					section_data["fields"].append(field_data)
-				
+
 				step_data["sections"].append(section_data)
 			
 			steps.append(step_data)
