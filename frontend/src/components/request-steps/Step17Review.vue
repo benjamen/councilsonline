@@ -82,6 +82,41 @@
         </div>
       </div>
 
+      <!-- Dynamic Review Sections (for configured request types) -->
+      <template v-if="usesConfigurableSteps && reviewSections.length > 0">
+        <div
+          v-for="step in reviewSections"
+          :key="step.step_code"
+          class="bg-white border border-gray-200 rounded-lg overflow-hidden"
+        >
+          <div class="bg-gray-50 px-6 py-3 border-b border-gray-200">
+            <h3 class="font-semibold text-gray-900">{{ step.step_title }}</h3>
+          </div>
+          <div class="p-6 space-y-4">
+            <div
+              v-for="section in step.sections.filter(s => s.show_on_review)"
+              :key="section.section_code"
+            >
+              <h4 v-if="section.section_title" class="text-sm font-medium text-gray-700 mb-2">
+                {{ section.section_title }}
+              </h4>
+              <div class="grid md:grid-cols-2 gap-4">
+                <div
+                  v-for="field in section.fields.filter(f => f.show_on_review)"
+                  :key="field.field_name"
+                >
+                  <span class="text-sm text-gray-500">{{ field.review_label || field.field_label }}:</span>
+                  <p class="font-medium">{{ formatFieldValue(field, modelValue[field.field_name]) }}</p>
+                </div>
+              </div>
+            </div>
+            <p v-if="!hasReviewContent(step)" class="text-gray-500 text-sm">
+              No information to display for review
+            </p>
+          </div>
+        </div>
+      </template>
+
       <!-- Resource Consent Specific Details -->
       <template v-if="isResourceConsent">
         <!-- Consent Types -->
@@ -259,8 +294,81 @@ const props = defineProps({
   isResourceConsent: {
     type: Boolean,
     default: false
+  },
+  stepConfigs: {
+    type: Array,
+    default: () => []
+  },
+  usesConfigurableSteps: {
+    type: Boolean,
+    default: false
   }
 })
+
+// Filter steps that should show on review
+const reviewSections = computed(() => {
+  if (!props.usesConfigurableSteps || !props.stepConfigs) {
+    return []
+  }
+
+  return props.stepConfigs.filter(step => step.show_on_review)
+})
+
+// Check if a step has any content to show on review
+const hasReviewContent = (step) => {
+  if (!step.sections) return false
+
+  for (const section of step.sections) {
+    if (!section.show_on_review) continue
+
+    for (const field of section.fields) {
+      if (field.show_on_review && props.modelValue[field.field_name]) {
+        return true
+      }
+    }
+  }
+
+  return false
+}
+
+// Format field value for display
+const formatFieldValue = (field, value) => {
+  if (value === undefined || value === null || value === '') {
+    return 'Not provided'
+  }
+
+  // Check field type
+  if (field.field_type === 'Check') {
+    return value ? 'Yes' : 'No'
+  }
+
+  if (field.field_type === 'Date' && value) {
+    // Format date nicely
+    try {
+      return new Date(value).toLocaleDateString('en-NZ', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      })
+    } catch (e) {
+      return value
+    }
+  }
+
+  if (field.field_type === 'Currency' && value) {
+    return `₱${Number(value).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+  }
+
+  if (field.field_type === 'Select') {
+    return value
+  }
+
+  if (field.field_type === 'Attach' || field.field_type === 'Attach Image') {
+    return value ? '✓ File attached' : 'Not provided'
+  }
+
+  return value
+}
 
 const hasAEEContent = computed(() => {
   return !!(

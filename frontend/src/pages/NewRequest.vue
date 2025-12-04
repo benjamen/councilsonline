@@ -157,6 +157,8 @@
                 :request-type-name="getRequestTypeName()"
                 :application-fee="getApplicationFee()"
                 :is-resource-consent="isResourceConsent"
+                :step-configs="stepConfigs"
+                :uses-configurable-steps="usesConfigurableSteps"
             />
         </div>
     </div>
