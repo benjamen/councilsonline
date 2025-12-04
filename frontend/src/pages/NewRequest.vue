@@ -1662,6 +1662,9 @@ const properties = createResource({
 
 // Methods
 const onCouncilChange = async (councilCode) => {
+  console.log('[NewRequest] onCouncilChange called with:', councilCode)
+  console.log('[NewRequest] formData.value.council is now:', formData.value.council)
+
   if (!councilCode) {
     requestTypes.value = { data: [], loading: false, error: null }
     return
@@ -1710,6 +1713,7 @@ const selectRequestType = async (type) => {
   console.log('[NewRequest] Form data updated:', {
     request_type: formData.value.request_type,
     request_category: formData.value.request_category,
+    council: formData.value.council,
     details: selectedRequestTypeDetails.value
   })
 

@@ -162,6 +162,11 @@
   dependencies:
     "@tanstack/vue-virtual" "^3.0.0-beta.60"
 
+"@heroicons/vue@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.npmjs.org/@heroicons/vue/-/vue-2.2.0.tgz"
+  integrity sha512-G3dbSxoeEKqbi/DFalhRxJU4mTXJn7GwZ7ae8NuEQzd1bqdd0jAbdaBZlHPcvPD2xI1iGzNVB4k20Un2AguYPw==
+
 "@iconify/types@^2.0.0":
   version "2.0.0"
   resolved "https://registry.npmjs.org/@iconify/types/-/types-2.0.0.tgz"
@@ -3177,7 +3182,7 @@ vue-router@^4.1.6, vue-router@^4.5.0:
   dependencies:
     "@vue/devtools-api" "^6.6.4"
 
-"vue@^2.7.0 || ^3.0.0", vue@^3.0.0, "vue@^3.0.0-0 || ^2.6.0", vue@^3.2.0, vue@^3.2.25, vue@^3.5.0, vue@^3.5.11, vue@^3.5.13, "vue@>= 3.2.0", vue@>=3.5.0, "vue@2 || 3", vue@3.5.22:
+"vue@^2.7.0 || ^3.0.0", vue@^3.0.0, "vue@^3.0.0-0 || ^2.6.0", vue@^3.2.0, vue@^3.2.25, vue@^3.5.0, vue@^3.5.11, vue@^3.5.13, "vue@>= 3", "vue@>= 3.2.0", vue@>=3.5.0, "vue@2 || 3", vue@3.5.22:
   version "3.5.22"
   resolved "https://registry.npmjs.org/vue/-/vue-3.5.22.tgz"
   integrity sha512-toaZjQ3a/G/mYaLSbV+QsQhIdMo9x5rrqIpYRObsJ6T/J+RyCSFwN2LHNVH9v8uIcljDNa3QzPVdv3Y6b9hAJQ==
