@@ -1,6 +1,6 @@
 {
  "actions": [],
- "creation": "2025-11-26 00:00:00.000000",
+ "creation": "2025-11-26 00:00:00",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -33,23 +33,24 @@
    "fieldname": "is_enabled",
    "fieldtype": "Check",
    "in_list_view": 1,
-   "label": "Enabled"
+   "label": "Enabled",
+   "reqd": 1
   },
   {
    "fieldname": "column_break_1",
    "fieldtype": "Column Break"
   },
   {
+   "description": "Leave blank to use request type's default fee",
    "fieldname": "base_fee_override",
    "fieldtype": "Currency",
-   "label": "Base Fee Override",
-   "description": "Leave blank to use request type's default fee"
+   "label": "Base Fee Override"
   },
   {
+   "description": "Leave blank to use request type's default SLA",
    "fieldname": "sla_days_override",
    "fieldtype": "Int",
-   "label": "SLA Days Override",
-   "description": "Leave blank to use request type's default SLA"
+   "label": "SLA Days Override"
   },
   {
    "fieldname": "section_break_description",
@@ -57,10 +58,10 @@
    "label": "Description"
   },
   {
+   "description": "Short description shown to applicants (50-100 words)",
    "fieldname": "brief_description",
    "fieldtype": "Small Text",
-   "label": "Brief Description",
-   "description": "Short description shown to applicants (50-100 words)"
+   "label": "Brief Description"
   },
   {
    "fieldname": "section_break_process",
@@ -68,23 +69,23 @@
    "label": "Council Process"
   },
   {
+   "description": "Detailed HTML description of the council's process for this request type (shown to applicants)",
    "fieldname": "process_description",
    "fieldtype": "Text Editor",
-   "label": "Process Description",
-   "description": "Detailed HTML description of the council's process for this request type (shown to applicants)"
+   "label": "Process Description"
   },
   {
+   "description": "Override step configuration for this council's version of the request type",
    "fieldname": "section_break_step_overrides",
    "fieldtype": "Section Break",
-   "label": "Step Overrides",
-   "description": "Override step configuration for this council's version of the request type"
+   "label": "Step Overrides"
   },
   {
+   "description": "Customize which steps appear for this request type in this council",
    "fieldname": "step_overrides",
    "fieldtype": "Table",
    "label": "Step Overrides",
-   "options": "Council Request Type Step Override",
-   "description": "Customize which steps appear for this request type in this council"
+   "options": "Council Request Type Step Override"
   },
   {
    "fieldname": "section_break_notes",
@@ -92,16 +93,16 @@
    "label": "Internal Notes"
   },
   {
+   "description": "Internal notes (not shown to applicants)",
    "fieldname": "notes",
    "fieldtype": "Small Text",
-   "label": "Internal Notes",
-   "description": "Internal notes (not shown to applicants)"
+   "label": "Internal Notes"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-11-26 00:00:00.000000",
+ "modified": "2025-12-04 17:07:12.634574",
  "modified_by": "Administrator",
  "module": "Lodgeick",
  "name": "Council Request Type",

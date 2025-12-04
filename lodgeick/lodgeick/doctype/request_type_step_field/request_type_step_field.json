@@ -5,6 +5,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "parent_section_code",
   "field_name",
   "field_label",
   "field_type",
@@ -21,6 +22,14 @@
   "review_label"
  ],
  "fields": [
+  {
+   "fieldname": "parent_section_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Parent Section Code",
+   "reqd": 1,
+   "description": "Link to parent section (avoids nested child tables)"
+  },
   {
    "fieldname": "field_name",
    "fieldtype": "Data",

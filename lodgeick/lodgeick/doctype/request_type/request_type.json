@@ -29,6 +29,10 @@
   "help_text",
   "section_break_step_configs",
   "step_configs",
+  "section_break_step_sections",
+  "step_sections",
+  "section_break_step_fields",
+  "step_fields",
   "section_break_notifications",
   "notification_template",
   "section_break_status",
@@ -166,6 +170,32 @@
    "label": "Step Configurations",
    "options": "Request Type Step Config",
    "description": "Define the steps that applicants will complete for this request type"
+  },
+  {
+   "fieldname": "section_break_step_sections",
+   "fieldtype": "Section Break",
+   "label": "Step Sections",
+   "description": "FLATTENED: All sections at Request Type level to avoid nested child tables"
+  },
+  {
+   "fieldname": "step_sections",
+   "fieldtype": "Table",
+   "label": "Sections",
+   "options": "Request Type Step Section",
+   "description": "Sections within steps. Each section links to its parent step via parent_step_code."
+  },
+  {
+   "fieldname": "section_break_step_fields",
+   "fieldtype": "Section Break",
+   "label": "Step Fields",
+   "description": "FLATTENED: All fields at Request Type level to avoid nested child tables"
+  },
+  {
+   "fieldname": "step_fields",
+   "fieldtype": "Table",
+   "label": "Fields",
+   "options": "Request Type Step Field",
+   "description": "Fields within sections. Each field links to its parent section via parent_section_code."
   },
   {
    "fieldname": "section_break_notifications",
