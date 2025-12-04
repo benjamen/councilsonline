@@ -6,3 +6,4 @@
 # Patches added in this section will be executed after doctypes are migrated
 lodgeick.lodgeick.patches.migrate_statutory_clock_to_rc_application
 lodgeick.lodgeick.patches.v1_2.flatten_nested_child_tables
+lodgeick.patches.v1_3.import_taytay_fixtures

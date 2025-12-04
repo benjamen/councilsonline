@@ -93,10 +93,6 @@
           v-if="currentStep > 3 && currentStep < totalSteps && usesConfigurableSteps && getCurrentStepConfig()"
           :stepConfig="getCurrentStepConfig()"
           v-model="formData"
-          :showBackButton="currentStep > 1"
-          :isLastStep="currentStep === totalSteps - 1"
-          @continue="handleNext"
-          @back="handlePrevious"
         />
 
         <!-- FRD Step 1: Applicant & Proposal Details (consolidates old Steps 4,5,6) -->

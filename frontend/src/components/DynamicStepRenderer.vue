@@ -73,28 +73,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Navigation Buttons -->
-    <div class="flex justify-between mt-8 pt-6 border-t border-gray-200">
-      <button
-        v-if="showBackButton"
-        @click="$emit('back')"
-        type="button"
-        class="px-6 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-      >
-        Back
-      </button>
-      <div v-else></div>
-
-      <button
-        @click="handleContinue"
-        type="button"
-        :disabled="!canProceed"
-        class="px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
-      >
-        {{ isLastStep ? 'Review Application' : 'Continue' }}
-      </button>
-    </div>
   </div>
 </template>
 
@@ -113,21 +91,13 @@ const props = defineProps({
     type: Object,
     required: true
   },
-  showBackButton: {
-    type: Boolean,
-    default: true
-  },
-  isLastStep: {
-    type: Boolean,
-    default: false
-  },
   stepDescription: {
     type: String,
     default: ''
   }
 })
 
-const emit = defineEmits(['update:modelValue', 'continue', 'back'])
+const emit = defineEmits(['update:modelValue'])
 
 const localData = computed({
   get: () => props.modelValue,
@@ -151,45 +121,11 @@ const visibleSections = computed(() => {
   })
 })
 
-// Check if user can proceed (all required fields filled)
-const canProceed = computed(() => {
-  if (!props.stepConfig.is_required) return true
-
-  for (const section of visibleSections.value) {
-    if (!section.is_required) continue
-
-    for (const field of section.fields) {
-      if (field.is_required) {
-        const value = localData.value[field.field_name]
-
-        // Check if field has a value
-        if (value === undefined || value === null || value === '') {
-          return false
-        }
-
-        // For checkboxes, ensure they're checked if required
-        if (field.field_type === 'Check' && !value) {
-          return false
-        }
-      }
-    }
-  }
-
-  return true
-})
-
 // Get tabs for tab-based sections (placeholder)
 const getTabsForSection = (section) => {
   // For now, return single tab
   // In future, could parse section structure for multiple tabs
   return [section.section_title]
-}
-
-// Handle continue button
-const handleContinue = () => {
-  if (canProceed.value) {
-    emit('continue')
-  }
 }
 
 // Initialize default values
