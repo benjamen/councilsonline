@@ -88,9 +88,20 @@
             />
         </div>
 
+        <!-- Dynamic Steps (for configured request types like Philippines SPISC) -->
+        <DynamicStepRenderer
+          v-if="currentStep > 3 && currentStep < totalSteps && usesConfigurableSteps && getCurrentStepConfig()"
+          :stepConfig="getCurrentStepConfig()"
+          v-model="formData"
+          :showBackButton="currentStep > 1"
+          :isLastStep="currentStep === totalSteps - 1"
+          @continue="handleNext"
+          @back="handlePrevious"
+        />
+
         <!-- FRD Step 1: Applicant & Proposal Details (consolidates old Steps 4,5,6) -->
         <Step1ApplicantProposal
-          v-if="currentStep === 4 && isResourceConsent"
+          v-if="currentStep === 4 && isResourceConsent && !usesConfigurableSteps"
           v-model="formData"
           :user-profile="userProfile"
           :properties="properties"
@@ -98,43 +109,43 @@
 
         <!-- FRD Step 2: Natural Hazards Assessment -->
         <Step2NaturalHazards
-          v-if="currentStep === 5 && isResourceConsent"
+          v-if="currentStep === 5 && isResourceConsent && !usesConfigurableSteps"
           v-model="formData"
         />
 
         <!-- FRD Step 3: NES Assessment -->
         <Step3NESAssessment
-          v-if="currentStep === 6 && isResourceConsent"
+          v-if="currentStep === 6 && isResourceConsent && !usesConfigurableSteps"
           v-model="formData"
         />
 
         <!-- FRD Step 4: Boundary Approvals & Affected Parties -->
         <Step4Approvals
-          v-if="currentStep === 7 && isResourceConsent"
+          v-if="currentStep === 7 && isResourceConsent && !usesConfigurableSteps"
           v-model="formData"
         />
 
         <!-- FRD Step 5: Consultation with Other Parties -->
         <Step5Consultation
-          v-if="currentStep === 8 && isResourceConsent"
+          v-if="currentStep === 8 && isResourceConsent && !usesConfigurableSteps"
           v-model="formData"
         />
 
         <!-- FRD Step 6: Plans & Documents Upload -->
         <Step6Documents
-          v-if="currentStep === 9 && isResourceConsent"
+          v-if="currentStep === 9 && isResourceConsent && !usesConfigurableSteps"
           v-model="formData"
         />
 
         <!-- FRD Step 7: Assessment of Environmental Effects (AEE) -->
         <Step7AEE
-          v-if="currentStep === 10 && isResourceConsent"
+          v-if="currentStep === 10 && isResourceConsent && !usesConfigurableSteps"
           v-model="formData"
         />
 
         <!-- FRD Step 9: Declaration & Submission -->
         <Step9Submission
-          v-if="currentStep === 11 && isResourceConsent"
+          v-if="currentStep === 11 && isResourceConsent && !usesConfigurableSteps"
           v-model="formData"
         />
 
@@ -996,6 +1007,7 @@ import Step6Documents from '../components/request-steps/Step6Documents.vue'
 import Step7AEE from '../components/request-steps/Step7AEE.vue'
 import Step9Submission from '../components/request-steps/Step9Submission.vue'
 import Step17Review from '../components/request-steps/Step17Review.vue'
+import DynamicStepRenderer from '../components/DynamicStepRenderer.vue'
 import { useCouncilStore } from '../stores/councilStore'
 import { session } from '../data/session'
 import { useFormValidation } from '../composables/useFormValidation'
@@ -1022,6 +1034,11 @@ const bookingMeeting = ref(false)
 const requestingMeeting = ref(false)
 const showActivityStatusHelp = ref(false)
 
+// Dynamic step configuration
+const stepConfigs = ref([])
+const loadingStepConfigs = ref(false)
+const usesConfigurableSteps = ref(false)
+
 // Available consent types (managed configuration)
 const availableConsentTypes = [
   'Land Use',
@@ -1038,8 +1055,20 @@ const steps = computed(() => {
     { title: 'Process Info', number: 3 }
   ]
 
-  // Add RC-specific steps (FRD 9-step structure)
-  if (isResourceConsent.value) {
+  // If using configurable steps, add them dynamically
+  if (usesConfigurableSteps.value && stepConfigs.value.length > 0) {
+    stepConfigs.value.forEach((config, index) => {
+      baseSteps.push({
+        title: config.step_title,
+        number: baseSteps.length + 1,
+        code: config.step_code,
+        config: config,
+        isDynamic: true
+      })
+    })
+  }
+  // Add RC-specific steps (FRD 9-step structure) - backward compatibility
+  else if (isResourceConsent.value) {
     baseSteps.push({ title: 'Applicant & Proposal', number: 4 })  // FRD Step 1
     baseSteps.push({ title: 'Natural Hazards', number: 5 })        // FRD Step 2
     baseSteps.push({ title: 'NES Assessment', number: 6 })         // FRD Step 3
@@ -1668,7 +1697,7 @@ const getStepClass = (stepNumber) => {
   }
 }
 
-const selectRequestType = (type) => {
+const selectRequestType = async (type) => {
   console.log('[NewRequest] Selecting Request Type:', type.name, type.type_name)
   formData.value.request_type = type.name
   formData.value.request_category = type.category || ''
@@ -1681,6 +1710,46 @@ const selectRequestType = (type) => {
     request_category: formData.value.request_category,
     details: selectedRequestTypeDetails.value
   })
+
+  // Load step configuration for this request type
+  await loadStepConfiguration(type.name)
+}
+
+// Load step configuration from API
+const loadStepConfiguration = async (requestType) => {
+  if (!requestType || !formData.value.council) {
+    console.log('[NewRequest] Skipping step config load - missing requestType or council')
+    return
+  }
+
+  try {
+    loadingStepConfigs.value = true
+    console.log('[NewRequest] Loading step config for:', requestType, 'council:', formData.value.council)
+
+    const result = await call('lodgeick.api.get_request_type_steps', {
+      request_type: requestType,
+      council_code: formData.value.council
+    })
+
+    console.log('[NewRequest] Step config API result:', result)
+
+    if (result && result.uses_config && result.steps && result.steps.length > 0) {
+      stepConfigs.value = result.steps
+      usesConfigurableSteps.value = true
+      console.log('[NewRequest] Loaded', stepConfigs.value.length, 'configured steps')
+    } else {
+      // No configuration found - use hardcoded flow
+      stepConfigs.value = []
+      usesConfigurableSteps.value = false
+      console.log('[NewRequest] No step configuration found - using hardcoded flow')
+    }
+  } catch (error) {
+    console.error('[NewRequest] Error loading step configuration:', error)
+    stepConfigs.value = []
+    usesConfigurableSteps.value = false
+  } finally {
+    loadingStepConfigs.value = false
+  }
 }
 
 const onPropertySelect = () => {
@@ -2068,6 +2137,29 @@ const handleNext = () => {
   if (canProceed.value) {
     currentStep.value++
   }
+}
+
+const handlePrevious = () => {
+  if (currentStep.value > 1) {
+    currentStep.value--
+  }
+}
+
+// Get the step configuration for the current step
+const getCurrentStepConfig = () => {
+  if (!usesConfigurableSteps.value || stepConfigs.value.length === 0) {
+    return null
+  }
+
+  // Current step is 4+ (after Council, Type, Process Info)
+  // Map to stepConfigs array (0-indexed)
+  const configIndex = currentStep.value - 4
+
+  if (configIndex >= 0 && configIndex < stepConfigs.value.length) {
+    return stepConfigs.value[configIndex]
+  }
+
+  return null
 }
 
 const handleSubmit = async () => {
