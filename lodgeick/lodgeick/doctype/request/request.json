@@ -69,6 +69,8 @@
   "section_break_attachments",
   "attachments",
   "section_break_fees",
+  "selected_payment_account",
+  "selected_bank_account",
   "total_fees_excl_gst",
   "gst_amount",
   "total_fees_incl_gst",
@@ -499,6 +501,24 @@
    "fieldname": "section_break_fees",
    "fieldtype": "Section Break",
    "label": "Fees & Payments"
+  },
+  {
+   "fieldname": "selected_payment_account",
+   "fieldtype": "Link",
+   "label": "Payment Account (Council Receives)",
+   "options": "Council Payment Account",
+   "description": "Council bank account to receive payment from applicant",
+   "depends_on": "eval:doc.request_type_collects_payment",
+   "read_only": 0
+  },
+  {
+   "fieldname": "selected_bank_account",
+   "fieldtype": "Link",
+   "label": "Bank Account (Applicant Receives)",
+   "options": "User Bank Account",
+   "description": "Applicant's bank account to receive payment from council",
+   "depends_on": "eval:doc.request_type_makes_payment",
+   "read_only": 0
   },
   {
    "fieldname": "total_fees_excl_gst",

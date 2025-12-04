@@ -1,0 +1,48 @@
+{
+ "contact_email": "info@taytay.gov.ph",
+ "contact_phone": "+63 2 8123 4567",
+ "council_code": "TAYTAY-PH",
+ "council_name": "TayTay Council",
+ "creation": "2025-12-04 12:05:39.129495",
+ "default_sla_days": 30,
+ "docstatus": 0,
+ "doctype": "Council",
+ "enabled_request_types": [
+  {
+   "base_fee_override": 0.0,
+   "is_enabled": 1,
+   "request_type": "Social Pension for Indigent Senior Citizens (SPISC)",
+   "sla_days_override": 0,
+   "step_overrides": []
+  },
+  {
+   "base_fee_override": 0.0,
+   "is_enabled": 1,
+   "request_type": "Local Senior Assistance / Financial Aid for Elderly",
+   "sla_days_override": 0,
+   "step_overrides": []
+  },
+  {
+   "base_fee_override": 0.0,
+   "is_enabled": 1,
+   "request_type": "Burial / Medical Support for Seniors",
+   "sla_days_override": 0,
+   "step_overrides": []
+  }
+ ],
+ "idx": 0,
+ "is_active": 1,
+ "license_expiry_date": "2026-12-04",
+ "license_start_date": "2025-12-04",
+ "max_requests_per_month": 500,
+ "modified": "2025-12-04 12:05:39.129495",
+ "modified_by": "Administrator",
+ "name": "TAYTAY-PH",
+ "official_name": "Municipal Government of Taytay, Rizal",
+ "owner": "Administrator",
+ "primary_color": "#0066CC",
+ "secondary_color": "#1E40AF",
+ "subscription_tier": "Premium",
+ "timezone": "Asia/Manila",
+ "website": "https://taytay.gov.ph"
+}

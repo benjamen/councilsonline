@@ -23,6 +23,8 @@
   "base_fee",
   "fee_calculation_method",
   "hourly_rate",
+  "collects_payment",
+  "make_payment",
   "section_break_form",
   "form_template",
   "required_documents",
@@ -137,6 +139,20 @@
    "fieldname": "hourly_rate",
    "fieldtype": "Currency",
    "label": "Hourly Rate"
+  },
+  {
+   "fieldname": "collects_payment",
+   "fieldtype": "Check",
+   "label": "Collects Payment from Applicant",
+   "default": "0",
+   "description": "Enable if this request type requires payment collection (fees, invoices). Automatically adds payment and invoice detail steps."
+  },
+  {
+   "fieldname": "make_payment",
+   "fieldtype": "Check",
+   "label": "Make Payment to Applicant",
+   "default": "0",
+   "description": "Enable if this request type involves making payments to the applicant (e.g., grants, pensions, reimbursements). Automatically adds bank account detail step."
   },
   {
    "fieldname": "section_break_form",

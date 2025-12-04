@@ -36,7 +36,9 @@
   "column_break_5",
   "max_requests_per_month",
   "request_types_section",
-  "enabled_request_types"
+  "enabled_request_types",
+  "payment_accounts_section",
+  "payment_accounts"
  ],
  "fields": [
   {
@@ -212,6 +214,18 @@
    "fieldtype": "Table",
    "label": "Enabled Request Types",
    "options": "Council Request Type"
+  },
+  {
+   "fieldname": "payment_accounts_section",
+   "fieldtype": "Section Break",
+   "label": "Payment Accounts"
+  },
+  {
+   "description": "Bank accounts and payment methods for receiving payments from applicants",
+   "fieldname": "payment_accounts",
+   "fieldtype": "Table",
+   "label": "Payment Accounts",
+   "options": "Council Payment Account"
   }
  ],
  "index_web_pages_for_search": 1,
