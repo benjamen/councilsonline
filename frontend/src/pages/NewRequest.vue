@@ -1710,12 +1710,11 @@ const selectRequestType = async (type) => {
   // Store the full request type details for the Process Info step
   selectedRequestTypeDetails.value = type
 
-  console.log('[NewRequest] Form data updated:', {
-    request_type: formData.value.request_type,
-    request_category: formData.value.request_category,
-    council: formData.value.council,
-    details: selectedRequestTypeDetails.value
-  })
+  console.log('[NewRequest] Form data updated:')
+  console.log('  request_type:', formData.value.request_type)
+  console.log('  request_category:', formData.value.request_category)
+  console.log('  council:', formData.value.council)
+  console.log('  formData.value:', formData.value)
 
   // Load step configuration for this request type
   await loadStepConfiguration(type.name)
@@ -2967,7 +2966,15 @@ watch(() => formData.value.applicant_phone, async (newPhone, oldPhone) => {
   }
 })
 
+// Watch for changes to formData.council
+watch(() => formData.value.council, (newValue, oldValue) => {
+  console.log('[NewRequest] formData.council changed from:', oldValue, 'to:', newValue)
+  console.trace('[NewRequest] Stack trace for council change')
+})
+
 onMounted(async () => {
+  console.log('[NewRequest] onMounted - starting initialization')
+
   // Load user profile first
   await loadUserProfile()
 
@@ -2982,15 +2989,19 @@ onMounted(async () => {
 
   // Check if council was preselected via URL or user default
   if (councilStore.preselectedFromUrl) {
+    console.log('[NewRequest] Setting council from URL:', councilStore.preselectedFromUrl)
     formData.value.council = councilStore.preselectedFromUrl
     await onCouncilChange(councilStore.preselectedFromUrl)
   } else {
     // Try to load user's default council
     const userCouncils = await councilStore.getUserCouncils()
     if (userCouncils.default_council) {
+      console.log('[NewRequest] Setting council from user default:', userCouncils.default_council)
       formData.value.council = userCouncils.default_council
       await onCouncilChange(userCouncils.default_council)
     }
   }
+
+  console.log('[NewRequest] onMounted - initialization complete, council is:', formData.value.council)
 })
 </script>

@@ -55,10 +55,17 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'type-selected'])
 
 const selectType = (type) => {
-  emit('update:modelValue', {
+  console.log('[Step2RequestType] selectType called with:', type.name)
+  console.log('[Step2RequestType] props.modelValue:', props.modelValue)
+  console.log('[Step2RequestType] props.modelValue.council:', props.modelValue.council)
+
+  const updatedValue = {
     ...props.modelValue,
     request_type: type.name
-  })
+  }
+
+  console.log('[Step2RequestType] Emitting updatedValue:', updatedValue)
+  emit('update:modelValue', updatedValue)
   emit('type-selected', type)
 }
 </script>
