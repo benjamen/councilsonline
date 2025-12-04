@@ -1,25 +1,5 @@
 import { defineStore } from 'pinia'
-import { AppApiClient } from '@lodgeick/ui'
-
-/**
- * councilStore.js
- *
- * REFACTORED to use AppApiClient from @lodgeick/ui
- *
- * This demonstrates a hybrid approach:
- * - Keeps Pinia defineStore pattern (required for reactivity)
- * - Uses AppApiClient instead of hardcoded API calls
- * - Maintains backwards compatibility
- * - Ready for multi-app migration (change app name in one place)
- *
- * BENEFITS:
- * - No hardcoded API calls (uses AppApiClient)
- * - Easy migration to platform_core (change one line)
- * - Full backwards compatibility
- * - Proper Pinia reactivity
- */
-
-const api = new AppApiClient('lodgeick') // Will change to 'platform_core' during migration
+import { call } from 'frappe-ui'
 
 export const useCouncilStore = defineStore('council', {
   state: () => ({
@@ -50,12 +30,8 @@ export const useCouncilStore = defineStore('council', {
       this.error = null
 
       try {
-        // REFACTORED: Using AppApiClient instead of hardcoded call
-        this.councils = await api.getList(
-          'Council',
-          { is_active: 1 },
-          ['name', 'council_code', 'council_name', 'logo', 'primary_color', 'website', 'contact_email', 'council_region', 'is_license_valid']
-        )
+        const response = await call('lodgeick.api.get_active_councils')
+        this.councils = response || []
 
         // If there's a preselected council from URL, set it
         if (this.preselectedFromUrl && !this.selectedCouncil) {
@@ -79,8 +55,7 @@ export const useCouncilStore = defineStore('council', {
       this.error = null
 
       try {
-        // REFACTORED: Using AppApiClient
-        const response = await api.call('get_council_by_code', {
+        const response = await call('lodgeick.api.get_council_by_code', {
           council_code: councilCode
         })
 
@@ -118,8 +93,7 @@ export const useCouncilStore = defineStore('council', {
       this.error = null
 
       try {
-        // REFACTORED: Using AppApiClient
-        const response = await api.call('get_request_types_for_council', {
+        const response = await call('lodgeick.api.get_request_types_for_council', {
           council_code: councilCode
         })
         this.requestTypes = response || []
@@ -163,8 +137,7 @@ export const useCouncilStore = defineStore('council', {
 
     async setUserDefaultCouncil(councilCode) {
       try {
-        // REFACTORED: Using AppApiClient
-        await api.call('set_user_default_council', {
+        await call('lodgeick.api.set_user_default_council', {
           council_code: councilCode
         })
 
@@ -181,8 +154,7 @@ export const useCouncilStore = defineStore('council', {
 
     async getUserCouncils() {
       try {
-        // REFACTORED: Using AppApiClient
-        const response = await api.call('get_user_councils')
+        const response = await call('lodgeick.api.get_user_councils')
         return response || { default_council: null, associated_councils: [] }
       } catch (err) {
         console.error('Error getting user councils:', err)
@@ -218,30 +190,3 @@ export const useCouncilStore = defineStore('council', {
     }
   }
 })
-
-/**
- * REFACTORING SUMMARY:
- *
- * BEFORE:
- * - Hardcoded: call('lodgeick.api.get_active_councils')
- * - Hardcoded: call('lodgeick.api.get_council_by_code')
- * - Hardcoded: call('lodgeick.api.get_request_types_for_council')
- * - Hardcoded: call('lodgeick.api.set_user_default_council')
- * - Hardcoded: call('lodgeick.api.get_user_councils')
- *
- * AFTER:
- * - Generic: api.getList('Council', filters, fields)
- * - Generic: api.call('get_council_by_code', args)
- * - Generic: api.call('get_request_types_for_council', args)
- * - Generic: api.call('set_user_default_council', args)
- * - Generic: api.call('get_user_councils')
- *
- * MIGRATION TO MULTI-APP:
- *
- * When Council moves to platform_core, change ONE line at the top:
- *   const api = new AppApiClient('lodgeick')
- *   →
- *   const api = new AppApiClient('platform_core')
- *
- * All API calls automatically update!
- */
