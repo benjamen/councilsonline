@@ -1,21 +1,43 @@
 <template>
-  <div class="dynamic-step">
-    <div class="mb-6">
-      <h2 class="text-2xl font-bold text-gray-900">{{ stepConfig.step_title }}</h2>
-      <p v-if="stepDescription" class="mt-2 text-sm text-gray-600">{{ stepDescription }}</p>
+  <div class="dynamic-step max-w-4xl mx-auto">
+    <!-- Step Header with gradient background -->
+    <div class="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
+      <div class="flex items-start">
+        <div class="flex-shrink-0">
+          <svg class="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+        </div>
+        <div class="ml-4 flex-1">
+          <h2 class="text-2xl font-bold text-blue-900">{{ stepConfig.step_title }}</h2>
+          <p v-if="stepDescription" class="mt-2 text-sm text-blue-700">{{ stepDescription }}</p>
+        </div>
+      </div>
     </div>
 
     <!-- Render sections -->
-    <div class="space-y-8">
+    <div class="space-y-6">
       <div v-for="section in visibleSections" :key="section.section_code" class="section">
-        <!-- Section Header -->
-        <div class="mb-4">
-          <h3 class="text-lg font-semibold text-gray-800">
-            {{ section.section_title }}
-            <span v-if="section.is_required" class="text-red-500">*</span>
-          </h3>
-          <div v-if="section.is_required" class="text-xs text-gray-500 mt-1">
-            All fields marked with * are required
+        <!-- Section Header with improved styling -->
+        <div class="mb-4 pb-3 border-b-2 border-gray-200">
+          <div class="flex items-center">
+            <div class="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+              <svg class="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">
+                {{ section.section_title }}
+                <span v-if="section.is_required" class="text-red-500 ml-1">*</span>
+              </h3>
+              <p v-if="section.section_description" class="text-sm text-gray-600 mt-0.5">
+                {{ section.section_description }}
+              </p>
+            </div>
+          </div>
+          <div v-if="section.is_required" class="text-xs text-gray-500 mt-2 ml-11">
+            All fields marked with <span class="text-red-500">*</span> are required
           </div>
         </div>
 
@@ -63,8 +85,8 @@
             </DisclosurePanel>
           </Disclosure>
 
-          <!-- Regular section (default) -->
-          <div v-else class="bg-white p-6 rounded-lg border border-gray-200">
+          <!-- Regular section (default) with enhanced card styling -->
+          <div v-else class="bg-white p-6 rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
             <DynamicFieldRenderer
               :fields="section.fields"
               v-model="localData"
@@ -153,9 +175,21 @@ watch(() => props.stepConfig, (config) => {
 
 .section {
   margin-bottom: 2rem;
+  scroll-margin-top: 100px; /* For smooth scrolling with fixed headers */
 }
 
 .section-content {
   margin-top: 1rem;
+}
+
+/* Enhanced tab styling */
+:deep(.tab-active) {
+  background: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Smooth transitions for all interactive elements */
+.section-content > div {
+  transition: all 0.2s ease-in-out;
 }
 </style>

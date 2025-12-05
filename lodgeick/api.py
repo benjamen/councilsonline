@@ -1439,7 +1439,7 @@ def get_council_by_code(council_code):
         return None
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_user_councils(user=None):
     """
     Get councils associated with current user
@@ -1592,11 +1592,142 @@ def get_council_stats(council_code):
     }
 
 
+@frappe.whitelist(allow_guest=True)
+def get_locked_council():
+    """
+    Returns the locked council from session, if any.
+    Used by frontend to determine if council is locked for the request flow.
+
+    Returns:
+        dict: Locked council info or {"is_locked": False}
+    """
+    # Get from cache using session ID
+    locked_data = frappe.cache().hget("locked_council", frappe.session.sid)
+
+    if locked_data:
+        try:
+            data = frappe.parse_json(locked_data)
+            locked_council = data.get("locked_council_code")
+            council = frappe.get_doc("Council", locked_council)
+            return {
+                "council_code": locked_council,
+                "council_name": data.get("locked_council_name"),
+                "locked_at": data.get("locked_at"),
+                "source_url": data.get("source_url"),
+                "is_locked": True,
+                "council": council.as_dict()
+            }
+        except (frappe.DoesNotExistError, ValueError, KeyError):
+            # Council was deleted or data corrupted - clear session
+            clear_locked_council()
+            return {"is_locked": False}
+
+    return {"is_locked": False}
+
+
+@frappe.whitelist(allow_guest=True)
+def set_locked_council(council_code):
+    """
+    Manually lock a council in session.
+    Used when user navigates to /{council_code} via Vue Router.
+
+    Args:
+        council_code: Council code to lock
+
+    Returns:
+        dict: Success status and council info
+    """
+    council_code = council_code.upper()
+
+    # Verify council exists and is active
+    try:
+        council = frappe.get_doc("Council", council_code)
+        if not council.is_active:
+            frappe.throw(_("Council is not active"))
+    except frappe.DoesNotExistError:
+        frappe.throw(_("Council not found: {0}").format(council_code))
+
+    # Set in session using Frappe's session cache (persists across requests)
+    frappe.cache().hset("locked_council", frappe.session.sid, frappe.as_json({
+        "locked_council_code": council_code,
+        "locked_council_name": council.council_name,
+        "locked_at": frappe.utils.now(),
+        "source_url": frappe.request.headers.get("Referer", "")
+    }))
+
+    return {
+        "success": True,
+        "council_code": council_code,
+        "council_name": council.council_name
+    }
+
+
+@frappe.whitelist(allow_guest=True)
+def clear_locked_council():
+    """
+    Clear locked council from session.
+    Used when user explicitly wants to change council or session expires.
+
+    Returns:
+        dict: Success status
+    """
+    # Remove from cache
+    frappe.cache().hdel("locked_council", frappe.session.sid)
+
+    return {"success": True}
+
+
+@frappe.whitelist(allow_guest=True)
+def get_council_landing_page(council_code):
+    """
+    Get Council Landing Page configuration for a council.
+    Returns default values if no landing page configured.
+
+    Args:
+        council_code: Council code
+
+    Returns:
+        dict: Landing page configuration
+    """
+    council_code = council_code.upper()
+
+    # Verify council exists
+    if not frappe.db.exists("Council", council_code):
+        frappe.throw(_("Council not found: {0}").format(council_code))
+
+    # Get landing page using SQL to avoid DocType cache issues
+    landing_pages = frappe.db.sql("""
+        SELECT *
+        FROM `tabCouncil Landing Page`
+        WHERE council = %s AND is_published = 1
+        LIMIT 1
+    """, (council_code,), as_dict=True)
+
+    if landing_pages:
+        return landing_pages[0]
+
+    # Return defaults if no landing page configured
+    council = frappe.get_doc("Council", council_code)
+    return {
+        "council": council_code,
+        "is_published": 0,
+        "hero_title": f"Welcome to {council.council_name}",
+        "hero_subtitle": "Submit planning applications, building consents, and resource consent requests online",
+        "primary_cta_text": "Start New Request",
+        "primary_cta_link": "/frontend/request/new",
+        "show_request_types": 1,
+        "intro_html": None,
+        "hero_image": None,
+        "meta_title": None,
+        "meta_description": None
+    }
+
+
 # ============================================================================
 # USER PROFILE & SETTINGS API ENDPOINTS
 # ============================================================================
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_user_profile(user=None):
     """
     Get user profile information including custom fields and organization data
@@ -2062,7 +2193,7 @@ def register_company_account(company_data):
 		frappe.throw(_("Error creating company account: {0}").format(str(e)))
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_user_company_account():
 	"""
 	Get company account details for current user
@@ -3481,7 +3612,7 @@ def get_company_users(company_name):
 # Step Configuration APIs
 # ================================
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_request_type_steps(request_type, council_code=None):
 	"""
 	Get step configuration for a request type, with optional council overrides

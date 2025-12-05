@@ -65,8 +65,8 @@
         </div>
       </div>
 
-      <!-- Delivery Preference -->
-      <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+      <!-- Delivery Preference (only show if request type collects payment) -->
+      <div v-if="requestTypeDetails?.collect_payment" class="bg-white border border-gray-200 rounded-lg overflow-hidden">
         <div class="bg-gray-50 px-6 py-3 border-b border-gray-200">
           <h3 class="font-semibold text-gray-900">Delivery & Payment</h3>
         </div>
@@ -302,6 +302,10 @@ const props = defineProps({
   usesConfigurableSteps: {
     type: Boolean,
     default: false
+  },
+  requestTypeDetails: {
+    type: Object,
+    default: null
   }
 })
 

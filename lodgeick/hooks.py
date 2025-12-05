@@ -67,8 +67,10 @@ home_page = "frontend"
 # Website Route Rules
 # -------------------
 # Route all /frontend/* paths to the frontend.py handler for SPA routing
+# Route /council/* to council_landing_page handler for public council pages
 website_route_rules = [
 	{"from_route": "/frontend/<path:app_path>", "to_route": "frontend"},
+	{"from_route": "/council/<council_code>", "to_route": "council_landing_page"},
 ]
 
 # Generators

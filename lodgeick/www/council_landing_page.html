@@ -1,0 +1,138 @@
+{% extends "templates/web.html" %}
+
+{% block title %}{{ landing_page.meta_title or hero_title }}{% endblock %}
+
+{% block meta_description %}{{ landing_page.meta_description or landing_page.hero_subtitle }}{% endblock %}
+
+{% block page_content %}
+<div class="council-landing-page">
+	<!-- Hero Section -->
+	<div class="hero-section"
+		 {% if landing_page.hero_image %}
+		 style="background-image: url('{{ landing_page.hero_image }}'); background-size: cover; background-position: center;"
+		 {% endif %}>
+		<div class="container py-5">
+			<div class="row justify-content-center">
+				<div class="col-md-10 text-center text-white">
+					{% if council.logo %}
+					<img src="{{ council.logo }}" alt="{{ council.council_name }}" class="mb-4 council-logo">
+					{% endif %}
+					<h1 class="display-4 fw-bold mb-3">{{ hero_title }}</h1>
+					<p class="lead mb-4">{{ landing_page.hero_subtitle }}</p>
+					<a href="{{ landing_page.primary_cta_link }}"
+					   class="btn btn-primary btn-lg px-5 py-3"
+					   {% if council.primary_color %}
+					   style="background-color: {{ council.primary_color }}; border-color: {{ council.primary_color }};"
+					   {% endif %}>
+						{{ landing_page.primary_cta_text }}
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Introduction Content -->
+	{% if landing_page.intro_html %}
+	<div class="container my-5">
+		<div class="row justify-content-center">
+			<div class="col-md-10">
+				{{ landing_page.intro_html | safe }}
+			</div>
+		</div>
+	</div>
+	{% endif %}
+
+	<!-- Request Type Cards -->
+	{% if request_types %}
+	<div class="container my-5">
+		<h2 class="text-center mb-4">Available Services</h2>
+		<div class="row g-4">
+			{% for rt in request_types %}
+			<div class="col-md-6 col-lg-4">
+				<div class="card h-100 shadow-sm hover-lift">
+					<div class="card-body">
+						<h5 class="card-title">{{ rt.name }}</h5>
+						<p class="text-muted small mb-2">{{ rt.category }}</p>
+						{% if rt.description %}
+						<p class="card-text">{{ rt.description[:150] }}{% if rt.description|length > 150 %}...{% endif %}</p>
+						{% endif %}
+						<ul class="list-unstyled small text-muted">
+							{% if rt.base_fee %}
+							<li><strong>Base Fee:</strong> ${{ "%.2f" | format(rt.base_fee) }}</li>
+							{% endif %}
+							{% if rt.processing_sla_days %}
+							<li><strong>Processing Time:</strong> {{ rt.processing_sla_days }} days</li>
+							{% endif %}
+						</ul>
+						<a href="/frontend/request/new?type={{ rt.name }}" class="btn btn-outline-primary btn-sm mt-2">
+							Start Application
+						</a>
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+	</div>
+	{% endif %}
+
+	<!-- Additional Info -->
+	<div class="container my-5 py-4 bg-light rounded">
+		<div class="row">
+			<div class="col-md-4 text-center mb-3">
+				<div class="fs-1 text-primary mb-2">⏱️</div>
+				<h5>Fast Processing</h5>
+				<p class="text-muted">Track your application online 24/7</p>
+			</div>
+			<div class="col-md-4 text-center mb-3">
+				<div class="fs-1 text-primary mb-2">🛡️</div>
+				<h5>Secure</h5>
+				<p class="text-muted">Your data is encrypted and protected</p>
+			</div>
+			<div class="col-md-4 text-center mb-3">
+				<div class="fs-1 text-primary mb-2">✅</div>
+				<h5>Easy to Use</h5>
+				<p class="text-muted">Step-by-step guidance through the process</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+.hero-section {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	min-height: 400px;
+	display: flex;
+	align-items: center;
+	position: relative;
+}
+
+.hero-section::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.3);
+	z-index: 1;
+}
+
+.hero-section > * {
+	position: relative;
+	z-index: 2;
+}
+
+.council-logo {
+	max-height: 100px;
+	filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.hover-lift {
+	transition: transform 0.2s ease-in-out;
+}
+
+.hover-lift:hover {
+	transform: translateY(-5px);
+}
+</style>
+{% endblock %}

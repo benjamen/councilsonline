@@ -8,7 +8,9 @@ export const useCouncilStore = defineStore('council', {
     preselectedFromUrl: null,
     requestTypes: [],
     loading: false,
-    error: null
+    error: null,
+    lockedCouncil: null,       // NEW: Locked council from session
+    isCouncilLocked: false     // NEW: Lock state
   }),
 
   getters: {
@@ -107,6 +109,12 @@ export const useCouncilStore = defineStore('council', {
     },
 
     setCouncil(councilCode) {
+      // Prevent changing council if locked
+      if (this.isCouncilLocked && councilCode !== this.lockedCouncil) {
+        console.warn('Cannot change council - council is locked:', this.lockedCouncil)
+        return false
+      }
+
       this.selectedCouncil = councilCode
 
       // Store in localStorage for persistence
@@ -119,6 +127,8 @@ export const useCouncilStore = defineStore('council', {
         localStorage.removeItem('selected_council')
         this.requestTypes = []
       }
+
+      return true
     },
 
     setPreselectedFromUrl(councilCode) {
@@ -178,6 +188,80 @@ export const useCouncilStore = defineStore('council', {
 
     clearError() {
       this.error = null
+    },
+
+    async loadLockedCouncil() {
+      // Check if council is locked in session
+      try {
+        const response = await call('lodgeick.api.get_locked_council')
+
+        if (response?.is_locked) {
+          this.lockedCouncil = response.council_code
+          this.isCouncilLocked = true
+          this.selectedCouncil = response.council_code
+
+          // Load request types for locked council
+          await this.loadRequestTypesForCouncil(response.council_code)
+
+          return response
+        } else {
+          // Only clear the lock if we don't already have one in memory
+          // This preserves the lock when navigating within the same session
+          if (!this.isCouncilLocked) {
+            this.lockedCouncil = null
+            this.isCouncilLocked = false
+          } else {
+            console.log('[councilStore] Redis has no lock, but preserving in-memory lock:', this.lockedCouncil)
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load locked council:', error)
+        // Only clear on error if we don't have an in-memory lock
+        if (!this.isCouncilLocked) {
+          this.lockedCouncil = null
+          this.isCouncilLocked = false
+        }
+      }
+
+      return null
+    },
+
+    async setLockedCouncil(councilCode) {
+      // Set council as locked in backend session
+      try {
+        const response = await call('lodgeick.api.set_locked_council', {
+          council_code: councilCode
+        })
+
+        if (response?.success) {
+          this.lockedCouncil = councilCode
+          this.isCouncilLocked = true
+          this.selectedCouncil = councilCode
+
+          // Load request types
+          await this.loadRequestTypesForCouncil(councilCode)
+
+          return true
+        }
+      } catch (error) {
+        console.error('Failed to lock council:', error)
+        return false
+      }
+
+      return false
+    },
+
+    async clearLockedCouncil() {
+      // Clear locked council (admin override only)
+      try {
+        await call('lodgeick.api.clear_locked_council')
+
+        this.lockedCouncil = null
+        this.isCouncilLocked = false
+        this.selectedCouncil = null
+      } catch (error) {
+        console.error('Failed to clear locked council:', error)
+      }
     },
 
     reset() {
