@@ -252,7 +252,7 @@
 
           <!-- Meetings -->
           <div v-if="meetings.data && meetings.data.length > 0" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Pre-Application Meetings</h2>
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Council Meetings</h2>
 
             <div class="space-y-3">
               <div
@@ -364,7 +364,7 @@
                           d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </template>
-                Book Pre-Application Meeting
+                Book Council Meeting
               </Button>
             </div>
           </div>
@@ -576,14 +576,14 @@ const handleBookMeeting = async () => {
       },
       body: JSON.stringify({
         request_id: request.data.name,
-        meeting_type: 'Pre-Application Meeting'
+        meeting_type: 'Council Meeting'
       })
     })
 
     const result = await response.json()
 
     if (result.message && result.message.success) {
-      alert(`Pre-Application Meeting request has been submitted! A council officer will contact you within 2 business days to schedule the meeting. Meeting ID: ${result.message.meeting_id}`)
+      alert(`Council Meeting request has been submitted! A council officer will contact you within 2 business days to schedule the meeting. Meeting ID: ${result.message.meeting_id}`)
       // Refresh meetings list to show the new meeting
       await meetings.reload()
     } else {
@@ -591,7 +591,7 @@ const handleBookMeeting = async () => {
     }
   } catch (error) {
     console.error('Error booking meeting:', error)
-    alert('Failed to book pre-application meeting. Please try again.')
+    alert('Failed to book council meeting. Please try again.')
   } finally {
     bookingMeeting.value = false
   }

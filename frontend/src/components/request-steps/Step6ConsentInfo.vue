@@ -52,7 +52,7 @@
                   <h5 class="font-semibold text-blue-900 text-sm">Not sure? That's okay!</h5>
                   <p class="text-blue-800 text-sm mt-1">
                     If you're unsure about your activity status, you can leave this blank. The council planner will determine the correct status when processing your application.
-                    Alternatively, you can book a free pre-application meeting with the council to discuss this.
+                    Alternatively, you can book a free council meeting with the council to discuss this.
                   </p>
                 </div>
               </div>

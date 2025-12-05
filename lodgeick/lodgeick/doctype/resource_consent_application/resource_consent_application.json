@@ -152,7 +152,6 @@
   "iwi_response_summary",
   "section_break_reports_tab",
   "section_break_reports",
-  "specialist_reports",
   "planning_assessment_tab",
   "section_break_planning",
   "alternatives_considered",
@@ -551,12 +550,6 @@
    "fieldname": "section_break_reports",
    "fieldtype": "Section Break",
    "label": "Specialist Reports"
-  },
-  {
-   "fieldname": "specialist_reports",
-   "fieldtype": "Table",
-   "label": "Specialist Reports",
-   "options": "RC Specialist Report"
   },
   {
    "description": "Conditions proposed by the applicant",
@@ -1285,11 +1278,6 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [
-  {
-   "group": "Workflow",
-   "link_doctype": "Specialist Assignment",
-   "link_fieldname": "resource_consent_application"
-  },
   {
    "group": "Workflow",
    "link_doctype": "Notification Decision",

@@ -15,7 +15,7 @@
   "processing_sla_days",
   "workflow_template",
   "default_assessment_template",
-  "pre_app_meeting_available",
+  "council_meeting_available",
   "section_break_fees",
   "base_fee",
   "fee_calculation_method",
@@ -92,11 +92,11 @@
    "description": "Auto-assigned when request is acknowledged. Determines which stages and tasks are created."
   },
   {
-   "fieldname": "pre_app_meeting_available",
+   "fieldname": "council_meeting_available",
    "fieldtype": "Check",
-   "label": "Pre-Application Meeting Available",
+   "label": "Council Meeting Available",
    "default": "1",
-   "description": "Allow applicants to schedule pre-application meetings during the application process"
+   "description": "Allow applicants to schedule council meetings during the application process"
   },
   {
    "fieldname": "section_break_fees",

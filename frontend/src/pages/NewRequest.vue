@@ -1627,7 +1627,7 @@ const activityStatusWarning = computed(() => {
 
   switch (formData.value.activity_status) {
     case 'Non-Complying':
-      return '⚠️ Non-complying activities face higher scrutiny and longer processing times. Consider pre-application meeting.'
+      return '⚠️ Non-complying activities face higher scrutiny and longer processing times. Consider council meeting.'
     case 'Discretionary':
       return 'ℹ️ Discretionary activities may require public notification depending on effects assessment.'
     case 'Controlled':
@@ -2318,20 +2318,20 @@ const bookPreApplicationMeeting = async () => {
       },
       body: JSON.stringify({
         request_id: requestId,
-        meeting_type: 'Pre-Application Meeting'
+        meeting_type: 'Council Meeting'
       })
     })
 
     const meetingResult = await meetingResponse.json()
 
     if (meetingResult.message && meetingResult.message.success) {
-      alert(`Pre-Application Meeting request has been submitted! A council officer will contact you within 2 business days to schedule the meeting. Task ID: ${meetingResult.message.task_id}`)
+      alert(`Council Meeting request has been submitted! A council officer will contact you within 2 business days to schedule the meeting. Task ID: ${meetingResult.message.task_id}`)
     } else {
       throw new Error(meetingResult.message || 'Failed to book meeting')
     }
   } catch (error) {
     console.error('Error booking meeting:', error)
-    alert('Failed to book pre-application meeting. Please try again.')
+    alert('Failed to book council meeting. Please try again.')
   } finally {
     bookingMeeting.value = false
   }
@@ -2816,13 +2816,13 @@ const removeCondition = (index) => {
   }
 }
 
-// Pre-Application Meeting Request
+// Council Meeting Request
 const meetingResource = createResource({
   url: 'lodgeick.api.book_council_meeting',
   makeParams: (values) => values,
   onSuccess: (data) => {
     if (data && data.success) {
-      alert(`✅ Pre-Application Meeting Request Sent!\n\nTask #${data.task_id} has been created for the planning team.\n\nThey will contact you within 2 business days to schedule.`)
+      alert(`✅ Council Meeting Request Sent!\n\nTask #${data.task_id} has been created for the planning team.\n\nThey will contact you within 2 business days to schedule.`)
     } else {
       alert('Meeting request sent successfully! The planning team will contact you soon.')
     }
@@ -2830,7 +2830,7 @@ const meetingResource = createResource({
   },
   onError: (error) => {
     console.error('Error requesting meeting:', error)
-    alert('Failed to request pre-application meeting. Please try again or contact the planning team directly.')
+    alert('Failed to request council meeting. Please try again or contact the planning team directly.')
     requestingMeeting.value = false
   }
 })
@@ -2841,7 +2841,7 @@ const requestPreAppMeeting = async () => {
     return
   }
 
-  if (!confirm('Request a pre-application meeting? A planning officer will contact you within 2 business days to schedule.\n\nNote: You should save your application as a draft first.')) {
+  if (!confirm('Request a council meeting? A planning officer will contact you within 2 business days to schedule.\n\nNote: You should save your application as a draft first.')) {
     return
   }
 
@@ -2860,11 +2860,11 @@ const requestPreAppMeeting = async () => {
     // Then request the meeting
     meetingResource.submit({
       request_id: draftResult.request_id,
-      meeting_type: 'Pre-Application Meeting'
+      meeting_type: 'Council Meeting'
     })
   } catch (error) {
     console.error('Error in meeting request:', error)
-    alert('Failed to request pre-application meeting. Please try again.')
+    alert('Failed to request council meeting. Please try again.')
     requestingMeeting.value = false
   }
 }
