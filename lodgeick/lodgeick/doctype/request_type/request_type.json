@@ -15,10 +15,7 @@
   "processing_sla_days",
   "workflow_template",
   "default_assessment_template",
-  "fast_track_available",
   "pre_app_meeting_available",
-  "section_break_conditions",
-  "condition_templates",
   "section_break_fees",
   "base_fee",
   "fee_calculation_method",
@@ -76,9 +73,10 @@
   {
    "fieldname": "processing_sla_days",
    "fieldtype": "Int",
-   "label": "Statutory Timeframe (days)",
+   "label": "Processing SLA (days)",
    "reqd": 1,
-   "default": "20"
+   "default": "20",
+   "description": "Target timeframe for processing this request type"
   },
   {
    "fieldname": "workflow_template",
@@ -94,30 +92,11 @@
    "description": "Auto-assigned when request is acknowledged. Determines which stages and tasks are created."
   },
   {
-   "fieldname": "fast_track_available",
-   "fieldtype": "Check",
-   "label": "Fast-Track Available (s.87AAB RMA)",
-   "default": "0",
-   "description": "Enable fast-track processing option for Controlled activities (Resource Consent only)"
-  },
-  {
    "fieldname": "pre_app_meeting_available",
    "fieldtype": "Check",
    "label": "Pre-Application Meeting Available",
    "default": "1",
    "description": "Allow applicants to schedule pre-application meetings during the application process"
-  },
-  {
-   "fieldname": "section_break_conditions",
-   "fieldtype": "Section Break",
-   "label": "Default Consent Conditions"
-  },
-  {
-   "description": "Condition templates that will be automatically applied to Resource Consent Applications of this type",
-   "fieldname": "condition_templates",
-   "fieldtype": "Table",
-   "label": "Condition Templates",
-   "options": "Request Type Condition Template"
   },
   {
    "fieldname": "section_break_fees",
