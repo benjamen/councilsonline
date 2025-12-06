@@ -8,6 +8,7 @@
   "parent_step_code",
   "section_code",
   "section_title",
+  "section_description",
   "section_type",
   "column_break_1",
   "sequence",
@@ -41,6 +42,12 @@
    "label": "Section Title",
    "reqd": 1,
    "description": "Display title shown to users (e.g., 'Personal Details', 'Contact Information')"
+  },
+  {
+   "fieldname": "section_description",
+   "fieldtype": "Text",
+   "label": "Section Description",
+   "description": "Optional description text shown at the top of the section"
   },
   {
    "fieldname": "section_type",

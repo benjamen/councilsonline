@@ -1,0 +1,451 @@
+# Lodgeick Platform Architecture
+
+## Overview
+
+Lodgeick is a multi-council platform for managing civic applications (Resource Consents, Building Consents, Social Pensions, etc.) with a flexible, configuration-driven architecture.
+
+---
+
+## Core Architecture Patterns
+
+### 1. Polymorphic Application Linking
+
+The platform uses a **polymorphic relationship** between Request (workflow) and Application (domain-specific data).
+
+```
+Request (Workflow Container)
+  ├─ application_doctype: "Resource Consent Application"
+  └─ application_name: "RC-APP-00001" (Dynamic Link)
+       │
+       └──> Resource Consent Application (Domain Data)
+              ├─ request: back-reference to Request
+              ├─ consent_types (child table)
+              ├─ activity_status
+              ├─ statutory_clock_started
+              └─ ... (189 RC-specific fields)
+
+Request (Workflow Container)
+  ├─ application_doctype: "SPISC Application"
+  └─ application_name: "SPISC-00001" (Dynamic Link)
+       │
+       └──> SPISC Application (Domain Data)
+              ├─ request: back-reference to Request
+              ├─ full_name
+              ├─ birth_date, age, sex
+              └─ ... (61 pension-specific fields)
+```
+
+**Benefits**:
+- Single Request DocType supports multiple application types
+- Type-safe via Dynamic Link (uses actual DocType names)
+- Bidirectional navigation (Request ↔ Application)
+- New application types can be added without changing Request
+
+**Implementation**: See `/workspace/development/frappe-bench/apps/lodgeick/lodgeick/api.py` lines 732-743
+
+---
+
+### 2. Request Type Configuration System
+
+Dynamic form generation via a **flattened three-level hierarchy**.
+
+#### Why Flattened?
+
+Frappe doesn't support nested child tables. Instead of:
+```
+Request Type
+  └─ Steps (child table)
+       └─ Sections (nested - NOT POSSIBLE)
+            └─ Fields (nested - NOT POSSIBLE)
+```
+
+We use **parent code linkage**:
+```
+Request Type
+  ├─ step_configs (child table)
+  │    └─ step_code: "rc_applicant_details"
+  │
+  ├─ step_sections (child table)
+  │    └─ parent_step_code: "rc_applicant_details" (links to step)
+  │    └─ section_code: "applicant_info"
+  │
+  └─ step_fields (child table)
+       └─ parent_section_code: "applicant_info" (links to section)
+       └─ field_name: "applicant_name"
+```
+
+#### Configuration Tables
+
+**Request Type Step Config** (10 fields)
+- `step_number`, `step_code`, `step_title`
+- `step_component` (default: DynamicStepRenderer)
+- `step_description` (optional help text)
+- `is_enabled`, `is_required`, `show_on_review`
+- `depends_on` (JavaScript conditional logic)
+
+**Request Type Step Section** (11 fields)
+- `parent_step_code` (links to step)
+- `section_code`, `section_title`, `section_description`
+- `section_type` (Section/Tab/Accordion/Field Group)
+- `sequence`, `is_enabled`, `is_required`, `show_on_review`
+- `depends_on` (JavaScript conditional logic)
+
+**Request Type Step Field** (15 fields)
+- `parent_section_code` (links to section)
+- `field_name`, `field_label`, `field_type`
+- `is_required`, `show_on_review`, `review_label`
+- `options`, `default_value`, `depends_on`, `validation` (JavaScript)
+- Supports 14 field types: Data, Select, Check, Text, Text Editor, Attach, Link, Table, Date, Float, Currency, etc.
+
+#### Example: Resource Consent - New Zealand
+
+**File**: `lodgeick/request_type/resource_consent_-_new_zealand/resource_consent_-_new_zealand.json`
+- **9 steps**: Applicant → Property → Consent → Site → Consultation → AEE → Documents → Conditions → Declaration
+- **27 sections**: Grouped by step
+- **90 fields**: All RMA compliance requirements
+- **1,298 lines** of JSON configuration
+
+---
+
+### 3. Request DocType - Workflow Orchestration
+
+**Purpose**: Cross-domain workflow container
+
+**Key Responsibilities**:
+- Workflow state management (Draft → Submitted → Processing → Decision)
+- Council routing and assignment
+- Applicant and agent information (single source of truth)
+- Timeline tracking (submitted, acknowledged, target/actual completion dates)
+- Fee calculation and payment tracking
+- Assessment Project integration (auto-created on acknowledgment)
+
+**Does NOT contain**: Domain-specific data (that's in Application DocTypes)
+
+**Fields** (74 total):
+- Core: `request_number`, `request_type`, `status`, `workflow_state`
+- Council: `council`, `request_category`
+- People: `applicant` (User link), `agent`, `organization`
+- Polymorphic: `application_doctype`, `application_name` (Dynamic Link)
+- Timeline: `submitted_date`, `acknowledged_date`, `target_completion_date`
+- Financial: `total_fees_incl_gst`, `payment_status`, `fees` (child table)
+- Assessment: `assessment_project` (auto-created)
+
+---
+
+### 4. Application DocTypes - Domain-Specific Data
+
+#### Resource Consent Application (189 fields, 11 child tables)
+
+**Purpose**: RMA (Resource Management Act) compliance
+
+**Key Sections**:
+- Consent Types (child table): Land Use, Subdivision, Discharge, Water, Coastal
+- Activity Status: Permitted, Controlled, Restricted Discretionary, Discretionary, Non-Complying, Prohibited
+- Assessment of Environmental Effects (Schedule 4 RMA)
+- Notification Level: Non-Notified, Limited Notified, Fully Notified
+- Statutory Clock: Working days tracking per RMA sections 91-115
+- Natural Hazards (child table): NES compliance
+- Affected Parties (child table): Written approvals tracking
+- Consultation: Iwi consultation, affected parties
+- Conditions (child table): Proposed and final conditions
+- Decision: Approve/Decline with conditions
+
+**Child Tables**:
+1. RC Consent Type
+2. RC Affected Party
+3. RC Natural Hazard
+4. Resource Consent Condition (proposed)
+5. Resource Consent Condition (final)
+6. Resource Consent Additional Consent
+7. Resource Consent PBA Contact (Permitted Boundary Activity)
+8. Resource Consent Consulted Organization
+9. Resource Consent Application Document
+10. Resource Consent Lodgement Payment
+11. HAIL Activity (Hazardous Activities and Industries List)
+
+#### SPISC Application (61 fields)
+
+**Purpose**: Social Pension for Indigent Senior Citizens (Philippines)
+
+**Key Sections**:
+- Personal Information: `full_name`, `birth_date`, `age` (auto-calculated), `sex`, `civil_status`
+- Economic Status: `monthly_income`, `is_4ps_beneficiary`, `poverty_score`
+- Identity: `philsys_id`, `sss_number`, `osca_id`
+- Documents: Barangay cert, birth certificate, valid ID, photo, medical cert
+- Assessment: `eligibility_status`, `eligibility_notes`
+- Payment: `monthly_pension_amount` (PHP 500), `payment_method`, bank details
+
+**Syncs back to Request**: Updates `property_address`, `brief_description` via `db_set()`
+
+---
+
+### 5. Data Flow: Request → Application → Assessment Project
+
+```
+1. User submits form via NewRequest.vue
+   ↓
+2. API creates Request (workflow container)
+   ↓
+3. API creates Application (domain-specific data)
+   - Resource Consent Application (RMA)
+   - SPISC Application (pension)
+   - Building Consent Application (building code)
+   ↓
+4. Request.application_doctype = "Resource Consent Application"
+   Request.application_name = "RC-APP-00001"
+   ↓
+5. On acknowledgment: Assessment Project auto-created
+   - Links to Request
+   - Provides task tracking, team collaboration
+   - Stage-based workflow
+```
+
+---
+
+## Current Implementation Status
+
+### ✅ Fully Implemented
+
+1. **Polymorphic Application Linking**: Request ↔ Multiple Application types
+2. **Request Type Configuration**: 90-field RC config proves scalability
+3. **Flattened Hierarchy**: Works efficiently without nested child tables
+4. **SPISC Dynamic Rendering**: Uses DynamicStepRenderer correctly
+5. **Property Field Mapping**: All 7 mandatory Property fields mapped (recent fix)
+6. **Consent Types Child Table**: Fixed to use rows instead of strings (recent fix)
+
+### ⚠️ Partially Implemented
+
+1. **Resource Consent Uses Hardcoded Steps**: Lines 1100-1109 in `NewRequest.vue`
+   - Has configuration but bypasses it
+   - Uses 8 hardcoded step components (Step1-Step8)
+   - **Resolution**: Phase 2.1 migration to dynamic config
+
+2. **Conditional Logic Engine**: `depends_on` fields exist but evaluation stubbed
+   - Frontend has TODO comments
+   - Tab/Accordion rendering incomplete
+   - **Resolution**: Phase 2.2 implementation
+
+3. **Applicant Information Duplication**: Stored in both Request and SPISC Application
+   - **Resolution**: Phase 2.3 standardization
+
+4. **Payment Steps Hardcoded**: API auto-injects payment/bank steps
+   - Lines 3984-4114 in `api.py`
+   - **Resolution**: Phase 2.4 move to configuration
+
+### ❌ Not Implemented
+
+1. **Validation JavaScript Execution**: Stored in config but not executed
+   - **Resolution**: Phase 3.1
+
+2. **Step Template Library**: No reusable step patterns
+   - **Resolution**: Phase 3.2
+
+3. **Configuration UI**: Manual JSON editing required
+   - **Resolution**: Phase 3.3
+
+4. **Bidirectional Sync Events**: Only SPISC syncs back to Request
+   - **Resolution**: Phase 3.4
+
+---
+
+## Design Decisions & Rationale
+
+### Why Polymorphic Link Instead of Inheritance?
+
+**Considered**: Making all applications inherit from base "Application" class
+
+**Chosen**: Polymorphic link with separate DocTypes
+
+**Reasons**:
+1. Frappe doesn't support true inheritance (only DocType extension)
+2. Domain models are vastly different (RC has 189 fields, SPISC has 61)
+3. Easier to maintain separate schemas
+4. Councils can customize individual application types
+5. No shared fields to justify inheritance overhead
+
+### Why Flattened Configuration Instead of Nested?
+
+**Constraint**: Frappe doesn't support nested child tables
+
+**Solution**: Parent code linkage (step_code → parent_step_code → parent_section_code)
+
+**Benefits**:
+1. Single-level queries (fast)
+2. No recursive loading
+3. Each table independently manageable
+4. Clear separation of concerns
+
+### Why Request + Application Instead of Single DocType?
+
+**Alternative**: One big DocType with all fields
+
+**Chosen**: Separate Request (workflow) and Application (domain)
+
+**Reasons**:
+1. Workflow logic reusable across all application types
+2. Domain-specific validations isolated
+3. Different access patterns (workflow vs data entry)
+4. Cleaner permission model
+5. Easier to extend with new application types
+
+---
+
+## Sync Patterns
+
+### Current State (Inconsistent)
+
+**SPISC Application → Request**:
+```python
+request.db_set("property_address", f"{address_line}, {barangay}")
+request.db_set("brief_description", f"{full_name} - SPISC Application (Age: {age})")
+```
+
+**Resource Consent Application → Request**:
+- No automatic sync
+- Display fields removed (Phase 1 cleanup)
+
+### Recommended Pattern (Future)
+
+Use Frappe hooks for automatic sync:
+```python
+# In Application DocType hooks
+def on_update(self):
+    if self.request:
+        request = frappe.get_doc("Request", self.request)
+        request.db_set("brief_description", self.get_summary())
+        # Trigger events for real-time updates
+```
+
+---
+
+## File Structure
+
+```
+lodgeick/
+├── lodgeick/
+│   ├── doctype/
+│   │   ├── request/                    # Workflow container
+│   │   ├── request_type/               # Configuration parent
+│   │   ├── request_type_step_config/   # Step definitions
+│   │   ├── request_type_step_section/  # Section definitions
+│   │   ├── request_type_step_field/    # Field definitions
+│   │   ├── resource_consent_application/  # RC domain data
+│   │   ├── spisc_application/          # Pension domain data
+│   │   └── ...
+│   ├── request_type/
+│   │   └── resource_consent_-_new_zealand/  # RC-NZ configuration
+│   │       └── resource_consent_-_new_zealand.json (1,298 lines)
+│   └── api.py                          # Core API endpoints
+├── frontend/
+│   ├── src/
+│   │   ├── pages/
+│   │   │   └── NewRequest.vue          # Request wizard
+│   │   └── components/
+│   │       └── request-steps/
+│   │           ├── DynamicStepRenderer.vue   # Config-driven rendering
+│   │           ├── DynamicFieldRenderer.vue
+│   │           ├── Step1ApplicantProposal.vue  # RC legacy (to be removed)
+│   │           ├── Step2NaturalHazards.vue     # RC legacy
+│   │           └── ... (Step3-Step8)
+```
+
+---
+
+## Migration Path: Hardcoded RC → Dynamic Config
+
+### Current (Phase 1 Complete)
+
+- ✅ 14 display fields removed from RC Application
+- ✅ Schema fields added (step_description, section_description)
+- ✅ Documentation created
+
+### Next (Phase 2)
+
+1. **Remove hardcoded RC steps** (`NewRequest.vue` lines 1100-1109)
+2. **Enable dynamic config for RC** (usesConfigurableSteps = true)
+3. **Keep legacy components as reference** (don't delete immediately)
+4. **Test thoroughly** (E2E Playwright suite)
+
+### Future (Phase 3)
+
+1. Delete legacy Step1-Step8 components
+2. Build configuration UI
+3. Create step template library
+
+---
+
+## Testing Strategy
+
+### E2E Tests
+
+**File**: `frontend/tests/e2e/rc-application.spec.js`
+- 37 tests total
+- 36/37 passing (97.3% pass rate)
+- Covers desktop and mobile viewports
+
+**Backend Test**: `lodgeick/test_utils.py`
+- `test_rc_e2e_submission()` - Full submission flow
+- Validates Property creation with 7 mandatory fields
+- Tests RC Application creation with child tables
+
+---
+
+## Performance Considerations
+
+### Request Type Configuration Loading
+
+**Current**: Single query loads all steps, sections, fields
+```python
+# api.py get_request_type_steps()
+step_configs = frappe.get_all("Request Type Step Config", ...)
+step_sections = frappe.get_all("Request Type Step Section", ...)
+step_fields = frappe.get_all("Request Type Step Field", ...)
+```
+
+**Optimization**: Already efficient due to flattened structure (3 queries vs recursive loading)
+
+### Child Table Performance
+
+**RC Application**: 11 child tables
+- Only load when needed (not eager loaded)
+- Use pagination for large tables (e.g., conditions)
+
+---
+
+## Security Model
+
+### Permissions
+
+**Request**:
+- Applicant: Create, Read own
+- Agent: Create, Read delegated
+- Council Staff: Read, Update assigned
+- Council Manager: All operations
+
+**Application DocTypes**:
+- Inherit Request permissions
+- Domain-specific validations in `.py` files
+
+---
+
+## Future Enhancements
+
+1. **Template Library** (Phase 3.2): Reusable step patterns
+2. **Configuration UI** (Phase 3.3): Visual editor for Request Types
+3. **Validation Engine** (Phase 3.1): Execute JavaScript validation
+4. **Real-time Sync** (Phase 3.4): Event-driven Request ↔ Application updates
+5. **Versioning**: Track Request Type configuration changes
+6. **Multi-language**: Translate step/section/field labels
+
+---
+
+## Related Documentation
+
+- Plan: `/home/frappe/.claude/plans/vectorized-riding-waffle.md`
+- Test Summary: `/tmp/RC_PROPERTY_FIELDS_FIX_SUMMARY.md`
+- API Documentation: See docstrings in `lodgeick/api.py`
+
+---
+
+**Last Updated**: 2025-12-07
+**Architecture Version**: 1.0 (Post Phase 1 Cleanup)
