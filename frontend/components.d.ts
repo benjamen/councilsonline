@@ -8,8 +8,10 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ActivityStatusSelector: typeof import('./src/components/ActivityStatusSelector.vue')['default']
     AddressLookup: typeof import('./src/components/AddressLookup.vue')['default']
     CameraUpload: typeof import('./src/components/CameraUpload.vue')['default']
+    ConsentTypeSelector: typeof import('./src/components/ConsentTypeSelector.vue')['default']
     ContactSelector: typeof import('./src/components/common/ContactSelector.vue')['default']
     CouncilSelector: typeof import('./src/components/CouncilSelector.vue')['default']
     'CouncilSelector.OLD': typeof import('./src/components/CouncilSelector.OLD.vue')['default']
@@ -17,8 +19,10 @@ declare module 'vue' {
     DocumentsUploadForm: typeof import('./src/components/DocumentsUploadForm.vue')['default']
     DynamicFieldRenderer: typeof import('./src/components/DynamicFieldRenderer.vue')['default']
     DynamicStepRenderer: typeof import('./src/components/DynamicStepRenderer.vue')['default']
+    EnhancedApplicationReview: typeof import('./src/components/EnhancedApplicationReview.vue')['default']
     FeatureCard: typeof import('./src/components/FeatureCard.vue')['default']
     FormSection: typeof import('./src/components/FormSection.vue')['default']
+    NZAddressInput: typeof import('./src/components/NZAddressInput.vue')['default']
     PersonalInfoForm: typeof import('./src/components/PersonalInfoForm.vue')['default']
     PhilippinesAddressInput: typeof import('./src/components/PhilippinesAddressInput.vue')['default']
     ProcessStep: typeof import('./src/components/ProcessStep.vue')['default']
@@ -60,5 +64,6 @@ declare module 'vue' {
     TaskDialog: typeof import('./src/components/TaskDialog.vue')['default']
     TaskManagement: typeof import('./src/components/TaskManagement.vue')['default']
     Tooltip: typeof import('./src/components/Tooltip.vue')['default']
+    UniversalAddressLookup: typeof import('./src/components/UniversalAddressLookup.vue')['default']
   }
 }
