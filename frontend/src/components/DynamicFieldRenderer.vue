@@ -21,16 +21,23 @@
             :id="field.field_name"
             type="text"
             v-model="localData[field.field_name]"
+            @blur="handleFieldValidation(field)"
             :required="field.is_required"
             class="block w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-            :class="{'border-blue-500 ring-2 ring-blue-100': localData[field.field_name]}"
+            :class="{
+              'border-blue-500 ring-2 ring-blue-100': localData[field.field_name] && !getValidationError(field.field_name),
+              'border-red-500 ring-2 ring-red-100': getValidationError(field.field_name)
+            }"
             :placeholder="getPlaceholder(field)"
           />
           <div v-if="getFieldIcon(field)" class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
             <span v-html="getFieldIcon(field)" class="text-gray-400"></span>
           </div>
         </div>
-        <p v-if="field.description" class="mt-1 text-xs text-gray-500">{{ field.description }}</p>
+        <p v-if="getValidationError(field.field_name)" class="mt-1 text-xs text-red-600">
+          {{ getValidationError(field.field_name) }}
+        </p>
+        <p v-else-if="field.description" class="mt-1 text-xs text-gray-500">{{ field.description }}</p>
       </div>
 
       <!-- Select Dropdown -->
@@ -230,11 +237,12 @@
 </template>
 
 <script setup>
-import { computed, watch } from 'vue'
+import { computed, watch, ref } from 'vue'
 import CameraUpload from './CameraUpload.vue'
 import PhilippinesAddressInput from './PhilippinesAddressInput.vue'
 import Tooltip from './Tooltip.vue'
 import { isFieldVisible } from '../utils/conditionalLogic'
+import { validateField } from '../utils/fieldValidation'
 
 const props = defineProps({
   fields: {
@@ -315,6 +323,32 @@ const getFieldIcon = (field) => {
 const getSelectOptions = (optionsString) => {
   if (!optionsString) return []
   return optionsString.split('\n').map(opt => opt.trim()).filter(Boolean)
+}
+
+// Validation state - tracks validation errors for each field
+const validationErrors = ref({})
+
+// Validate a single field
+const handleFieldValidation = (field) => {
+  if (!field.validation) {
+    // Clear any existing error if no validation rule
+    delete validationErrors.value[field.field_name]
+    return
+  }
+
+  const value = localData.value[field.field_name]
+  const result = validateField(value, field.validation, localData.value)
+
+  if (!result.valid) {
+    validationErrors.value[field.field_name] = result.message
+  } else {
+    delete validationErrors.value[field.field_name]
+  }
+}
+
+// Get validation error message for a field
+const getValidationError = (fieldName) => {
+  return validationErrors.value[fieldName] || ''
 }
 
 // Handle file upload

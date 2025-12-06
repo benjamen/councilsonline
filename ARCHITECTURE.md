@@ -215,12 +215,17 @@ Request Type
 7. **Property Field Mapping**: All 7 mandatory Property fields mapped
 8. **Consent Types Child Table**: Fixed to use rows instead of strings
 
+### ⚠️ Partially Implemented
+
+1. **Validation JavaScript Execution**: Implemented for Data fields, pending for other field types (Phase 3.1 in progress)
+   - Built-in validation: email, phone, url, number
+   - Custom JavaScript expressions: `eval:value >= 18`
+   - Validation errors displayed on blur
+   - Only Data field type has full validation UI (other field types pending)
+
 ### ❌ Not Implemented
 
-1. **Validation JavaScript Execution**: Stored in config but not executed
-   - **Resolution**: Phase 3.1
-
-2. **Step Template Library**: No reusable step patterns
+1. **Step Template Library**: No reusable step patterns
    - **Resolution**: Phase 3.2
 
 3. **Configuration UI**: Manual JSON editing required
