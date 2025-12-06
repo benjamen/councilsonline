@@ -1,0 +1,108 @@
+{
+  "template_name": "applicant_details",
+  "template_title": "Applicant Details Template",
+  "description": "Standard applicant information collection (name, contact, address)",
+  "version": "1.0",
+  "step_config": {
+    "step_code": "applicant_details",
+    "step_title": "Applicant Details",
+    "step_component": "DynamicStepRenderer",
+    "is_enabled": 1,
+    "is_required": 1,
+    "show_on_review": 1
+  },
+  "sections": [
+    {
+      "section_code": "personal_info",
+      "section_title": "Personal Information",
+      "section_type": "Standard",
+      "sequence": 1,
+      "is_enabled": 1,
+      "is_required": 1,
+      "show_on_review": 1,
+      "fields": [
+        {
+          "field_name": "applicant_name",
+          "field_label": "Full Name",
+          "field_type": "Data",
+          "is_required": 1,
+          "show_on_review": 1,
+          "review_label": "Applicant Name",
+          "description": "Enter your full legal name as it appears on official documents"
+        },
+        {
+          "field_name": "applicant_email",
+          "field_label": "Email Address",
+          "field_type": "Data",
+          "is_required": 1,
+          "show_on_review": 1,
+          "review_label": "Email",
+          "validation": "email",
+          "description": "We will send updates and notifications to this email"
+        },
+        {
+          "field_name": "applicant_phone",
+          "field_label": "Phone Number",
+          "field_type": "Data",
+          "is_required": 1,
+          "show_on_review": 1,
+          "review_label": "Phone",
+          "validation": "phone",
+          "description": "Include country code if applicable"
+        }
+      ]
+    },
+    {
+      "section_code": "address",
+      "section_title": "Address",
+      "section_type": "Standard",
+      "sequence": 2,
+      "is_enabled": 1,
+      "is_required": 1,
+      "show_on_review": 1,
+      "fields": [
+        {
+          "field_name": "street_address",
+          "field_label": "Street Address",
+          "field_type": "Data",
+          "is_required": 1,
+          "show_on_review": 1,
+          "review_label": "Street Address"
+        },
+        {
+          "field_name": "city",
+          "field_label": "City/Town",
+          "field_type": "Data",
+          "is_required": 1,
+          "show_on_review": 1,
+          "review_label": "City"
+        },
+        {
+          "field_name": "postal_code",
+          "field_label": "Postal/ZIP Code",
+          "field_type": "Data",
+          "is_required": 1,
+          "show_on_review": 1,
+          "review_label": "Postal Code"
+        },
+        {
+          "field_name": "country",
+          "field_label": "Country",
+          "field_type": "Select",
+          "is_required": 1,
+          "show_on_review": 1,
+          "review_label": "Country",
+          "options": "New Zealand\nPhilippines\nAustralia\nOther",
+          "default_value": "New Zealand"
+        }
+      ]
+    }
+  ],
+  "customization_options": {
+    "include_organization": false,
+    "include_agent_fields": false,
+    "address_format": "international",
+    "required_fields": ["applicant_name", "applicant_email", "applicant_phone"]
+  },
+  "usage_notes": "This template collects basic applicant information. Set include_organization=true to add organization/company fields. Set include_agent_fields=true for agent representation."
+}

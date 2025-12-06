@@ -1,0 +1,103 @@
+{
+  "template_name": "payment_collection",
+  "template_title": "Payment & Invoice Details Template",
+  "description": "Standard payment collection fields for fees and invoicing (payments FROM applicant)",
+  "version": "1.0",
+  "step_config": {
+    "step_code": "payment_collection",
+    "step_title": "Payment & Invoice Details",
+    "step_component": "DynamicStepRenderer",
+    "is_enabled": 1,
+    "is_required": 1,
+    "show_on_review": 1,
+    "description": "Provide payment and invoicing information for processing fees"
+  },
+  "sections": [
+    {
+      "section_code": "invoice_details",
+      "section_title": "Invoice Information",
+      "section_type": "Standard",
+      "sequence": 1,
+      "is_enabled": 1,
+      "is_required": 1,
+      "show_on_review": 1,
+      "fields": [
+        {
+          "field_name": "invoice_to",
+          "field_label": "Invoice To",
+          "field_type": "Select",
+          "is_required": 1,
+          "show_on_review": 1,
+          "review_label": "Invoice Recipient",
+          "options": "Applicant\nOrganization\nAgent\nOther",
+          "default_value": "Applicant"
+        },
+        {
+          "field_name": "invoice_name",
+          "field_label": "Name for Invoice",
+          "field_type": "Data",
+          "is_required": 1,
+          "show_on_review": 1,
+          "review_label": "Invoice Name",
+          "description": "Name to appear on the invoice"
+        },
+        {
+          "field_name": "invoice_email",
+          "field_label": "Invoice Email",
+          "field_type": "Data",
+          "is_required": 1,
+          "show_on_review": 1,
+          "review_label": "Invoice Email",
+          "validation": "email",
+          "description": "Email address to receive the invoice"
+        },
+        {
+          "field_name": "invoice_address",
+          "field_label": "Billing Address",
+          "field_type": "Text",
+          "is_required": 1,
+          "show_on_review": 1,
+          "review_label": "Billing Address",
+          "description": "Full billing address for the invoice"
+        }
+      ]
+    },
+    {
+      "section_code": "payment_method",
+      "section_title": "Payment Method",
+      "section_type": "Standard",
+      "sequence": 2,
+      "is_enabled": 1,
+      "is_required": 1,
+      "show_on_review": 1,
+      "fields": [
+        {
+          "field_name": "payment_method",
+          "field_label": "Preferred Payment Method",
+          "field_type": "Select",
+          "is_required": 1,
+          "show_on_review": 1,
+          "review_label": "Payment Method",
+          "options": "Credit Card\nBank Transfer\nCash\nCheque\nOnline Payment",
+          "description": "Select how you would like to pay"
+        },
+        {
+          "field_name": "purchase_order_number",
+          "field_label": "Purchase Order Number (if applicable)",
+          "field_type": "Data",
+          "is_required": 0,
+          "show_on_review": 1,
+          "review_label": "PO Number",
+          "depends_on": "eval:formData.invoice_to === 'Organization'"
+        }
+      ]
+    }
+  ],
+  "customization_options": {
+    "include_tax_id": false,
+    "include_fast_track_option": false,
+    "payment_methods": ["Credit Card", "Bank Transfer", "Cash", "Cheque"],
+    "calculate_fees_automatically": true
+  },
+  "usage_notes": "Use this template for request types that collect fees FROM applicants (e.g., Resource Consent lodgement fees). Set collects_payment=1 on Request Type."
+}

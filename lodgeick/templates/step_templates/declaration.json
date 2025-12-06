@@ -1,0 +1,79 @@
+{
+  "template_name": "declaration",
+  "template_title": "Declaration & Submission Template",
+  "description": "Standard declaration step with truth, consent, and signature fields",
+  "version": "1.0",
+  "step_config": {
+    "step_code": "declaration",
+    "step_title": "Declaration & Submission",
+    "step_component": "DynamicStepRenderer",
+    "is_enabled": 1,
+    "is_required": 1,
+    "show_on_review": 1
+  },
+  "sections": [
+    {
+      "section_code": "declaration",
+      "section_title": "Applicant Declaration",
+      "section_type": "Standard",
+      "sequence": 1,
+      "is_enabled": 1,
+      "is_required": 1,
+      "show_on_review": 1,
+      "fields": [
+        {
+          "field_name": "declaration_accuracy",
+          "field_label": "I declare that the information provided in this application is true and accurate to the best of my knowledge",
+          "field_type": "Check",
+          "is_required": 1,
+          "show_on_review": 1,
+          "review_label": "Information Accuracy Declaration",
+          "validation": "eval:value === 1"
+        },
+        {
+          "field_name": "declaration_authority",
+          "field_label": "I authorize the council to verify the information provided and conduct necessary investigations",
+          "field_type": "Check",
+          "is_required": 1,
+          "show_on_review": 1,
+          "review_label": "Verification Authority",
+          "validation": "eval:value === 1"
+        },
+        {
+          "field_name": "declaration_acknowledgment",
+          "field_label": "I acknowledge that providing false or misleading information may result in rejection of this application",
+          "field_type": "Check",
+          "is_required": 1,
+          "show_on_review": 1,
+          "review_label": "False Information Acknowledgment",
+          "validation": "eval:value === 1"
+        },
+        {
+          "field_name": "applicant_signature",
+          "field_label": "Applicant Signature (Full Name)",
+          "field_type": "Data",
+          "is_required": 1,
+          "show_on_review": 1,
+          "review_label": "Signature",
+          "description": "Type your full legal name as your electronic signature"
+        },
+        {
+          "field_name": "signature_date",
+          "field_label": "Date",
+          "field_type": "Date",
+          "is_required": 1,
+          "show_on_review": 1,
+          "review_label": "Date Signed",
+          "default_value": "eval:frappe.utils.nowdate()"
+        }
+      ]
+    }
+  ],
+  "customization_options": {
+    "add_privacy_consent": false,
+    "add_terms_acceptance": false,
+    "add_witness_fields": false,
+    "custom_declarations": []
+  },
+  "usage_notes": "This template provides standard declaration fields. Customize by adding additional declaration checkboxes via customization_options.custom_declarations array."
+}

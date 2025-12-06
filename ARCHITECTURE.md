@@ -229,15 +229,22 @@ Request Type
 
 (None - all planned features for Phase 1-3.1 complete)
 
+### ✅ Fully Implemented (continued)
+
+10. **Step Template Library**: Reusable step patterns (Phase 3.2 complete)
+   - 4 standard templates: declaration, applicant_details, bank_details, payment_collection
+   - Template loader utility: [step_templates.py](lodgeick/templates/step_templates.py)
+   - JSON-based templates with customization options
+   - Programmatic application via `apply_template()` function
+   - Reduces duplication, ensures consistency
+   - Full documentation: [Templates README](lodgeick/templates/step_templates/README.md)
+
 ### ❌ Not Implemented
 
-1. **Step Template Library**: No reusable step patterns
-   - **Resolution**: Phase 3.2
-
-3. **Configuration UI**: Manual JSON editing required
+1. **Configuration UI**: Manual JSON editing required
    - **Resolution**: Phase 3.3
 
-4. **Bidirectional Sync Events**: Only SPISC syncs back to Request
+2. **Bidirectional Sync Events**: Only SPISC syncs back to Request
    - **Resolution**: Phase 3.4
 
 ---
@@ -436,6 +443,87 @@ def on_update(self):
         request = frappe.get_doc("Request", self.request)
         request.db_set("brief_description", self.get_summary())
         # Trigger events for real-time updates
+```
+
+---
+
+## Step Template Library (Phase 3.2)
+
+### Overview
+
+Step templates are reusable JSON-based patterns that eliminate duplication across Request Type configurations. Instead of manually defining common steps like "Declaration" or "Applicant Details" for every request type, templates provide pre-configured step/section/field structures.
+
+### Available Templates
+
+| Template | Purpose | Fields | Use Case |
+|----------|---------|--------|----------|
+| `declaration.json` | Declaration & Signature | 5 fields | Final step for most request types |
+| `applicant_details.json` | Applicant Information | 7 fields | Initial applicant data collection |
+| `bank_details.json` | Bank Account (payouts) | 5 fields | Pension, rebates (TO applicant) |
+| `payment_collection.json` | Payment & Invoice | 6 fields | Fees, lodgements (FROM applicant) |
+
+### Usage Example
+
+```python
+from lodgeick.templates.step_templates import apply_template
+
+# Create new request type
+rt_doc = frappe.new_doc("Request Type")
+rt_doc.name = "Building Consent"
+
+# Apply applicant template
+apply_template(rt_doc, "applicant_details", step_number=1)
+
+# Add custom steps (2-6)...
+
+# Apply payment template with customization
+apply_template(rt_doc, "payment_collection", step_number=7, customization={
+    "include_fast_track_option": True
+})
+
+# Apply declaration template
+apply_template(rt_doc, "declaration", step_number=8)
+
+rt_doc.insert()
+```
+
+### Template Structure
+
+Each template contains:
+- **step_config**: Step metadata (code, title, component)
+- **sections**: Array of section definitions
+- **fields**: Array of field definitions per section
+- **customization_options**: Optional features to enable/disable
+- **usage_notes**: Implementation guidance
+
+### Benefits
+
+1. **Consistency**: Same fields, labels, validations across all request types
+2. **Faster Development**: New request types in minutes instead of hours
+3. **Reduced Duplication**: Write once, use everywhere
+4. **Easier Maintenance**: Update template → affects all using it
+5. **Best Practices**: Templates encode UX patterns and validation rules
+
+### Template Files
+
+- Templates: [lodgeick/templates/step_templates/](lodgeick/templates/step_templates/)
+- Utility Functions: [step_templates.py](lodgeick/templates/step_templates.py)
+- Documentation: [Templates README](lodgeick/templates/step_templates/README.md)
+
+### Helper Functions
+
+```python
+# Load template to inspect
+template = load_template("declaration")
+
+# List all available
+templates = list_available_templates()  # ['declaration', 'applicant_details', ...]
+
+# Get metadata
+info = get_template_info("bank_details")
+
+# Validate structure
+is_valid, errors = validate_template(template_data)
 ```
 
 ---

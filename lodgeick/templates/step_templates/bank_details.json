@@ -1,0 +1,79 @@
+{
+  "template_name": "bank_details",
+  "template_title": "Bank Account Details Template",
+  "description": "Standard bank account information for payment processing (payouts TO applicant)",
+  "version": "1.0",
+  "step_config": {
+    "step_code": "bank_details",
+    "step_title": "Bank Account Details",
+    "step_component": "DynamicStepRenderer",
+    "is_enabled": 1,
+    "is_required": 1,
+    "show_on_review": 0,
+    "description": "Provide your bank account details for payment processing"
+  },
+  "sections": [
+    {
+      "section_code": "bank_account",
+      "section_title": "Bank Account Information",
+      "section_type": "Standard",
+      "sequence": 1,
+      "is_enabled": 1,
+      "is_required": 1,
+      "show_on_review": 0,
+      "fields": [
+        {
+          "field_name": "account_holder_name",
+          "field_label": "Account Holder Name",
+          "field_type": "Data",
+          "is_required": 1,
+          "show_on_review": 0,
+          "description": "Name as it appears on the bank account"
+        },
+        {
+          "field_name": "bank_name",
+          "field_label": "Bank Name",
+          "field_type": "Data",
+          "is_required": 1,
+          "show_on_review": 0,
+          "description": "Full name of the bank"
+        },
+        {
+          "field_name": "account_number",
+          "field_label": "Account Number",
+          "field_type": "Data",
+          "is_required": 1,
+          "show_on_review": 0,
+          "description": "Your bank account number"
+        },
+        {
+          "field_name": "account_type",
+          "field_label": "Account Type",
+          "field_type": "Select",
+          "is_required": 1,
+          "show_on_review": 0,
+          "options": "Savings\nChecking\nCurrent",
+          "default_value": "Savings"
+        },
+        {
+          "field_name": "branch_code",
+          "field_label": "Branch Code (optional)",
+          "field_type": "Data",
+          "is_required": 0,
+          "show_on_review": 0,
+          "description": "Branch or routing number if applicable"
+        }
+      ]
+    }
+  ],
+  "customization_options": {
+    "include_swift_code": false,
+    "include_iban": false,
+    "country_specific_fields": {
+      "philippines": ["branch_code"],
+      "new_zealand": [],
+      "australia": ["bsb_number"]
+    }
+  },
+  "usage_notes": "Use this template for request types that make payments TO applicants (e.g., SPISC pensions, rebates). Set make_payment=1 on Request Type."
+}
