@@ -4008,20 +4008,20 @@ def get_request_type_steps(request_type, council_code=None):
 		# Previous code injected payment_collection and bank_details steps based on flags
 		# Now these should be added to Request Type configuration instead
 
-	# Apply council-specific overrides if provided
-	if council_code:
-		steps = apply_council_step_overrides(steps, request_type, council_code)
+		# Apply council-specific overrides if provided
+		if council_code:
+			steps = apply_council_step_overrides(steps, request_type, council_code)
 
-	# Sort by step_number
-	steps = sorted(steps, key=lambda x: x.get("step_number", 999))
+		# Sort by step_number
+		steps = sorted(steps, key=lambda x: x.get("step_number", 999))
 
-	return {
-		"steps": steps,
-		"uses_config": True,
-		"request_type": request_type,
-		"council_code": council_code
-	}
-	
+		return {
+			"steps": steps,
+			"uses_config": True,
+			"request_type": request_type,
+			"council_code": council_code
+		}
+
 	except Exception as e:
 		frappe.log_error(f"Get Request Type Steps Error: {str(e)}")
 		return {
