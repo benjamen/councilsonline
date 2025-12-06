@@ -98,55 +98,45 @@
           v-model="formData"
         />
 
-        <!-- FRD Step 1: Applicant & Proposal Details (consolidates old Steps 4,5,6) -->
+        <!-- LEGACY: RC-specific hardcoded step components (Phase 2.1 - kept as reference) -->
+        <!-- These are no longer used since RC now uses dynamic configuration -->
+        <!-- Can be safely removed in Phase 3 after thorough testing -->
+        <!--
         <Step1ApplicantProposal
           v-if="getCurrentStepTitle() === 'Applicant & Proposal' && isResourceConsent && !usesConfigurableSteps"
           v-model="formData"
           :user-profile="userProfile"
           :properties="properties"
         />
-
-        <!-- FRD Step 2: Natural Hazards Assessment -->
         <Step2NaturalHazards
           v-if="getCurrentStepTitle() === 'Natural Hazards' && isResourceConsent && !usesConfigurableSteps"
           v-model="formData"
         />
-
-        <!-- FRD Step 3: NES Assessment -->
         <Step3NESAssessment
           v-if="getCurrentStepTitle() === 'NES Assessment' && isResourceConsent && !usesConfigurableSteps"
           v-model="formData"
         />
-
-        <!-- FRD Step 4: Boundary Approvals & Affected Parties -->
         <Step4Approvals
           v-if="getCurrentStepTitle() === 'Approvals' && isResourceConsent && !usesConfigurableSteps"
           v-model="formData"
         />
-
-        <!-- FRD Step 5: Consultation with Other Parties -->
         <Step5Consultation
           v-if="getCurrentStepTitle() === 'Consultation' && isResourceConsent && !usesConfigurableSteps"
           v-model="formData"
         />
-
-        <!-- FRD Step 6: Plans & Documents Upload -->
         <Step6Documents
           v-if="getCurrentStepTitle() === 'Documents' && isResourceConsent && !usesConfigurableSteps"
           v-model="formData"
         />
-
-        <!-- FRD Step 7: Assessment of Environmental Effects (AEE) -->
         <Step7AEE
           v-if="getCurrentStepTitle() === 'AEE' && isResourceConsent && !usesConfigurableSteps"
           v-model="formData"
         />
-
-        <!-- FRD Step 9: Declaration & Submission -->
         <Step9Submission
           v-if="getCurrentStepTitle() === 'Submission' && isResourceConsent && !usesConfigurableSteps"
           v-model="formData"
         />
+        -->
 
         <!-- Review Step (Final Step for all request types) -->
         <div v-if="getCurrentStepTitle() === 'Review'">
@@ -1000,14 +990,16 @@ import Step1CouncilSelection from '../components/request-steps/Step1CouncilSelec
 import Step2RequestType from '../components/request-steps/Step2RequestType.vue'
 import Step3ProcessInfo from '../components/request-steps/Step3ProcessInfo.vue'
 // FRD-compliant step components
-import Step1ApplicantProposal from '../components/request-steps/Step1ApplicantProposal.vue'
-import Step2NaturalHazards from '../components/request-steps/Step2NaturalHazards.vue'
-import Step3NESAssessment from '../components/request-steps/Step3NESAssessment.vue'
-import Step4Approvals from '../components/request-steps/Step4Approvals.vue'
-import Step5Consultation from '../components/request-steps/Step5Consultation.vue'
-import Step6Documents from '../components/request-steps/Step6Documents.vue'
-import Step7AEE from '../components/request-steps/Step7AEE.vue'
-import Step9Submission from '../components/request-steps/Step9Submission.vue'
+// LEGACY: RC-specific hardcoded step components (Phase 2.1 - kept as reference)
+// These imports can be removed in Phase 3 after thorough testing
+// import Step1ApplicantProposal from '../components/request-steps/Step1ApplicantProposal.vue'
+// import Step2NaturalHazards from '../components/request-steps/Step2NaturalHazards.vue'
+// import Step3NESAssessment from '../components/request-steps/Step3NESAssessment.vue'
+// import Step4Approvals from '../components/request-steps/Step4Approvals.vue'
+// import Step5Consultation from '../components/request-steps/Step5Consultation.vue'
+// import Step6Documents from '../components/request-steps/Step6Documents.vue'
+// import Step7AEE from '../components/request-steps/Step7AEE.vue'
+// import Step9Submission from '../components/request-steps/Step9Submission.vue'
 import Step17Review from '../components/request-steps/Step17Review.vue'
 import DynamicStepRenderer from '../components/DynamicStepRenderer.vue'
 import { useCouncilStore } from '../stores/councilStore'
@@ -1084,7 +1076,7 @@ const steps = computed(() => {
   baseSteps.push({ title: 'Process Info', number: baseSteps.length + 1 })
   console.log('[Steps] Added Process Info step')
 
-  // If using configurable steps, add them dynamically
+  // Add configurable steps dynamically
   if (usesConfigurableSteps.value && stepConfigs.value.length > 0) {
     stepConfigs.value.forEach((config, index) => {
       baseSteps.push({
@@ -1095,17 +1087,6 @@ const steps = computed(() => {
         isDynamic: true
       })
     })
-  }
-  // Add RC-specific steps (FRD 9-step structure) - backward compatibility
-  else if (isResourceConsent.value) {
-    baseSteps.push({ title: 'Applicant & Proposal', number: baseSteps.length + 1 })  // FRD Step 1
-    baseSteps.push({ title: 'Natural Hazards', number: baseSteps.length + 1 })        // FRD Step 2
-    baseSteps.push({ title: 'NES Assessment', number: baseSteps.length + 1 })         // FRD Step 3
-    baseSteps.push({ title: 'Approvals', number: baseSteps.length + 1 })              // FRD Step 4
-    baseSteps.push({ title: 'Consultation', number: baseSteps.length + 1 })           // FRD Step 5
-    baseSteps.push({ title: 'Documents', number: baseSteps.length + 1 })              // FRD Step 6
-    baseSteps.push({ title: 'AEE', number: baseSteps.length + 1 })                    // FRD Step 7
-    baseSteps.push({ title: 'Submission', number: baseSteps.length + 1 })             // FRD Step 9
   }
 
   // Review step is always last
