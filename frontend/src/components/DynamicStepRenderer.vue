@@ -103,6 +103,7 @@ import { ref, computed, watch } from 'vue'
 import { TabGroup, TabList, Tab, TabPanels, TabPanel, Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
 import { ChevronUpIcon } from '@heroicons/vue/20/solid'
 import DynamicFieldRenderer from './DynamicFieldRenderer.vue'
+import { isSectionVisible } from '../utils/conditionalLogic'
 
 const props = defineProps({
   stepConfig: {
@@ -131,15 +132,7 @@ const visibleSections = computed(() => {
   if (!props.stepConfig.sections) return []
 
   return props.stepConfig.sections.filter(section => {
-    if (!section.is_enabled) return false
-
-    if (section.depends_on) {
-      // TODO: Implement proper conditional logic evaluation
-      // For now, show all enabled sections
-      return true
-    }
-
-    return true
+    return isSectionVisible(section, formData.value)
   })
 })
 

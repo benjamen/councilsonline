@@ -234,6 +234,7 @@ import { computed, watch } from 'vue'
 import CameraUpload from './CameraUpload.vue'
 import PhilippinesAddressInput from './PhilippinesAddressInput.vue'
 import Tooltip from './Tooltip.vue'
+import { isFieldVisible } from '../utils/conditionalLogic'
 
 const props = defineProps({
   fields: {
@@ -256,11 +257,7 @@ const localData = computed({
 // Filter visible fields based on depends_on logic
 const visibleFields = computed(() => {
   return props.fields.filter(field => {
-    if (!field.depends_on) return true
-
-    // TODO: Implement proper conditional logic evaluation
-    // For now, show all fields
-    return true
+    return isFieldVisible(field, localData.value)
   })
 })
 
