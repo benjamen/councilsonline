@@ -2,6 +2,7 @@
  "actions": [],
  "autoname": "field:council_code",
  "creation": "2025-11-26 00:00:00",
+ "default_view": "List",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -35,7 +36,9 @@
   "column_break_5",
   "max_requests_per_month",
   "request_types_section",
-  "enabled_request_types"
+  "enabled_request_types",
+  "payment_accounts_section",
+  "payment_accounts"
  ],
  "fields": [
   {
@@ -211,11 +214,23 @@
    "fieldtype": "Table",
    "label": "Enabled Request Types",
    "options": "Council Request Type"
+  },
+  {
+   "fieldname": "payment_accounts_section",
+   "fieldtype": "Section Break",
+   "label": "Payment Accounts"
+  },
+  {
+   "description": "Bank accounts and payment methods for receiving payments from applicants",
+   "fieldname": "payment_accounts",
+   "fieldtype": "Table",
+   "label": "Payment Accounts",
+   "options": "Council Payment Account"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-11-26 17:37:07.011096",
+ "modified": "2025-12-04 17:08:34.229658",
  "modified_by": "Administrator",
  "module": "Lodgeick",
  "name": "Council",

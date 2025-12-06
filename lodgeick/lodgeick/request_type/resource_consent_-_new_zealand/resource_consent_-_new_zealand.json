@@ -1,0 +1,1299 @@
+{
+ "base_fee": 3500.0,
+ "category": "Resource Consent",
+ "condition_templates": [],
+ "creation": "2025-12-06 00:00:00.000000",
+ "description": "<p>Resource consent is required under the Resource Management Act 1991 (RMA) for activities that may affect the environment. This includes land use, subdivision, discharge of contaminants, water takes, and coastal activities.</p>\n<p><strong>Types of Resource Consent:</strong></p>\n<ul>\n<li><strong>Land Use Consent:</strong> For activities that use land in ways not permitted by the District Plan</li>\n<li><strong>Subdivision Consent:</strong> For dividing land into separate titles or creating unit titles</li>\n<li><strong>Discharge Permit:</strong> For discharging contaminants to air, water, or land</li>\n<li><strong>Water Permit:</strong> For taking, using, damming, or diverting water</li>\n<li><strong>Coastal Permit:</strong> For activities in the coastal marine area</li>\n</ul>",
+ "docstatus": 0,
+ "doctype": "Request Type",
+ "fast_track_available": 1,
+ "fee_calculation_method": "Hourly",
+ "help_text": "<p>The processing time depends on the complexity of your application and whether notification is required. Non-notified applications typically take 20 working days, while notified applications can take 3-6 months.</p>\n<p>You may be required to provide additional information during the assessment process. The council will send you a request for further information (RFI) if needed.</p>",
+ "hourly_rate": 150.0,
+ "idx": 0,
+ "is_active": 1,
+ "modified": "2025-12-06 00:00:00.000000",
+ "modified_by": "Administrator",
+ "name": "Resource Consent - New Zealand",
+ "owner": "Administrator",
+ "pre_app_meeting_available": 1,
+ "processing_sla_days": 20,
+ "requires_payment": 1,
+ "step_configs": [
+  {
+   "is_enabled": 1,
+   "is_required": 1,
+   "show_on_review": 1,
+   "step_code": "rc_applicant_info",
+   "step_component": "DynamicStepRenderer",
+   "step_number": 1,
+   "step_title": "Applicant & Agent Details"
+  },
+  {
+   "is_enabled": 1,
+   "is_required": 1,
+   "show_on_review": 1,
+   "step_code": "rc_property_info",
+   "step_component": "DynamicStepRenderer",
+   "step_number": 2,
+   "step_title": "Property Information"
+  },
+  {
+   "is_enabled": 1,
+   "is_required": 1,
+   "show_on_review": 1,
+   "step_code": "rc_consent_details",
+   "step_component": "DynamicStepRenderer",
+   "step_number": 3,
+   "step_title": "Consent Details"
+  },
+  {
+   "is_enabled": 1,
+   "is_required": 1,
+   "show_on_review": 1,
+   "step_code": "rc_site_environment",
+   "step_component": "DynamicStepRenderer",
+   "step_number": 4,
+   "step_title": "Site & Environment"
+  },
+  {
+   "is_enabled": 1,
+   "is_required": 1,
+   "show_on_review": 1,
+   "step_code": "rc_affected_parties",
+   "step_component": "DynamicStepRenderer",
+   "step_number": 5,
+   "step_title": "Affected Parties & Consultation"
+  },
+  {
+   "is_enabled": 1,
+   "is_required": 1,
+   "show_on_review": 1,
+   "step_code": "rc_assessment_effects",
+   "step_component": "DynamicStepRenderer",
+   "step_number": 6,
+   "step_title": "Assessment of Environmental Effects"
+  },
+  {
+   "is_enabled": 1,
+   "is_required": 0,
+   "show_on_review": 0,
+   "step_code": "rc_documents",
+   "step_component": "DynamicStepRenderer",
+   "step_number": 7,
+   "step_title": "Documents & Evidence"
+  },
+  {
+   "is_enabled": 1,
+   "is_required": 0,
+   "show_on_review": 1,
+   "step_code": "rc_conditions",
+   "step_component": "DynamicStepRenderer",
+   "step_number": 8,
+   "step_title": "Proposed Conditions"
+  },
+  {
+   "is_enabled": 1,
+   "is_required": 1,
+   "show_on_review": 1,
+   "step_code": "rc_declaration",
+   "step_component": "DynamicStepRenderer",
+   "step_number": 9,
+   "step_title": "Declaration & Submission"
+  }
+ ],
+ "step_sections": [
+  {
+   "parent_step_code": "rc_applicant_info",
+   "section_code": "applicant_details",
+   "section_title": "Applicant Details",
+   "section_type": "Section",
+   "sequence": 1,
+   "is_enabled": 1,
+   "help_text": "The applicant is the person or organization applying for resource consent. This must be the property owner or someone with the owner's written approval."
+  },
+  {
+   "parent_step_code": "rc_applicant_info",
+   "section_code": "applicant_contact",
+   "section_title": "Applicant Contact Information",
+   "section_type": "Section",
+   "sequence": 2,
+   "is_enabled": 1
+  },
+  {
+   "parent_step_code": "rc_applicant_info",
+   "section_code": "agent_details",
+   "section_title": "Agent/Representative Details",
+   "section_type": "Section",
+   "sequence": 3,
+   "is_enabled": 1,
+   "help_text": "If you are using a planning consultant, architect, or other representative, provide their details here. All correspondence will be sent to the agent if one is specified."
+  },
+  {
+   "parent_step_code": "rc_property_info",
+   "section_code": "property_address",
+   "section_title": "Property Address",
+   "section_type": "Section",
+   "sequence": 1,
+   "is_enabled": 1,
+   "help_text": "Provide the full address of the property where the proposed activity will take place."
+  },
+  {
+   "parent_step_code": "rc_property_info",
+   "section_code": "property_legal",
+   "section_title": "Legal Description",
+   "section_type": "Section",
+   "sequence": 2,
+   "is_enabled": 1,
+   "help_text": "This information can be found on your property title or rates notice. Contact your solicitor or search the Land Information New Zealand (LINZ) register if you need help."
+  },
+  {
+   "parent_step_code": "rc_property_info",
+   "section_code": "property_planning",
+   "section_title": "District Plan Information",
+   "section_type": "Section",
+   "sequence": 3,
+   "is_enabled": 1,
+   "help_text": "Zoning and overlay information from the District Plan. This determines what activities are permitted on your property."
+  },
+  {
+   "parent_step_code": "rc_property_info",
+   "section_code": "property_ownership",
+   "section_title": "Property Ownership",
+   "section_type": "Section",
+   "sequence": 4,
+   "is_enabled": 1,
+   "help_text": "If you are not the property owner, you must have written approval from all owners to apply for resource consent."
+  },
+  {
+   "parent_step_code": "rc_consent_details",
+   "section_code": "consent_types",
+   "section_title": "Types of Consent Required",
+   "section_type": "Section",
+   "sequence": 1,
+   "is_enabled": 1,
+   "help_text": "Select all types of resource consent you are applying for. You may need multiple consents for one project (e.g., land use consent and subdivision consent)."
+  },
+  {
+   "parent_step_code": "rc_consent_details",
+   "section_code": "activity_description",
+   "section_title": "Activity Description",
+   "section_type": "Section",
+   "sequence": 2,
+   "is_enabled": 1,
+   "help_text": "Provide a clear description of what you propose to do. This should be detailed enough for the council to understand your proposal."
+  },
+  {
+   "parent_step_code": "rc_consent_details",
+   "section_code": "activity_status",
+   "section_title": "Activity Status",
+   "section_type": "Section",
+   "sequence": 3,
+   "is_enabled": 1,
+   "help_text": "The activity status determines the consent pathway and notification requirements under the RMA. Check the District Plan to determine your activity status."
+  },
+  {
+   "parent_step_code": "rc_consent_details",
+   "section_code": "project_details",
+   "section_title": "Project Details",
+   "section_type": "Section",
+   "sequence": 4,
+   "is_enabled": 1
+  },
+  {
+   "parent_step_code": "rc_site_environment",
+   "section_code": "site_characteristics",
+   "section_title": "Site Characteristics",
+   "section_type": "Section",
+   "sequence": 1,
+   "is_enabled": 1,
+   "help_text": "Describe the existing features and characteristics of your site."
+  },
+  {
+   "parent_step_code": "rc_site_environment",
+   "section_code": "natural_hazards",
+   "section_title": "Natural Hazards",
+   "section_type": "Section",
+   "sequence": 2,
+   "is_enabled": 1,
+   "help_text": "Identify any natural hazard risks that may affect the property (check council hazard maps)."
+  },
+  {
+   "parent_step_code": "rc_site_environment",
+   "section_code": "environmental_features",
+   "section_title": "Environmental Features",
+   "section_type": "Section",
+   "sequence": 3,
+   "is_enabled": 1,
+   "help_text": "Describe any significant natural, cultural, or historical features on or near the site."
+  },
+  {
+   "parent_step_code": "rc_site_environment",
+   "section_code": "servicing",
+   "section_title": "Services & Infrastructure",
+   "section_type": "Section",
+   "sequence": 4,
+   "is_enabled": 1,
+   "help_text": "Details about utilities and infrastructure serving the property."
+  },
+  {
+   "parent_step_code": "rc_affected_parties",
+   "section_code": "consultation_overview",
+   "section_title": "Consultation Overview",
+   "section_type": "Section",
+   "sequence": 1,
+   "is_enabled": 1,
+   "help_text": "Have you consulted with neighbors or other affected parties about your proposal?"
+  },
+  {
+   "parent_step_code": "rc_affected_parties",
+   "section_code": "affected_parties_list",
+   "section_title": "Affected Parties",
+   "section_type": "Section",
+   "sequence": 2,
+   "is_enabled": 1,
+   "help_text": "List all parties who may be affected by your proposal (neighbors, adjoining owners, etc.)."
+  },
+  {
+   "parent_step_code": "rc_affected_parties",
+   "section_code": "written_approvals",
+   "section_title": "Written Approvals",
+   "section_type": "Section",
+   "sequence": 3,
+   "is_enabled": 1,
+   "help_text": "Written approvals from affected parties can help avoid notification of your application."
+  },
+  {
+   "parent_step_code": "rc_assessment_effects",
+   "section_code": "aee_overview",
+   "section_title": "Assessment of Environmental Effects",
+   "section_type": "Section",
+   "sequence": 1,
+   "is_enabled": 1,
+   "help_text": "The AEE is a critical component of your application. It should identify and assess all actual and potential effects on the environment."
+  },
+  {
+   "parent_step_code": "rc_assessment_effects",
+   "section_code": "positive_effects",
+   "section_title": "Positive Effects",
+   "section_type": "Section",
+   "sequence": 2,
+   "is_enabled": 1,
+   "help_text": "Describe any positive environmental, social, economic, or cultural effects."
+  },
+  {
+   "parent_step_code": "rc_assessment_effects",
+   "section_code": "adverse_effects",
+   "section_title": "Adverse Effects & Mitigation",
+   "section_type": "Section",
+   "sequence": 3,
+   "is_enabled": 1,
+   "help_text": "Identify all potential adverse effects and explain how you will avoid, remedy, or mitigate them."
+  },
+  {
+   "parent_step_code": "rc_documents",
+   "section_code": "plans_drawings",
+   "section_title": "Plans and Drawings",
+   "section_type": "Section",
+   "sequence": 1,
+   "is_enabled": 1,
+   "help_text": "Upload all relevant plans, drawings, and technical documents."
+  },
+  {
+   "parent_step_code": "rc_documents",
+   "section_code": "technical_reports",
+   "section_title": "Technical Reports",
+   "section_type": "Section",
+   "sequence": 2,
+   "is_enabled": 1,
+   "help_text": "Upload any specialist reports (traffic, acoustic, geotechnical, etc.)."
+  },
+  {
+   "parent_step_code": "rc_documents",
+   "section_code": "supporting_documents",
+   "section_title": "Supporting Documents",
+   "section_type": "Section",
+   "sequence": 3,
+   "is_enabled": 1,
+   "help_text": "Upload any other supporting documentation."
+  },
+  {
+   "parent_step_code": "rc_conditions",
+   "section_code": "proposed_conditions",
+   "section_title": "Proposed Conditions",
+   "section_type": "Section",
+   "sequence": 1,
+   "is_enabled": 1,
+   "help_text": "You may propose conditions that you are willing to accept on your consent. This is optional but can help facilitate approval."
+  },
+  {
+   "parent_step_code": "rc_declaration",
+   "section_code": "application_summary",
+   "section_title": "Application Summary",
+   "section_type": "Section",
+   "sequence": 1,
+   "is_enabled": 1,
+   "help_text": "Review your application details before submitting."
+  },
+  {
+   "parent_step_code": "rc_declaration",
+   "section_code": "declarations",
+   "section_title": "Declarations",
+   "section_type": "Section",
+   "sequence": 2,
+   "is_enabled": 1,
+   "help_text": "Legal declarations required for resource consent applications under the RMA."
+  }
+ ],
+ "step_fields": [
+  {
+   "parent_section_code": "applicant_details",
+   "field_name": "applicant_type",
+   "field_label": "Applicant Type",
+   "field_type": "Select",
+   "options": "Individual\nCompany\nTrust\nPartnership\nGovernment Agency\nOther",
+   "is_required": 1,
+   "sequence": 1,
+   "show_on_review": 1
+  },
+  {
+   "parent_section_code": "applicant_details",
+   "field_name": "applicant_full_name",
+   "field_label": "Full Name / Company Name",
+   "field_type": "Data",
+   "is_required": 1,
+   "sequence": 2,
+   "show_on_review": 1,
+   "placeholder": "Enter full legal name"
+  },
+  {
+   "parent_section_code": "applicant_details",
+   "field_name": "applicant_trading_name",
+   "field_label": "Trading Name (if different)",
+   "field_type": "Data",
+   "is_required": 0,
+   "sequence": 3,
+   "show_on_review": 1,
+   "depends_on": "eval:formData.applicant_type!='Individual'"
+  },
+  {
+   "parent_section_code": "applicant_details",
+   "field_name": "applicant_company_number",
+   "field_label": "Company Number",
+   "field_type": "Data",
+   "is_required": 0,
+   "sequence": 4,
+   "show_on_review": 1,
+   "depends_on": "eval:formData.applicant_type=='Company'",
+   "placeholder": "NZBN or Companies Office number"
+  },
+  {
+   "parent_section_code": "applicant_contact",
+   "field_name": "applicant_email",
+   "field_label": "Email Address",
+   "field_type": "Data",
+   "is_required": 1,
+   "sequence": 5,
+   "show_on_review": 1,
+   "placeholder": "example@email.com"
+  },
+  {
+   "parent_section_code": "applicant_contact",
+   "field_name": "applicant_phone",
+   "field_label": "Phone Number",
+   "field_type": "Data",
+   "is_required": 1,
+   "sequence": 6,
+   "show_on_review": 1,
+   "placeholder": "04 123 4567"
+  },
+  {
+   "parent_section_code": "applicant_contact",
+   "field_name": "applicant_mobile",
+   "field_label": "Mobile Number",
+   "field_type": "Data",
+   "is_required": 0,
+   "sequence": 7,
+   "show_on_review": 1,
+   "placeholder": "021 123 4567"
+  },
+  {
+   "parent_section_code": "applicant_contact",
+   "field_name": "applicant_postal_address",
+   "field_label": "Postal Address",
+   "field_type": "Text",
+   "is_required": 1,
+   "sequence": 8,
+   "show_on_review": 1,
+   "placeholder": "Enter full postal address for correspondence"
+  },
+  {
+   "parent_section_code": "agent_details",
+   "field_name": "has_agent",
+   "field_label": "Are you using an agent or representative?",
+   "field_type": "Check",
+   "is_required": 0,
+   "sequence": 9,
+   "show_on_review": 1,
+   "default_value": "0"
+  },
+  {
+   "parent_section_code": "agent_details",
+   "field_name": "agent_full_name",
+   "field_label": "Agent Full Name",
+   "field_type": "Data",
+   "is_required": 0,
+   "sequence": 10,
+   "show_on_review": 1,
+   "depends_on": "eval:formData.has_agent",
+   "placeholder": "Enter agent's full name"
+  },
+  {
+   "parent_section_code": "agent_details",
+   "field_name": "agent_company",
+   "field_label": "Agent Company/Organization",
+   "field_type": "Data",
+   "is_required": 0,
+   "sequence": 11,
+   "show_on_review": 1,
+   "depends_on": "eval:formData.has_agent",
+   "placeholder": "Planning consultancy or firm name"
+  },
+  {
+   "parent_section_code": "agent_details",
+   "field_name": "agent_email",
+   "field_label": "Agent Email Address",
+   "field_type": "Data",
+   "is_required": 0,
+   "sequence": 12,
+   "show_on_review": 1,
+   "depends_on": "eval:formData.has_agent",
+   "placeholder": "agent@company.co.nz"
+  },
+  {
+   "parent_section_code": "agent_details",
+   "field_name": "agent_phone",
+   "field_label": "Agent Phone Number",
+   "field_type": "Data",
+   "is_required": 0,
+   "sequence": 13,
+   "show_on_review": 1,
+   "depends_on": "eval:formData.has_agent",
+   "placeholder": "04 123 4567"
+  },
+  {
+   "parent_section_code": "agent_details",
+   "field_name": "agent_postal_address",
+   "field_label": "Agent Postal Address",
+   "field_type": "Text",
+   "is_required": 0,
+   "sequence": 14,
+   "show_on_review": 1,
+   "depends_on": "eval:formData.has_agent",
+   "placeholder": "Enter agent's postal address"
+  },
+  {
+   "parent_section_code": "property_address",
+   "field_name": "property_street_address",
+   "field_label": "Street Address",
+   "field_type": "Data",
+   "is_required": 1,
+   "sequence": 15,
+   "show_on_review": 1,
+   "placeholder": "123 Main Street"
+  },
+  {
+   "parent_section_code": "property_address",
+   "field_name": "property_suburb",
+   "field_label": "Suburb",
+   "field_type": "Data",
+   "is_required": 0,
+   "sequence": 16,
+   "show_on_review": 1,
+   "placeholder": "Petone"
+  },
+  {
+   "parent_section_code": "property_address",
+   "field_name": "property_city",
+   "field_label": "City",
+   "field_type": "Select",
+   "options": "Lower Hutt\nWellington\nPorirua\nUpper Hutt",
+   "is_required": 1,
+   "sequence": 17,
+   "show_on_review": 1,
+   "default_value": "Lower Hutt"
+  },
+  {
+   "parent_section_code": "property_address",
+   "field_name": "property_postcode",
+   "field_label": "Postcode",
+   "field_type": "Data",
+   "is_required": 1,
+   "sequence": 18,
+   "show_on_review": 1,
+   "placeholder": "5011"
+  },
+  {
+   "parent_section_code": "property_legal",
+   "field_name": "property_legal_description",
+   "field_label": "Legal Description",
+   "field_type": "Text",
+   "is_required": 1,
+   "sequence": 19,
+   "show_on_review": 1,
+   "placeholder": "e.g., Lot 5 DP 12345",
+   "description": "The legal description from your Certificate of Title"
+  },
+  {
+   "parent_section_code": "property_legal",
+   "field_name": "property_ct_reference",
+   "field_label": "Certificate of Title Reference",
+   "field_type": "Data",
+   "is_required": 1,
+   "sequence": 20,
+   "show_on_review": 1,
+   "placeholder": "e.g., WN123/456",
+   "description": "The CT number from your property title"
+  },
+  {
+   "parent_section_code": "property_legal",
+   "field_name": "property_valuation_reference",
+   "field_label": "Valuation Reference",
+   "field_type": "Data",
+   "is_required": 0,
+   "sequence": 21,
+   "show_on_review": 1,
+   "placeholder": "From your rates notice",
+   "description": "Your property's valuation reference number"
+  },
+  {
+   "parent_section_code": "property_legal",
+   "field_name": "property_site_area",
+   "field_label": "Site Area (m\u00b2)",
+   "field_type": "Float",
+   "is_required": 1,
+   "sequence": 22,
+   "show_on_review": 1,
+   "placeholder": "500",
+   "description": "Total land area in square meters"
+  },
+  {
+   "parent_section_code": "property_planning",
+   "field_name": "property_zoning",
+   "field_label": "District Plan Zone",
+   "field_type": "Select",
+   "options": "High Density Residential\nMedium Density Residential\nLarge Lot Residential\nMixed Use\nGeneral Rural\nCommercial\nIndustrial\nOpen Space\nHills\nOther",
+   "is_required": 1,
+   "sequence": 23,
+   "show_on_review": 1,
+   "description": "The zoning designation under the District Plan"
+  },
+  {
+   "parent_section_code": "property_planning",
+   "field_name": "property_overlays",
+   "field_label": "District Plan Overlays",
+   "field_type": "Text",
+   "is_required": 0,
+   "sequence": 24,
+   "show_on_review": 1,
+   "placeholder": "e.g., Heritage Area, Flood Hazard, Outstanding Natural Features",
+   "description": "Any special overlays that apply to your property (check District Plan maps)"
+  },
+  {
+   "parent_section_code": "property_planning",
+   "field_name": "property_precinct",
+   "field_label": "Special Precinct (if applicable)",
+   "field_type": "Data",
+   "is_required": 0,
+   "sequence": 25,
+   "show_on_review": 1,
+   "placeholder": "e.g., City Centre, Petone Commercial",
+   "description": "Special planning precincts that may have additional rules"
+  },
+  {
+   "parent_section_code": "property_ownership",
+   "field_name": "applicant_is_owner",
+   "field_label": "Are you the property owner?",
+   "field_type": "Check",
+   "is_required": 0,
+   "sequence": 26,
+   "show_on_review": 1,
+   "default_value": "1"
+  },
+  {
+   "parent_section_code": "property_ownership",
+   "field_name": "owner_names",
+   "field_label": "Property Owner Names",
+   "field_type": "Text",
+   "is_required": 0,
+   "sequence": 27,
+   "show_on_review": 1,
+   "depends_on": "eval:!formData.applicant_is_owner",
+   "placeholder": "List all legal owners as shown on the Certificate of Title",
+   "description": "Enter all registered proprietors"
+  },
+  {
+   "parent_section_code": "property_ownership",
+   "field_name": "owner_written_approval",
+   "field_label": "Written Approval from Owner(s)",
+   "field_type": "Attach",
+   "is_required": 0,
+   "sequence": 28,
+   "show_on_review": 1,
+   "depends_on": "eval:!formData.applicant_is_owner",
+   "description": "Upload written approval from all registered owners authorizing this application"
+  },
+  {
+   "parent_section_code": "consent_types",
+   "field_name": "consent_type_land_use",
+   "field_label": "Land Use Consent",
+   "field_type": "Check",
+   "is_required": 0,
+   "sequence": 29,
+   "show_on_review": 1,
+   "description": "For activities that use land in ways not permitted by the District Plan"
+  },
+  {
+   "parent_section_code": "consent_types",
+   "field_name": "consent_type_subdivision",
+   "field_label": "Subdivision Consent",
+   "field_type": "Check",
+   "is_required": 0,
+   "sequence": 30,
+   "show_on_review": 1,
+   "description": "For dividing land into separate titles or creating unit titles"
+  },
+  {
+   "parent_section_code": "consent_types",
+   "field_name": "consent_type_discharge",
+   "field_label": "Discharge Permit",
+   "field_type": "Check",
+   "is_required": 0,
+   "sequence": 31,
+   "show_on_review": 1,
+   "description": "For discharging contaminants to air, water, or land"
+  },
+  {
+   "parent_section_code": "consent_types",
+   "field_name": "consent_type_water",
+   "field_label": "Water Permit",
+   "field_type": "Check",
+   "is_required": 0,
+   "sequence": 32,
+   "show_on_review": 1,
+   "description": "For taking, using, damming, or diverting water"
+  },
+  {
+   "parent_section_code": "consent_types",
+   "field_name": "consent_type_coastal",
+   "field_label": "Coastal Permit",
+   "field_type": "Check",
+   "is_required": 0,
+   "sequence": 33,
+   "show_on_review": 1,
+   "description": "For activities in the coastal marine area"
+  },
+  {
+   "parent_section_code": "activity_description",
+   "field_name": "activity_title",
+   "field_label": "Activity Title",
+   "field_type": "Data",
+   "is_required": 1,
+   "sequence": 34,
+   "show_on_review": 1,
+   "placeholder": "e.g., Two-storey residential dwelling",
+   "description": "A brief title for your proposed activity"
+  },
+  {
+   "parent_section_code": "activity_description",
+   "field_name": "activity_description",
+   "field_label": "Detailed Description",
+   "field_type": "Text Editor",
+   "is_required": 1,
+   "sequence": 35,
+   "show_on_review": 1,
+   "placeholder": "Describe what you propose to do, including dimensions, materials, timeframes, and any other relevant details",
+   "description": "Provide a comprehensive description of your proposed activity"
+  },
+  {
+   "parent_section_code": "activity_description",
+   "field_name": "activity_purpose",
+   "field_label": "Purpose and Need",
+   "field_type": "Text",
+   "is_required": 1,
+   "sequence": 36,
+   "show_on_review": 1,
+   "placeholder": "Explain why you need this consent and what you will achieve",
+   "description": "Outline the reasons for undertaking this activity"
+  },
+  {
+   "parent_section_code": "activity_status",
+   "field_name": "activity_status_type",
+   "field_label": "Activity Status",
+   "field_type": "Select",
+   "options": "Permitted\nControlled\nRestricted Discretionary\nDiscretionary\nNon-Complying\nProhibited\nUnsure",
+   "is_required": 1,
+   "sequence": 37,
+   "show_on_review": 1,
+   "description": "The activity status under the District Plan and/or Regional Plan"
+  },
+  {
+   "parent_section_code": "activity_status",
+   "field_name": "plan_rules_breached",
+   "field_label": "District/Regional Plan Rules Breached",
+   "field_type": "Text",
+   "is_required": 1,
+   "sequence": 38,
+   "show_on_review": 1,
+   "placeholder": "e.g., Rule 14A.2.1 - Height in relation to boundary, Rule 14A.3.5 - Building coverage",
+   "description": "List the specific plan rules that your proposal does not comply with"
+  },
+  {
+   "parent_section_code": "activity_status",
+   "field_name": "matters_of_discretion",
+   "field_label": "Matters of Discretion/Control",
+   "field_type": "Text",
+   "is_required": 0,
+   "sequence": 39,
+   "show_on_review": 1,
+   "depends_on": "eval:['Controlled','Restricted Discretionary'].includes(formData.activity_status_type)",
+   "placeholder": "e.g., Effects on amenity, traffic generation, landscaping",
+   "description": "For controlled or restricted discretionary activities, list the matters the Council can consider"
+  },
+  {
+   "parent_section_code": "project_details",
+   "field_name": "construction_start_date",
+   "field_label": "Proposed Start Date",
+   "field_type": "Date",
+   "is_required": 0,
+   "sequence": 40,
+   "show_on_review": 1,
+   "description": "When do you plan to start the activity/construction?"
+  },
+  {
+   "parent_section_code": "project_details",
+   "field_name": "construction_duration",
+   "field_label": "Estimated Duration",
+   "field_type": "Data",
+   "is_required": 0,
+   "sequence": 41,
+   "show_on_review": 1,
+   "placeholder": "e.g., 6 months",
+   "description": "How long will the activity/construction take?"
+  },
+  {
+   "parent_section_code": "project_details",
+   "field_name": "estimated_project_cost",
+   "field_label": "Estimated Project Cost (NZD)",
+   "field_type": "Currency",
+   "is_required": 0,
+   "sequence": 42,
+   "show_on_review": 1,
+   "description": "Approximate total cost of the project"
+  },
+  {
+   "parent_section_code": "site_characteristics",
+   "field_name": "site_topography",
+   "field_label": "Site Topography",
+   "field_type": "Select",
+   "options": "Flat\nGently sloping\nModerately sloping\nSteeply sloping\nMixed",
+   "is_required": 1,
+   "sequence": 43,
+   "show_on_review": 1,
+   "description": "General shape and slope of the land"
+  },
+  {
+   "parent_section_code": "site_characteristics",
+   "field_name": "site_vegetation",
+   "field_label": "Existing Vegetation",
+   "field_type": "Text",
+   "is_required": 1,
+   "sequence": 44,
+   "show_on_review": 1,
+   "placeholder": "Describe existing trees, shrubs, and ground cover",
+   "description": "Include details about any significant trees or vegetation"
+  },
+  {
+   "parent_section_code": "site_characteristics",
+   "field_name": "site_development_status",
+   "field_label": "Current Development Status",
+   "field_type": "Select",
+   "options": "Vacant land\nPartially developed\nFully developed\nPreviously developed (brownfield)",
+   "is_required": 1,
+   "sequence": 45,
+   "show_on_review": 1
+  },
+  {
+   "parent_section_code": "site_characteristics",
+   "field_name": "existing_structures",
+   "field_label": "Existing Structures",
+   "field_type": "Text",
+   "is_required": 0,
+   "sequence": 46,
+   "show_on_review": 1,
+   "placeholder": "Describe any buildings, structures, or hard surfaces currently on the site",
+   "description": "Include buildings to be retained and those to be demolished"
+  },
+  {
+   "parent_section_code": "natural_hazards",
+   "field_name": "hazard_flooding",
+   "field_label": "Flood Hazard Risk",
+   "field_type": "Check",
+   "is_required": 0,
+   "sequence": 47,
+   "show_on_review": 1,
+   "description": "Is the property subject to flood hazard overlay?"
+  },
+  {
+   "parent_section_code": "natural_hazards",
+   "field_name": "hazard_earthquake",
+   "field_label": "Earthquake/Fault Line Risk",
+   "field_type": "Check",
+   "is_required": 0,
+   "sequence": 48,
+   "show_on_review": 1,
+   "description": "Is the property subject to earthquake or fault hazard?"
+  },
+  {
+   "parent_section_code": "natural_hazards",
+   "field_name": "hazard_landslip",
+   "field_label": "Landslip/Slope Instability",
+   "field_type": "Check",
+   "is_required": 0,
+   "sequence": 49,
+   "show_on_review": 1,
+   "description": "Is the property subject to landslip or slope stability concerns?"
+  },
+  {
+   "parent_section_code": "natural_hazards",
+   "field_name": "hazard_coastal",
+   "field_label": "Coastal Hazard Risk",
+   "field_type": "Check",
+   "is_required": 0,
+   "sequence": 50,
+   "show_on_review": 1,
+   "description": "Is the property subject to coastal erosion or inundation?"
+  },
+  {
+   "parent_section_code": "natural_hazards",
+   "field_name": "hazard_reports",
+   "field_label": "Hazard Assessment Reports",
+   "field_type": "Attach",
+   "is_required": 0,
+   "sequence": 51,
+   "show_on_review": 1,
+   "description": "Upload any geotechnical or hazard assessment reports"
+  },
+  {
+   "parent_section_code": "environmental_features",
+   "field_name": "heritage_features",
+   "field_label": "Heritage Features",
+   "field_type": "Text",
+   "is_required": 0,
+   "sequence": 52,
+   "show_on_review": 1,
+   "placeholder": "Describe any heritage buildings, sites, or features",
+   "description": "Include scheduled heritage items or sites of significance to M\u0101ori"
+  },
+  {
+   "parent_section_code": "environmental_features",
+   "field_name": "ecological_features",
+   "field_label": "Ecological Features",
+   "field_type": "Text",
+   "is_required": 0,
+   "sequence": 53,
+   "show_on_review": 1,
+   "placeholder": "Describe any significant native vegetation, wetlands, or habitats",
+   "description": "Include information about indigenous biodiversity"
+  },
+  {
+   "parent_section_code": "environmental_features",
+   "field_name": "waterbodies",
+   "field_label": "Waterbodies and Waterways",
+   "field_type": "Text",
+   "is_required": 0,
+   "sequence": 54,
+   "show_on_review": 1,
+   "placeholder": "Describe any streams, rivers, wetlands, or coastal waters",
+   "description": "Include permanent and intermittent watercourses"
+  },
+  {
+   "parent_section_code": "servicing",
+   "field_name": "water_supply",
+   "field_label": "Water Supply",
+   "field_type": "Select",
+   "options": "Council reticulated\nPrivate bore/well\nRainwater collection\nOther",
+   "is_required": 1,
+   "sequence": 55,
+   "show_on_review": 1
+  },
+  {
+   "parent_section_code": "servicing",
+   "field_name": "wastewater_disposal",
+   "field_label": "Wastewater Disposal",
+   "field_type": "Select",
+   "options": "Council sewer\nOn-site septic system\nOther",
+   "is_required": 1,
+   "sequence": 56,
+   "show_on_review": 1
+  },
+  {
+   "parent_section_code": "servicing",
+   "field_name": "stormwater_disposal",
+   "field_label": "Stormwater Disposal",
+   "field_type": "Select",
+   "options": "Council system\nOn-site soakage\nMixed\nOther",
+   "is_required": 1,
+   "sequence": 57,
+   "show_on_review": 1
+  },
+  {
+   "parent_section_code": "servicing",
+   "field_name": "access_details",
+   "field_label": "Vehicle Access",
+   "field_type": "Text",
+   "is_required": 1,
+   "sequence": 58,
+   "show_on_review": 1,
+   "placeholder": "Describe existing and proposed vehicle access, including street frontage",
+   "description": "Include details about driveways, parking, and loading areas"
+  },
+  {
+   "parent_section_code": "consultation_overview",
+   "field_name": "consultation_undertaken",
+   "field_label": "Have you consulted with affected parties?",
+   "field_type": "Select",
+   "options": "Yes - consulted all potentially affected parties\nYes - consulted some parties\nNo - have not consulted\nNot applicable",
+   "is_required": 1,
+   "sequence": 59,
+   "show_on_review": 1
+  },
+  {
+   "parent_section_code": "consultation_overview",
+   "field_name": "consultation_summary",
+   "field_label": "Consultation Summary",
+   "field_type": "Text",
+   "is_required": 0,
+   "sequence": 60,
+   "show_on_review": 1,
+   "depends_on": "eval:formData.consultation_undertaken && formData.consultation_undertaken.startsWith('Yes')",
+   "placeholder": "Summarize who you consulted with, when, and what feedback you received",
+   "description": "Provide details about your consultation process"
+  },
+  {
+   "parent_section_code": "affected_parties_list",
+   "field_name": "affected_parties_details",
+   "field_label": "Affected Parties Details",
+   "field_type": "Text Editor",
+   "is_required": 1,
+   "sequence": 61,
+   "show_on_review": 1,
+   "placeholder": "List all neighbors and other parties who may be affected (name, address, relationship to property)",
+   "description": "Include all adjoining owners and parties who may experience more than minor effects"
+  },
+  {
+   "parent_section_code": "written_approvals",
+   "field_name": "written_approvals_obtained",
+   "field_label": "Have you obtained any written approvals?",
+   "field_type": "Check",
+   "is_required": 0,
+   "sequence": 62,
+   "show_on_review": 1
+  },
+  {
+   "parent_section_code": "written_approvals",
+   "field_name": "written_approvals_upload",
+   "field_label": "Upload Written Approvals",
+   "field_type": "Attach",
+   "is_required": 0,
+   "sequence": 63,
+   "show_on_review": 1,
+   "depends_on": "eval:formData.written_approvals_obtained",
+   "description": "Upload signed written approval forms from affected parties (Form 9 - Section 95E RMA)"
+  },
+  {
+   "parent_section_code": "written_approvals",
+   "field_name": "approvals_summary",
+   "field_label": "Approvals Summary",
+   "field_type": "Text",
+   "is_required": 0,
+   "sequence": 64,
+   "show_on_review": 1,
+   "depends_on": "eval:formData.written_approvals_obtained",
+   "placeholder": "List who has provided written approval and who has not",
+   "description": "Summary of approval status"
+  },
+  {
+   "parent_section_code": "aee_overview",
+   "field_name": "aee_full_assessment",
+   "field_label": "Full Assessment of Environmental Effects",
+   "field_type": "Text Editor",
+   "is_required": 1,
+   "sequence": 65,
+   "show_on_review": 1,
+   "placeholder": "Provide a comprehensive assessment covering: existing environment, description of proposed activity, actual and potential effects on the environment, measures to avoid/remedy/mitigate adverse effects, consultation undertaken, and assessment against relevant plan provisions",
+   "description": "This is the core of your consent application. Be thorough and address all RMA considerations."
+  },
+  {
+   "parent_section_code": "positive_effects",
+   "field_name": "positive_effects_description",
+   "field_label": "Positive Effects",
+   "field_type": "Text",
+   "is_required": 0,
+   "sequence": 66,
+   "show_on_review": 1,
+   "placeholder": "Describe any positive effects (environmental, social, economic, cultural)",
+   "description": "e.g., improved amenity, economic benefits, environmental enhancement"
+  },
+  {
+   "parent_section_code": "adverse_effects",
+   "field_name": "effects_visual_amenity",
+   "field_label": "Visual and Amenity Effects",
+   "field_type": "Text",
+   "is_required": 1,
+   "sequence": 67,
+   "show_on_review": 1,
+   "placeholder": "Assess effects on visual amenity, privacy, shading, and neighborhood character",
+   "description": "How will the proposal affect the look and feel of the area?"
+  },
+  {
+   "parent_section_code": "adverse_effects",
+   "field_name": "effects_traffic_parking",
+   "field_label": "Traffic and Parking Effects",
+   "field_type": "Text",
+   "is_required": 1,
+   "sequence": 68,
+   "show_on_review": 1,
+   "placeholder": "Assess traffic generation, parking demand, and access effects",
+   "description": "How will the proposal affect traffic and parking?"
+  },
+  {
+   "parent_section_code": "adverse_effects",
+   "field_name": "effects_noise",
+   "field_label": "Noise Effects",
+   "field_type": "Text",
+   "is_required": 1,
+   "sequence": 69,
+   "show_on_review": 1,
+   "placeholder": "Assess noise effects during construction and operation",
+   "description": "Consider both temporary and permanent noise impacts"
+  },
+  {
+   "parent_section_code": "adverse_effects",
+   "field_name": "effects_other",
+   "field_label": "Other Adverse Effects",
+   "field_type": "Text",
+   "is_required": 0,
+   "sequence": 70,
+   "show_on_review": 1,
+   "placeholder": "Describe any other adverse effects not covered above (e.g., ecological, cultural, archaeological)",
+   "description": "Consider all potential effects on the environment"
+  },
+  {
+   "parent_section_code": "adverse_effects",
+   "field_name": "mitigation_measures",
+   "field_label": "Mitigation Measures",
+   "field_type": "Text Editor",
+   "is_required": 1,
+   "sequence": 71,
+   "show_on_review": 1,
+   "placeholder": "Describe in detail how you will avoid, remedy, or mitigate all identified adverse effects",
+   "description": "Explain your mitigation strategy comprehensively"
+  },
+  {
+   "parent_section_code": "plans_drawings",
+   "field_name": "site_plan",
+   "field_label": "Site Plan",
+   "field_type": "Attach",
+   "is_required": 1,
+   "sequence": 72,
+   "show_on_review": 0,
+   "description": "Scaled site plan showing existing and proposed features"
+  },
+  {
+   "parent_section_code": "plans_drawings",
+   "field_name": "floor_plans",
+   "field_label": "Floor Plans",
+   "field_type": "Attach",
+   "is_required": 0,
+   "sequence": 73,
+   "show_on_review": 0,
+   "description": "Floor plans for all levels (if applicable)"
+  },
+  {
+   "parent_section_code": "plans_drawings",
+   "field_name": "elevations",
+   "field_label": "Elevations",
+   "field_type": "Attach",
+   "is_required": 0,
+   "sequence": 74,
+   "show_on_review": 0,
+   "description": "Elevation drawings showing all sides of proposed structures"
+  },
+  {
+   "parent_section_code": "plans_drawings",
+   "field_name": "cross_sections",
+   "field_label": "Cross Sections",
+   "field_type": "Attach",
+   "is_required": 0,
+   "sequence": 75,
+   "show_on_review": 0,
+   "description": "Section drawings showing relationship to ground and adjoining properties"
+  },
+  {
+   "parent_section_code": "plans_drawings",
+   "field_name": "landscape_plan",
+   "field_label": "Landscape Plan",
+   "field_type": "Attach",
+   "is_required": 0,
+   "sequence": 76,
+   "show_on_review": 0,
+   "description": "Landscape planting and treatment plan"
+  },
+  {
+   "parent_section_code": "technical_reports",
+   "field_name": "traffic_report",
+   "field_label": "Traffic Impact Assessment",
+   "field_type": "Attach",
+   "is_required": 0,
+   "sequence": 77,
+   "show_on_review": 0,
+   "description": "Traffic engineering report (if required)"
+  },
+  {
+   "parent_section_code": "technical_reports",
+   "field_name": "acoustic_report",
+   "field_label": "Acoustic Assessment",
+   "field_type": "Attach",
+   "is_required": 0,
+   "sequence": 78,
+   "show_on_review": 0,
+   "description": "Noise assessment report (if required)"
+  },
+  {
+   "parent_section_code": "technical_reports",
+   "field_name": "geotechnical_report",
+   "field_label": "Geotechnical Report",
+   "field_type": "Attach",
+   "is_required": 0,
+   "sequence": 79,
+   "show_on_review": 0,
+   "description": "Geotechnical engineering report (if required)"
+  },
+  {
+   "parent_section_code": "technical_reports",
+   "field_name": "ecological_report",
+   "field_label": "Ecological Assessment",
+   "field_type": "Attach",
+   "is_required": 0,
+   "sequence": 80,
+   "show_on_review": 0,
+   "description": "Ecological impact assessment (if required)"
+  },
+  {
+   "parent_section_code": "technical_reports",
+   "field_name": "stormwater_report",
+   "field_label": "Stormwater Management Plan",
+   "field_type": "Attach",
+   "is_required": 0,
+   "sequence": 81,
+   "show_on_review": 0,
+   "description": "Stormwater design and management plan (if required)"
+  },
+  {
+   "parent_section_code": "supporting_documents",
+   "field_name": "property_title",
+   "field_label": "Certificate of Title",
+   "field_type": "Attach",
+   "is_required": 1,
+   "sequence": 82,
+   "show_on_review": 0,
+   "description": "Current Certificate of Title from LINZ"
+  },
+  {
+   "parent_section_code": "supporting_documents",
+   "field_name": "photographs",
+   "field_label": "Site Photographs",
+   "field_type": "Attach",
+   "is_required": 0,
+   "sequence": 83,
+   "show_on_review": 0,
+   "description": "Photographs showing existing site conditions and context"
+  },
+  {
+   "parent_section_code": "supporting_documents",
+   "field_name": "other_documents",
+   "field_label": "Other Supporting Documents",
+   "field_type": "Attach",
+   "is_required": 0,
+   "sequence": 84,
+   "show_on_review": 0,
+   "description": "Any other relevant documents"
+  },
+  {
+   "parent_section_code": "proposed_conditions",
+   "field_name": "conditions_text",
+   "field_label": "Proposed Conditions",
+   "field_type": "Text Editor",
+   "is_required": 0,
+   "sequence": 85,
+   "show_on_review": 1,
+   "placeholder": "List any conditions you propose to accept on your consent (optional)",
+   "description": "You may propose conditions relating to timing, mitigation measures, monitoring, etc."
+  },
+  {
+   "parent_section_code": "declarations",
+   "field_name": "declaration_accuracy",
+   "field_label": "Declaration of Accuracy",
+   "field_type": "Check",
+   "is_required": 1,
+   "sequence": 86,
+   "show_on_review": 1,
+   "description": "I declare that the information provided in this application is true and correct to the best of my knowledge."
+  },
+  {
+   "parent_section_code": "declarations",
+   "field_name": "declaration_authority",
+   "field_label": "Declaration of Authority",
+   "field_type": "Check",
+   "is_required": 1,
+   "sequence": 87,
+   "show_on_review": 1,
+   "description": "I declare that I am the applicant or authorized to make this application on behalf of the applicant."
+  },
+  {
+   "parent_section_code": "declarations",
+   "field_name": "declaration_acknowledgment",
+   "field_label": "Acknowledgment",
+   "field_type": "Check",
+   "is_required": 1,
+   "sequence": 88,
+   "show_on_review": 1,
+   "description": "I acknowledge that the Council may request further information and may publicly notify this application."
+  },
+  {
+   "parent_section_code": "declarations",
+   "field_name": "applicant_signature",
+   "field_label": "Applicant Signature",
+   "field_type": "Data",
+   "is_required": 1,
+   "sequence": 89,
+   "show_on_review": 1,
+   "placeholder": "Type your full name as signature",
+   "description": "Your typed name serves as your electronic signature"
+  },
+  {
+   "parent_section_code": "declarations",
+   "field_name": "signature_date",
+   "field_label": "Date",
+   "field_type": "Date",
+   "is_required": 1,
+   "sequence": 90,
+   "show_on_review": 1,
+   "default_value": "Today",
+   "description": "Date of signature"
+  }
+ ],
+ "type_code": "RC_NZ",
+ "type_name": "Resource Consent - New Zealand"
+}

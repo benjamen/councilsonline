@@ -17,14 +17,14 @@ class Request(Document):
         request_type_doc = frappe.get_doc("Request Type", self.request_type)
         prefix = request_type_doc.type_code or "REQ"
 
-        # Format: RC-2025-001, BC-2025-001, etc.
+        # Format: RC-2025-001, BC-2025-001, REQ-2025-001, etc.
         from frappe.model.naming import make_autoname
         self.name = make_autoname(f"{prefix}-.YYYY.-.###")
         self.request_number = self.name
 
     def validate(self):
         """Validation before saving"""
-        # 1. Set default status if not set (do this first)
+        # 1. Set default status if not set
         if not self.status:
             self.status = "Draft"
 
@@ -45,15 +45,8 @@ class Request(Document):
         if self.request_type and self.submitted_date and not self.target_completion_date:
             self.calculate_target_completion_date()
 
-        # 6. Calculate working days
-        if self.statutory_clock_started:
-            self.calculate_working_days()
-
-        # 7. Calculate total fees
+        # 6. Calculate total fees
         self.calculate_total_fees()
-
-        # 8. Calculate costing (task costs + disbursements)
-        self.calculate_costing()
 
     def validate_council_license(self):
         """Validate that council is active and has valid license"""
@@ -108,13 +101,13 @@ class Request(Document):
     def on_submit(self):
         """Actions when document is submitted"""
         # Add to status history
-        self.add_status_history("Draft", "Submitted", "Application submitted by applicant")
+        self.add_status_history("Draft", "Submitted", "Request submitted by applicant")
 
         # Send acknowledgment email
         self.send_acknowledgment_email()
 
         # Create timeline entry
-        self.add_comment("Label", "Application Submitted")
+        self.add_comment("Label", "Request Submitted")
 
     def on_update_after_submit(self):
         """Actions after document is updated post-submission"""
@@ -128,9 +121,8 @@ class Request(Document):
             old_state = self.get_doc_before_save().workflow_state if self.get_doc_before_save() else None
             self.handle_workflow_state_change(old_state, self.workflow_state)
 
-        # Legacy: If status changed to Acknowledged, start statutory clock (for non-workflow requests)
-        if self.status == "Acknowledged" and not self.statutory_clock_started:
-            self.statutory_clock_started = now()
+        # If status changed to Acknowledged, set acknowledged date
+        if self.status == "Acknowledged" and not self.acknowledged_date:
             self.acknowledged_date = getdate()
             self.calculate_target_completion_date()
 
@@ -150,25 +142,6 @@ class Request(Document):
         start_date = getdate(self.acknowledged_date or self.submitted_date)
         self.target_completion_date = add_working_days(start_date, sla_days)
 
-    def calculate_working_days(self):
-        """Calculate working days elapsed excluding weekends and holidays"""
-        if not self.statutory_clock_started:
-            return
-
-        end_date = self.statutory_clock_stopped or now()
-        self.working_days_elapsed = calculate_working_days_between(
-            self.statutory_clock_started,
-            end_date
-        )
-
-        # Get SLA from request type
-        if self.request_type:
-            request_type_doc = frappe.get_doc("Request Type", self.request_type)
-            sla_days = request_type_doc.processing_sla_days or 20
-
-            self.working_days_remaining = max(0, sla_days - self.working_days_elapsed)
-            self.is_overdue = 1 if self.working_days_elapsed > sla_days else 0
-
     def calculate_total_fees(self):
         """Calculate total fees from fee line items"""
         total = 0
@@ -179,36 +152,6 @@ class Request(Document):
         self.total_fees_excl_gst = total
         self.gst_amount = total * 0.15  # 15% GST
         self.total_fees_incl_gst = total + self.gst_amount
-
-    def calculate_costing(self):
-        """Calculate total costing from tasks and disbursements"""
-        # WB Task integration disabled - Workboard app not installed
-        # Setting task cost to 0 until integration is configured
-        task_cost = 0
-
-        # Original code commented out - requires Workboard app installation:
-        # task_cost = frappe.db.sql("""
-        #     SELECT SUM(IFNULL(total_cost, 0))
-        #     FROM `tabWB Task`
-        #     WHERE request = %s
-        # """, self.name)[0][0] or 0
-
-        self.total_task_cost = task_cost
-
-        # Calculate total disbursements
-        # Note: disbursements child table may not exist in all Request Types
-        disbursement_total = 0
-        if hasattr(self, 'disbursements') and self.disbursements:
-            for item in self.disbursements:
-                disbursement_total += item.amount or 0
-
-        self.total_disbursements = disbursement_total
-
-        # Get application fee from total_fees_excl_gst
-        self.application_fee = self.total_fees_excl_gst or 0
-
-        # Calculate total amount due
-        self.total_amount_due = self.application_fee + self.total_task_cost + self.total_disbursements
 
     def add_status_history(self, from_status, to_status, reason=None):
         """Add entry to status history"""
@@ -225,25 +168,25 @@ class Request(Document):
         if not self.applicant_email:
             return
 
-        subject = f"Your application {self.request_number} has been received"
+        subject = f"Your request {self.request_number} has been received"
         message = f"""
         <p>Hi {self.applicant_name},</p>
 
-        <p>Thank you for submitting your application for {self.brief_description} at {self.property_address}.</p>
+        <p>Thank you for submitting your request: {self.brief_description}.</p>
 
-        <p><strong>Application Details:</strong></p>
+        <p><strong>Request Details:</strong></p>
         <ul>
-            <li>Application Number: {self.request_number}</li>
+            <li>Request Number: {self.request_number}</li>
             <li>Submitted: {format_date(self.submitted_date)}</li>
             <li>Type: {self.request_type}</li>
         </ul>
 
-        <p>We will review your application and notify you once it has been accepted for processing.</p>
+        <p>We will review your request and notify you once it has been accepted for processing.</p>
 
-        <p>You can track your application status at any time through the portal.</p>
+        <p>You can track your request status at any time through the portal.</p>
 
         <p>Kind regards,<br>
-        Council Consents Team</p>
+        {frappe.db.get_value('Council', self.council, 'council_name') if self.council else 'Council'} Team</p>
         """
 
         try:
@@ -263,12 +206,9 @@ class Request(Document):
         # Add status history tracking
         self.add_status_history(old_state, new_state, "Workflow state changed")
 
-        # State: Acknowledged - Start statutory clock and create assessment
+        # State: Acknowledged - Create assessment project
         if new_state == "Acknowledged":
-            # Delegate clock start to child DocType (RC Application)
-            self.start_statutory_clock()
-
-            # Set acknowledged date on parent Request
+            # Set acknowledged date on Request
             if not self.acknowledged_date:
                 ack_date = getdate()
                 self.db_set("acknowledged_date", ack_date, update_modified=False)
@@ -286,28 +226,8 @@ class Request(Document):
                 indicator="green"
             )
 
-        # State: RFI Issued - Stop statutory clock
-        elif new_state == "RFI Issued":
-            self.stop_statutory_clock()
-            frappe.msgprint(
-                f"RFI issued. Statutory clock stopped (if applicable).",
-                alert=True,
-                indicator="orange"
-            )
-
-        # State: RFI Received - Restart statutory clock
-        elif new_state == "RFI Received" and old_state == "RFI Issued":
-            self.restart_statutory_clock()
-            frappe.msgprint(
-                f"RFI received. Statutory clock restarted (if applicable).",
-                alert=True,
-                indicator="green"
-            )
-
-        # States: Approved/Approved with Conditions/Declined - Stop clock and set completion
-        elif new_state in ["Approved", "Approved with Conditions", "Declined"]:
-            self.stop_statutory_clock()
-
+        # States: Approved/Approved with Conditions/Declined/Completed - Set completion date
+        elif new_state in ["Approved", "Approved with Conditions", "Declined", "Completed"]:
             if not self.actual_completion_date:
                 completion_date = getdate()
                 self.db_set("actual_completion_date", completion_date, update_modified=False)
@@ -317,32 +237,24 @@ class Request(Document):
             self.db_set("status", new_state, update_modified=False)
             self.status = new_state
 
-            indicator = "green" if new_state.startswith("Approved") else "red"
+            indicator = "green" if new_state.startswith("Approved") or new_state == "Completed" else "red"
             frappe.msgprint(
                 f"Request {new_state.lower()}.",
                 alert=True,
                 indicator=indicator
             )
 
-        # State: Withdrawn - Stop clock
-        elif new_state == "Withdrawn":
-            self.stop_statutory_clock()
-
+        # State: Withdrawn/Cancelled - Mark as closed
+        elif new_state in ["Withdrawn", "Cancelled"]:
             # Update status field for backward compatibility
-            self.db_set("status", "Withdrawn", update_modified=False)
-            self.status = "Withdrawn"
+            self.db_set("status", new_state, update_modified=False)
+            self.status = new_state
 
             frappe.msgprint(
-                f"Request withdrawn.",
+                f"Request {new_state.lower()}.",
                 alert=True,
                 indicator="red"
             )
-
-        # State: Processing - Ensure clock is running
-        elif new_state == "Processing":
-            self.start_statutory_clock()
-            # Ensure clock is not stopped (restart if coming from RFI Received)
-            self.restart_statutory_clock()
 
     def auto_create_assessment_project(self):
         """Auto-create assessment project when request is acknowledged"""
@@ -383,7 +295,6 @@ class Request(Document):
                 "assessment_template": template,
                 "project_owner": self.assigned_to or frappe.session.user,
                 "statutory_clock_days": request_type_doc.processing_sla_days or 20,
-                "started_date": self.statutory_clock_started,
                 "overall_status": "In Progress"
             })
             assessment_project.insert()
@@ -391,7 +302,7 @@ class Request(Document):
             # Create stages from template
             assessment_project.create_stages_from_template()
 
-            # NEW: Auto-create tasks from task templates
+            # Auto-create tasks from task templates
             tasks_created = assessment_project.create_tasks_from_template()
 
             assessment_project.save()
@@ -410,61 +321,9 @@ class Request(Document):
             frappe.log_error(f"Failed to auto-create assessment project: {str(e)}")
             frappe.msgprint(f"Failed to create assessment project: {str(e)}", alert=True, indicator="red")
 
-    def get_consent_application(self):
-        """Get the appropriate consent application child document"""
-        if self.request_category == "Resource Consent":
-            rc_app = frappe.db.get_value(
-                "Resource Consent Application",
-                {"request": self.name},
-                "name"
-            )
-            if rc_app:
-                return frappe.get_doc("Resource Consent Application", rc_app)
-        elif self.request_category == "Building Consent":
-            bc_app = frappe.db.get_value(
-                "Building Consent Application",
-                {"request": self.name},
-                "name"
-            )
-            if bc_app:
-                return frappe.get_doc("Building Consent Application", bc_app)
-        return None
-
-    def start_statutory_clock(self):
-        """Delegate to child DocType"""
-        consent_app = self.get_consent_application()
-        if consent_app and hasattr(consent_app, 'start_statutory_clock'):
-            consent_app.start_statutory_clock()
-
-    def stop_statutory_clock(self):
-        """Delegate to child DocType"""
-        consent_app = self.get_consent_application()
-        if consent_app and hasattr(consent_app, 'stop_statutory_clock'):
-            consent_app.stop_statutory_clock()
-
-    def restart_statutory_clock(self):
-        """Delegate to child DocType"""
-        consent_app = self.get_consent_application()
-        if consent_app and hasattr(consent_app, 'restart_statutory_clock'):
-            consent_app.restart_statutory_clock()
-
-    def get_working_days_elapsed(self):
-        """Get working days from child DocType"""
-        consent_app = self.get_consent_application()
-        if consent_app and hasattr(consent_app, 'working_days_elapsed'):
-            return consent_app.working_days_elapsed
-        return 0
-
-    def get_working_days_remaining(self):
-        """Get working days remaining from child DocType"""
-        consent_app = self.get_consent_application()
-        if consent_app and hasattr(consent_app, 'working_days_remaining'):
-            return consent_app.working_days_remaining
-        return 0
-
 
 def add_working_days(start_date, days):
-    """Add working days to a date (excluding weekends and NZ public holidays)"""
+    """Add working days to a date (excluding weekends and public holidays)"""
     current_date = getdate(start_date)
     working_days_added = 0
 
@@ -508,92 +367,67 @@ def calculate_working_days_between(start_date, end_date):
 
 
 def is_public_holiday(date):
-    """Check if a date is a NZ public holiday"""
+    """Check if a date is a public holiday"""
     # TODO: Implement proper holiday checking against Holiday List DocType
     # For now, return False (no holidays considered)
     return False
 
 
 @frappe.whitelist()
-def get_my_applications(status=None):
-    """Get applications for current user with statutory clock data from appropriate child DocType"""
+def get_my_requests(status=None):
+    """Get requests for current user"""
     user = frappe.session.user
 
     filters = {"applicant": user}
     if status:
         filters["status"] = status
 
-    applications = frappe.get_all(
+    requests = frappe.get_all(
         "Request",
         filters=filters,
         fields=[
-            "name", "request_number", "status", "property_address",
+            "name", "request_number", "status",
             "brief_description", "submitted_date", "target_completion_date",
             "is_overdue", "request_type", "request_category", "council", "creation"
         ],
         order_by="modified desc"
     )
 
-    # Enrich with statutory clock data from child DocTypes and council name
-    for app in applications:
-        # Get council name if council is set
-        if app.get("council"):
-            council_name = frappe.db.get_value("Council", app["council"], "council_name")
-            app["council"] = council_name
+    # Enrich with council name
+    for req in requests:
+        if req.get("council"):
+            council_name = frappe.db.get_value("Council", req["council"], "council_name")
+            req["council_name"] = council_name
 
-        if app.get("request_category") == "Resource Consent":
-            # Get clock data from Resource Consent Application
-            rc_app = frappe.db.get_value(
-                "Resource Consent Application",
-                {"request": app["name"]},
-                ["working_days_elapsed", "working_days_remaining", "statutory_clock_started"],
-                as_dict=True
-            )
-            if rc_app:
-                app["working_days_elapsed"] = rc_app.get("working_days_elapsed") or 0
-                app["working_days_remaining"] = rc_app.get("working_days_remaining") or 0
-                app["statutory_clock_started"] = rc_app.get("statutory_clock_started")
-            else:
-                # Fallback to deprecated Request fields during migration
-                app["working_days_elapsed"] = 0
-                app["working_days_remaining"] = 0
-                app["statutory_clock_started"] = None
-        # TODO: Add Building Consent Application handling here when implemented
-        else:
-            # For non-RC requests, set defaults
-            app["working_days_elapsed"] = 0
-            app["working_days_remaining"] = 0
-            app["statutory_clock_started"] = None
-
-    return applications
+    return requests
 
 
 @frappe.whitelist()
-def submit_application(request_id):
-    """Submit an application (move from Draft to Submitted)"""
+def submit_request(request_id):
+    """Submit a request (move from Draft to Submitted)"""
     doc = frappe.get_doc("Request", request_id)
 
     # Validate user has permission
     if doc.applicant != frappe.session.user:
-        frappe.throw("You don't have permission to submit this application")
+        frappe.throw("You don't have permission to submit this request")
 
     # Check if already submitted
     if doc.docstatus == 1:
-        frappe.throw("Application is already submitted")
+        frappe.throw("Request is already submitted")
 
     # Submit
     doc.submit()
 
     return {
         "success": True,
-        "message": "Application submitted successfully",
+        "message": "Request submitted successfully",
         "request_number": doc.request_number
     }
 
 
 @frappe.whitelist()
 def calculate_fees(request_type, building_value=None):
-    """Calculate estimated fees for an application"""
+    """Calculate estimated fees for a request"""
     request_type_doc = frappe.get_doc("Request Type", request_type)
 
     fees = []
@@ -650,7 +484,7 @@ def calculate_fees(request_type, building_value=None):
 
 @frappe.whitelist()
 def get_all_requests_for_staff():
-    """Get all requests for internal staff view with statutory clock data from child DocTypes"""
+    """Get all requests for internal staff view"""
     requests = frappe.get_all(
         "Request",
         fields=[
@@ -659,7 +493,6 @@ def get_all_requests_for_staff():
             "request_type",
             "request_category",
             "brief_description",
-            "property_address",
             "council",
             "status",
             "submitted_date",
@@ -673,34 +506,10 @@ def get_all_requests_for_staff():
         order_by="creation desc"
     )
 
-    # Enrich with statutory clock data from child DocTypes and council name
+    # Enrich with council name
     for req in requests:
-        # Get council name if council is set
         if req.get("council"):
             council_name = frappe.db.get_value("Council", req["council"], "council_name")
-            req["council"] = council_name
-
-        if req.get("request_category") == "Resource Consent":
-            # Get clock data from Resource Consent Application
-            rc_app = frappe.db.get_value(
-                "Resource Consent Application",
-                {"request": req["name"]},
-                ["working_days_elapsed", "working_days_remaining", "statutory_clock_started"],
-                as_dict=True
-            )
-            if rc_app:
-                req["working_days_elapsed"] = rc_app.get("working_days_elapsed") or 0
-                req["working_days_remaining"] = rc_app.get("working_days_remaining") or 0
-                req["statutory_clock_started"] = rc_app.get("statutory_clock_started")
-            else:
-                req["working_days_elapsed"] = 0
-                req["working_days_remaining"] = 0
-                req["statutory_clock_started"] = None
-        # TODO: Add Building Consent Application handling here when implemented
-        else:
-            # For non-RC requests, set defaults
-            req["working_days_elapsed"] = 0
-            req["working_days_remaining"] = 0
-            req["statutory_clock_started"] = None
+            req["council_name"] = council_name
 
     return requests

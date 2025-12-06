@@ -1,0 +1,408 @@
+{
+ "base_fee": 0.0,
+ "category": "Social Assistance",
+ "condition_templates": [],
+ "creation": "2025-12-04 12:02:32.722119",
+ "description": "<p>The Social Pension for Indigent Senior Citizens (SPISC) is a monthly cash assistance program for senior citizens aged 60 and above who are frail, sickly, disabled, or living alone with no regular source of income or support from their families.</p>\n\t\t<p><strong>Eligibility Requirements:</strong></p>\n\t\t<ul>\n\t\t\t<li>60 years old or above</li>\n\t\t\t<li>Resident of Taytay for at least 6 months</li>\n\t\t\t<li>Income below the poverty threshold</li>\n\t\t\t<li>Not receiving pension from SSS, GSIS, or other government agencies</li>\n\t\t</ul>",
+ "docstatus": 0,
+ "doctype": "Request Type",
+ "fast_track_available": 0,
+ "fee_calculation_method": "Fixed",
+ "help_text": "<p>The monthly pension amount is PHP 500. Payment is made through bank deposit or cash pickup at the barangay hall.</p>\n\t\t<p>After approval, you will need to provide your bank account details or preferred pickup location.</p>",
+ "hourly_rate": 0.0,
+ "idx": 0,
+ "is_active": 1,
+ "modified": "2025-12-04 21:15:52.755773",
+ "modified_by": "Administrator",
+ "name": "Social Pension for Indigent Senior Citizens (SPISC)",
+ "owner": "Administrator",
+ "pre_app_meeting_available": 1,
+ "processing_sla_days": 30,
+ "step_configs": [
+  {
+   "is_enabled": 1,
+   "is_required": 1,
+   "show_on_review": 1,
+   "step_code": "personal_info",
+   "step_component": "DynamicStepRenderer",
+   "step_number": 1,
+   "step_title": "Personal Information"
+  },
+  {
+   "is_enabled": 1,
+   "is_required": 1,
+   "show_on_review": 1,
+   "step_code": "household_info",
+   "step_component": "DynamicStepRenderer",
+   "step_number": 2,
+   "step_title": "Household Information"
+  },
+  {
+   "is_enabled": 1,
+   "is_required": 1,
+   "show_on_review": 1,
+   "step_code": "identity_verification",
+   "step_component": "DynamicStepRenderer",
+   "step_number": 3,
+   "step_title": "Identity Verification"
+  },
+  {
+   "is_enabled": 1,
+   "is_required": 1,
+   "show_on_review": 0,
+   "step_code": "supporting_documents",
+   "step_component": "DynamicStepRenderer",
+   "step_number": 4,
+   "step_title": "Supporting Documents"
+  },
+  {
+   "is_enabled": 1,
+   "is_required": 1,
+   "show_on_review": 1,
+   "step_code": "declaration",
+   "step_component": "DynamicStepRenderer",
+   "step_number": 5,
+   "step_title": "Declaration & Submission"
+  }
+ ],
+ "step_fields": [
+  {
+   "field_label": "Full Name",
+   "field_name": "full_name",
+   "field_type": "Data",
+   "is_required": 1,
+   "parent_section_code": "basic_details",
+   "show_on_review": 1
+  },
+  {
+   "field_label": "Date of Birth",
+   "field_name": "birth_date",
+   "field_type": "Date",
+   "is_required": 1,
+   "parent_section_code": "basic_details",
+   "review_label": "Age / Date of Birth",
+   "show_on_review": 1
+  },
+  {
+   "field_label": "Sex",
+   "field_name": "sex",
+   "field_type": "Select",
+   "is_required": 1,
+   "options": "Male\nFemale",
+   "parent_section_code": "basic_details",
+   "show_on_review": 1
+  },
+  {
+   "field_label": "Civil Status",
+   "field_name": "civil_status",
+   "field_type": "Select",
+   "is_required": 1,
+   "options": "Single\nMarried\nWidowed\nSeparated",
+   "parent_section_code": "basic_details",
+   "show_on_review": 1
+  },
+  {
+   "field_label": "Mobile Number",
+   "field_name": "mobile_number",
+   "field_type": "Data",
+   "is_required": 1,
+   "parent_section_code": "contact_info",
+   "show_on_review": 1
+  },
+  {
+   "field_label": "Email Address",
+   "field_name": "email",
+   "field_type": "Data",
+   "is_required": 0,
+   "parent_section_code": "contact_info",
+   "show_on_review": 1
+  },
+  {
+   "field_label": "Street / House Number",
+   "field_name": "address_line",
+   "field_type": "Data",
+   "is_required": 1,
+   "parent_section_code": "address",
+   "show_on_review": 1
+  },
+  {
+   "field_label": "Barangay",
+   "field_name": "barangay",
+   "field_type": "Data",
+   "is_required": 1,
+   "parent_section_code": "address",
+   "show_on_review": 1
+  },
+  {
+   "default_value": "Taytay",
+   "field_label": "Municipality",
+   "field_name": "municipality",
+   "field_type": "Data",
+   "is_required": 1,
+   "parent_section_code": "address",
+   "show_on_review": 1
+  },
+  {
+   "default_value": "Rizal",
+   "field_label": "Province",
+   "field_name": "province",
+   "field_type": "Data",
+   "is_required": 1,
+   "parent_section_code": "address",
+   "show_on_review": 1
+  },
+  {
+   "field_label": "Number of Household Members",
+   "field_name": "household_size",
+   "field_type": "Int",
+   "is_required": 1,
+   "parent_section_code": "household_composition",
+   "show_on_review": 1
+  },
+  {
+   "field_label": "Living Arrangement",
+   "field_name": "living_arrangement",
+   "field_type": "Select",
+   "is_required": 1,
+   "options": "Living alone\nLiving with spouse\nLiving with children\nLiving with relatives\nOther",
+   "parent_section_code": "household_composition",
+   "show_on_review": 1
+  },
+  {
+   "field_label": "Monthly Income (PHP)",
+   "field_name": "monthly_income",
+   "field_type": "Currency",
+   "is_required": 1,
+   "parent_section_code": "economic_status",
+   "show_on_review": 1
+  },
+  {
+   "field_label": "Source of Income",
+   "field_name": "income_source",
+   "field_type": "Select",
+   "is_required": 1,
+   "options": "No income\nFamily support\nPension\nSmall business\nOther",
+   "parent_section_code": "economic_status",
+   "show_on_review": 1
+  },
+  {
+   "field_label": "Are you a 4Ps beneficiary?",
+   "field_name": "is_4ps_beneficiary",
+   "field_type": "Check",
+   "is_required": 0,
+   "parent_section_code": "economic_status",
+   "review_label": "4Ps Beneficiary",
+   "show_on_review": 1
+  },
+  {
+   "field_label": "PhilSys ID Number (National ID)",
+   "field_name": "philsys_id",
+   "field_type": "Data",
+   "is_required": 0,
+   "parent_section_code": "identity_documents",
+   "show_on_review": 1
+  },
+  {
+   "field_label": "SSS/GSIS Number",
+   "field_name": "sss_number",
+   "field_type": "Data",
+   "is_required": 0,
+   "parent_section_code": "identity_documents",
+   "show_on_review": 1
+  },
+  {
+   "field_label": "OSCA ID Number",
+   "field_name": "osca_id",
+   "field_type": "Data",
+   "is_required": 0,
+   "parent_section_code": "identity_documents",
+   "review_label": "Senior Citizen ID",
+   "show_on_review": 1
+  },
+  {
+   "field_label": "Other Valid ID",
+   "field_name": "other_id",
+   "field_type": "Data",
+   "is_required": 0,
+   "parent_section_code": "identity_documents",
+   "show_on_review": 1
+  },
+  {
+   "field_label": "Barangay Certificate of Indigency",
+   "field_name": "barangay_cert_indigency",
+   "field_type": "Attach",
+   "is_required": 1,
+   "parent_section_code": "required_documents",
+   "show_on_review": 0
+  },
+  {
+   "field_label": "Birth Certificate or Baptismal Certificate",
+   "field_name": "birth_certificate",
+   "field_type": "Attach",
+   "is_required": 1,
+   "parent_section_code": "required_documents",
+   "show_on_review": 0
+  },
+  {
+   "field_label": "Photocopy of Valid ID",
+   "field_name": "valid_id_copy",
+   "field_type": "Attach",
+   "is_required": 1,
+   "parent_section_code": "required_documents",
+   "show_on_review": 0
+  },
+  {
+   "field_label": "Recent 2x2 Photo",
+   "field_name": "recent_photo",
+   "field_type": "Attach Image",
+   "is_required": 1,
+   "parent_section_code": "required_documents",
+   "show_on_review": 0
+  },
+  {
+   "field_label": "Medical Certificate (if frail/sickly/disabled)",
+   "field_name": "medical_certificate",
+   "field_type": "Attach",
+   "is_required": 0,
+   "parent_section_code": "optional_documents",
+   "show_on_review": 0
+  },
+  {
+   "field_label": "Certificate of Indigency",
+   "field_name": "indigency_certificate",
+   "field_type": "Attach",
+   "is_required": 0,
+   "parent_section_code": "optional_documents",
+   "show_on_review": 0
+  },
+  {
+   "field_label": "I declare that all information provided in this application is true and correct",
+   "field_name": "declaration_truth",
+   "field_type": "Check",
+   "is_required": 1,
+   "parent_section_code": "declaration",
+   "review_label": "Truth Declaration",
+   "show_on_review": 1
+  },
+  {
+   "field_label": "I consent to the collection, processing, and verification of my personal information in accordance with RA 10173 (Data Privacy Act)",
+   "field_name": "declaration_consent",
+   "field_type": "Check",
+   "is_required": 1,
+   "parent_section_code": "declaration",
+   "review_label": "Data Privacy Consent",
+   "show_on_review": 1
+  },
+  {
+   "field_label": "Signature or Thumbmark",
+   "field_name": "signature",
+   "field_type": "Attach Image",
+   "is_required": 1,
+   "parent_section_code": "declaration",
+   "show_on_review": 1
+  },
+  {
+   "default_value": "Today",
+   "field_label": "Date Signed",
+   "field_name": "signature_date",
+   "field_type": "Date",
+   "is_required": 1,
+   "parent_section_code": "declaration",
+   "show_on_review": 1
+  }
+ ],
+ "step_sections": [
+  {
+   "is_enabled": 1,
+   "is_required": 1,
+   "parent_step_code": "personal_info",
+   "section_code": "basic_details",
+   "section_title": "Basic Details",
+   "section_type": "Section",
+   "sequence": 1,
+   "show_on_review": 1
+  },
+  {
+   "is_enabled": 1,
+   "is_required": 1,
+   "parent_step_code": "personal_info",
+   "section_code": "contact_info",
+   "section_title": "Contact Information",
+   "section_type": "Section",
+   "sequence": 2,
+   "show_on_review": 1
+  },
+  {
+   "is_enabled": 1,
+   "is_required": 1,
+   "parent_step_code": "personal_info",
+   "section_code": "address",
+   "section_title": "Residential Address",
+   "section_type": "Section",
+   "sequence": 3,
+   "show_on_review": 1
+  },
+  {
+   "is_enabled": 1,
+   "is_required": 1,
+   "parent_step_code": "household_info",
+   "section_code": "household_composition",
+   "section_title": "Household Composition",
+   "section_type": "Section",
+   "sequence": 1,
+   "show_on_review": 1
+  },
+  {
+   "is_enabled": 1,
+   "is_required": 1,
+   "parent_step_code": "household_info",
+   "section_code": "economic_status",
+   "section_title": "Economic Status",
+   "section_type": "Section",
+   "sequence": 2,
+   "show_on_review": 1
+  },
+  {
+   "is_enabled": 1,
+   "is_required": 1,
+   "parent_step_code": "identity_verification",
+   "section_code": "identity_documents",
+   "section_title": "Identity Documents",
+   "section_type": "Section",
+   "sequence": 1,
+   "show_on_review": 1
+  },
+  {
+   "is_enabled": 1,
+   "is_required": 1,
+   "parent_step_code": "supporting_documents",
+   "section_code": "required_documents",
+   "section_title": "Required Documents",
+   "section_type": "Section",
+   "sequence": 1,
+   "show_on_review": 0
+  },
+  {
+   "is_enabled": 1,
+   "is_required": 0,
+   "parent_step_code": "supporting_documents",
+   "section_code": "optional_documents",
+   "section_title": "Optional Supporting Documents",
+   "section_type": "Section",
+   "sequence": 2,
+   "show_on_review": 0
+  },
+  {
+   "is_enabled": 1,
+   "is_required": 1,
+   "parent_step_code": "declaration",
+   "section_code": "declaration",
+   "section_title": "Applicant Declaration",
+   "section_type": "Section",
+   "sequence": 1,
+   "show_on_review": 1
+  }
+ ],
+ "type_code": "SPISC",
+ "type_name": "Social Pension for Indigent Senior Citizens (SPISC)"
+}

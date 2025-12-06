@@ -29,10 +29,15 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'council-change'])
 
 const updateCouncil = (council) => {
+  console.log('[Step1CouncilSelection] updateCouncil called with:', council)
+  console.log('[Step1CouncilSelection] Current modelValue:', props.modelValue)
+
   emit('update:modelValue', {
     ...props.modelValue,
     council: council
   })
   emit('council-change', council)
+
+  console.log('[Step1CouncilSelection] Emitted events')
 }
 </script>

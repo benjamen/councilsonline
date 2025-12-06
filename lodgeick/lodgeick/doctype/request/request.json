@@ -21,31 +21,17 @@
   "applicant_name",
   "applicant_email",
   "applicant_phone",
-  "applicant_type",
-  "acting_on_behalf",
   "column_break_2",
   "agent",
   "agent_name",
   "agent_email",
   "agent_phone",
   "organization",
-  "section_break_owner",
-  "applicant_is_not_owner",
-  "owner_name",
-  "owner_email",
-  "column_break_owner",
-  "owner_phone",
-  "owner_address",
-  "section_break_property",
-  "property",
+  "section_break_application",
+  "application_doctype",
+  "application_name",
+  "column_break_application",
   "property_address",
-  "legal_description",
-  "ct_reference",
-  "certificate_of_title_document",
-  "zoning",
-  "column_break_3",
-  "site_area",
-  "property_coordinates",
   "section_break_proposal",
   "brief_description",
   "detailed_description",
@@ -69,6 +55,8 @@
   "section_break_attachments",
   "attachments",
   "section_break_fees",
+  "selected_payment_account",
+  "selected_bank_account",
   "total_fees_excl_gst",
   "gst_amount",
   "total_fees_incl_gst",
@@ -119,15 +107,16 @@
    "fieldname": "request_category",
    "fieldtype": "Select",
    "label": "Category",
-   "options": "Resource Consent\nBuilding Consent\nService Request\nLicense\nComplaint",
-   "reqd": 1
+   "options": "Resource Consent\nBuilding Consent\nService Request\nLicense\nPermit\nComplaint\nInformation Request\nOther",
+   "reqd": 0,
+   "description": "General category for this request. Can be left blank if request type already defines category."
   },
   {
    "allow_on_submit": 1,
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "Draft\nSubmitted\nAcknowledged\nProcessing\nRFI Issued\nRFI Received\nPending Decision\nApproved\nApproved with Conditions\nDeclined\nWithdrawn\nUnder Appeal",
+   "options": "Draft\nSubmitted\nAcknowledged\nProcessing\nRFI Issued\nRFI Received\nPending Decision\nApproved\nApproved with Conditions\nDeclined\nWithdrawn\nCancelled\nCompleted",
    "reqd": 1
   },
   {
@@ -155,7 +144,7 @@
    "read_only": 1
   },
   {
-   "description": "Details about the person or entity submitting this application. If using an agent or consultant, provide their details in the right column.",
+   "description": "Details about the person or entity submitting this request",
    "fieldname": "section_break_applicant",
    "fieldtype": "Section Break",
    "label": "Applicant Information"
@@ -184,21 +173,7 @@
   {
    "fieldname": "applicant_phone",
    "fieldtype": "Data",
-   "label": "Phone",
-   "reqd": 1
-  },
-  {
-   "fieldname": "applicant_type",
-   "fieldtype": "Select",
-   "label": "Applicant Type",
-   "options": "Individual\nCompany\nTrust\nPartnership",
-   "reqd": 1
-  },
-  {
-   "default": "0",
-   "fieldname": "acting_on_behalf",
-   "fieldtype": "Check",
-   "label": "Acting on Behalf of Client"
+   "label": "Phone"
   },
   {
    "fieldname": "column_break_2",
@@ -207,8 +182,9 @@
   {
    "fieldname": "agent",
    "fieldtype": "Link",
-   "label": "Agent/Consultant",
-   "options": "User"
+   "label": "Agent/Representative",
+   "options": "User",
+   "description": "Optional: Person or consultant acting on behalf of applicant"
   },
   {
    "fetch_from": "agent.full_name",
@@ -233,123 +209,55 @@
    "fieldname": "organization",
    "fieldtype": "Link",
    "label": "Organization",
-   "options": "Organization"
+   "options": "Organization",
+   "description": "Optional: Organization associated with this request"
   },
   {
-   "collapsible": 1,
-   "description": "If you are not the property owner, provide the owner's contact details. This is required under Section 88 of the RMA.",
-   "fieldname": "section_break_owner",
+   "description": "Link to the type-specific application document (e.g., Resource Consent Application, SPISC Application)",
+   "fieldname": "section_break_application",
    "fieldtype": "Section Break",
-   "label": "Property Owner Details"
+   "label": "Application Details",
+   "collapsible": 1
   },
   {
-   "default": "0",
-   "fieldname": "applicant_is_not_owner",
-   "fieldtype": "Check",
-   "label": "I am not the property owner"
-  },
-  {
-   "depends_on": "eval:doc.applicant_is_not_owner==1",
-   "fieldname": "owner_name",
+   "fieldname": "application_doctype",
    "fieldtype": "Data",
-   "label": "Owner Name",
-   "mandatory_depends_on": "eval:doc.applicant_is_not_owner==1"
+   "label": "Application DocType",
+   "read_only": 1,
+   "description": "The DocType of the associated application (e.g., 'Resource Consent Application', 'SPISC Application')",
+   "in_list_view": 0,
+   "in_standard_filter": 0
   },
   {
-   "depends_on": "eval:doc.applicant_is_not_owner==1",
-   "fieldname": "owner_email",
-   "fieldtype": "Data",
-   "label": "Owner Email",
-   "options": "Email"
+   "fieldname": "application_name",
+   "fieldtype": "Dynamic Link",
+   "options": "application_doctype",
+   "label": "Application",
+   "read_only": 1,
+   "description": "Link to the associated application record",
+   "in_list_view": 0
   },
   {
-   "fieldname": "column_break_owner",
+   "fieldname": "column_break_application",
    "fieldtype": "Column Break"
   },
   {
-   "depends_on": "eval:doc.applicant_is_not_owner==1",
-   "fieldname": "owner_phone",
-   "fieldtype": "Data",
-   "label": "Owner Phone"
-  },
-  {
-   "depends_on": "eval:doc.applicant_is_not_owner==1",
-   "fieldname": "owner_address",
-   "fieldtype": "Small Text",
-   "label": "Owner Address"
-  },
-  {
-   "description": "The property where the proposed work will take place. Select an existing property or create a new one with the address and legal description.",
-   "fieldname": "section_break_property",
-   "fieldtype": "Section Break",
-   "label": "Property Information"
-  },
-  {
-   "fieldname": "property",
-   "fieldtype": "Link",
-   "label": "Property",
-   "options": "Property",
-   "reqd": 1
-  },
-  {
-   "fetch_from": "property.street_address",
    "fieldname": "property_address",
    "fieldtype": "Small Text",
-   "label": "Address",
-   "read_only": 1
+   "label": "Property/Location",
+   "read_only": 1,
+   "description": "Display-only field for list views. Synced from Application DocType.",
+   "in_list_view": 1,
+   "in_standard_filter": 0
   },
   {
-   "fetch_from": "property.legal_description",
-   "fieldname": "legal_description",
-   "fieldtype": "Small Text",
-   "label": "Legal Description",
-   "read_only": 1
-  },
-  {
-   "fetch_from": "property.certificate_of_title",
-   "fieldname": "ct_reference",
-   "fieldtype": "Data",
-   "label": "Certificate of Title",
-   "read_only": 1
-  },
-  {
-   "description": "Optional: Upload a copy of the Certificate of Title if available",
-   "fieldname": "certificate_of_title_document",
-   "fieldtype": "Attach",
-   "label": "Certificate of Title Document"
-  },
-  {
-   "fetch_from": "property.zoning",
-   "fieldname": "zoning",
-   "fieldtype": "Data",
-   "label": "Zoning",
-   "read_only": 1
-  },
-  {
-   "fieldname": "column_break_3",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fetch_from": "property.site_area",
-   "fieldname": "site_area",
-   "fieldtype": "Float",
-   "label": "Site Area (m\u00b2)",
-   "read_only": 1
-  },
-  {
-   "fieldname": "property_coordinates",
-   "fieldtype": "Small Text",
-   "label": "Coordinates",
-   "read_only": 1
-  },
-  {
-   "description": "Describe what is being proposed. Brief description (50-100 words) is shown in listings and reports. Detailed description is used for assessment and should include all relevant information about the proposed work.",
+   "description": "Describe what is being requested. Brief description is shown in listings and reports. Detailed description is used for assessment.",
    "fieldname": "section_break_proposal",
    "fieldtype": "Section Break",
-   "label": "Proposal Details"
+   "label": "Request Details"
   },
   {
-   "description": "Short summary (50-100 words) visible in request listings, reports, and public notices. Keep it concise and focused on the main proposal.",
+   "description": "Short summary (50-100 words) visible in request listings and reports",
    "fieldname": "brief_description",
    "fieldtype": "Small Text",
    "label": "Brief Description",
@@ -357,14 +265,13 @@
    "reqd": 1
   },
   {
-   "description": "Full description of the proposed work for planner assessment. Include all relevant details about scope, materials, dimensions, environmental considerations, and any other information needed for processing.",
+   "description": "Full description of the request with all relevant details",
    "fieldname": "detailed_description",
    "fieldtype": "Text Editor",
-   "label": "Detailed Description",
-   "reqd": 1
+   "label": "Detailed Description"
   },
   {
-   "description": "Tracks statutory timeframes required under the Resource Management Act (RMA). The statutory clock starts when the request is acknowledged and stops during RFI (Request for Information) periods. Working days are calculated excluding weekends and public holidays.",
+   "description": "Track key dates and timeframes for this request",
    "fieldname": "section_break_dates",
    "fieldtype": "Section Break",
    "label": "Dates & Timeframes"
@@ -386,7 +293,8 @@
    "fieldname": "target_completion_date",
    "fieldtype": "Date",
    "label": "Target Completion Date",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Calculated based on request type SLA"
   },
   {
    "allow_on_submit": 1,
@@ -418,18 +326,19 @@
   {
    "fieldname": "processing_notes",
    "fieldtype": "Text Editor",
-   "label": "Processing Notes"
+   "label": "Processing Notes",
+   "description": "Internal notes for processing this request"
   },
   {
    "collapsible": 1,
-   "description": "Links to the internal assessment workflow project. An Assessment Project is automatically created when the request is acknowledged, containing tasks, stages, and team assignments for processing this application.",
+   "description": "Links to the internal assessment workflow project",
    "fieldname": "section_break_assessment",
    "fieldtype": "Section Break",
    "label": "Assessment Project"
   },
   {
    "allow_on_submit": 1,
-   "description": "Link to the internal assessment workflow. Automatically created when this request is acknowledged. Click to view tasks, stages, and team assignments.",
+   "description": "Link to the internal assessment workflow. Automatically created when this request is acknowledged.",
    "fieldname": "assessment_project",
    "fieldtype": "Link",
    "label": "Assessment Project",
@@ -484,10 +393,26 @@
   },
   {
    "collapsible": 1,
-   "description": "Fee breakdown and payment tracking for this application. Fees are calculated based on the request type and work scope. GST is added automatically. Payment status is updated when payments are received.",
+   "description": "Fee breakdown and payment tracking",
    "fieldname": "section_break_fees",
    "fieldtype": "Section Break",
    "label": "Fees & Payments"
+  },
+  {
+   "fieldname": "selected_payment_account",
+   "fieldtype": "Link",
+   "label": "Payment Account (Council Receives)",
+   "options": "Council Payment Account",
+   "description": "Council bank account to receive payment from applicant",
+   "read_only": 0
+  },
+  {
+   "fieldname": "selected_bank_account",
+   "fieldtype": "Link",
+   "label": "Bank Account (Applicant Receives)",
+   "options": "User Bank Account",
+   "description": "Applicant's bank account to receive payment from council",
+   "read_only": 0
   },
   {
    "fieldname": "total_fees_excl_gst",
@@ -512,7 +437,7 @@
    "fieldtype": "Column Break"
   },
   {
-   "description": "Current payment status for this application. Updated automatically when payments are received or processed.",
+   "description": "Current payment status",
    "fieldname": "payment_status",
    "fieldtype": "Select",
    "label": "Payment Status",
@@ -520,7 +445,7 @@
    "read_only": 1
   },
   {
-   "description": "Itemized breakdown of all fees for this application. Add fee line items based on the request type and scope of work.",
+   "description": "Itemized breakdown of fees",
    "fieldname": "fees",
    "fieldtype": "Table",
    "label": "Fee Breakdown",
@@ -528,7 +453,7 @@
   },
   {
    "collapsible": 1,
-   "description": "Specify who should receive the invoice if different from the applicant. This could be the agent, property owner, or another party.",
+   "description": "Specify who should receive the invoice",
    "fieldname": "section_break_invoicing",
    "fieldtype": "Section Break",
    "label": "Invoicing Details"
@@ -537,7 +462,7 @@
    "fieldname": "invoice_to",
    "fieldtype": "Select",
    "label": "Invoice To",
-   "options": "Applicant\nAgent/Consultant\nProperty Owner\nOther",
+   "options": "Applicant\nAgent/Representative\nOrganization\nOther",
    "default": "Applicant"
   },
   {
@@ -572,16 +497,16 @@
   },
   {
    "collapsible": 1,
-   "description": "Choose how you would like to receive decision documents and communications from the council.",
+   "description": "Choose how you would like to receive communications",
    "fieldname": "section_break_delivery",
    "fieldtype": "Section Break",
-   "label": "Delivery & Deposit Transfer"
+   "label": "Delivery Preferences"
   },
   {
    "fieldname": "delivery_preference",
    "fieldtype": "Select",
    "label": "Delivery Preference",
-   "options": "Email\nPost\nPortal",
+   "options": "Email\nPost\nPortal\nSMS",
    "default": "Email"
   },
   {
@@ -601,12 +526,13 @@
    "collapsible": 1,
    "fieldname": "section_break_related",
    "fieldtype": "Section Break",
-   "label": "Related Applications"
+   "label": "Related Requests"
   },
   {
    "fieldname": "related_requests",
    "fieldtype": "Small Text",
-   "label": "Related Request Numbers"
+   "label": "Related Request Numbers",
+   "description": "Comma-separated list of related request numbers"
   },
   {
    "fieldname": "amended_from",
@@ -619,11 +545,6 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [
-  {
-   "group": "Related Documents",
-   "link_doctype": "Resource Consent Application",
-   "link_fieldname": "request"
-  },
   {
    "group": "Related Documents",
    "link_doctype": "Assessment Project",
@@ -640,7 +561,7 @@
    "link_fieldname": "reference_name"
   }
  ],
- "modified": "2025-11-05 19:00:00",
+ "modified": "2025-12-05 23:59:00",
  "modified_by": "Administrator",
  "module": "Lodgeick",
  "name": "Request",
@@ -705,7 +626,7 @@
    "write": 1
   }
  ],
- "search_fields": "request_number,property_address,applicant_name",
+ "search_fields": "request_number,applicant_name,brief_description,property_address",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

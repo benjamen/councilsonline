@@ -16,6 +16,8 @@
 		"test:e2e:headed": "playwright test --headed"
 	},
 	"dependencies": {
+		"@heroicons/vue": "^2.2.0",
+		"@lodgeick/ui": "file:../ui-library",
 		"feather-icons": "^4.29.2",
 		"frappe-ui": "^0.1.192",
 		"pinia": "^3.0.4",

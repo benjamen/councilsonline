@@ -80,8 +80,7 @@ def setup_spisc_request_type():
 		"base_fee": 0,
 		"fee_calculation_method": "Fixed",
 		"is_active": 1,
-		"pre_app_meeting_available": 0,
-		"fast_track_available": 0,
+		"council_meeting_available": 0,
 		"help_text": """<p>The monthly pension amount is PHP 500. Payment is made through bank deposit or cash pickup at the barangay hall.</p>
 		<p>After approval, you will need to provide your bank account details or preferred pickup location.</p>"""
 	})
@@ -115,8 +114,7 @@ def setup_lsfa_request_type():
 		"base_fee": 0,
 		"fee_calculation_method": "Fixed",
 		"is_active": 1,
-		"pre_app_meeting_available": 0,
-		"fast_track_available": 1,
+		"council_meeting_available": 0,
 		"help_text": """<p>Financial aid ranges from PHP 1,000 to PHP 10,000 depending on the nature and severity of the emergency.</p>
 		<p>Applications are processed on a case-by-case basis with priority given to urgent medical needs.</p>"""
 	})
@@ -150,8 +148,7 @@ def setup_bmss_request_type():
 		"base_fee": 0,
 		"fee_calculation_method": "Fixed",
 		"is_active": 1,
-		"pre_app_meeting_available": 0,
-		"fast_track_available": 1,
+		"council_meeting_available": 0,
 		"help_text": """<p><strong>Burial Assistance:</strong> Up to PHP 10,000 to cover funeral expenses</p>
 		<p><strong>Medical Assistance:</strong> Up to PHP 15,000 per critical illness/hospitalization</p>
 		<p>Payment can be made directly to service providers or as reimbursement to the family.</p>"""

@@ -15,20 +15,23 @@
   "processing_sla_days",
   "workflow_template",
   "default_assessment_template",
-  "fast_track_available",
-  "pre_app_meeting_available",
-  "section_break_conditions",
-  "condition_templates",
+  "council_meeting_available",
   "section_break_fees",
   "base_fee",
   "fee_calculation_method",
   "hourly_rate",
+  "collects_payment",
+  "make_payment",
   "section_break_form",
   "form_template",
   "required_documents",
   "help_text",
   "section_break_step_configs",
   "step_configs",
+  "section_break_step_sections",
+  "step_sections",
+  "section_break_step_fields",
+  "step_fields",
   "section_break_notifications",
   "notification_template",
   "section_break_status",
@@ -70,9 +73,10 @@
   {
    "fieldname": "processing_sla_days",
    "fieldtype": "Int",
-   "label": "Statutory Timeframe (days)",
+   "label": "Processing SLA (days)",
    "reqd": 1,
-   "default": "20"
+   "default": "20",
+   "description": "Target timeframe for processing this request type"
   },
   {
    "fieldname": "workflow_template",
@@ -88,30 +92,11 @@
    "description": "Auto-assigned when request is acknowledged. Determines which stages and tasks are created."
   },
   {
-   "fieldname": "fast_track_available",
+   "fieldname": "council_meeting_available",
    "fieldtype": "Check",
-   "label": "Fast-Track Available (s.87AAB RMA)",
-   "default": "0",
-   "description": "Enable fast-track processing option for Controlled activities (Resource Consent only)"
-  },
-  {
-   "fieldname": "pre_app_meeting_available",
-   "fieldtype": "Check",
-   "label": "Pre-Application Meeting Available",
+   "label": "Council Meeting Available",
    "default": "1",
-   "description": "Allow applicants to schedule pre-application meetings during the application process"
-  },
-  {
-   "fieldname": "section_break_conditions",
-   "fieldtype": "Section Break",
-   "label": "Default Consent Conditions"
-  },
-  {
-   "description": "Condition templates that will be automatically applied to Resource Consent Applications of this type",
-   "fieldname": "condition_templates",
-   "fieldtype": "Table",
-   "label": "Condition Templates",
-   "options": "Request Type Condition Template"
+   "description": "Allow applicants to schedule council meetings during the application process"
   },
   {
    "fieldname": "section_break_fees",
@@ -133,6 +118,20 @@
    "fieldname": "hourly_rate",
    "fieldtype": "Currency",
    "label": "Hourly Rate"
+  },
+  {
+   "fieldname": "collects_payment",
+   "fieldtype": "Check",
+   "label": "Collects Payment from Applicant",
+   "default": "0",
+   "description": "Enable if this request type requires payment collection (fees, invoices). Automatically adds payment and invoice detail steps."
+  },
+  {
+   "fieldname": "make_payment",
+   "fieldtype": "Check",
+   "label": "Make Payment to Applicant",
+   "default": "0",
+   "description": "Enable if this request type involves making payments to the applicant (e.g., grants, pensions, reimbursements). Automatically adds bank account detail step."
   },
   {
    "fieldname": "section_break_form",
@@ -166,6 +165,32 @@
    "label": "Step Configurations",
    "options": "Request Type Step Config",
    "description": "Define the steps that applicants will complete for this request type"
+  },
+  {
+   "fieldname": "section_break_step_sections",
+   "fieldtype": "Section Break",
+   "label": "Step Sections",
+   "description": "FLATTENED: All sections at Request Type level to avoid nested child tables"
+  },
+  {
+   "fieldname": "step_sections",
+   "fieldtype": "Table",
+   "label": "Sections",
+   "options": "Request Type Step Section",
+   "description": "Sections within steps. Each section links to its parent step via parent_step_code."
+  },
+  {
+   "fieldname": "section_break_step_fields",
+   "fieldtype": "Section Break",
+   "label": "Step Fields",
+   "description": "FLATTENED: All fields at Request Type level to avoid nested child tables"
+  },
+  {
+   "fieldname": "step_fields",
+   "fieldtype": "Table",
+   "label": "Fields",
+   "options": "Request Type Step Field",
+   "description": "Fields within sections. Each field links to its parent section via parent_section_code."
   },
   {
    "fieldname": "section_break_notifications",

@@ -12,7 +12,7 @@
             </button>
             <div>
               <h1 class="text-xl font-bold text-gray-900">New Application</h1>
-              <p class="text-sm text-gray-500">Step {{ currentStep }} of {{ totalSteps }}</p>
+              <p class="text-sm text-gray-500">Step {{ currentStep + 1 }} of {{ totalSteps }}</p>
             </div>
           </div>
           <div class="flex items-center gap-2">
@@ -40,14 +40,14 @@
             <div class="flex flex-col items-center">
               <div
                 class="w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm"
-                :class="getStepClass(index + 1)"
+                :class="getStepClass(index)"
               >
-                <span v-if="index + 1 < currentStep">✓</span>
+                <span v-if="index < currentStep">✓</span>
                 <span v-else>{{ index + 1 }}</span>
               </div>
               <span
                 class="text-xs mt-2 text-center"
-                :class="index + 1 === currentStep ? 'text-blue-600 font-medium' : 'text-gray-500'"
+                :class="index === currentStep ? 'text-blue-600 font-medium' : 'text-gray-500'"
               >
                 {{ step.title }}
               </span>
@@ -55,7 +55,7 @@
             <div
               v-if="index < steps.length - 1"
               class="flex-1 h-1 mx-4 rounded"
-              :class="index + 1 < currentStep ? 'bg-blue-600' : 'bg-gray-200'"
+              :class="index < currentStep ? 'bg-blue-600' : 'bg-gray-200'"
             ></div>
           </div>
         </div>
@@ -64,14 +64,16 @@
 
 <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-        <div v-if="currentStep === 1">
+        <!-- Council Selection Step (only shown if not locked) -->
+        <div v-if="getCurrentStepTitle() === 'Council'">
             <Step1CouncilSelection
                 v-model="formData"
                 @council-change="onCouncilChange"
             />
         </div>
 
-        <div v-if="currentStep === 2">
+        <!-- Request Type Selection Step (only shown if not locked/pre-selected) -->
+        <div v-if="getCurrentStepTitle() === 'Type'">
             <Step2RequestType
                 v-model="formData"
                 :request-types="requestTypes"
@@ -79,7 +81,8 @@
             />
         </div>
 
-        <div v-if="currentStep === 3">
+        <!-- Process Info Step (always shown after council/type) -->
+        <div v-if="getCurrentStepTitle() === 'Process Info'">
             <Step3ProcessInfo
                 :request-type-details="selectedRequestTypeDetails"
                 :council-name="getCouncilName()"
@@ -90,67 +93,53 @@
 
         <!-- Dynamic Steps (for configured request types like Philippines SPISC) -->
         <DynamicStepRenderer
-          v-if="currentStep > 3 && currentStep < totalSteps && usesConfigurableSteps && getCurrentStepConfig()"
+          v-if="usesConfigurableSteps && getCurrentStepConfig() && getCurrentStepTitle() !== 'Process Info' && getCurrentStepTitle() !== 'Review'"
           :stepConfig="getCurrentStepConfig()"
           v-model="formData"
-          :showBackButton="currentStep > 1"
-          :isLastStep="currentStep === totalSteps - 1"
-          @continue="handleNext"
-          @back="handlePrevious"
         />
 
-        <!-- FRD Step 1: Applicant & Proposal Details (consolidates old Steps 4,5,6) -->
+        <!-- LEGACY: RC-specific hardcoded step components (Phase 2.1 - kept as reference) -->
+        <!-- These are no longer used since RC now uses dynamic configuration -->
+        <!-- Can be safely removed in Phase 3 after thorough testing -->
+        <!--
         <Step1ApplicantProposal
-          v-if="currentStep === 4 && isResourceConsent && !usesConfigurableSteps"
+          v-if="getCurrentStepTitle() === 'Applicant & Proposal' && isResourceConsent && !usesConfigurableSteps"
           v-model="formData"
           :user-profile="userProfile"
           :properties="properties"
         />
-
-        <!-- FRD Step 2: Natural Hazards Assessment -->
         <Step2NaturalHazards
-          v-if="currentStep === 5 && isResourceConsent && !usesConfigurableSteps"
+          v-if="getCurrentStepTitle() === 'Natural Hazards' && isResourceConsent && !usesConfigurableSteps"
           v-model="formData"
         />
-
-        <!-- FRD Step 3: NES Assessment -->
         <Step3NESAssessment
-          v-if="currentStep === 6 && isResourceConsent && !usesConfigurableSteps"
+          v-if="getCurrentStepTitle() === 'NES Assessment' && isResourceConsent && !usesConfigurableSteps"
           v-model="formData"
         />
-
-        <!-- FRD Step 4: Boundary Approvals & Affected Parties -->
         <Step4Approvals
-          v-if="currentStep === 7 && isResourceConsent && !usesConfigurableSteps"
+          v-if="getCurrentStepTitle() === 'Approvals' && isResourceConsent && !usesConfigurableSteps"
           v-model="formData"
         />
-
-        <!-- FRD Step 5: Consultation with Other Parties -->
         <Step5Consultation
-          v-if="currentStep === 8 && isResourceConsent && !usesConfigurableSteps"
+          v-if="getCurrentStepTitle() === 'Consultation' && isResourceConsent && !usesConfigurableSteps"
           v-model="formData"
         />
-
-        <!-- FRD Step 6: Plans & Documents Upload -->
         <Step6Documents
-          v-if="currentStep === 9 && isResourceConsent && !usesConfigurableSteps"
+          v-if="getCurrentStepTitle() === 'Documents' && isResourceConsent && !usesConfigurableSteps"
           v-model="formData"
         />
-
-        <!-- FRD Step 7: Assessment of Environmental Effects (AEE) -->
         <Step7AEE
-          v-if="currentStep === 10 && isResourceConsent && !usesConfigurableSteps"
+          v-if="getCurrentStepTitle() === 'AEE' && isResourceConsent && !usesConfigurableSteps"
           v-model="formData"
         />
-
-        <!-- FRD Step 9: Declaration & Submission -->
         <Step9Submission
-          v-if="currentStep === 11 && isResourceConsent && !usesConfigurableSteps"
+          v-if="getCurrentStepTitle() === 'Submission' && isResourceConsent && !usesConfigurableSteps"
           v-model="formData"
         />
+        -->
 
         <!-- Review Step (Final Step for all request types) -->
-        <div v-if="currentStep === totalSteps">
+        <div v-if="getCurrentStepTitle() === 'Review'">
             <Step17Review
                 v-model="formData"
                 :council-name="getCouncilName()"
@@ -159,6 +148,7 @@
                 :is-resource-consent="isResourceConsent"
                 :step-configs="stepConfigs"
                 :uses-configurable-steps="usesConfigurableSteps"
+                :request-type-details="selectedRequestTypeDetails"
             />
         </div>
     </div>
@@ -166,7 +156,7 @@
     <!-- Navigation Buttons -->
         <div class="mt-8 flex justify-between items-center">
             <button
-                v-if="currentStep > 1"
+                v-if="currentStep > 0"
                 @click="currentStep--"
                 class="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors flex items-center"
             >
@@ -180,7 +170,7 @@
             <!-- Next button: Show on all steps except the last step -->
             <button
                 type="button"
-                v-if="currentStep < totalSteps"
+                v-if="currentStep < steps.length - 1"
                 @click="handleNext"
                 :disabled="!canProceed"
                 class="px-6 py-3 font-medium rounded-lg transition-colors flex items-center"
@@ -1000,14 +990,16 @@ import Step1CouncilSelection from '../components/request-steps/Step1CouncilSelec
 import Step2RequestType from '../components/request-steps/Step2RequestType.vue'
 import Step3ProcessInfo from '../components/request-steps/Step3ProcessInfo.vue'
 // FRD-compliant step components
-import Step1ApplicantProposal from '../components/request-steps/Step1ApplicantProposal.vue'
-import Step2NaturalHazards from '../components/request-steps/Step2NaturalHazards.vue'
-import Step3NESAssessment from '../components/request-steps/Step3NESAssessment.vue'
-import Step4Approvals from '../components/request-steps/Step4Approvals.vue'
-import Step5Consultation from '../components/request-steps/Step5Consultation.vue'
-import Step6Documents from '../components/request-steps/Step6Documents.vue'
-import Step7AEE from '../components/request-steps/Step7AEE.vue'
-import Step9Submission from '../components/request-steps/Step9Submission.vue'
+// LEGACY: RC-specific hardcoded step components (Phase 2.1 - kept as reference)
+// These imports can be removed in Phase 3 after thorough testing
+// import Step1ApplicantProposal from '../components/request-steps/Step1ApplicantProposal.vue'
+// import Step2NaturalHazards from '../components/request-steps/Step2NaturalHazards.vue'
+// import Step3NESAssessment from '../components/request-steps/Step3NESAssessment.vue'
+// import Step4Approvals from '../components/request-steps/Step4Approvals.vue'
+// import Step5Consultation from '../components/request-steps/Step5Consultation.vue'
+// import Step6Documents from '../components/request-steps/Step6Documents.vue'
+// import Step7AEE from '../components/request-steps/Step7AEE.vue'
+// import Step9Submission from '../components/request-steps/Step9Submission.vue'
 import Step17Review from '../components/request-steps/Step17Review.vue'
 import DynamicStepRenderer from '../components/DynamicStepRenderer.vue'
 import { useCouncilStore } from '../stores/councilStore'
@@ -1026,7 +1018,7 @@ const loadingProfile = ref(false)
 const userCompanyAccount = ref(null)
 
 // Form state
-const currentStep = ref(1)
+const currentStep = ref(0)
 const totalSteps = computed(() => steps.value.length)
 const savingDraft = ref(false)
 const submitting = ref(false)
@@ -1051,13 +1043,40 @@ const availableConsentTypes = [
 ]
 
 const steps = computed(() => {
-  const baseSteps = [
-    { title: 'Council', number: 1 },
-    { title: 'Type', number: 2 },
-    { title: 'Process Info', number: 3 }
-  ]
+  const baseSteps = []
 
-  // If using configurable steps, add them dynamically
+  // Debug logging
+  console.log('[Steps] Computing steps...')
+  console.log('[Steps] councilStore.isCouncilLocked:', councilStore.isCouncilLocked)
+  console.log('[Steps] route.query.type:', route.query.type)
+  console.log('[Steps] formData.value.request_type:', formData.value.request_type)
+
+  // Step 1: Council Selection (SKIP if council is locked)
+  if (!councilStore.isCouncilLocked) {
+    baseSteps.push({ title: 'Council', number: baseSteps.length + 1 })
+    console.log('[Steps] Added Council step')
+  } else {
+    console.log('[Steps] Skipped Council step (locked)')
+  }
+
+  // Step 2: Request Type (SKIP if council is locked AND type is pre-selected from URL)
+  const hasPreselectedType = route.query.type || (route.query.locked === 'true' && formData.value.request_type)
+  const skipTypeStep = councilStore.isCouncilLocked && hasPreselectedType
+  console.log('[Steps] hasPreselectedType:', hasPreselectedType)
+  console.log('[Steps] skipTypeStep:', skipTypeStep)
+
+  if (!skipTypeStep) {
+    baseSteps.push({ title: 'Type', number: baseSteps.length + 1 })
+    console.log('[Steps] Added Type step')
+  } else {
+    console.log('[Steps] Skipped Type step (locked + preselected)')
+  }
+
+  // Step 3: Process Info (always included)
+  baseSteps.push({ title: 'Process Info', number: baseSteps.length + 1 })
+  console.log('[Steps] Added Process Info step')
+
+  // Add configurable steps dynamically
   if (usesConfigurableSteps.value && stepConfigs.value.length > 0) {
     stepConfigs.value.forEach((config, index) => {
       baseSteps.push({
@@ -1069,20 +1088,12 @@ const steps = computed(() => {
       })
     })
   }
-  // Add RC-specific steps (FRD 9-step structure) - backward compatibility
-  else if (isResourceConsent.value) {
-    baseSteps.push({ title: 'Applicant & Proposal', number: 4 })  // FRD Step 1
-    baseSteps.push({ title: 'Natural Hazards', number: 5 })        // FRD Step 2
-    baseSteps.push({ title: 'NES Assessment', number: 6 })         // FRD Step 3
-    baseSteps.push({ title: 'Approvals', number: 7 })              // FRD Step 4
-    baseSteps.push({ title: 'Consultation', number: 8 })           // FRD Step 5
-    baseSteps.push({ title: 'Documents', number: 9 })              // FRD Step 6
-    baseSteps.push({ title: 'AEE', number: 10 })                   // FRD Step 7
-    baseSteps.push({ title: 'Submission', number: 11 })            // FRD Step 9
-  }
 
   // Review step is always last
   baseSteps.push({ title: 'Review', number: baseSteps.length + 1 })
+
+  console.log('[Steps] Final steps:', baseSteps.map(s => s.title).join(' → '))
+  console.log('[Steps] Total steps:', baseSteps.length)
 
   return baseSteps
 })
@@ -1631,7 +1642,7 @@ const activityStatusWarning = computed(() => {
 
   switch (formData.value.activity_status) {
     case 'Non-Complying':
-      return '⚠️ Non-complying activities face higher scrutiny and longer processing times. Consider pre-application meeting.'
+      return '⚠️ Non-complying activities face higher scrutiny and longer processing times. Consider council meeting.'
     case 'Discretionary':
       return 'ℹ️ Discretionary activities may require public notification depending on effects assessment.'
     case 'Controlled':
@@ -1649,7 +1660,7 @@ const canSubmit = computed(() => {
 // Get request types (will be loaded based on council selection)
 const requestTypes = ref({ data: [], loading: false, error: null })
 
-// Get user's properties
+// Get user's properties (only for logged-in users)
 const properties = createResource({
   url: 'frappe.client.get_list',
   params: {
@@ -1657,11 +1668,14 @@ const properties = createResource({
     fields: ['name', 'property_id', 'street_address', 'suburb', 'city', 'legal_description', 'certificate_of_title'],
     limit_page_length: 100,
   },
-  auto: true,
+  auto: false, // Don't auto-fetch for guest users
 })
 
 // Methods
 const onCouncilChange = async (councilCode) => {
+  console.log('[NewRequest] onCouncilChange called with:', councilCode)
+  console.log('[NewRequest] formData.value.council is now:', formData.value.council)
+
   if (!councilCode) {
     requestTypes.value = { data: [], loading: false, error: null }
     return
@@ -1707,11 +1721,16 @@ const selectRequestType = async (type) => {
   // Store the full request type details for the Process Info step
   selectedRequestTypeDetails.value = type
 
-  console.log('[NewRequest] Form data updated:', {
-    request_type: formData.value.request_type,
-    request_category: formData.value.request_category,
-    details: selectedRequestTypeDetails.value
-  })
+  console.log('[NewRequest] Form data updated:')
+  console.log('  request_type:', formData.value.request_type)
+  console.log('  request_category:', formData.value.request_category)
+  console.log('  council:', formData.value.council)
+  console.log('  formData.value:', formData.value)
+
+  // Load properties if this is a Resource Consent and user is logged in
+  if (type.category === 'Resource Consent' && session.user && session.user !== 'Guest') {
+    properties.fetch()
+  }
 
   // Load step configuration for this request type
   await loadStepConfiguration(type.name)
@@ -2005,10 +2024,10 @@ const nextStep = () => {
     currentStep: currentStepValue,
     totalSteps: totalStepsValue,
     steps: steps.value,
-    willProceed: canProceedValue && currentStepValue < totalStepsValue
+    willProceed: canProceedValue && currentStepValue < totalStepsValue - 1
   })
 
-  if (canProceedValue && currentStepValue < totalStepsValue) {
+  if (canProceedValue && currentStepValue < totalStepsValue - 1) {
     currentStep.value++
     console.log('[NewRequest] Moved to step:', currentStep.value)
   } else {
@@ -2022,7 +2041,7 @@ const nextStep = () => {
 }
 
 const previousStep = () => {
-  if (currentStep.value > 1) {
+  if (currentStep.value > 0) {
     currentStep.value--
   }
 }
@@ -2153,15 +2172,29 @@ const getCurrentStepConfig = () => {
     return null
   }
 
-  // Current step is 4+ (after Council, Type, Process Info)
-  // Map to stepConfigs array (0-indexed)
-  const configIndex = currentStep.value - 4
+  // Find the index of 'Process Info' in the steps array
+  const processInfoIndex = steps.value.findIndex(s => s.title === 'Process Info')
+
+  // Dynamic steps come after Process Info
+  // Map currentStep to stepConfigs array (0-indexed)
+  const configIndex = currentStep.value - processInfoIndex - 1
 
   if (configIndex >= 0 && configIndex < stepConfigs.value.length) {
     return stepConfigs.value[configIndex]
   }
 
   return null
+}
+
+// Get the title of the current step
+const getCurrentStepTitle = () => {
+  const title = (currentStep.value >= 0 && currentStep.value < steps.value.length)
+    ? steps.value[currentStep.value].title
+    : ''
+
+  console.log('[getCurrentStepTitle] currentStep:', currentStep.value, 'title:', title, 'allSteps:', steps.value.map(s => s.title).join(' → '))
+
+  return title
 }
 
 const handleSubmit = async () => {
@@ -2319,20 +2352,20 @@ const bookPreApplicationMeeting = async () => {
       },
       body: JSON.stringify({
         request_id: requestId,
-        meeting_type: 'Pre-Application Meeting'
+        meeting_type: 'Council Meeting'
       })
     })
 
     const meetingResult = await meetingResponse.json()
 
     if (meetingResult.message && meetingResult.message.success) {
-      alert(`Pre-Application Meeting request has been submitted! A council officer will contact you within 2 business days to schedule the meeting. Task ID: ${meetingResult.message.task_id}`)
+      alert(`Council Meeting request has been submitted! A council officer will contact you within 2 business days to schedule the meeting. Task ID: ${meetingResult.message.task_id}`)
     } else {
       throw new Error(meetingResult.message || 'Failed to book meeting')
     }
   } catch (error) {
     console.error('Error booking meeting:', error)
-    alert('Failed to book pre-application meeting. Please try again.')
+    alert('Failed to book council meeting. Please try again.')
   } finally {
     bookingMeeting.value = false
   }
@@ -2817,13 +2850,13 @@ const removeCondition = (index) => {
   }
 }
 
-// Pre-Application Meeting Request
+// Council Meeting Request
 const meetingResource = createResource({
   url: 'lodgeick.api.book_council_meeting',
   makeParams: (values) => values,
   onSuccess: (data) => {
     if (data && data.success) {
-      alert(`✅ Pre-Application Meeting Request Sent!\n\nTask #${data.task_id} has been created for the planning team.\n\nThey will contact you within 2 business days to schedule.`)
+      alert(`✅ Council Meeting Request Sent!\n\nTask #${data.task_id} has been created for the planning team.\n\nThey will contact you within 2 business days to schedule.`)
     } else {
       alert('Meeting request sent successfully! The planning team will contact you soon.')
     }
@@ -2831,7 +2864,7 @@ const meetingResource = createResource({
   },
   onError: (error) => {
     console.error('Error requesting meeting:', error)
-    alert('Failed to request pre-application meeting. Please try again or contact the planning team directly.')
+    alert('Failed to request council meeting. Please try again or contact the planning team directly.')
     requestingMeeting.value = false
   }
 })
@@ -2842,7 +2875,7 @@ const requestPreAppMeeting = async () => {
     return
   }
 
-  if (!confirm('Request a pre-application meeting? A planning officer will contact you within 2 business days to schedule.\n\nNote: You should save your application as a draft first.')) {
+  if (!confirm('Request a council meeting? A planning officer will contact you within 2 business days to schedule.\n\nNote: You should save your application as a draft first.')) {
     return
   }
 
@@ -2861,11 +2894,11 @@ const requestPreAppMeeting = async () => {
     // Then request the meeting
     meetingResource.submit({
       request_id: draftResult.request_id,
-      meeting_type: 'Pre-Application Meeting'
+      meeting_type: 'Council Meeting'
     })
   } catch (error) {
     console.error('Error in meeting request:', error)
-    alert('Failed to request pre-application meeting. Please try again.')
+    alert('Failed to request council meeting. Please try again.')
     requestingMeeting.value = false
   }
 }
@@ -2963,7 +2996,15 @@ watch(() => formData.value.applicant_phone, async (newPhone, oldPhone) => {
   }
 })
 
+// Watch for changes to formData.council
+watch(() => formData.value.council, (newValue, oldValue) => {
+  console.log('[NewRequest] formData.council changed from:', oldValue, 'to:', newValue)
+  console.trace('[NewRequest] Stack trace for council change')
+})
+
 onMounted(async () => {
+  console.log('[NewRequest] onMounted - starting initialization')
+
   // Load user profile first
   await loadUserProfile()
 
@@ -2974,19 +3015,67 @@ onMounted(async () => {
   const draftId = route.params.id || route.query.draft_id
   if (draftId) {
     await loadDraft(draftId)
+    return  // Skip council/type initialization when loading a draft
   }
 
-  // Check if council was preselected via URL or user default
-  if (councilStore.preselectedFromUrl) {
+  // Load locked council state from session
+  console.log('[NewRequest] Before loadLockedCouncil - isCouncilLocked:', councilStore.isCouncilLocked)
+  const lockedResult = await councilStore.loadLockedCouncil()
+  console.log('[NewRequest] After loadLockedCouncil - result:', lockedResult)
+  console.log('[NewRequest] After loadLockedCouncil - isCouncilLocked:', councilStore.isCouncilLocked)
+  console.log('[NewRequest] After loadLockedCouncil - lockedCouncil:', councilStore.lockedCouncil)
+
+  // Check for pre-selected request type from URL
+  const preselectedType = route.query.type
+  console.log('[NewRequest] preselectedType from URL:', preselectedType)
+
+  // Handle council selection
+  if (councilStore.isCouncilLocked) {
+    // Council is locked - pre-select it
+    console.log('[NewRequest] Council is locked:', councilStore.lockedCouncil)
+    formData.value.council = councilStore.lockedCouncil
+    await onCouncilChange(councilStore.lockedCouncil)
+
+    if (preselectedType) {
+      // Both council and type are locked - skip Steps 1 & 2
+      console.log('[NewRequest] Request type is pre-selected:', preselectedType)
+      formData.value.request_type = preselectedType
+
+      // Find the request type details from the loaded request types
+      const requestType = councilStore.requestTypes.find(rt => rt.name === preselectedType)
+      if (requestType) {
+        selectedRequestTypeDetails.value = requestType
+        formData.value.request_category = requestType.category || ''
+        console.log('[NewRequest] Set selectedRequestTypeDetails:', requestType)
+      }
+
+      // Load step configuration for this request type
+      await loadStepConfiguration(preselectedType)
+
+      // Start at Step 3 (Process Info) - which is now step index 0 (since Steps 1 & 2 are removed)
+      currentStep.value = 0
+    } else {
+      // Only council is locked - skip Step 1, show Step 2 (Type)
+      currentStep.value = 0  // Points to "Request Type" step (which is now index 0)
+    }
+  } else if (councilStore.preselectedFromUrl) {
+    // Council was preselected via URL (but not locked)
+    console.log('[NewRequest] Setting council from URL:', councilStore.preselectedFromUrl)
     formData.value.council = councilStore.preselectedFromUrl
     await onCouncilChange(councilStore.preselectedFromUrl)
   } else {
     // Try to load user's default council
     const userCouncils = await councilStore.getUserCouncils()
     if (userCouncils.default_council) {
+      console.log('[NewRequest] Setting council from user default:', userCouncils.default_council)
       formData.value.council = userCouncils.default_council
       await onCouncilChange(userCouncils.default_council)
     }
   }
+
+  console.log('[NewRequest] onMounted - initialization complete')
+  console.log('  Council:', formData.value.council)
+  console.log('  Type:', formData.value.request_type)
+  console.log('  Current Step:', currentStep.value)
 })
 </script>

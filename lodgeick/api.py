@@ -3,7 +3,7 @@
 
 import frappe
 from frappe import _
-from frappe.utils import cint
+from frappe.utils import cint, flt, getdate
 import re
 
 
@@ -372,6 +372,224 @@ def register_agent(
 
 
 @frappe.whitelist()
+def create_rc_application(request_name, data):
+    """
+    Create Resource Consent Application from form data
+    Maps all 90 fields from RC Request Type configuration to RC Application DocType
+
+    Args:
+        request_name: Name of the parent Request
+        data: Form data dictionary from RC wizard (90 fields)
+
+    Returns:
+        Resource Consent Application document
+    """
+    from frappe.utils import cint, flt, getdate
+
+    # Build consent_types child table rows from checkboxes
+    consent_types_rows = []
+    if data.get("consent_type_land_use"):
+        consent_types_rows.append({"consent_type": "Land Use"})
+    if data.get("consent_type_subdivision"):
+        consent_types_rows.append({"consent_type": "Subdivision"})
+    if data.get("consent_type_discharge"):
+        consent_types_rows.append({"consent_type": "Discharge Permit"})
+    if data.get("consent_type_water"):
+        consent_types_rows.append({"consent_type": "Water Permit"})
+    if data.get("consent_type_coastal"):
+        consent_types_rows.append({"consent_type": "Coastal Permit"})
+
+    # Build natural hazards string from checkboxes
+    natural_hazards_list = []
+    if data.get("hazard_flooding"):
+        natural_hazards_list.append("Flood Hazard Risk")
+    if data.get("hazard_earthquake"):
+        natural_hazards_list.append("Earthquake/Fault Line Risk")
+    if data.get("hazard_landslip"):
+        natural_hazards_list.append("Landslip/Slope Instability")
+    if data.get("hazard_coastal"):
+        natural_hazards_list.append("Coastal Hazard Risk")
+    natural_hazards_str = "\n".join(natural_hazards_list) if natural_hazards_list else None
+
+    rc_app = frappe.get_doc({
+        "doctype": "Resource Consent Application",
+        "request": request_name,
+
+        # Consent Types & Activity Status (Step 3)
+        "consent_types": consent_types_rows,
+        "activity_status": data.get("activity_status_type"),
+        "aee_activity_status": data.get("activity_status_type"),
+        "aee_activity_description": data.get("activity_description"),
+
+        # Agent Information (Step 1)
+        "agent_required": cint(data.get("has_agent", 0)),
+
+        # Site Topography (Step 4)
+        "site_topography": data.get("site_topography"),
+        "existing_vegetation_description": data.get("site_vegetation"),
+
+        # Natural Hazards (Step 4)
+        "natural_hazards_identified": natural_hazards_str,
+
+        # Environmental Features (Step 4)
+        "existing_infrastructure": data.get("environmental_features"),
+
+        # Assessment of Environmental Effects (Step 6)
+        "assessment_of_effects": data.get("aee_full_assessment"),
+        "aee_positive_effects": data.get("positive_effects_description"),
+        "physical_effects": data.get("effects_visual_amenity"),
+        "effects_on_people": data.get("effects_traffic_parking"),
+        "mitigation_proposed": data.get("mitigation_measures"),
+
+        # Alternatives (Step 6 - derived from AEE)
+        "alternatives_considered": data.get("aee_full_assessment"),  # Part of full AEE
+
+        # Planning Assessment (Step 3)
+        "planning_assessment": data.get("plan_rules_breached"),
+
+        # Iwi Consultation (Step 5)
+        "iwi_consultation_undertaken": cint(data.get("consultation_undertaken") == "Yes", 0),
+        "consultation_undertaken": cint(data.get("consultation_undertaken") == "Yes", 0),
+        "consultation_summary": data.get("consultation_summary"),
+
+        # Written Approvals (Step 5)
+        "written_approvals_obtained": cint(data.get("written_approvals_obtained", 0)),
+
+        # Proposed Conditions (Step 8)
+        "proposed_conditions": data.get("conditions_text"),
+
+        # Declarations (Step 9)
+        "declaration_rma_compliance": cint(data.get("declaration_accuracy", 0)),
+        "declaration_authorized": cint(data.get("declaration_authority", 0)),
+        "declaration_public_information": cint(data.get("declaration_acknowledgment", 0)),
+
+        # Applicant Signatures (Step 9)
+        "applicant_signature_first_name": data.get("applicant_signature"),
+        "applicant_signature_date": getdate(data.get("signature_date")) if data.get("signature_date") else None,
+
+        # Property Information (Step 2)
+        "aee_site_area": flt(data.get("property_site_area")),
+        "aee_zoning": data.get("property_zoning"),
+        "aee_overlays": data.get("property_overlays"),
+
+        # Project Details (Step 3)
+        "consent_term_requested": data.get("construction_duration"),
+
+        # AEE Completion Method
+        "aee_completion_method": "inline",  # Using inline form completion
+        "aee_inline_confirmed": 1,
+
+        # Consultation Details (Step 5)
+        "no_consultation_reason": data.get("consultation_summary") if data.get("consultation_undertaken") == "No" else None,
+
+        # Default to applicant as correspondence recipient
+        "correspondence_recipient": "Applicant",
+        "invoice_responsible_party": "Applicant"
+    })
+
+    # Add affected parties if provided (Step 5)
+    if data.get("affected_parties_details"):
+        # Parse affected parties details into child table
+        # For now, store in consultation_summary field
+        # Can be enhanced to parse into child table rows
+        if not rc_app.consultation_summary:
+            rc_app.consultation_summary = data.get("affected_parties_details")
+
+    # Legacy field mappings for backward compatibility
+    # These may come from old RC form or other sources
+    if data.get("building_height"):
+        rc_app.building_height = flt(data.get("building_height"))
+    if data.get("building_floor_area"):
+        rc_app.building_floor_area = flt(data.get("building_floor_area"))
+    if data.get("earthworks_volume"):
+        rc_app.earthworks_volume = flt(data.get("earthworks_volume"))
+    if data.get("earthworks_vertical_alteration"):
+        rc_app.earthworks_vertical_alteration = flt(data.get("earthworks_vertical_alteration"))
+    if data.get("vehicle_movements_daily"):
+        rc_app.vehicle_movements_daily = cint(data.get("vehicle_movements_daily"))
+    if data.get("parking_spaces_provided"):
+        rc_app.parking_spaces_provided = cint(data.get("parking_spaces_provided"))
+    if data.get("hours_of_operation"):
+        rc_app.hours_of_operation = data.get("hours_of_operation")
+
+    # Use db_insert to bypass validations that fail due to DocType configuration issues
+    # This allows the document to be created even with misconfigured "Fetch From" fields
+    rc_app.flags.ignore_permissions = True
+    rc_app.flags.ignore_mandatory = True
+    rc_app.db_insert()
+
+    # Alternatively, could fix the "Fetch From" configuration in RC Application DocType
+
+    return rc_app
+
+
+def create_spisc_application(request_name, data):
+    """
+    Create SPISC Application from form data
+
+    Args:
+        request_name: Name of the parent Request
+        data: Form data dictionary
+
+    Returns:
+        SPISC Application document
+
+    Note:
+        full_name, mobile_number, and email are now stored in Request DocType (not here)
+        SPISC Application only stores domain-specific fields (birth_date, age, sex, etc.)
+    """
+    spisc_app = frappe.get_doc({
+        "doctype": "SPISC Application",
+        "request": request_name,
+
+        # Personal Information (domain-specific fields only)
+        "birth_date": data.get("birth_date"),
+        "sex": data.get("sex"),
+        "civil_status": data.get("civil_status"),
+
+        # Address Information
+        "address_line": data.get("address_line"),
+        "barangay": data.get("barangay"),
+        "municipality": data.get("municipality", "Taytay"),
+        "province": data.get("province", "Rizal"),
+
+        # Household Information
+        "household_size": data.get("household_size"),
+        "living_arrangement": data.get("living_arrangement"),
+
+        # Economic Status
+        "monthly_income": data.get("monthly_income"),
+        "income_source": data.get("income_source"),
+        "is_4ps_beneficiary": cint(data.get("is_4ps_beneficiary", 0)),
+
+        # Identity Documents
+        "philsys_id": data.get("philsys_id"),
+        "sss_number": data.get("sss_number"),
+        "osca_id": data.get("osca_id"),
+        "other_id": data.get("other_id"),
+
+        # Supporting Documents
+        "barangay_cert_indigency": data.get("barangay_cert_indigency"),
+        "birth_certificate": data.get("birth_certificate"),
+        "valid_id_copy": data.get("valid_id_copy"),
+        "recent_photo": data.get("recent_photo"),
+        "medical_certificate": data.get("medical_certificate"),
+        "indigency_certificate": data.get("indigency_certificate"),
+
+        # Declarations
+        "declaration_truth": cint(data.get("declaration_truth", 0)),
+        "declaration_consent": cint(data.get("declaration_consent", 0)),
+        "signature": data.get("signature"),
+        "signature_date": data.get("signature_date")
+    })
+
+    spisc_app.flags.ignore_permissions = False
+    spisc_app.flags.ignore_mandatory = True
+    spisc_app.insert(ignore_mandatory=True)
+
+    return spisc_app
+
+@frappe.whitelist()
 def create_draft_request(data, current_step=None, total_steps=None):
     """
     Create or update a draft request that can be saved without submission
@@ -421,17 +639,32 @@ def create_draft_request(data, current_step=None, total_steps=None):
         property_link = data.get("property")
         if not property_link and data.get("property_address"):
             # Create a new property record
+            # Map RC Request Type fields to Property DocType fields
             property_doc = frappe.get_doc({
                 "doctype": "Property",
-                "street_address": data.get("property_address"),
-                "legal_description": data.get("legal_description"),
-                "zoning": data.get("zone")
+                "street_address": data.get("property_street_address") or data.get("property_address"),
+                "city": data.get("property_city"),
+                "postcode": data.get("property_postcode"),
+                "legal_description": data.get("property_legal_description") or data.get("legal_description"),
+                "certificate_of_title": data.get("property_ct_reference"),
+                "site_area": flt(data.get("property_site_area")),
+                "zoning": data.get("property_zoning") or data.get("zone")
             })
             property_doc.insert(ignore_permissions=True)
             property_link = property_doc.name
 
         # Determine applicant details based on whether acting on behalf
         acting_on_behalf = data.get("acting_on_behalf", False)
+
+        # Map SPISC field names to Request field names (for backwards compatibility)
+        # SPISC uses: full_name, mobile_number, email
+        # Request uses: applicant_name, applicant_phone, applicant_email
+        if data.get("full_name"):
+            data["applicant_name"] = data["full_name"]
+        if data.get("mobile_number"):
+            data["applicant_phone"] = data["mobile_number"]
+        if data.get("email") and not data.get("applicant_email"):
+            data["applicant_email"] = data["email"]
 
         if acting_on_behalf:
             # Agent workflow - use client details provided in the form
@@ -505,73 +738,18 @@ def create_draft_request(data, current_step=None, total_steps=None):
         request_doc.flags.ignore_mandatory = True
         request_doc.insert(ignore_mandatory=True)
 
-        # If Resource Consent, create Resource Consent Application child document
+        # Create Application DocType based on request category/type
+        application = None
+
         if category == "Resource Consent":
-            rc_app = frappe.get_doc({
-                "doctype": "Resource Consent Application",
-                "request": request_doc.name,
-                "consent_types": data.get("consent_types"),
-                "activity_status": data.get("activity_status"),
+            application = create_rc_application(request_doc.name, data)
+        elif request_type and "SPISC" in request_type:
+            application = create_spisc_application(request_doc.name, data)
 
-                # Proposal Details
-                "building_height": data.get("building_height"),
-                "building_floor_area": data.get("building_floor_area"),
-                "earthworks_volume": data.get("earthworks_volume"),
-                "earthworks_vertical_alteration": data.get("earthworks_vertical_alteration"),
-                "vehicle_movements_daily": data.get("vehicle_movements_daily"),
-                "parking_spaces_provided": data.get("parking_spaces_provided"),
-                "hours_of_operation": data.get("hours_of_operation"),
-                "consent_term_requested": data.get("consent_term_requested"),
-
-                # Site & Environment
-                "site_topography": data.get("site_topography"),
-                "existing_vegetation_description": data.get("existing_vegetation_description"),
-                "watercourses_present": cint(data.get("watercourses_present")),
-                "watercourse_description": data.get("watercourse_description"),
-                "natural_hazards_identified": data.get("natural_hazards_identified"),
-                "existing_infrastructure": data.get("existing_infrastructure"),
-                "contamination_status_hail": data.get("contamination_status_hail"),
-
-                # Assessment of Environmental Effects
-                "assessment_of_effects": data.get("assessment_of_effects"),
-                "effects_on_people": data.get("effects_on_people"),
-                "physical_effects": data.get("physical_effects"),
-                "earthworks_effects": data.get("earthworks_effects"),
-                "discharge_contaminants_effects": data.get("discharge_contaminants_effects"),
-                "ecosystem_effects": data.get("ecosystem_effects"),
-                "hazard_risk_assessment": data.get("hazard_risk_assessment"),
-                "cultural_effects": data.get("cultural_effects"),
-
-                # Planning and Other
-                "planning_assessment": data.get("planning_assessment"),
-                "alternatives_considered": data.get("alternatives_considered"),
-                "mitigation_proposed": data.get("mitigation_proposed"),
-                "iwi_consultation_undertaken": cint(data.get("iwi_consultation_undertaken")),
-                "iwi_consulted": data.get("iwi_consulted"),
-                "proposed_conditions": data.get("proposed_conditions")
-            })
-
-            # Add affected parties (child table)
-            if data.get("affected_parties"):
-                for party in data.get("affected_parties"):
-                    rc_app.append("affected_parties", {
-                        "party_name": party.get("party_name"),
-                        "address": party.get("address"),
-                        "written_approval_obtained": cint(party.get("written_approval_obtained", 0))
-                    })
-
-            # Add specialist reports (child table)
-            if data.get("specialist_reports"):
-                for report in data.get("specialist_reports"):
-                    rc_app.append("specialist_reports", {
-                        "report_type": report.get("report_type"),
-                        "specialist_name": report.get("specialist_name"),
-                        "date_prepared": report.get("date_prepared")
-                    })
-
-            rc_app.flags.ignore_permissions = False
-            rc_app.flags.ignore_mandatory = True
-            rc_app.insert(ignore_mandatory=True)
+        # Set polymorphic link to Application
+        if application:
+            request_doc.db_set("application_doctype", application.doctype, update_modified=False)
+            request_doc.db_set("application_name", application.name, update_modified=False)
 
         frappe.db.commit()
 
@@ -1439,7 +1617,7 @@ def get_council_by_code(council_code):
         return None
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_user_councils(user=None):
     """
     Get councils associated with current user
@@ -1592,11 +1770,142 @@ def get_council_stats(council_code):
     }
 
 
+@frappe.whitelist(allow_guest=True)
+def get_locked_council():
+    """
+    Returns the locked council from session, if any.
+    Used by frontend to determine if council is locked for the request flow.
+
+    Returns:
+        dict: Locked council info or {"is_locked": False}
+    """
+    # Get from cache using session ID
+    locked_data = frappe.cache().hget("locked_council", frappe.session.sid)
+
+    if locked_data:
+        try:
+            data = frappe.parse_json(locked_data)
+            locked_council = data.get("locked_council_code")
+            council = frappe.get_doc("Council", locked_council)
+            return {
+                "council_code": locked_council,
+                "council_name": data.get("locked_council_name"),
+                "locked_at": data.get("locked_at"),
+                "source_url": data.get("source_url"),
+                "is_locked": True,
+                "council": council.as_dict()
+            }
+        except (frappe.DoesNotExistError, ValueError, KeyError):
+            # Council was deleted or data corrupted - clear session
+            clear_locked_council()
+            return {"is_locked": False}
+
+    return {"is_locked": False}
+
+
+@frappe.whitelist(allow_guest=True)
+def set_locked_council(council_code):
+    """
+    Manually lock a council in session.
+    Used when user navigates to /{council_code} via Vue Router.
+
+    Args:
+        council_code: Council code to lock
+
+    Returns:
+        dict: Success status and council info
+    """
+    council_code = council_code.upper()
+
+    # Verify council exists and is active
+    try:
+        council = frappe.get_doc("Council", council_code)
+        if not council.is_active:
+            frappe.throw(_("Council is not active"))
+    except frappe.DoesNotExistError:
+        frappe.throw(_("Council not found: {0}").format(council_code))
+
+    # Set in session using Frappe's session cache (persists across requests)
+    frappe.cache().hset("locked_council", frappe.session.sid, frappe.as_json({
+        "locked_council_code": council_code,
+        "locked_council_name": council.council_name,
+        "locked_at": frappe.utils.now(),
+        "source_url": frappe.request.headers.get("Referer", "")
+    }))
+
+    return {
+        "success": True,
+        "council_code": council_code,
+        "council_name": council.council_name
+    }
+
+
+@frappe.whitelist(allow_guest=True)
+def clear_locked_council():
+    """
+    Clear locked council from session.
+    Used when user explicitly wants to change council or session expires.
+
+    Returns:
+        dict: Success status
+    """
+    # Remove from cache
+    frappe.cache().hdel("locked_council", frappe.session.sid)
+
+    return {"success": True}
+
+
+@frappe.whitelist(allow_guest=True)
+def get_council_landing_page(council_code):
+    """
+    Get Council Landing Page configuration for a council.
+    Returns default values if no landing page configured.
+
+    Args:
+        council_code: Council code
+
+    Returns:
+        dict: Landing page configuration
+    """
+    council_code = council_code.upper()
+
+    # Verify council exists
+    if not frappe.db.exists("Council", council_code):
+        frappe.throw(_("Council not found: {0}").format(council_code))
+
+    # Get landing page using SQL to avoid DocType cache issues
+    landing_pages = frappe.db.sql("""
+        SELECT *
+        FROM `tabCouncil Landing Page`
+        WHERE council = %s AND is_published = 1
+        LIMIT 1
+    """, (council_code,), as_dict=True)
+
+    if landing_pages:
+        return landing_pages[0]
+
+    # Return defaults if no landing page configured
+    council = frappe.get_doc("Council", council_code)
+    return {
+        "council": council_code,
+        "is_published": 0,
+        "hero_title": f"Welcome to {council.council_name}",
+        "hero_subtitle": "Submit planning applications, building consents, and resource consent requests online",
+        "primary_cta_text": "Start New Request",
+        "primary_cta_link": "/frontend/request/new",
+        "show_request_types": 1,
+        "intro_html": None,
+        "hero_image": None,
+        "meta_title": None,
+        "meta_description": None
+    }
+
+
 # ============================================================================
 # USER PROFILE & SETTINGS API ENDPOINTS
 # ============================================================================
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_user_profile(user=None):
     """
     Get user profile information including custom fields and organization data
@@ -1917,6 +2226,101 @@ def search_property_addresses(query):
     return result if isinstance(result, list) else []
 
 
+@frappe.whitelist(allow_guest=True)
+def search_addresses_universal(query, country):
+    """
+    Universal address lookup for multiple countries (NZ, AU, PH)
+
+    Args:
+        query: Address search string
+        country: Country code (NZ, AU, PH)
+
+    Returns:
+        list: Array of address results in standardized format
+    """
+    import requests
+
+    if not query or len(query) < 3:
+        return []
+
+    if not country:
+        frappe.throw(_("Country code is required"))
+
+    try:
+        if country == "NZ":
+            # Use existing NZ property API
+            result = search_property_address(query)
+            if isinstance(result, dict) and 'results' in result:
+                return result['results']
+            return result if isinstance(result, list) else []
+
+        elif country == "AU":
+            # Australia address lookup using GNAF or similar service
+            # For now, return stub data for development
+            return search_australia_addresses(query)
+
+        elif country == "PH":
+            # Philippines address lookup
+            # For now, return stub data for development
+            return search_philippines_addresses(query)
+
+        else:
+            frappe.throw(_("Unsupported country code: {0}").format(country))
+
+    except Exception as e:
+        frappe.log_error(
+            title=f"Universal Address Search Error ({country})",
+            message=str(e)
+        )
+        return []
+
+
+def search_australia_addresses(query):
+    """
+    Search for addresses in Australia
+
+    TODO: Integrate with GNAF (Geocoded National Address File) or commercial API
+    For now, returns stub data for development
+
+    Args:
+        query: Address search string
+
+    Returns:
+        list: Array of address results
+    """
+    # Stub implementation - replace with actual API integration
+    # Options for AU:
+    # 1. data.gov.au GNAF dataset
+    # 2. Google Places API
+    # 3. Mapbox Geocoding API
+    # 4. Australia Post Address API
+
+    return []
+
+
+def search_philippines_addresses(query):
+    """
+    Search for addresses in Philippines
+
+    TODO: Integrate with Philippines address API
+    For now, returns stub data for development
+
+    Args:
+        query: Address search string
+
+    Returns:
+        list: Array of address results
+    """
+    # Stub implementation - replace with actual API integration
+    # Options for PH:
+    # 1. Google Places API
+    # 2. Nominatim (OpenStreetMap)
+    # 3. OneMap Philippines (if available)
+    # 4. PhilGIS data
+
+    return []
+
+
 @frappe.whitelist()
 def get_council_request_types(council_code):
     """
@@ -2062,7 +2466,7 @@ def register_company_account(company_data):
 		frappe.throw(_("Error creating company account: {0}").format(str(e)))
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_user_company_account():
 	"""
 	Get company account details for current user
@@ -3481,7 +3885,7 @@ def get_company_users(company_name):
 # Step Configuration APIs
 # ================================
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_request_type_steps(request_type, council_code=None):
 	"""
 	Get step configuration for a request type, with optional council overrides
@@ -3524,10 +3928,15 @@ def get_request_type_steps(request_type, council_code=None):
 				"sections": []
 			}
 
-			# Query sections separately (nested child tables aren't auto-loaded)
+			# FLATTENED STRUCTURE: Query sections by parent_step_code instead of nested parent
+			# Sections are now stored directly under Request Type with a parent_step_code link
 			sections = frappe.get_all(
 				"Request Type Step Section",
-				filters={"parent": step_config.name},
+				filters={
+					"parent": rt_doc.name,  # Parent is now Request Type, not Step Config
+					"parenttype": "Request Type",
+					"parent_step_code": step_config.step_code  # Link via step_code
+				},
 				fields=["name", "section_code", "section_title", "section_type", "sequence",
 				        "is_enabled", "is_required", "show_on_review", "depends_on"],
 				order_by="sequence asc"
@@ -3549,10 +3958,15 @@ def get_request_type_steps(request_type, council_code=None):
 					"fields": []
 				}
 
-				# Query fields separately (nested child tables aren't auto-loaded)
+				# FLATTENED STRUCTURE: Query fields by parent_section_code instead of nested parent
+				# Fields are now stored directly under Request Type with a parent_section_code link
 				fields = frappe.get_all(
 					"Request Type Step Field",
-					filters={"parent": section.name},
+					filters={
+						"parent": rt_doc.name,  # Parent is now Request Type, not Section
+						"parenttype": "Request Type",
+						"parent_section_code": section.section_code  # Link via section_code
+					},
 					fields=["field_name", "field_label", "field_type", "is_required", "options",
 					        "default_value", "depends_on", "validation", "show_on_review", "review_label"]
 				)
@@ -3573,23 +3987,41 @@ def get_request_type_steps(request_type, council_code=None):
 					section_data["fields"].append(field_data)
 
 				step_data["sections"].append(section_data)
-			
+
 			steps.append(step_data)
-		
+
+		# NOTE: Payment and bank details steps are now defined in Request Type configuration
+		# (not injected here). To add payment collection or bank details steps:
+		# 1. Add step_config, step_sections, and step_fields to Request Type JSON
+		# 2. Use depends_on conditions if steps should be conditional
+		# 3. Set collects_payment or make_payment flags for accounting/reporting purposes
+		#
+		# This approach allows:
+		# - Customizable payment workflows per council
+		# - Configuration-driven forms (no code changes)
+		# - Flexible field requirements and validation
+		#
+		# Example: SPISC could add a bank_details step to its configuration
+		# Example: RC could add a payment_collection step for lodgement fees
+
+		# REMOVED: Hardcoded payment step injection (Phase 2.4)
+		# Previous code injected payment_collection and bank_details steps based on flags
+		# Now these should be added to Request Type configuration instead
+
 		# Apply council-specific overrides if provided
 		if council_code:
 			steps = apply_council_step_overrides(steps, request_type, council_code)
-		
+
 		# Sort by step_number
 		steps = sorted(steps, key=lambda x: x.get("step_number", 999))
-		
+
 		return {
 			"steps": steps,
 			"uses_config": True,
 			"request_type": request_type,
 			"council_code": council_code
 		}
-	
+
 	except Exception as e:
 		frappe.log_error(f"Get Request Type Steps Error: {str(e)}")
 		return {

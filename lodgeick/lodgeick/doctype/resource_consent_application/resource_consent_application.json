@@ -8,24 +8,10 @@
  "field_order": [
   "request",
   "section_break_request_info",
-  "request_number_display",
-  "request_status_display",
-  "submitted_date_display",
-  "acknowledged_date_display",
   "column_break_request_1",
-  "applicant_display",
-  "applicant_email_display",
-  "applicant_phone_display",
-  "applicant_type_display",
   "column_break_request_2",
-  "agent_display",
-  "agent_email_display",
   "section_break_property_info",
-  "property_address_display",
-  "legal_description_display",
   "column_break_property",
-  "zoning_display",
-  "site_area_display",
   "section_break_consent",
   "column_break_consent_1",
   "consent_types",
@@ -152,7 +138,6 @@
   "iwi_response_summary",
   "section_break_reports_tab",
   "section_break_reports",
-  "specialist_reports",
   "planning_assessment_tab",
   "section_break_planning",
   "alternatives_considered",
@@ -210,82 +195,12 @@
    "label": "Request Information"
   },
   {
-   "fetch_from": "request.request_number",
-   "fieldname": "request_number_display",
-   "fieldtype": "Data",
-   "label": "Request Number",
-   "read_only": 1
-  },
-  {
-   "fetch_from": "request.status",
-   "fieldname": "request_status_display",
-   "fieldtype": "Data",
-   "label": "Request Status",
-   "read_only": 1
-  },
-  {
-   "fetch_from": "request.submitted_date",
-   "fieldname": "submitted_date_display",
-   "fieldtype": "Date",
-   "label": "Submitted Date",
-   "read_only": 1
-  },
-  {
-   "fetch_from": "request.acknowledged_date",
-   "fieldname": "acknowledged_date_display",
-   "fieldtype": "Date",
-   "label": "Acknowledged Date",
-   "read_only": 1
-  },
-  {
    "fieldname": "column_break_request_1",
    "fieldtype": "Column Break"
   },
   {
-   "fetch_from": "request.applicant_name",
-   "fieldname": "applicant_display",
-   "fieldtype": "Data",
-   "label": "Applicant Name",
-   "read_only": 1
-  },
-  {
-   "fetch_from": "request.applicant_email",
-   "fieldname": "applicant_email_display",
-   "fieldtype": "Data",
-   "label": "Applicant Email",
-   "read_only": 1
-  },
-  {
-   "fetch_from": "request.applicant_phone",
-   "fieldname": "applicant_phone_display",
-   "fieldtype": "Data",
-   "label": "Applicant Phone",
-   "read_only": 1
-  },
-  {
-   "fetch_from": "request.applicant_type",
-   "fieldname": "applicant_type_display",
-   "fieldtype": "Data",
-   "label": "Applicant Type",
-   "read_only": 1
-  },
-  {
    "fieldname": "column_break_request_2",
    "fieldtype": "Column Break"
-  },
-  {
-   "fetch_from": "request.agent_name",
-   "fieldname": "agent_display",
-   "fieldtype": "Data",
-   "label": "Agent Name",
-   "read_only": 1
-  },
-  {
-   "fetch_from": "request.agent_email",
-   "fieldname": "agent_email_display",
-   "fieldtype": "Data",
-   "label": "Agent Email",
-   "read_only": 1
   },
   {
    "collapsible": 1,
@@ -294,37 +209,8 @@
    "label": "Property Information"
   },
   {
-   "fetch_from": "request.property_address",
-   "fieldname": "property_address_display",
-   "fieldtype": "Small Text",
-   "label": "Property Address",
-   "read_only": 1
-  },
-  {
-   "fetch_from": "request.legal_description",
-   "fieldname": "legal_description_display",
-   "fieldtype": "Small Text",
-   "label": "Legal Description",
-   "read_only": 1
-  },
-  {
    "fieldname": "column_break_property",
    "fieldtype": "Column Break"
-  },
-  {
-   "fetch_from": "request.zoning",
-   "fieldname": "zoning_display",
-   "fieldtype": "Data",
-   "label": "Zoning",
-   "read_only": 1
-  },
-  {
-   "fetch_from": "request.site_area",
-   "fieldname": "site_area_display",
-   "fieldtype": "Float",
-   "label": "Site Area (m\u00b2)",
-   "precision": "2",
-   "read_only": 1
   },
   {
    "description": "Core consent information provided by the applicant",
@@ -551,12 +437,6 @@
    "fieldname": "section_break_reports",
    "fieldtype": "Section Break",
    "label": "Specialist Reports"
-  },
-  {
-   "fieldname": "specialist_reports",
-   "fieldtype": "Table",
-   "label": "Specialist Reports",
-   "options": "RC Specialist Report"
   },
   {
    "description": "Conditions proposed by the applicant",
@@ -1285,11 +1165,6 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [
-  {
-   "group": "Workflow",
-   "link_doctype": "Specialist Assignment",
-   "link_fieldname": "resource_consent_application"
-  },
   {
    "group": "Workflow",
    "link_doctype": "Notification Decision",

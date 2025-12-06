@@ -8,15 +8,14 @@
   "step_number",
   "step_code",
   "step_title",
+  "step_description",
   "column_break_1",
   "step_component",
   "is_enabled",
   "is_required",
   "section_break_config",
   "show_on_review",
-  "depends_on",
-  "section_break_sections",
-  "sections"
+  "depends_on"
  ],
  "fields": [
   {
@@ -43,6 +42,12 @@
    "label": "Step Title",
    "reqd": 1,
    "description": "Display title shown to users (e.g., 'Applicant Information')"
+  },
+  {
+   "fieldname": "step_description",
+   "fieldtype": "Text",
+   "label": "Step Description",
+   "description": "Optional description text shown at the top of the step"
   },
   {
    "fieldname": "column_break_1",
@@ -87,18 +92,6 @@
    "label": "Conditional Logic (depends_on)",
    "description": "JavaScript expression to conditionally show this step (e.g., 'doc.consent_type == \"Land Use\"')",
    "options": "JavaScript"
-  },
-  {
-   "fieldname": "section_break_sections",
-   "fieldtype": "Section Break",
-   "label": "Sections"
-  },
-  {
-   "fieldname": "sections",
-   "fieldtype": "Table",
-   "label": "Sections",
-   "options": "Request Type Step Section",
-   "description": "Define sections within this step"
   }
  ],
  "index_web_pages_for_search": 1,
