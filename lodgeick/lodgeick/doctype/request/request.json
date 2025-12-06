@@ -27,6 +27,11 @@
   "agent_email",
   "agent_phone",
   "organization",
+  "section_break_application",
+  "application_doctype",
+  "application_name",
+  "column_break_application",
+  "property_address",
   "section_break_proposal",
   "brief_description",
   "detailed_description",
@@ -206,6 +211,44 @@
    "label": "Organization",
    "options": "Organization",
    "description": "Optional: Organization associated with this request"
+  },
+  {
+   "description": "Link to the type-specific application document (e.g., Resource Consent Application, SPISC Application)",
+   "fieldname": "section_break_application",
+   "fieldtype": "Section Break",
+   "label": "Application Details",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "application_doctype",
+   "fieldtype": "Data",
+   "label": "Application DocType",
+   "read_only": 1,
+   "description": "The DocType of the associated application (e.g., 'Resource Consent Application', 'SPISC Application')",
+   "in_list_view": 0,
+   "in_standard_filter": 0
+  },
+  {
+   "fieldname": "application_name",
+   "fieldtype": "Dynamic Link",
+   "options": "application_doctype",
+   "label": "Application",
+   "read_only": 1,
+   "description": "Link to the associated application record",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "column_break_application",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "property_address",
+   "fieldtype": "Small Text",
+   "label": "Property/Location",
+   "read_only": 1,
+   "description": "Display-only field for list views. Synced from Application DocType.",
+   "in_list_view": 1,
+   "in_standard_filter": 0
   },
   {
    "description": "Describe what is being requested. Brief description is shown in listings and reports. Detailed description is used for assessment.",
@@ -583,7 +626,7 @@
    "write": 1
   }
  ],
- "search_fields": "request_number,applicant_name,brief_description",
+ "search_fields": "request_number,applicant_name,brief_description,property_address",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

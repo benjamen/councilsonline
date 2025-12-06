@@ -20,6 +20,7 @@ declare module 'vue' {
     FeatureCard: typeof import('./src/components/FeatureCard.vue')['default']
     FormSection: typeof import('./src/components/FormSection.vue')['default']
     PersonalInfoForm: typeof import('./src/components/PersonalInfoForm.vue')['default']
+    PhilippinesAddressInput: typeof import('./src/components/PhilippinesAddressInput.vue')['default']
     ProcessStep: typeof import('./src/components/ProcessStep.vue')['default']
     PropertyManager: typeof import('./src/components/registration/PropertyManager.vue')['default']
     ResourceConsentDetails: typeof import('./src/components/ResourceConsentDetails.vue')['default']
@@ -58,5 +59,6 @@ declare module 'vue' {
     Step9Submission: typeof import('./src/components/request-steps/Step9Submission.vue')['default']
     TaskDialog: typeof import('./src/components/TaskDialog.vue')['default']
     TaskManagement: typeof import('./src/components/TaskManagement.vue')['default']
+    Tooltip: typeof import('./src/components/Tooltip.vue')['default']
   }
 }

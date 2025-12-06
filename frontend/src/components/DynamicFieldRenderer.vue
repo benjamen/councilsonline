@@ -266,13 +266,16 @@ const visibleFields = computed(() => {
 
 // Check if field is an address field
 const isAddressField = (field) => {
-  const addressKeywords = ['address', 'residential_address', 'permanent_address', 'current_address', 'home_address']
-  const fieldName = field.field_name?.toLowerCase() || ''
-  const fieldLabel = field.field_label?.toLowerCase() || ''
+  // Only trigger for the actual address collection section, not individual address parts
+  // Check if this is part of an address section AND is the primary address field
+  const parentSection = field.parent_section_code?.toLowerCase() || ''
+  const addressSections = ['address', 'residential_address', 'permanent_address', 'property_address', 'current_address', 'home_address']
 
-  return addressKeywords.some(keyword =>
-    fieldName.includes(keyword) || fieldLabel.includes(keyword)
-  )
+  // Only show Philippines/Address component for the main address field in an address section
+  // This prevents duplication where both the section and individual fields trigger the component
+  return addressSections.includes(parentSection) &&
+         field.field_name === 'address_line' &&
+         field.field_type === 'Data'
 }
 
 // Get placeholder text for field

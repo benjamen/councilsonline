@@ -101,7 +101,7 @@
 
       <div v-else-if="requestTypeDetails.description" class="bg-white border border-gray-200 rounded-lg p-6">
         <h4 class="text-lg font-semibold text-gray-900 mb-4">About This Application</h4>
-        <p class="text-gray-700">{{ requestTypeDetails.description }}</p>
+        <div class="prose prose-sm max-w-none text-gray-700" v-html="requestTypeDetails.description"></div>
       </div>
 
       <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
@@ -121,7 +121,7 @@
       <div class="flex justify-center pt-4">
         <button
           type="button"
-          @click="emit('continue')"
+          @click="handleContinue"
           class="px-8 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
         >
           I Understand - Continue to Application
@@ -220,6 +220,10 @@
 
 <script setup>
 import { defineProps, defineEmits, ref, watch } from 'vue'
+import { session } from '@/data/session'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const props = defineProps({
   requestTypeDetails: {
@@ -290,5 +294,21 @@ const formatDate = (dateString) => {
     dateStyle: 'medium',
     timeStyle: 'short'
   })
+}
+
+const handleContinue = () => {
+  // Check if user is logged in before allowing them to continue
+  if (!session.isLoggedIn) {
+    // Save current URL to redirect back after login
+    const currentPath = window.location.pathname + window.location.search
+    router.push({
+      name: 'Login',
+      query: { redirect: currentPath }
+    })
+    return
+  }
+
+  // User is logged in, proceed normally
+  emit('continue')
 }
 </script>
