@@ -533,20 +533,19 @@ def create_spisc_application(request_name, data):
 
     Returns:
         SPISC Application document
+
+    Note:
+        full_name, mobile_number, and email are now stored in Request DocType (not here)
+        SPISC Application only stores domain-specific fields (birth_date, age, sex, etc.)
     """
     spisc_app = frappe.get_doc({
         "doctype": "SPISC Application",
         "request": request_name,
 
-        # Personal Information
-        "full_name": data.get("full_name"),
+        # Personal Information (domain-specific fields only)
         "birth_date": data.get("birth_date"),
         "sex": data.get("sex"),
         "civil_status": data.get("civil_status"),
-
-        # Contact Information
-        "mobile_number": data.get("mobile_number"),
-        "email": data.get("email"),
 
         # Address Information
         "address_line": data.get("address_line"),
@@ -656,6 +655,16 @@ def create_draft_request(data, current_step=None, total_steps=None):
 
         # Determine applicant details based on whether acting on behalf
         acting_on_behalf = data.get("acting_on_behalf", False)
+
+        # Map SPISC field names to Request field names (for backwards compatibility)
+        # SPISC uses: full_name, mobile_number, email
+        # Request uses: applicant_name, applicant_phone, applicant_email
+        if data.get("full_name"):
+            data["applicant_name"] = data["full_name"]
+        if data.get("mobile_number"):
+            data["applicant_phone"] = data["mobile_number"]
+        if data.get("email") and not data.get("applicant_email"):
+            data["applicant_email"] = data["email"]
 
         if acting_on_behalf:
             # Agent workflow - use client details provided in the form

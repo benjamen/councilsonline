@@ -63,8 +63,9 @@ class SPISCApplication(Document):
 				]
 				display_address = ", ".join(filter(None, address_parts))
 
-				# Build brief description
-				brief_description = f"{self.full_name} - SPISC Application"
+				# Build brief description using Request.applicant_name
+				applicant_name = request.applicant_name or "Unknown"
+				brief_description = f"{applicant_name} - SPISC Application"
 				if self.age:
 					brief_description += f" (Age: {self.age})"
 
@@ -127,7 +128,12 @@ class SPISCApplication(Document):
 
 	def get_display_description(self):
 		"""Get brief description for Request list view"""
-		desc = f"{self.full_name} - SPISC Application"
+		# Get applicant name from parent Request
+		applicant_name = "Unknown"
+		if self.request:
+			applicant_name = frappe.db.get_value("Request", self.request, "applicant_name") or "Unknown"
+
+		desc = f"{applicant_name} - SPISC Application"
 		if self.age:
 			desc += f" (Age: {self.age})"
 		if self.eligibility_status and self.eligibility_status != "Pending":

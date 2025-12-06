@@ -209,26 +209,15 @@ Request Type
 1. **Polymorphic Application Linking**: Request ↔ Multiple Application types
 2. **Request Type Configuration**: 90-field RC config proves scalability
 3. **Flattened Hierarchy**: Works efficiently without nested child tables
-4. **SPISC Dynamic Rendering**: Uses DynamicStepRenderer correctly
-5. **Property Field Mapping**: All 7 mandatory Property fields mapped (recent fix)
-6. **Consent Types Child Table**: Fixed to use rows instead of strings (recent fix)
+4. **Dynamic Form Rendering**: All request types use DynamicStepRenderer (Phase 2.1)
+5. **Conditional Logic Engine**: depends_on evaluation working for steps/sections/fields (Phase 2.2)
+6. **Single Source Applicant Data**: Request stores applicant info, Applications only domain-specific (Phase 2.3)
+7. **Property Field Mapping**: All 7 mandatory Property fields mapped
+8. **Consent Types Child Table**: Fixed to use rows instead of strings
 
 ### ⚠️ Partially Implemented
 
-1. **Resource Consent Uses Hardcoded Steps**: Lines 1100-1109 in `NewRequest.vue`
-   - Has configuration but bypasses it
-   - Uses 8 hardcoded step components (Step1-Step8)
-   - **Resolution**: Phase 2.1 migration to dynamic config
-
-2. **Conditional Logic Engine**: `depends_on` fields exist but evaluation stubbed
-   - Frontend has TODO comments
-   - Tab/Accordion rendering incomplete
-   - **Resolution**: Phase 2.2 implementation
-
-3. **Applicant Information Duplication**: Stored in both Request and SPISC Application
-   - **Resolution**: Phase 2.3 standardization
-
-4. **Payment Steps Hardcoded**: API auto-injects payment/bank steps
+1. **Payment Steps Hardcoded**: API auto-injects payment/bank steps
    - Lines 3984-4114 in `api.py`
    - **Resolution**: Phase 2.4 move to configuration
 
@@ -290,21 +279,75 @@ Request Type
 
 ---
 
+## Applicant Information Storage Pattern
+
+### Design Decision (Phase 2.3 - Implemented)
+
+**Single Source of Truth**: Request DocType
+
+**Rationale**:
+- Eliminates duplication across Application DocTypes
+- Consistent applicant data regardless of application type
+- Supports agent workflows (acting on behalf)
+
+**Request Fields**:
+```python
+applicant: User link (person who created request, or client)
+applicant_name: Full name (auto-fetched from User or manual override)
+applicant_email: Email (auto-fetched from User or manual override)
+applicant_phone: Phone number
+agent: Optional User link (person acting on behalf)
+agent_name: Agent's full name
+agent_email: Agent's email
+agent_phone: Agent's phone
+organization: Optional Organization link
+```
+
+**Application DocTypes Store**:
+- Domain-specific fields only
+- SPISC: birth_date, age, sex, civil_status, address, income, etc.
+- RC: consent types, activity status, AEE, conditions, etc.
+
+**Field Mapping**:
+```python
+# api.py (lines 659-667)
+# Maps SPISC form fields to Request fields
+if data.get("full_name"):
+    data["applicant_name"] = data["full_name"]
+if data.get("mobile_number"):
+    data["applicant_phone"] = data["mobile_number"]
+if data.get("email"):
+    data["applicant_email"] = data["email"]
+```
+
+**Request Type Configuration**:
+- Fields remain in configuration (for dynamic forms)
+- Values stored in Request (not Application)
+- No duplication in database
+
+**SPISC Application Removed Fields** (Phase 2.3):
+- ~~full_name~~ → Request.applicant_name
+- ~~mobile_number~~ → Request.applicant_phone
+- ~~email~~ → Request.applicant_email
+
+---
+
 ## Sync Patterns
 
-### Current State (Inconsistent)
+### Current State
 
 **SPISC Application → Request**:
 ```python
-request.db_set("property_address", f"{address_line}, {barangay}")
-request.db_set("brief_description", f"{full_name} - SPISC Application (Age: {age})")
+# spisc_application.py on_update()
+request.db_set("property_address", f"{barangay}, {municipality}, {province}")
+request.db_set("brief_description", f"{request.applicant_name} - SPISC Application (Age: {self.age})")
 ```
 
 **Resource Consent Application → Request**:
 - No automatic sync
 - Display fields removed (Phase 1 cleanup)
 
-### Recommended Pattern (Future)
+### Recommended Pattern (Future - Phase 3.4)
 
 Use Frappe hooks for automatic sync:
 ```python

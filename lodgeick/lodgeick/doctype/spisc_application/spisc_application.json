@@ -9,16 +9,11 @@
  "field_order": [
   "request",
   "section_personal",
-  "full_name",
   "birth_date",
   "age",
   "column_break_personal",
   "sex",
   "civil_status",
-  "section_contact",
-  "mobile_number",
-  "column_break_contact",
-  "email",
   "section_address",
   "address_line",
   "barangay",
@@ -84,12 +79,6 @@
    "label": "Personal Information"
   },
   {
-   "fieldname": "full_name",
-   "fieldtype": "Data",
-   "label": "Full Name",
-   "reqd": 1
-  },
-  {
    "fieldname": "birth_date",
    "fieldtype": "Date",
    "label": "Date of Birth",
@@ -119,26 +108,6 @@
    "label": "Civil Status",
    "options": "Single\nMarried\nWidowed\nSeparated",
    "reqd": 1
-  },
-  {
-   "fieldname": "section_contact",
-   "fieldtype": "Section Break",
-   "label": "Contact Information"
-  },
-  {
-   "fieldname": "mobile_number",
-   "fieldtype": "Data",
-   "label": "Mobile Number",
-   "reqd": 1
-  },
-  {
-   "fieldname": "column_break_contact",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "email",
-   "fieldtype": "Data",
-   "label": "Email Address"
   },
   {
    "fieldname": "section_address",
