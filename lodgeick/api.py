@@ -3990,171 +3990,37 @@ def get_request_type_steps(request_type, council_code=None):
 
 			steps.append(step_data)
 
-		# Inject payment collection step if enabled
-		if rt_doc.collects_payment:
-			payment_collection_step = {
-				"step_number": len(steps) + 1,
-				"step_code": "payment_collection",
-				"step_title": "Payment & Invoice Details",
-				"step_component": "DynamicStepRenderer",
-				"is_enabled": True,
-				"is_required": True,
-				"show_on_review": True,
-				"depends_on": None,
-				"sections": [
-					{
-						"section_code": "invoice_details",
-						"section_title": "Invoice Details",
-						"section_type": "Standard",
-						"sequence": 1,
-						"is_enabled": True,
-						"is_required": True,
-						"show_on_review": True,
-						"depends_on": None,
-						"fields": [
-							{
-								"field_name": "invoice_to",
-								"field_label": "Invoice To",
-								"field_type": "Select",
-								"is_required": True,
-								"options": "Applicant\nProperty Owner\nOther",
-								"default_value": "Applicant",
-								"depends_on": None,
-								"validation": None,
-								"show_on_review": True,
-								"review_label": "Invoice To"
-							},
-							{
-								"field_name": "invoice_name",
-								"field_label": "Name",
-								"field_type": "Data",
-								"is_required": True,
-								"options": None,
-								"default_value": None,
-								"depends_on": None,
-								"validation": None,
-								"show_on_review": True,
-								"review_label": "Invoice Name"
-							},
-							{
-								"field_name": "invoice_email",
-								"field_label": "Email",
-								"field_type": "Data",
-								"is_required": True,
-								"options": None,
-								"default_value": None,
-								"depends_on": None,
-								"validation": "email",
-								"show_on_review": True,
-								"review_label": "Invoice Email"
-							}
-						]
-					}
-				]
-			}
-			steps.append(payment_collection_step)
+		# NOTE: Payment and bank details steps are now defined in Request Type configuration
+		# (not injected here). To add payment collection or bank details steps:
+		# 1. Add step_config, step_sections, and step_fields to Request Type JSON
+		# 2. Use depends_on conditions if steps should be conditional
+		# 3. Set collects_payment or make_payment flags for accounting/reporting purposes
+		#
+		# This approach allows:
+		# - Customizable payment workflows per council
+		# - Configuration-driven forms (no code changes)
+		# - Flexible field requirements and validation
+		#
+		# Example: SPISC could add a bank_details step to its configuration
+		# Example: RC could add a payment_collection step for lodgement fees
 
-		# Inject bank details step if enabled (for payments TO applicant)
-		if rt_doc.make_payment:
-			bank_details_step = {
-				"step_number": len(steps) + 1,
-				"step_code": "bank_details",
-				"step_title": "Bank Account Details",
-				"step_component": "DynamicStepRenderer",
-				"is_enabled": True,
-				"is_required": True,
-				"show_on_review": True,
-				"depends_on": None,
-				"sections": [
-					{
-						"section_code": "bank_account",
-						"section_title": "Payment Recipient Details",
-						"section_type": "Standard",
-						"sequence": 1,
-						"is_enabled": True,
-						"is_required": True,
-						"show_on_review": True,
-						"depends_on": None,
-						"fields": [
-							{
-								"field_name": "account_holder_name",
-								"field_label": "Account Holder Name",
-								"field_type": "Data",
-								"is_required": True,
-								"options": None,
-								"default_value": None,
-								"depends_on": None,
-								"validation": None,
-								"show_on_review": True,
-								"review_label": "Account Holder Name"
-							},
-							{
-								"field_name": "bank_name",
-								"field_label": "Bank Name",
-								"field_type": "Data",
-								"is_required": True,
-								"options": None,
-								"default_value": None,
-								"depends_on": None,
-								"validation": None,
-								"show_on_review": True,
-								"review_label": "Bank Name"
-							},
-							{
-								"field_name": "account_number",
-								"field_label": "Account Number",
-								"field_type": "Data",
-								"is_required": True,
-								"options": None,
-								"default_value": None,
-								"depends_on": None,
-								"validation": None,
-								"show_on_review": True,
-								"review_label": "Account Number"
-							},
-							{
-								"field_name": "routing_number",
-								"field_label": "Routing/Branch Number",
-								"field_type": "Data",
-								"is_required": False,
-								"options": None,
-								"default_value": None,
-								"depends_on": None,
-								"validation": None,
-								"show_on_review": True,
-								"review_label": "Routing Number"
-							},
-							{
-								"field_name": "account_type",
-								"field_label": "Account Type",
-								"field_type": "Select",
-								"is_required": True,
-								"options": "Savings\nChecking\nCurrent",
-								"default_value": "Savings",
-								"depends_on": None,
-								"validation": None,
-								"show_on_review": True,
-								"review_label": "Account Type"
-							}
-						]
-					}
-				]
-			}
-			steps.append(bank_details_step)
+		# REMOVED: Hardcoded payment step injection (Phase 2.4)
+		# Previous code injected payment_collection and bank_details steps based on flags
+		# Now these should be added to Request Type configuration instead
 
-		# Apply council-specific overrides if provided
-		if council_code:
-			steps = apply_council_step_overrides(steps, request_type, council_code)
+	# Apply council-specific overrides if provided
+	if council_code:
+		steps = apply_council_step_overrides(steps, request_type, council_code)
 
-		# Sort by step_number
-		steps = sorted(steps, key=lambda x: x.get("step_number", 999))
-		
-		return {
-			"steps": steps,
-			"uses_config": True,
-			"request_type": request_type,
-			"council_code": council_code
-		}
+	# Sort by step_number
+	steps = sorted(steps, key=lambda x: x.get("step_number", 999))
+
+	return {
+		"steps": steps,
+		"uses_config": True,
+		"request_type": request_type,
+		"council_code": council_code
+	}
 	
 	except Exception as e:
 		frappe.log_error(f"Get Request Type Steps Error: {str(e)}")

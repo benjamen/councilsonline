@@ -215,12 +215,6 @@ Request Type
 7. **Property Field Mapping**: All 7 mandatory Property fields mapped
 8. **Consent Types Child Table**: Fixed to use rows instead of strings
 
-### ⚠️ Partially Implemented
-
-1. **Payment Steps Hardcoded**: API auto-injects payment/bank steps
-   - Lines 3984-4114 in `api.py`
-   - **Resolution**: Phase 2.4 move to configuration
-
 ### ❌ Not Implemented
 
 1. **Validation JavaScript Execution**: Stored in config but not executed
@@ -329,6 +323,80 @@ if data.get("email"):
 - ~~full_name~~ → Request.applicant_name
 - ~~mobile_number~~ → Request.applicant_phone
 - ~~email~~ → Request.applicant_email
+
+---
+
+## Payment and Bank Details Step Pattern
+
+### Design Decision (Phase 2.4 - Implemented)
+
+**Configuration-Driven Payment Steps**: Add to Request Type JSON (not hardcoded injection)
+
+**Previous Approach** (Removed):
+- API auto-injected payment_collection step if `collects_payment=True`
+- API auto-injected bank_details step if `make_payment=True`
+- 130+ lines of hardcoded step/section/field definitions (api.py lines 3993-4143)
+
+**New Approach**:
+- Add payment/bank steps directly to Request Type configuration
+- Use `depends_on` for conditional display
+- Fully customizable per council and request type
+
+**Benefits**:
+- No code changes to modify payment workflows
+- Council-specific payment requirements
+- Flexible field validation and options
+- Consistent with other steps (configuration-driven)
+
+**How to Add Payment Steps**:
+
+1. **For fee collection** (payments FROM applicant):
+   ```json
+   {
+     "step_code": "payment_collection",
+     "step_title": "Payment & Invoice Details",
+     "step_component": "DynamicStepRenderer",
+     "sections": [
+       {
+         "section_code": "invoice_details",
+         "fields": [
+           {"field_name": "invoice_to", "field_type": "Select", ...},
+           {"field_name": "invoice_name", "field_type": "Data", ...},
+           {"field_name": "invoice_email", "field_type": "Data", ...}
+         ]
+       }
+     ]
+   }
+   ```
+
+2. **For payouts** (payments TO applicant):
+   ```json
+   {
+     "step_code": "bank_details",
+     "step_title": "Bank Account Details",
+     "step_component": "DynamicStepRenderer",
+     "sections": [
+       {
+         "section_code": "bank_account",
+         "fields": [
+           {"field_name": "account_holder_name", "field_type": "Data", ...},
+           {"field_name": "bank_name", "field_type": "Data", ...},
+           {"field_name": "account_number", "field_type": "Data", ...},
+           {"field_name": "account_type", "field_type": "Select", ...}
+         ]
+       }
+     ]
+   }
+   ```
+
+3. **Set flags for accounting** (optional):
+   - `collects_payment`: True if request type involves fee collection
+   - `make_payment`: True if request type involves payouts to applicant
+
+**Example Use Cases**:
+- RC (Resource Consent): Add payment_collection step for lodgement fees
+- SPISC: Add bank_details step for pension direct deposit
+- Building Consent: Add payment_collection with conditional fast-track fee field
 
 ---
 
