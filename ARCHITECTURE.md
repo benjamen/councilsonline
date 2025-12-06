@@ -215,13 +215,19 @@ Request Type
 7. **Property Field Mapping**: All 7 mandatory Property fields mapped
 8. **Consent Types Child Table**: Fixed to use rows instead of strings
 
+### ✅ Fully Implemented (continued)
+
+9. **Validation JavaScript Execution**: Complete for all field types (Phase 3.1 complete)
+   - Built-in validation: email, phone, url, number
+   - Custom JavaScript expressions: `eval:value >= 18`, `eval:value === formData.password`
+   - Validation errors displayed on blur/change
+   - Implemented for all field types: Data, Select, Text, Date, Currency, Check, Int, Float
+   - Visual feedback: red border and error messages
+   - Validation utility: [fieldValidation.js](frontend/src/utils/fieldValidation.js)
+
 ### ⚠️ Partially Implemented
 
-1. **Validation JavaScript Execution**: Implemented for Data fields, pending for other field types (Phase 3.1 in progress)
-   - Built-in validation: email, phone, url, number
-   - Custom JavaScript expressions: `eval:value >= 18`
-   - Validation errors displayed on blur
-   - Only Data field type has full validation UI (other field types pending)
+(None - all planned features for Phase 1-3.1 complete)
 
 ### ❌ Not Implemented
 

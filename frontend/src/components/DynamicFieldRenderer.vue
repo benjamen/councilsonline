@@ -51,9 +51,13 @@
           <select
             :id="field.field_name"
             v-model="localData[field.field_name]"
+            @blur="handleFieldValidation(field)"
             :required="field.is_required"
             class="block w-full pl-4 pr-10 py-3 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 rounded-lg transition-all appearance-none bg-white"
-            :class="{'border-blue-500 ring-2 ring-blue-100': localData[field.field_name]}"
+            :class="{
+              'border-blue-500 ring-2 ring-blue-100': localData[field.field_name] && !getValidationError(field.field_name),
+              'border-red-500 ring-2 ring-red-100': getValidationError(field.field_name)
+            }"
           >
             <option value="">Select {{ field.field_label }}</option>
             <option
@@ -70,17 +74,25 @@
             </svg>
           </div>
         </div>
-        <p v-if="field.description" class="mt-1 text-xs text-gray-500">{{ field.description }}</p>
+        <p v-if="getValidationError(field.field_name)" class="mt-1 text-xs text-red-600">
+          {{ getValidationError(field.field_name) }}
+        </p>
+        <p v-else-if="field.description" class="mt-1 text-xs text-gray-500">{{ field.description }}</p>
       </div>
 
       <!-- Checkbox -->
       <div v-else-if="field.field_type === 'Check'" class="form-group">
-        <div class="flex items-start p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors">
+        <div class="flex items-start p-4 border rounded-lg hover:border-blue-300 transition-colors"
+          :class="{
+            'border-gray-200': !getValidationError(field.field_name),
+            'border-red-500 bg-red-50': getValidationError(field.field_name)
+          }">
           <div class="flex items-center h-5">
             <input
               :id="field.field_name"
               type="checkbox"
               v-model="localData[field.field_name]"
+              @change="handleFieldValidation(field)"
               :required="field.is_required"
               class="focus:ring-blue-500 h-5 w-5 text-blue-600 border-gray-300 rounded cursor-pointer"
             />
@@ -90,7 +102,10 @@
               {{ field.field_label }}
               <span v-if="field.is_required" class="text-red-500 ml-1">*</span>
             </label>
-            <p v-if="field.description" class="mt-1 text-xs text-gray-500">{{ field.description }}</p>
+            <p v-if="getValidationError(field.field_name)" class="mt-1 text-xs text-red-600">
+              {{ getValidationError(field.field_name) }}
+            </p>
+            <p v-else-if="field.description" class="mt-1 text-xs text-gray-500">{{ field.description }}</p>
           </div>
         </div>
       </div>
@@ -104,13 +119,20 @@
         <textarea
           :id="field.field_name"
           v-model="localData[field.field_name]"
+          @blur="handleFieldValidation(field)"
           :required="field.is_required"
           rows="4"
           class="block w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-y"
-          :class="{'border-blue-500 ring-2 ring-blue-100': localData[field.field_name]}"
+          :class="{
+            'border-blue-500 ring-2 ring-blue-100': localData[field.field_name] && !getValidationError(field.field_name),
+            'border-red-500 ring-2 ring-red-100': getValidationError(field.field_name)
+          }"
           :placeholder="getPlaceholder(field)"
         ></textarea>
-        <p v-if="field.description" class="mt-1 text-xs text-gray-500">{{ field.description }}</p>
+        <p v-if="getValidationError(field.field_name)" class="mt-1 text-xs text-red-600">
+          {{ getValidationError(field.field_name) }}
+        </p>
+        <p v-else-if="field.description" class="mt-1 text-xs text-gray-500">{{ field.description }}</p>
       </div>
 
       <!-- Date -->
@@ -125,9 +147,13 @@
             :id="field.field_name"
             type="date"
             v-model="localData[field.field_name]"
+            @blur="handleFieldValidation(field)"
             :required="field.is_required"
             class="block w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-            :class="{'border-blue-500 ring-2 ring-blue-100': localData[field.field_name]}"
+            :class="{
+              'border-blue-500 ring-2 ring-blue-100': localData[field.field_name] && !getValidationError(field.field_name),
+              'border-red-500 ring-2 ring-red-100': getValidationError(field.field_name)
+            }"
           />
           <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
             <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -135,7 +161,10 @@
             </svg>
           </div>
         </div>
-        <p v-if="field.description" class="mt-1 text-xs text-gray-500">{{ field.description }}</p>
+        <p v-if="getValidationError(field.field_name)" class="mt-1 text-xs text-red-600">
+          {{ getValidationError(field.field_name) }}
+        </p>
+        <p v-else-if="field.description" class="mt-1 text-xs text-gray-500">{{ field.description }}</p>
       </div>
 
       <!-- Integer -->
@@ -205,14 +234,21 @@
             :id="field.field_name"
             type="number"
             v-model.number="localData[field.field_name]"
+            @blur="handleFieldValidation(field)"
             :required="field.is_required"
             step="0.01"
             class="block w-full pl-10 pr-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-            :class="{'border-blue-500 ring-2 ring-blue-100': localData[field.field_name]}"
+            :class="{
+              'border-blue-500 ring-2 ring-blue-100': localData[field.field_name] && !getValidationError(field.field_name),
+              'border-red-500 ring-2 ring-red-100': getValidationError(field.field_name)
+            }"
             placeholder="0.00"
           />
         </div>
-        <p v-if="field.description" class="mt-1 text-xs text-gray-500">{{ field.description }}</p>
+        <p v-if="getValidationError(field.field_name)" class="mt-1 text-xs text-red-600">
+          {{ getValidationError(field.field_name) }}
+        </p>
+        <p v-else-if="field.description" class="mt-1 text-xs text-gray-500">{{ field.description }}</p>
       </div>
 
       <!-- Attach / File Upload with Camera Support -->
