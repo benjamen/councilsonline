@@ -1793,7 +1793,11 @@ def get_locked_council():
                 "locked_at": data.get("locked_at"),
                 "source_url": data.get("source_url"),
                 "is_locked": True,
-                "council": council.as_dict()
+                "council": council.as_dict(),
+                # Add portal settings for frontend routing
+                "redirect_dashboard_to_council": int(council.redirect_dashboard_to_council or 1),
+                "allow_system_wide_dashboard": int(council.allow_system_wide_dashboard or 0),
+                "show_council_switcher": int(council.show_council_switcher or 0)
             }
         except (frappe.DoesNotExistError, ValueError, KeyError):
             # Council was deleted or data corrupted - clear session
@@ -1899,6 +1903,107 @@ def get_council_landing_page(council_code):
         "meta_title": None,
         "meta_description": None
     }
+
+
+@frappe.whitelist()
+def get_council_requests(council_code):
+    """
+    Get requests for current user filtered by council.
+    Used by council-specific dashboard.
+
+    Args:
+        council_code: Council code to filter by
+
+    Returns:
+        list: Requests for this council
+    """
+    user = frappe.session.user
+
+    requests = frappe.get_all(
+        "Request",
+        filters={
+            "applicant": user,
+            "council": council_code
+        },
+        fields=[
+            "name", "request_number", "request_type", "status",
+            "property_address", "brief_description", "creation",
+            "submitted_date", "statutory_clock_started",
+            "working_days_elapsed", "council"
+        ],
+        order_by="modified desc"
+    )
+
+    # Enrich with council name
+    for req in requests:
+        if req.get("council"):
+            council_name = frappe.db.get_value("Council", req["council"], "council_name")
+            req["council_name"] = council_name
+
+    return requests
+
+
+@frappe.whitelist()
+def should_redirect_to_council_dashboard(council_code):
+    """
+    Check if user should be redirected to council-specific dashboard.
+    Used by route guard on /dashboard.
+
+    Args:
+        council_code: Council code to check settings for
+
+    Returns:
+        dict: Redirect settings for this council
+    """
+    try:
+        council = frappe.get_doc("Council", council_code)
+        return {
+            "should_redirect": int(council.redirect_dashboard_to_council or 1),
+            "allow_system_wide": int(council.allow_system_wide_dashboard or 0),
+            "show_switcher": int(council.show_council_switcher or 0),
+            "council_name": council.council_name,
+            "primary_color": council.primary_color
+        }
+    except frappe.DoesNotExistError:
+        return {
+            "should_redirect": False,
+            "allow_system_wide": True,
+            "show_switcher": False
+        }
+
+
+@frappe.whitelist()
+def get_council_settings(council_code):
+    """
+    Get council portal and website settings.
+    Used for branding and configuration in council-specific pages.
+
+    Args:
+        council_code: Council code
+
+    Returns:
+        dict: Council settings
+    """
+    try:
+        council = frappe.get_doc("Council", council_code)
+        return {
+            "council_code": council.council_code,
+            "council_name": council.council_name,
+            "official_name": council.official_name,
+            "logo": council.logo,
+            "primary_color": council.primary_color,
+            "secondary_color": council.secondary_color,
+            "redirect_dashboard_to_council": int(council.redirect_dashboard_to_council or 1),
+            "allow_system_wide_dashboard": int(council.allow_system_wide_dashboard or 0),
+            "show_council_switcher": int(council.show_council_switcher or 0),
+            "custom_domain": council.custom_domain,
+            "login_page_custom_html": council.login_page_custom_html,
+            "contact_email": council.contact_email,
+            "contact_phone": council.contact_phone,
+            "website": council.website
+        }
+    except frappe.DoesNotExistError:
+        frappe.throw(_("Council not found: {0}").format(council_code))
 
 
 # ============================================================================

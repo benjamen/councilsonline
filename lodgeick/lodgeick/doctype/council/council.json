@@ -26,6 +26,13 @@
   "primary_color",
   "secondary_color",
   "letterhead",
+  "website_portal_section",
+  "redirect_dashboard_to_council",
+  "allow_system_wide_dashboard",
+  "column_break_portal",
+  "show_council_switcher",
+  "custom_domain",
+  "login_page_custom_html",
   "configuration_section",
   "timezone",
   "default_sla_days",
@@ -153,6 +160,48 @@
    "fieldtype": "Link",
    "label": "Letterhead",
    "options": "Letter Head"
+  },
+  {
+   "fieldname": "website_portal_section",
+   "fieldtype": "Section Break",
+   "label": "Website & Portal Settings"
+  },
+  {
+   "default": "1",
+   "description": "Auto-redirect /dashboard to council-specific dashboard",
+   "fieldname": "redirect_dashboard_to_council",
+   "fieldtype": "Check",
+   "label": "Redirect to Council Dashboard"
+  },
+  {
+   "default": "0",
+   "description": "Allow users to access system-wide dashboard showing all councils",
+   "fieldname": "allow_system_wide_dashboard",
+   "fieldtype": "Check",
+   "label": "Allow System-Wide Dashboard"
+  },
+  {
+   "fieldname": "column_break_portal",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "description": "Show council switcher button in navigation",
+   "fieldname": "show_council_switcher",
+   "fieldtype": "Check",
+   "label": "Show Council Switcher"
+  },
+  {
+   "description": "Custom domain for this council (e.g., auckland-council.com)",
+   "fieldname": "custom_domain",
+   "fieldtype": "Data",
+   "label": "Custom Domain"
+  },
+  {
+   "description": "Custom HTML content to display on council-specific login page",
+   "fieldname": "login_page_custom_html",
+   "fieldtype": "HTML Editor",
+   "label": "Login Page Custom HTML"
   },
   {
    "fieldname": "configuration_section",
