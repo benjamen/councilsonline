@@ -37,13 +37,46 @@
 						/>
 						<h1 class="text-5xl font-bold mb-4">{{ heroTitle }}</h1>
 						<p class="text-xl mb-8 opacity-90">{{ landingPage.hero_subtitle }}</p>
-						<router-link
-							:to="{ name: 'NewRequest', query: { locked: 'true' } }"
-							class="inline-block bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition shadow-lg"
-							:style="ctaButtonStyle"
-						>
-							{{ landingPage.primary_cta_text }}
-						</router-link>
+
+						<!-- Not Logged In: Show Login/Register Buttons -->
+						<div v-if="!session.isLoggedIn" class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+							<router-link
+								:to="{ name: 'CouncilLogin', params: { councilCode: route.params.councilCode } }"
+								class="inline-block bg-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition shadow-lg"
+								:style="ctaButtonStyle"
+							>
+								Log In
+							</router-link>
+							<router-link
+								:to="{ name: 'CouncilRegister', params: { councilCode: route.params.councilCode } }"
+								class="inline-block bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white hover:bg-opacity-10 transition shadow-lg"
+							>
+								Sign Up
+							</router-link>
+						</div>
+
+						<!-- Logged In: Show Dashboard and New Application Buttons -->
+						<div v-else class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+							<router-link
+								:to="{ name: 'CouncilDashboard', params: { councilCode: route.params.councilCode } }"
+								class="inline-block bg-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition shadow-lg"
+								:style="ctaButtonStyle"
+							>
+								My Requests
+							</router-link>
+							<router-link
+								:to="{ name: 'NewRequest', query: { council: route.params.councilCode, locked: 'true' } }"
+								class="inline-block bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white hover:bg-opacity-10 transition shadow-lg"
+							>
+								{{ landingPage.primary_cta_text || 'New Application' }}
+							</router-link>
+							<router-link
+								:to="{ name: 'CouncilAccount', params: { councilCode: route.params.councilCode } }"
+								class="text-sm text-white hover:text-gray-200 underline"
+							>
+								My Account
+							</router-link>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -117,6 +150,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { call } from 'frappe-ui'
+import { session } from '../data/session'
 
 const route = useRoute()
 
