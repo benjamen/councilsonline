@@ -3,6 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
+from lodgeick.utils.application_sync import sync_to_request
 
 
 class ResourceConsentApplication(Document):
@@ -46,6 +47,10 @@ class ResourceConsentApplication(Document):
         # Calculate statutory clock metrics
         if self.statutory_clock_started:
             self.calculate_working_days()
+
+    def on_update(self):
+        """Sync display fields to parent Request using standardized utility"""
+        sync_to_request(self)
 
     def on_submit(self):
         """Actions on submit"""

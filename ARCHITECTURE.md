@@ -251,14 +251,27 @@ Request Type
    - Real-time validation
    - Status: Fully functional, production-ready
 
+1. **Bidirectional Sync Events**: Complete - Phase 3.4
+   - Event-driven Application → Request sync mechanism
+   - Utility module: [application_sync.py](lodgeick/utils/application_sync.py)
+   - Standardized `sync_to_request()` function
+   - Application-specific display logic builders
+   - Implemented for all Application types:
+     - SPISC Application (refactored to use utility)
+     - Resource Consent Application (new)
+     - Building Consent Application (new)
+   - Automatic updates to Request display fields:
+     - `property_address` - Display address from Application
+     - `brief_description` - Summary with Application type and key details
+   - Status: Fully functional, all Application types supported
+
 ### ⚠️ Partially Implemented (None)
 
-All planned features through Phase 3.3 are complete
+All planned features through Phase 3.4 are complete
 
 ### ❌ Not Implemented
 
-1. **Bidirectional Sync Events**: Only SPISC syncs back to Request
-   - **Resolution**: Phase 3.4
+None - All planned architecture features through Phase 3.4 are complete
 
 ---
 

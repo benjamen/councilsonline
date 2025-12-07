@@ -4,6 +4,7 @@
 import frappe
 from frappe.model.document import Document
 from frappe.utils import getdate, today
+from lodgeick.utils.application_sync import sync_to_request
 
 
 class SPISCApplication(Document):
@@ -50,34 +51,8 @@ class SPISCApplication(Document):
 			)
 
 	def on_update(self):
-		"""Sync display fields to parent Request"""
-		if self.request:
-			try:
-				request = frappe.get_doc("Request", self.request)
-
-				# Build display address
-				address_parts = [
-					self.barangay,
-					self.municipality,
-					self.province
-				]
-				display_address = ", ".join(filter(None, address_parts))
-
-				# Build brief description using Request.applicant_name
-				applicant_name = request.applicant_name or "Unknown"
-				brief_description = f"{applicant_name} - SPISC Application"
-				if self.age:
-					brief_description += f" (Age: {self.age})"
-
-				# Update Request display fields without triggering modified timestamp
-				request.db_set("property_address", display_address, update_modified=False)
-				request.db_set("brief_description", brief_description, update_modified=False)
-
-			except Exception as e:
-				frappe.log_error(
-					message=f"Failed to sync display fields to Request: {str(e)}",
-					title="SPISC Application - Display Field Sync Error"
-				)
+		"""Sync display fields to parent Request using standardized utility"""
+		sync_to_request(self)
 
 	def assess_eligibility(self, assessed_by=None):
 		"""

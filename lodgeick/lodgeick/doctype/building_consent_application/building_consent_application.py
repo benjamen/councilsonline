@@ -3,6 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
+from lodgeick.utils.application_sync import sync_to_request
 
 
 class BuildingConsentApplication(Document):
@@ -62,6 +63,10 @@ class BuildingConsentApplication(Document):
                 indicator="orange",
                 title="Resource Consent Check"
             )
+
+    def on_update(self):
+        """Sync display fields to parent Request using standardized utility"""
+        sync_to_request(self)
 
     def on_submit(self):
         """Actions on submit"""
