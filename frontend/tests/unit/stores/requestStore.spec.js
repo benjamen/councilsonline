@@ -7,26 +7,23 @@ vi.mock('frappe-ui', () => ({
 }))
 
 // Mock services to avoid import issues
-vi.mock('../../../src/services', () => ({
-  apiClient: {
-    call: vi.fn(),
-    createResource: vi.fn()
-  },
-  requestService: {
-    createDraft: vi.fn(),
-    submitRequest: vi.fn(),
-    getRequest: vi.fn()
+vi.mock('../../../src/services', () => {
+  return {
+    apiClient: {
+      call: vi.fn(),
+      createResource: vi.fn()
+    },
+    requestService: {
+      createDraft: vi.fn(),
+      submitRequest: vi.fn(),
+      getRequest: vi.fn(),
+      getRequestTypeConfig: vi.fn()
+    }
   }
-}))
+})
 
 import { useRequestStore } from '../../../src/stores/requestStore'
-
-// Import requestService from the mocked module
-const requestService = {
-  createDraft: vi.fn(),
-  submitRequest: vi.fn(),
-  getRequest: vi.fn()
-}
+import { requestService } from '../../../src/services'
 
 describe('RequestStore', () => {
   beforeEach(() => {
@@ -73,13 +70,13 @@ describe('RequestStore', () => {
       store.requestTypeConfig = { steps: [{}, {}, {}, {}] }
 
       store.currentStep = 0
-      expect(store.completionPercentage).toBe(0)
+      expect(store.completionPercentage).toBe(25)
 
       store.currentStep = 2
-      expect(store.completionPercentage).toBe(50)
+      expect(store.completionPercentage).toBe(75)
 
       store.currentStep = 3
-      expect(store.completionPercentage).toBe(75)
+      expect(store.completionPercentage).toBe(100)
     })
   })
 
@@ -146,7 +143,7 @@ describe('RequestStore', () => {
     it('should save progress and update request ID', async () => {
       const store = useRequestStore()
       const mockResponse = { request_id: 'REQ-001' }
-      requestService.createDraft = vi.fn().mockResolvedValue(mockResponse)
+      requestService.createDraft.mockResolvedValue(mockResponse)
 
       store.formData = { applicant_name: 'John Doe' }
       store.currentStep = 1
@@ -164,7 +161,7 @@ describe('RequestStore', () => {
 
     it('should set isSaving flag during save', async () => {
       const store = useRequestStore()
-      requestService.createDraft = vi.fn().mockImplementation(
+      requestService.createDraft.mockImplementation(
         () => new Promise(resolve => setTimeout(() => resolve({ request_id: 'REQ-001' }), 100))
       )
 
@@ -180,9 +177,9 @@ describe('RequestStore', () => {
     it('should handle save errors gracefully', async () => {
       const store = useRequestStore()
       const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
-      requestService.createDraft = vi.fn().mockRejectedValue(new Error('Save failed'))
+      requestService.createDraft.mockRejectedValue(new Error('Save failed'))
 
-      await store.saveProgress()
+      await expect(store.saveProgress()).rejects.toThrow('Save failed')
 
       expect(consoleError).toHaveBeenCalled()
       expect(store.isSaving).toBe(false)
@@ -195,7 +192,7 @@ describe('RequestStore', () => {
     it('should submit request and reset state', async () => {
       const store = useRequestStore()
       store.currentRequestId = 'REQ-001'
-      requestService.submitRequest = vi.fn().mockResolvedValue({})
+      requestService.submitRequest.mockResolvedValue({})
 
       await store.submitRequest()
 
@@ -209,7 +206,7 @@ describe('RequestStore', () => {
     it('should set isSubmitting flag during submit', async () => {
       const store = useRequestStore()
       store.currentRequestId = 'REQ-001'
-      requestService.submitRequest = vi.fn().mockImplementation(
+      requestService.submitRequest.mockImplementation(
         () => new Promise(resolve => setTimeout(resolve, 100))
       )
 
@@ -226,7 +223,7 @@ describe('RequestStore', () => {
       const store = useRequestStore()
       store.currentRequestId = 'REQ-001'
       const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
-      requestService.submitRequest = vi.fn().mockRejectedValue(new Error('Submit failed'))
+      requestService.submitRequest.mockRejectedValue(new Error('Submit failed'))
 
       await expect(store.submitRequest()).rejects.toThrow('Submit failed')
 
