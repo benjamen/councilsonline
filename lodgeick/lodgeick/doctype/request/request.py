@@ -403,6 +403,39 @@ def get_my_requests(status=None):
 
 
 @frappe.whitelist()
+def get_my_applications():
+    """Get applications for current user (Dashboard view)"""
+    user = frappe.session.user
+
+    requests = frappe.get_all(
+        "Request",
+        filters={"applicant": user},
+        fields=[
+            "name",
+            "request_number",
+            "request_type",
+            "status",
+            "council",
+            "property_address",
+            "brief_description",
+            "creation",
+            "submitted_date",
+            "statutory_clock_started",
+            "working_days_elapsed"
+        ],
+        order_by="modified desc"
+    )
+
+    # Enrich with council name
+    for req in requests:
+        if req.get("council"):
+            council_name = frappe.db.get_value("Council", req["council"], "council_name")
+            req["council_name"] = council_name
+
+    return requests
+
+
+@frappe.whitelist()
 def submit_request(request_id):
     """Submit a request (move from Draft to Submitted)"""
     doc = frappe.get_doc("Request", request_id)
