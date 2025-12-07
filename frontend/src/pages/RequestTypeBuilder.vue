@@ -11,15 +11,17 @@
           <div class="flex gap-3">
             <button
               @click="loadTemplate"
-              class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+              :disabled="loading"
+              class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Load Template
+              {{ loading ? 'Loading...' : 'Load Request Type' }}
             </button>
             <button
               @click="saveRequestType"
-              class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"
+              :disabled="saving || loading"
+              class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Save Request Type
+              {{ saving ? 'Saving...' : 'Save Request Type' }}
             </button>
           </div>
         </div>
@@ -94,7 +96,9 @@
           <!-- Template Library -->
           <div class="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Template Library</h2>
-            <div class="space-y-2">
+            <div v-if="loading" class="text-center py-4 text-gray-500">Loading templates...</div>
+            <div v-else-if="availableTemplates.length === 0" class="text-center py-4 text-gray-500">No templates available</div>
+            <div v-else class="space-y-2">
               <button
                 v-for="template in availableTemplates"
                 :key="template.name"
@@ -103,6 +107,31 @@
               >
                 <div class="font-medium text-gray-900">{{ template.title }}</div>
                 <div class="text-xs text-gray-500 mt-1">{{ template.description }}</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- JSON Preview/Export -->
+          <div class="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">JSON Export</h2>
+            <button
+              @click="showJsonPreview = !showJsonPreview"
+              class="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200"
+            >
+              {{ showJsonPreview ? 'Hide' : 'Show' }} JSON Preview
+            </button>
+            <div v-if="showJsonPreview" class="mt-4">
+              <textarea
+                :value="jsonPreview"
+                readonly
+                rows="12"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg font-mono text-xs bg-gray-50"
+              ></textarea>
+              <button
+                @click="copyJsonToClipboard"
+                class="mt-2 w-full px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700"
+              >
+                Copy to Clipboard
               </button>
             </div>
           </div>
@@ -383,7 +412,8 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
+import { call } from 'frappe-ui'
 
 // Request Type Data Model
 const requestType = reactive({
@@ -396,28 +426,34 @@ const requestType = reactive({
 })
 
 // Available Templates
-const availableTemplates = ref([
-  {
-    name: 'declaration',
-    title: 'Declaration & Submission',
-    description: 'Standard declaration with signature (5 fields)'
-  },
-  {
-    name: 'applicant_details',
-    title: 'Applicant Details',
-    description: 'Personal info and address (7 fields)'
-  },
-  {
-    name: 'bank_details',
-    title: 'Bank Account Details',
-    description: 'For payouts to applicants (5 fields)'
-  },
-  {
-    name: 'payment_collection',
-    title: 'Payment & Invoice',
-    description: 'For fee collection from applicants (6 fields)'
+const availableTemplates = ref([])
+const loading = ref(false)
+const saving = ref(false)
+const showJsonPreview = ref(false)
+
+// JSON Preview computed
+const jsonPreview = computed(() => {
+  return JSON.stringify(requestType, null, 2)
+})
+
+// Load templates from backend
+async function loadAvailableTemplates() {
+  try {
+    loading.value = true
+    const response = await call('lodgeick.api.get_step_templates')
+    availableTemplates.value = response || []
+  } catch (error) {
+    console.error('Failed to load templates:', error)
+    alert('Failed to load templates from backend')
+  } finally {
+    loading.value = false
   }
-])
+}
+
+// Load templates on mount
+onMounted(() => {
+  loadAvailableTemplates()
+})
 
 // Step Management
 function addStep() {
@@ -503,13 +539,111 @@ function deleteField(stepIndex, sectionIndex, fieldIndex) {
 
 // Template Application
 async function applyTemplate(templateName) {
-  // TODO: Load template from backend and apply to requestType
-  alert(`Applying template: ${templateName}`)
+  try {
+    loading.value = true
+    const response = await call('lodgeick.api.load_step_template', { template_name: templateName })
+
+    if (!response.success) {
+      alert(`Failed to load template: ${response.error}`)
+      return
+    }
+
+    const template = response.template
+
+    // Create new step from template
+    const newStep = {
+      step_number: requestType.steps.length + 1,
+      step_code: template.step_config.step_code,
+      step_title: template.step_config.step_title,
+      step_component: template.step_config.step_component,
+      is_enabled: template.step_config.is_enabled,
+      is_required: template.step_config.is_required,
+      show_on_review: template.step_config.show_on_review,
+      description: template.step_config.description || '',
+      expanded: true,
+      sections: []
+    }
+
+    // Add sections from template
+    for (const section of template.sections) {
+      const newSection = {
+        section_code: section.section_code,
+        section_title: section.section_title,
+        section_type: section.section_type,
+        sequence: section.sequence,
+        is_enabled: section.is_enabled,
+        is_required: section.is_required,
+        show_on_review: section.show_on_review,
+        description: section.description || '',
+        fields: []
+      }
+
+      // Add fields from template
+      for (const field of section.fields) {
+        newSection.fields.push({
+          field_name: field.field_name,
+          field_label: field.field_label,
+          field_type: field.field_type,
+          is_required: field.is_required,
+          show_on_review: field.show_on_review,
+          review_label: field.review_label || field.field_label,
+          options: field.options || '',
+          default_value: field.default_value || '',
+          validation: field.validation || '',
+          depends_on: field.depends_on || '',
+          description: field.description || ''
+        })
+      }
+
+      newStep.sections.push(newSection)
+    }
+
+    // Add step to request type
+    requestType.steps.push(newStep)
+
+    alert(`Template "${template.template_title}" applied successfully!`)
+  } catch (error) {
+    console.error('Failed to apply template:', error)
+    alert('Failed to apply template')
+  } finally {
+    loading.value = false
+  }
 }
 
 function loadTemplate() {
-  // TODO: Show modal to select and load existing Request Type
-  alert('Load Template modal - TODO')
+  const rtName = prompt('Enter Request Type name to load:')
+  if (!rtName) return
+
+  loadRequestTypeConfig(rtName)
+}
+
+async function loadRequestTypeConfig(rtName) {
+  try {
+    loading.value = true
+    const response = await call('lodgeick.api.load_request_type_config', { request_type_name: rtName })
+
+    if (!response.success) {
+      alert(`Failed to load Request Type: ${response.error}`)
+      return
+    }
+
+    const config = response.config
+
+    // Update requestType with loaded config
+    requestType.name = config.name
+    requestType.category = config.category
+    requestType.description = config.description
+    requestType.collects_payment = config.collects_payment
+    requestType.make_payment = config.make_payment
+    requestType.steps = config.steps
+
+    alert(`Request Type "${rtName}" loaded successfully!`)
+  } catch (error) {
+    console.error('Failed to load Request Type:', error)
+    alert('Failed to load Request Type')
+  } finally {
+    loading.value = false
+  }
 }
 
 // Save
@@ -519,8 +653,54 @@ async function saveRequestType() {
     return
   }
 
-  console.log('Saving Request Type:', requestType)
-  alert('Request Type saved! (TODO: Implement backend save)')
+  // Validate that steps have proper codes
+  for (const step of requestType.steps) {
+    if (!step.step_code || !step.step_title) {
+      alert('All steps must have a step code and title')
+      return
+    }
+    for (const section of step.sections) {
+      if (!section.section_code || !section.section_title) {
+        alert('All sections must have a code and title')
+        return
+      }
+      for (const field of section.fields) {
+        if (!field.field_name || !field.field_label || !field.field_type) {
+          alert('All fields must have a name, label, and type')
+          return
+        }
+      }
+    }
+  }
+
+  try {
+    saving.value = true
+    const response = await call('lodgeick.api.save_request_type_config', { config: requestType })
+
+    if (!response.success) {
+      alert(`Failed to save: ${response.error}`)
+      return
+    }
+
+    alert(response.message)
+  } catch (error) {
+    console.error('Failed to save Request Type:', error)
+    alert('Failed to save Request Type')
+  } finally {
+    saving.value = false
+  }
+}
+
+// JSON Export
+function copyJsonToClipboard() {
+  navigator.clipboard.writeText(jsonPreview.value)
+    .then(() => {
+      alert('JSON copied to clipboard!')
+    })
+    .catch(err => {
+      console.error('Failed to copy:', err)
+      alert('Failed to copy to clipboard')
+    })
 }
 </script>
 

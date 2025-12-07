@@ -4173,3 +4173,282 @@ def validate_step_data(request_type, council_code, step_code, data):
 			"valid": False,
 			"errors": {"system": str(e)}
 		}
+
+
+# ============================================================================
+# REQUEST TYPE BUILDER API ENDPOINTS
+# ============================================================================
+
+@frappe.whitelist()
+def get_step_templates():
+	"""
+	Get list of available step templates for Request Type Builder
+
+	Returns:
+		list: List of template metadata
+	"""
+	try:
+		from lodgeick.templates.step_templates import list_available_templates, get_template_info
+
+		templates = list_available_templates()
+		template_list = []
+
+		for template_name in templates:
+			try:
+				info = get_template_info(template_name)
+				template_list.append({
+					"name": template_name,
+					"title": info.get("template_title", template_name),
+					"description": info.get("description", ""),
+					"version": info.get("version", "1.0")
+				})
+			except Exception as e:
+				frappe.log_error(f"Error loading template {template_name}: {str(e)}")
+				continue
+
+		return template_list
+
+	except Exception as e:
+		frappe.log_error(f"Get Step Templates Error: {str(e)}")
+		frappe.throw(_("Failed to load step templates: {0}").format(str(e)))
+
+
+@frappe.whitelist()
+def load_step_template(template_name):
+	"""
+	Load a specific step template for Request Type Builder
+
+	Args:
+		template_name: Name of the template to load
+
+	Returns:
+		dict: Template configuration
+	"""
+	try:
+		from lodgeick.templates.step_templates import load_template
+
+		template = load_template(template_name)
+
+		return {
+			"success": True,
+			"template": template
+		}
+
+	except Exception as e:
+		frappe.log_error(f"Load Step Template Error: {str(e)}")
+		return {
+			"success": False,
+			"error": str(e)
+		}
+
+
+@frappe.whitelist()
+def save_request_type_config(config):
+	"""
+	Save Request Type configuration from Request Type Builder
+
+	Args:
+		config: JSON string or dict containing Request Type configuration
+
+	Returns:
+		dict: Success status and created/updated Request Type name
+	"""
+	try:
+		import json
+		if isinstance(config, str):
+			config = json.loads(config)
+
+		# Validate required fields
+		if not config.get("name"):
+			frappe.throw(_("Request Type name is required"))
+
+		rt_name = config["name"]
+
+		# Check if Request Type exists
+		exists = frappe.db.exists("Request Type", rt_name)
+
+		# Create or get Request Type document
+		if exists:
+			rt_doc = frappe.get_doc("Request Type", rt_name)
+			# Clear existing configuration
+			rt_doc.step_configs = []
+			rt_doc.step_sections = []
+			rt_doc.step_fields = []
+		else:
+			rt_doc = frappe.new_doc("Request Type")
+			rt_doc.name = rt_name
+
+		# Set basic fields
+		rt_doc.category = config.get("category", "Planning")
+		rt_doc.description = config.get("description", "")
+		rt_doc.collects_payment = cint(config.get("collects_payment", 0))
+		rt_doc.make_payment = cint(config.get("make_payment", 0))
+		rt_doc.is_active = 1
+
+		# Add steps, sections, and fields
+		for step in config.get("steps", []):
+			step_config = {
+				"step_number": step.get("step_number"),
+				"step_code": step.get("step_code"),
+				"step_title": step.get("step_title"),
+				"step_component": step.get("step_component", "DynamicStepRenderer"),
+				"is_enabled": cint(step.get("is_enabled", 1)),
+				"is_required": cint(step.get("is_required", 1)),
+				"show_on_review": cint(step.get("show_on_review", 1)),
+				"description": step.get("description", "")
+			}
+
+			rt_doc.append("step_configs", step_config)
+
+			# Add sections
+			for section in step.get("sections", []):
+				section_data = {
+					"parent_step_code": step.get("step_code"),
+					"section_code": section.get("section_code"),
+					"section_title": section.get("section_title"),
+					"section_type": section.get("section_type", "Standard"),
+					"sequence": section.get("sequence", 1),
+					"is_enabled": cint(section.get("is_enabled", 1)),
+					"is_required": cint(section.get("is_required", 1)),
+					"show_on_review": cint(section.get("show_on_review", 1)),
+					"description": section.get("description", "")
+				}
+
+				rt_doc.append("step_sections", section_data)
+
+				# Add fields
+				for field in section.get("fields", []):
+					field_data = {
+						"parent_section_code": section.get("section_code"),
+						"field_name": field.get("field_name"),
+						"field_label": field.get("field_label"),
+						"field_type": field.get("field_type"),
+						"is_required": cint(field.get("is_required", 0)),
+						"show_on_review": cint(field.get("show_on_review", 1)),
+						"review_label": field.get("review_label", field.get("field_label")),
+						"options": field.get("options", ""),
+						"default_value": field.get("default_value", ""),
+						"validation": field.get("validation", ""),
+						"depends_on": field.get("depends_on", ""),
+						"description": field.get("description", "")
+					}
+
+					rt_doc.append("step_fields", field_data)
+
+		# Save the document
+		if exists:
+			rt_doc.save()
+			action = "updated"
+		else:
+			rt_doc.insert()
+			action = "created"
+
+		frappe.db.commit()
+
+		return {
+			"success": True,
+			"message": f"Request Type '{rt_name}' {action} successfully",
+			"name": rt_name
+		}
+
+	except Exception as e:
+		frappe.log_error(f"Save Request Type Config Error: {str(e)}")
+		return {
+			"success": False,
+			"error": str(e)
+		}
+
+
+@frappe.whitelist()
+def load_request_type_config(request_type_name):
+	"""
+	Load existing Request Type configuration for editing in Request Type Builder
+
+	Args:
+		request_type_name: Name of the Request Type to load
+
+	Returns:
+		dict: Request Type configuration in builder format
+	"""
+	try:
+		if not frappe.db.exists("Request Type", request_type_name):
+			frappe.throw(_("Request Type '{0}' not found").format(request_type_name))
+
+		rt_doc = frappe.get_doc("Request Type", request_type_name)
+
+		# Build configuration object
+		config = {
+			"name": rt_doc.name,
+			"category": rt_doc.category,
+			"description": rt_doc.description or "",
+			"collects_payment": cint(rt_doc.collects_payment),
+			"make_payment": cint(rt_doc.make_payment),
+			"steps": []
+		}
+
+		# Group sections and fields by step
+		for step_config in rt_doc.step_configs:
+			step = {
+				"step_number": step_config.step_number,
+				"step_code": step_config.step_code,
+				"step_title": step_config.step_title,
+				"step_component": step_config.step_component,
+				"is_enabled": cint(step_config.is_enabled),
+				"is_required": cint(step_config.is_required),
+				"show_on_review": cint(step_config.show_on_review),
+				"description": step_config.description or "",
+				"expanded": False,
+				"sections": []
+			}
+
+			# Get sections for this step
+			sections = [s for s in rt_doc.step_sections if s.parent_step_code == step_config.step_code]
+
+			for section in sections:
+				section_data = {
+					"section_code": section.section_code,
+					"section_title": section.section_title,
+					"section_type": section.section_type,
+					"sequence": section.sequence,
+					"is_enabled": cint(section.is_enabled),
+					"is_required": cint(section.is_required),
+					"show_on_review": cint(section.show_on_review),
+					"description": section.description or "",
+					"fields": []
+				}
+
+				# Get fields for this section
+				fields = [f for f in rt_doc.step_fields if f.parent_section_code == section.section_code]
+
+				for field in fields:
+					field_data = {
+						"field_name": field.field_name,
+						"field_label": field.field_label,
+						"field_type": field.field_type,
+						"is_required": cint(field.is_required),
+						"show_on_review": cint(field.show_on_review),
+						"review_label": field.review_label or field.field_label,
+						"options": field.options or "",
+						"default_value": field.default_value or "",
+						"validation": field.validation or "",
+						"depends_on": field.depends_on or "",
+						"description": field.description or ""
+					}
+
+					section_data["fields"].append(field_data)
+
+				step["sections"].append(section_data)
+
+			config["steps"].append(step)
+
+		return {
+			"success": True,
+			"config": config
+		}
+
+	except Exception as e:
+		frappe.log_error(f"Load Request Type Config Error: {str(e)}")
+		return {
+			"success": False,
+			"error": str(e)
+		}

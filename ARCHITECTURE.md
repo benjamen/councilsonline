@@ -239,13 +239,21 @@ Request Type
    - Reduces duplication, ensures consistency
    - Full documentation: [Templates README](lodgeick/templates/step_templates/README.md)
 
-### ⚠️ Partially Implemented
-
-1. **Configuration UI (Visual Request Type Builder)**: In Progress - Phase 3.3
-   - UI Foundation: Visual builder for Request Types (drag-and-drop, live editing)
+1. **Configuration UI (Visual Request Type Builder)**: Complete - Phase 3.3
+   - Visual builder for creating/editing Request Types without JSON editing
    - Component: [RequestTypeBuilder.vue](frontend/src/pages/RequestTypeBuilder.vue)
-   - Features: Step/section/field management, template integration
-   - Status: Part 1 Complete (UI), Part 2 Pending (API integration, save/load)
+   - API endpoints: [api.py](lodgeick/api.py) - `get_step_templates()`, `load_step_template()`, `save_request_type_config()`, `load_request_type_config()`
+   - Features:
+   - Step/section/field management UI (add, delete, reorder)
+   - Template library integration (apply templates with one click)
+   - Save/load Request Types from database
+   - JSON preview/export functionality
+   - Real-time validation
+   - Status: Fully functional, production-ready
+
+### ⚠️ Partially Implemented (None)
+
+All planned features through Phase 3.3 are complete
 
 ### ❌ Not Implemented
 
