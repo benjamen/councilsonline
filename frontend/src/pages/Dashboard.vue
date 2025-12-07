@@ -217,10 +217,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { createResource, Dropdown, Input, Button } from 'frappe-ui'
+import { Dropdown, Input, Button } from 'frappe-ui'
 import { session } from '../data/session'
+import { requestService } from '../services'
 import StatusBadge from '../components/StatusBadge.vue'
 import StatCard from '../components/StatCard.vue'
 
@@ -247,11 +248,8 @@ const filterStatus = ref('')
 const filterCouncil = ref('')
 const filterType = ref('')
 
-// Get user's requests
-const requests = createResource({
-  url: 'lodgeick.lodgeick.doctype.request.request.get_my_applications',
-  auto: true,
-})
+// Get user's requests using service
+const requests = requestService.getUserRequests()
 
 // Available councils from requests
 const availableCouncils = computed(() => {
