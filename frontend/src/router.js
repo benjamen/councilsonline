@@ -153,6 +153,18 @@ const routes = [
 			next()
 		}
 	},
+	// Council-specific forgot password
+	{
+		path: "/council/:councilCode/forgot-password",
+		name: "CouncilForgotPassword",
+		component: () => import("@/pages/CouncilForgotPassword.vue"),
+		meta: { public: true },
+		beforeEnter: async (to, from, next) => {
+			const councilStore = useCouncilStore()
+			await councilStore.setLockedCouncil(to.params.councilCode.toUpperCase())
+			next()
+		}
+	},
 	// Council-specific dashboard
 	{
 		path: "/council/:councilCode/dashboard",

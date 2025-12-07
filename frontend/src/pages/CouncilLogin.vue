@@ -53,9 +53,13 @@
               <label for="password" class="block text-sm font-medium text-gray-700">
                 Password
               </label>
-              <a href="#" class="text-sm font-medium hover:opacity-80" :style="{ color: primaryColor }">
+              <router-link
+                :to="{ name: 'CouncilForgotPassword', params: { councilCode } }"
+                class="text-sm font-medium hover:opacity-80"
+                :style="{ color: primaryColor }"
+              >
                 Forgot password?
-              </a>
+              </router-link>
             </div>
             <Input
               id="password"
