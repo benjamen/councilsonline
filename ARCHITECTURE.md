@@ -239,12 +239,17 @@ Request Type
    - Reduces duplication, ensures consistency
    - Full documentation: [Templates README](lodgeick/templates/step_templates/README.md)
 
+### ⚠️ Partially Implemented
+
+1. **Configuration UI (Visual Request Type Builder)**: In Progress - Phase 3.3
+   - UI Foundation: Visual builder for Request Types (drag-and-drop, live editing)
+   - Component: [RequestTypeBuilder.vue](frontend/src/pages/RequestTypeBuilder.vue)
+   - Features: Step/section/field management, template integration
+   - Status: Part 1 Complete (UI), Part 2 Pending (API integration, save/load)
+
 ### ❌ Not Implemented
 
-1. **Configuration UI**: Manual JSON editing required
-   - **Resolution**: Phase 3.3
-
-2. **Bidirectional Sync Events**: Only SPISC syncs back to Request
+1. **Bidirectional Sync Events**: Only SPISC syncs back to Request
    - **Resolution**: Phase 3.4
 
 ---

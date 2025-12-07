@@ -47,6 +47,12 @@ const routes = [
 		component: () => import("@/pages/Settings.vue"),
 	},
 	{
+		path: "/admin/request-type-builder",
+		name: "RequestTypeBuilder",
+		component: () => import("@/pages/RequestTypeBuilder.vue"),
+		meta: { requiresAdmin: true }
+	},
+	{
 		path: "/company",
 		name: "CompanyManagement",
 		component: () => import("@/pages/CompanyManagement.vue"),
