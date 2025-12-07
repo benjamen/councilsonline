@@ -132,7 +132,7 @@ const visibleSections = computed(() => {
   if (!props.stepConfig.sections) return []
 
   return props.stepConfig.sections.filter(section => {
-    return isSectionVisible(section, formData.value)
+    return isSectionVisible(section, localData.value)
   })
 })
 
