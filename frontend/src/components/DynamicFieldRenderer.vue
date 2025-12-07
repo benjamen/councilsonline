@@ -361,25 +361,20 @@ const getSelectOptions = (optionsString) => {
   return optionsString.split('\n').map(opt => opt.trim()).filter(Boolean)
 }
 
-// Validation state - tracks validation errors for each field
-const validationErrors = ref({})
+// Use step validation composable
+import { useStepValidation } from '../composables/useStepValidation'
+const { errors: validationErrors, validateConfigField, clearFieldError } = useStepValidation()
 
 // Validate a single field
 const handleFieldValidation = (field) => {
-  if (!field.validation) {
+  if (!field.validation && !field.is_required) {
     // Clear any existing error if no validation rule
-    delete validationErrors.value[field.field_name]
+    clearFieldError(field.field_name)
     return
   }
 
   const value = localData.value[field.field_name]
-  const result = validateField(value, field.validation, localData.value)
-
-  if (!result.valid) {
-    validationErrors.value[field.field_name] = result.message
-  } else {
-    delete validationErrors.value[field.field_name]
-  }
+  validateConfigField(field.field_name, value, field, localData.value)
 }
 
 // Get validation error message for a field
