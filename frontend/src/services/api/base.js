@@ -37,8 +37,15 @@ export class BaseAPIClient {
 			? error.exc_type
 			: error?.message || 'An unexpected error occurred'
 
-		// Store error in global error state (will add in Phase 4)
-		// useErrorStore().addError({ message, type: 'api_error' })
+		// Store error in global error state
+		try {
+			const { useErrorStore } = require('../../stores/errorStore')
+			const errorStore = useErrorStore()
+			errorStore.addError({ message, type: 'api_error', context: error })
+		} catch (e) {
+			// Fail silently if store not available
+			console.error('Could not add error to store:', e)
+		}
 
 		return { error: message }
 	}
