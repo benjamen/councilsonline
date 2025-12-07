@@ -2007,6 +2007,99 @@ def get_council_settings(council_code):
 
 
 # ============================================================================
+# ANALYTICS - LOGIN SOURCE TRACKING
+# ============================================================================
+
+@frappe.whitelist()
+def track_login_event(source, council_code=None):
+    """
+    Track login events for analytics
+
+    Args:
+        source: Login source ('system-wide' or 'council-specific')
+        council_code: Council code if council-specific login
+    """
+    try:
+        # Create login tracking record
+        login_event = frappe.get_doc({
+            "doctype": "Login Event",
+            "user": frappe.session.user,
+            "source": source,
+            "council": council_code,
+            "timestamp": frappe.utils.now(),
+            "ip_address": frappe.local.request_ip,
+            "user_agent": frappe.local.request.headers.get("User-Agent")
+        })
+        login_event.insert(ignore_permissions=True)
+        frappe.db.commit()
+
+        return {"success": True}
+    except Exception as e:
+        frappe.log_error(f"Failed to track login event: {str(e)}")
+        # Don't fail the login if tracking fails
+        return {"success": False, "error": str(e)}
+
+
+@frappe.whitelist()
+def get_login_analytics(council_code=None, from_date=None, to_date=None):
+    """
+    Get login analytics data
+
+    Args:
+        council_code: Optional council filter
+        from_date: Start date for analytics
+        to_date: End date for analytics
+
+    Returns:
+        dict: Analytics data including counts and breakdowns
+    """
+    filters = {}
+
+    if council_code:
+        filters["council"] = council_code
+
+    if from_date:
+        filters["timestamp"] = [">=", from_date]
+
+    if to_date:
+        if "timestamp" in filters:
+            filters["timestamp"] = [[">=", from_date], ["<=", to_date]]
+        else:
+            filters["timestamp"] = ["<=", to_date]
+
+    # Get login events
+    events = frappe.get_all(
+        "Login Event",
+        filters=filters,
+        fields=["source", "council", "timestamp", "user"],
+        order_by="timestamp desc"
+    )
+
+    # Calculate analytics
+    total_logins = len(events)
+    system_wide_logins = len([e for e in events if e.source == "system-wide"])
+    council_logins = len([e for e in events if e.source == "council-specific"])
+
+    # Council breakdown
+    council_breakdown = {}
+    for event in events:
+        if event.council:
+            council_breakdown[event.council] = council_breakdown.get(event.council, 0) + 1
+
+    # Unique users
+    unique_users = len(set(e["user"] for e in events))
+
+    return {
+        "total_logins": total_logins,
+        "system_wide_logins": system_wide_logins,
+        "council_specific_logins": council_logins,
+        "council_breakdown": council_breakdown,
+        "unique_users": unique_users,
+        "events": events[:100]  # Return last 100 events
+    }
+
+
+# ============================================================================
 # USER PROFILE & SETTINGS API ENDPOINTS
 # ============================================================================
 
