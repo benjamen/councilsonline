@@ -264,6 +264,38 @@ export const useCouncilStore = defineStore('council', {
       }
     },
 
+    async shouldRedirectToCouncilDashboard(councilCode) {
+      // Check if user should be redirected to council-specific dashboard
+      try {
+        const response = await call('lodgeick.api.should_redirect_to_council_dashboard', {
+          council_code: councilCode
+        })
+        return response?.should_redirect || false
+      } catch (error) {
+        console.error('Failed to check redirect settings:', error)
+        return false
+      }
+    },
+
+    async getCouncilSettings(councilCode) {
+      // Get council portal and website settings
+      try {
+        const response = await call('lodgeick.api.get_council_settings', {
+          council_code: councilCode
+        })
+        return response
+      } catch (error) {
+        console.error('Failed to get council settings:', error)
+        return null
+      }
+    },
+
+    setPreferredCouncil(councilCode) {
+      // Set as preferred council (softer than locked)
+      this.selectedCouncil = councilCode
+      localStorage.setItem('preferred_council', councilCode)
+    },
+
     reset() {
       this.selectedCouncil = null
       this.preselectedFromUrl = null

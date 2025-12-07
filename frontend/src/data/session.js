@@ -3,6 +3,7 @@ import { createResource } from "frappe-ui"
 import { computed, reactive } from "vue"
 
 import { userResource } from "./user"
+import { useCouncilStore } from "@/stores/councilStore"
 
 export function sessionUser() {
 	const cookies = new URLSearchParams(document.cookie.split("; ").join("&"))
@@ -22,11 +23,21 @@ export const session = reactive({
 				pwd: password,
 			}
 		},
-		onSuccess() {
+		async onSuccess() {
 			userResource.reload()
 			session.user = sessionUser()
 			session.login.reset()
-			router.replace({ name: "Dashboard" })
+
+			// Check if coming from council-specific login page
+			const councilStore = useCouncilStore()
+			if (councilStore.lockedCouncil) {
+				router.replace({
+					name: "CouncilDashboard",
+					params: { councilCode: councilStore.lockedCouncil }
+				})
+			} else {
+				router.replace({ name: "Dashboard" })
+			}
 		},
 	}),
 	logout: createResource({

@@ -14,6 +14,24 @@ const routes = [
 		path: "/dashboard",
 		name: "Dashboard",
 		component: () => import("@/pages/Dashboard.vue"),
+		beforeEnter: async (to, from, next) => {
+			const councilStore = useCouncilStore()
+
+			// Check if user has a locked/preferred council
+			if (councilStore.lockedCouncil || councilStore.selectedCouncil) {
+				const councilCode = councilStore.lockedCouncil || councilStore.selectedCouncil
+
+				// Check council settings
+				const shouldRedirect = await councilStore.shouldRedirectToCouncilDashboard(councilCode)
+
+				if (shouldRedirect) {
+					next({ name: "CouncilDashboard", params: { councilCode } })
+					return
+				}
+			}
+
+			next()
+		}
 	},
 	{
 		path: "/home",
@@ -109,6 +127,52 @@ const routes = [
 					locked: "true"
 				}
 			})
+		}
+	},
+	// Council-specific login
+	{
+		path: "/council/:councilCode/login",
+		name: "CouncilLogin",
+		component: () => import("@/pages/CouncilLogin.vue"),
+		meta: { public: true },
+		beforeEnter: async (to, from, next) => {
+			const councilStore = useCouncilStore()
+			await councilStore.setLockedCouncil(to.params.councilCode.toUpperCase())
+			next()
+		}
+	},
+	// Council-specific registration
+	{
+		path: "/council/:councilCode/register",
+		name: "CouncilRegister",
+		component: () => import("@/pages/CouncilRegister.vue"),
+		meta: { public: true },
+		beforeEnter: async (to, from, next) => {
+			const councilStore = useCouncilStore()
+			await councilStore.setLockedCouncil(to.params.councilCode.toUpperCase())
+			next()
+		}
+	},
+	// Council-specific dashboard
+	{
+		path: "/council/:councilCode/dashboard",
+		name: "CouncilDashboard",
+		component: () => import("@/pages/CouncilDashboard.vue"),
+		beforeEnter: async (to, from, next) => {
+			const councilStore = useCouncilStore()
+			await councilStore.setLockedCouncil(to.params.councilCode.toUpperCase())
+			next()
+		}
+	},
+	// Council-specific account page
+	{
+		path: "/council/:councilCode/account",
+		name: "CouncilAccount",
+		component: () => import("@/pages/CouncilAccount.vue"),
+		beforeEnter: async (to, from, next) => {
+			const councilStore = useCouncilStore()
+			await councilStore.setLockedCouncil(to.params.councilCode.toUpperCase())
+			next()
 		}
 	},
 ]
