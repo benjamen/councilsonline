@@ -1587,7 +1587,7 @@ def get_user_requests(status=None):
                 "name", "request_number", "request_type", "status",
                 "requester_name", "requester_email", "requester_phone",
                 "council", "brief_description", "creation", "modified",
-                "workflow_state", "current_step", "total_steps"
+                "workflow_state", "draft_current_step", "draft_total_steps"
             ],
             order_by="modified desc"
         )
