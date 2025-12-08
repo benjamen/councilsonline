@@ -114,38 +114,35 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 13639,
+                      "duration": 7401,
                       "error": {
-                        "message": "TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('text=Select Your Council') to be visible\u001b[22m\n",
-                        "stack": "TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('text=Select Your Council') to be visible\u001b[22m\n\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/request-creation-taytasy.spec.ts:36:14",
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('text=/Step \\\\d+ of \\\\d+/')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=/Step \\\\d+ of \\\\d+/')\u001b[22m\n\u001b[2m    9 × locator resolved to 0 elements\u001b[22m\n\u001b[2m      - unexpected value \"0\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('text=/Step \\\\d+ of \\\\d+/')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=/Step \\\\d+ of \\\\d+/')\u001b[22m\n\u001b[2m    9 × locator resolved to 0 elements\u001b[22m\n\u001b[2m      - unexpected value \"0\"\u001b[22m\n\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/request-creation-taytasy.spec.ts:47:31",
                         "location": {
                           "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/request-creation-taytasy.spec.ts",
-                          "column": 14,
-                          "line": 36
+                          "column": 31,
+                          "line": 47
                         },
-                        "snippet": "  34 | \t\t// Step 1: Select Tay Tasy Council\n  35 | \t\tconsole.log('Step 1: Selecting Tay Tasy Council...')\n> 36 | \t\tawait page.waitForSelector('text=Select Your Council', { timeout: 10000 })\n     | \t\t           ^\n  37 |\n  38 | \t\t// Click on Tay Tasy council option\n  39 | \t\tconst taytasyOption = page.locator('text=Tay Tasy').first()"
+                        "snippet": "  45 | \t\t// Verify only ONE progress indicator visible (no duplicates)\n  46 | \t\tconst progressTexts = page.locator('text=/Step \\\\d+ of \\\\d+/')\n> 47 | \t\tawait expect(progressTexts).toHaveCount(1, { timeout: 5000 })\n     | \t\t                            ^\n  48 | \t\tconsole.log('✓ Single progress indicator confirmed')\n  49 |\n  50 | \t\t// Step 1: Select Tay Tasy Council"
                       },
                       "errors": [
                         {
                           "location": {
                             "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/request-creation-taytasy.spec.ts",
-                            "column": 14,
-                            "line": 36
+                            "column": 31,
+                            "line": 47
                           },
-                          "message": "TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('text=Select Your Council') to be visible\u001b[22m\n\n\n  34 | \t\t// Step 1: Select Tay Tasy Council\n  35 | \t\tconsole.log('Step 1: Selecting Tay Tasy Council...')\n> 36 | \t\tawait page.waitForSelector('text=Select Your Council', { timeout: 10000 })\n     | \t\t           ^\n  37 |\n  38 | \t\t// Click on Tay Tasy council option\n  39 | \t\tconst taytasyOption = page.locator('text=Tay Tasy').first()\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/request-creation-taytasy.spec.ts:36:14"
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('text=/Step \\\\d+ of \\\\d+/')\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('text=/Step \\\\d+ of \\\\d+/')\u001b[22m\n\u001b[2m    9 × locator resolved to 0 elements\u001b[22m\n\u001b[2m      - unexpected value \"0\"\u001b[22m\n\n\n  45 | \t\t// Verify only ONE progress indicator visible (no duplicates)\n  46 | \t\tconst progressTexts = page.locator('text=/Step \\\\d+ of \\\\d+/')\n> 47 | \t\tawait expect(progressTexts).toHaveCount(1, { timeout: 5000 })\n     | \t\t                            ^\n  48 | \t\tconsole.log('✓ Single progress indicator confirmed')\n  49 |\n  50 | \t\t// Step 1: Select Tay Tasy Council\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/request-creation-taytasy.spec.ts:47:31"
                         }
                       ],
                       "stdout": [
                         {
                           "text": "Starting Tay Tasy Council request creation test...\n"
-                        },
-                        {
-                          "text": "Step 1: Selecting Tay Tasy Council...\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-12-08T08:38:20.009Z",
+                      "startTime": "2025-12-08T09:34:01.748Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -166,8 +163,8 @@
                       ],
                       "errorLocation": {
                         "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/request-creation-taytasy.spec.ts",
-                        "column": 14,
-                        "line": 36
+                        "column": 31,
+                        "line": 47
                       }
                     }
                   ],
@@ -176,7 +173,7 @@
               ],
               "id": "88b282b2b29dab8fe8af-42e5ea3cab03c980768b",
               "file": "e2e/request-creation-taytasy.spec.ts",
-              "line": 27,
+              "line": 38,
               "column": 2
             }
           ]
@@ -186,8 +183,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-12-08T08:38:17.918Z",
-    "duration": 16065.266000000001,
+    "startTime": "2025-12-08T09:34:01.600Z",
+    "duration": 9436.653,
     "expected": 0,
     "skipped": 0,
     "unexpected": 1,

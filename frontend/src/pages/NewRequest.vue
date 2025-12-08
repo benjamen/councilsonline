@@ -12,7 +12,6 @@
 						</button>
 						<div>
 							<h1 class="text-xl font-bold text-gray-900">New Application</h1>
-							<p class="text-sm text-gray-500">Step {{ store.currentStep + 1 }} of {{ totalSteps }}</p>
 						</div>
 					</div>
 					<div class="flex items-center gap-2">
@@ -150,9 +149,10 @@ const selectedRequestTypeDetails = ref(null)
 // Computed
 const totalSteps = computed(() => {
 	if (store.requestTypeConfig?.steps) {
-		return store.requestTypeConfig.steps.length + 3 // council + type + process info
+		// Council + Type + Process Info + Dynamic Steps + Review
+		return store.requestTypeConfig.steps.length + 4
 	}
-	return 9 // default fallback
+	return 4 // Default: Council, Type, Process Info, Review
 })
 
 const stepTitles = computed(() => {
@@ -160,6 +160,7 @@ const stepTitles = computed(() => {
 	if (store.requestTypeConfig?.steps) {
 		titles.push(...store.requestTypeConfig.steps.map(s => s.step_title))
 	}
+	titles.push('Review') // Always add Review as the last step
 	return titles
 })
 
@@ -175,22 +176,17 @@ const canNavigateNext = computed(() => {
 // Methods
 function getCurrentStepTitle() {
 	const index = store.currentStep
-	if (index === 0) return 'Council'
-	if (index === 1) return 'Type'
-	if (index === 2) return 'Process Info'
-	if (index === totalSteps.value - 1) return 'Review'
-
-	// Dynamic step
-	if (store.requestTypeConfig?.steps) {
-		const stepIndex = index - 3
-		return store.requestTypeConfig.steps[stepIndex]?.step_title
+	if (index >= 0 && index < stepTitles.value.length) {
+		return stepTitles.value[index]
 	}
 	return ''
 }
 
 function getCurrentStepConfig() {
 	const index = store.currentStep
-	if (index <= 2 || index === totalSteps.value - 1) return null
+	// Dynamic steps start at index 3 (after Council, Type, Process Info)
+	// and end before Review (totalSteps - 1)
+	if (index < 3 || index >= totalSteps.value - 1) return null
 
 	if (store.requestTypeConfig?.steps) {
 		const stepIndex = index - 3
@@ -221,9 +217,19 @@ async function onCouncilChange(councilCode) {
 }
 
 async function selectRequestType(requestTypeCode) {
+	console.log('[NewRequest] selectRequestType called with:', requestTypeCode)
+
 	// Load request type configuration
 	await store.initialize(requestTypeCode)
 	selectedRequestTypeDetails.value = store.requestTypeConfig
+
+	// Validate config loaded
+	if (!store.requestTypeConfig) {
+		console.error('[NewRequest] Failed to load request type config')
+		return
+	}
+
+	console.log('[NewRequest] Request type config loaded:', store.requestTypeConfig)
 }
 
 async function handleNext() {
