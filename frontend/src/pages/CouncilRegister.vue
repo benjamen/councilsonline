@@ -31,8 +31,8 @@
               <svg class="w-12 h-12 mx-auto mb-3" :style="{ color: primaryColor }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
-              <h3 class="text-lg font-semibold text-gray-900 mb-2">Register as Applicant</h3>
-              <p class="text-sm text-gray-600 mb-4">Apply for resource consents for yourself or your organization</p>
+              <h3 class="text-lg font-semibold text-gray-900 mb-2">Register as Requester</h3>
+              <p class="text-sm text-gray-600 mb-4">Submit requests for yourself or on behalf of an organization</p>
               <div class="text-sm font-medium" :style="{ color: primaryColor }">✓ Currently selected</div>
             </div>
           </div>
@@ -46,7 +46,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
               <h3 class="text-lg font-semibold text-gray-900 mb-2">Register as Agent</h3>
-              <p class="text-sm text-gray-600 mb-4">Planning consultants assisting applicants with resource consents</p>
+              <p class="text-sm text-gray-600 mb-4">Consultants or representatives submitting on behalf of clients</p>
               <div class="text-sm font-medium" :style="{ color: primaryColor }">Click to register as agent →</div>
             </div>
           </button>
@@ -74,12 +74,12 @@
             </div>
           </div>
 
-          <!-- Applicant Type Selection -->
+          <!-- Account Type Selection -->
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-3">
-              Applicant Type <span class="text-red-500">*</span>
+              Account Type <span class="text-red-500">*</span>
             </label>
-            <p class="text-xs text-gray-500 mb-3">Select the type of applicant you are</p>
+            <p class="text-xs text-gray-500 mb-3">Select the entity type you're registering as</p>
             <div class="grid grid-cols-2 gap-3">
               <button
                 type="button"
@@ -489,7 +489,7 @@
             :style="{ backgroundColor: primaryColor, borderColor: primaryColor }"
           >
             <template v-if="!isLoading">
-              Create Applicant Account
+              Create Account
             </template>
             <template v-else>
               Creating account...
