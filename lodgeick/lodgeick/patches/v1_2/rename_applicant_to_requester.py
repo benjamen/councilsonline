@@ -9,7 +9,6 @@ This patch:
 """
 
 import frappe
-from frappe.model.utils.rename_field import rename_field
 
 
 def execute():
@@ -53,7 +52,9 @@ def rename_request_fields():
             if frappe.db.has_column("tabRequest", old_field):
                 if not frappe.db.has_column("tabRequest", new_field):
                     print(f"  - Renaming: {old_field} → {new_field}")
-                    rename_field("Request", old_field, new_field)
+                    # Use SQL rename instead of rename_field for better control
+                    frappe.db.sql(f"ALTER TABLE `tabRequest` CHANGE `{old_field}` `{new_field}` VARCHAR(255)")
+                    frappe.db.commit()
                 else:
                     print(f"  ⚠ Skipping {old_field}: {new_field} already exists")
             else:
@@ -133,7 +134,7 @@ def migrate_doctype_permissions():
     applicant_perms = frappe.get_all(
         "DocPerm",
         filters={"role": "Applicant"},
-        fields=["parent", "name", "*"]
+        fields=["*"]
     )
 
     migrated = 0
