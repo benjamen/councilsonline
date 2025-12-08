@@ -48,7 +48,7 @@
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
                 <input
-                  v-model="localData.applicant_name"
+                  v-model="localData.requester_name"
                   type="text"
                   placeholder="John Smith"
                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -60,7 +60,7 @@
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
                 <input
-                  v-model="localData.applicant_email"
+                  v-model="localData.requester_email"
                   type="email"
                   placeholder="john@example.com"
                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -75,7 +75,7 @@
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Contact Phone *</label>
                 <input
-                  v-model="localData.applicant_phone"
+                  v-model="localData.requester_phone"
                   type="tel"
                   placeholder="021 123 4567"
                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -88,7 +88,7 @@
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Applicant Type *</label>
                 <select
-                  v-model="localData.applicant_type"
+                  v-model="localData.requester_type"
                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   required
                 >
@@ -195,10 +195,10 @@ const emit = defineEmits(['update:modelValue'])
 const localData = ref({
   submitted_on_behalf_of: props.modelValue.submitted_on_behalf_of || 'Myself',
   acting_on_behalf: props.modelValue.acting_on_behalf || false,
-  applicant_name: props.modelValue.applicant_name || '',
-  applicant_email: props.modelValue.applicant_email || '',
-  applicant_phone: props.modelValue.applicant_phone || '',
-  applicant_type: props.modelValue.applicant_type || '',
+  applicant_name: props.modelValue.requester_name || '',
+  applicant_email: props.modelValue.requester_email || '',
+  applicant_phone: props.modelValue.requester_phone || '',
+  applicant_type: props.modelValue.requester_type || '',
   applicant_is_not_owner: props.modelValue.applicant_is_not_owner || false,
   owner_name: props.modelValue.owner_name || '',
   owner_email: props.modelValue.owner_email || '',
@@ -210,10 +210,10 @@ const localData = ref({
 watch(() => props.modelValue, (newVal) => {
   localData.value.submitted_on_behalf_of = newVal.submitted_on_behalf_of || 'Myself'
   localData.value.acting_on_behalf = newVal.acting_on_behalf || false
-  localData.value.applicant_name = newVal.applicant_name || ''
-  localData.value.applicant_email = newVal.applicant_email || ''
-  localData.value.applicant_phone = newVal.applicant_phone || ''
-  localData.value.applicant_type = newVal.applicant_type || ''
+  localData.value.requester_name = newVal.requester_name || ''
+  localData.value.requester_email = newVal.requester_email || ''
+  localData.value.requester_phone = newVal.requester_phone || ''
+  localData.value.requester_type = newVal.requester_type || ''
   localData.value.applicant_is_not_owner = newVal.applicant_is_not_owner || false
   localData.value.owner_name = newVal.owner_name || ''
   localData.value.owner_email = newVal.owner_email || ''
@@ -227,10 +227,10 @@ watch(localData, (newVal) => {
     ...props.modelValue,
     submitted_on_behalf_of: newVal.submitted_on_behalf_of,
     acting_on_behalf: newVal.acting_on_behalf,
-    applicant_name: newVal.applicant_name,
-    applicant_email: newVal.applicant_email,
-    applicant_phone: newVal.applicant_phone,
-    applicant_type: newVal.applicant_type,
+    applicant_name: newVal.requester_name,
+    applicant_email: newVal.requester_email,
+    applicant_phone: newVal.requester_phone,
+    applicant_type: newVal.requester_type,
     applicant_is_not_owner: newVal.applicant_is_not_owner,
     owner_name: newVal.owner_name,
     owner_email: newVal.owner_email,

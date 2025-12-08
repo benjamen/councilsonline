@@ -29,14 +29,14 @@ class CommunicationLog(Document):
                 self.sender = frappe.db.get_value("User", frappe.session.user, "email")
             else:
                 # Get applicant email from request
-                self.sender = frappe.db.get_value("Request", self.request, "applicant_email")
+                self.sender = frappe.db.get_value("Request", self.request, "requester_email")
 
         if not self.recipient:
             if self.direction == "Incoming":
                 self.recipient = frappe.db.get_value("User", frappe.session.user, "email")
             else:
                 # Get applicant email from request
-                self.recipient = frappe.db.get_value("Request", self.request, "applicant_email")
+                self.recipient = frappe.db.get_value("Request", self.request, "requester_email")
 
     def after_insert(self):
         """Actions after inserting communication log"""
@@ -143,7 +143,7 @@ def send_notification_to_applicant(request, subject, message, communication_type
         "subject": subject,
         "content": message,
         "sender": frappe.db.get_value("User", frappe.session.user, "email"),
-        "recipient": request_doc.applicant_email,
+        "recipient": request_doc.requester_email,
         "communication_date": now()
     })
     comm.insert()

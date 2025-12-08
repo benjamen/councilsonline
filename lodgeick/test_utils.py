@@ -11,10 +11,10 @@ def test_rc_e2e_submission():
     # Test data matching RC Request Type fields
     test_data = {
         # Step 1: Applicant Details
-        "applicant_type": "Individual",
+        "requester_type": "Individual",
         "applicant_full_name": "John Test Smith",
-        "applicant_email": "john.smith@example.com",
-        "applicant_phone": "021234567",
+        "requester_email": "john.smith@example.com",
+        "requester_phone": "021234567",
         "applicant_postal_address": "123 Test Street, Auckland 1010",
         "has_agent": 0,
 

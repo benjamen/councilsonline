@@ -61,9 +61,9 @@
    "in_list_view": 1
   },
   {
-   "fieldname": "applicant",
+   "fieldname": "requester",
    "fieldtype": "Link",
-   "label": "Applicant",
+   "label": "Requester",
    "options": "User",
    "reqd": 1
   },
@@ -279,7 +279,7 @@
    "write": 1
   }
  ],
- "search_fields": "request,applicant,eligibility_status",
+ "search_fields": "request,requester,eligibility_status",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

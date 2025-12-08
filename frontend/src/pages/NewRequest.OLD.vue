@@ -2000,9 +2000,9 @@ const canProceed = computed(() => {
         const hasDeclarations = formData.value.declaration_rma_compliance &&
           formData.value.declaration_public_information &&
           formData.value.declaration_authorized
-        const hasSignature = !!formData.value.applicant_signature_first_name?.trim() &&
-          !!formData.value.applicant_signature_last_name?.trim() &&
-          !!formData.value.applicant_signature_date
+        const hasSignature = !!formData.value.requester_signature_first_name?.trim() &&
+          !!formData.value.requester_signature_last_name?.trim() &&
+          !!formData.value.requester_signature_date
 
         return hasDeclarations && hasSignature
       }
@@ -2912,19 +2912,19 @@ const loadUserProfile = async () => {
     userProfile.value = profile
 
     // Auto-populate applicant type from profile default
-    if (profile.applicant_type && !formData.value.applicant_type) {
-      formData.value.applicant_type = profile.applicant_type
+    if (profile.requester_type && !formData.value.requester_type) {
+      formData.value.requester_type = profile.requester_type
     }
 
     // Auto-populate phone if not acting on behalf
-    if (profile.phone && !formData.value.applicant_phone && !formData.value.acting_on_behalf) {
-      formData.value.applicant_phone = profile.phone
+    if (profile.phone && !formData.value.requester_phone && !formData.value.acting_on_behalf) {
+      formData.value.requester_phone = profile.phone
     }
 
     // Auto-populate applicant name and email when not acting on behalf
     if (!formData.value.acting_on_behalf) {
-      formData.value.applicant_name = `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || profile.email
-      formData.value.applicant_email = profile.email
+      formData.value.requester_name = `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || profile.email
+      formData.value.requester_email = profile.email
     }
   } catch (error) {
     console.error('Error loading user profile:', error)
@@ -2957,25 +2957,25 @@ watch(() => formData.value.submitted_on_behalf_of, (submittedAs) => {
 watch(() => formData.value.acting_on_behalf, (actingOnBehalf) => {
   if (!actingOnBehalf && userProfile.value) {
     // Auto-populate from profile
-    formData.value.applicant_name = `${userProfile.value.first_name || ''} ${userProfile.value.last_name || ''}`.trim() || userProfile.value.email
-    formData.value.applicant_email = userProfile.value.email
+    formData.value.requester_name = `${userProfile.value.first_name || ''} ${userProfile.value.last_name || ''}`.trim() || userProfile.value.email
+    formData.value.requester_email = userProfile.value.email
     if (userProfile.value.phone) {
-      formData.value.applicant_phone = userProfile.value.phone
+      formData.value.requester_phone = userProfile.value.phone
     }
-    if (userProfile.value.applicant_type) {
-      formData.value.applicant_type = userProfile.value.applicant_type
+    if (userProfile.value.requester_type) {
+      formData.value.requester_type = userProfile.value.requester_type
     }
   } else if (actingOnBehalf) {
     // Clear fields for agent to fill in client details
-    formData.value.applicant_name = ''
-    formData.value.applicant_email = ''
-    formData.value.applicant_phone = ''
+    formData.value.requester_name = ''
+    formData.value.requester_email = ''
+    formData.value.requester_phone = ''
     // Keep applicant_type as it might be different for the client
   }
 })
 
 // Watch phone number to save back to profile when user updates it (and not acting on behalf)
-watch(() => formData.value.applicant_phone, async (newPhone, oldPhone) => {
+watch(() => formData.value.requester_phone, async (newPhone, oldPhone) => {
   // Only save if:
   // 1. Not acting on behalf (it's their own application)
   // 2. Profile is loaded

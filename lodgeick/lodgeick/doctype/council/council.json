@@ -270,7 +270,7 @@
    "label": "Payment Accounts"
   },
   {
-   "description": "Bank accounts and payment methods for receiving payments from applicants",
+   "description": "Bank accounts and payment methods for receiving payments from requesters",
    "fieldname": "payment_accounts",
    "fieldtype": "Table",
    "label": "Payment Accounts",

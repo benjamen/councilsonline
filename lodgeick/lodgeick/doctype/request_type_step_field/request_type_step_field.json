@@ -36,7 +36,7 @@
    "in_list_view": 1,
    "label": "Field Name",
    "reqd": 1,
-   "description": "Database field name (e.g., 'applicant_name', 'property_address')"
+   "description": "Database field name (e.g., 'requester_name', 'property_address')"
   },
   {
    "fieldname": "field_label",
@@ -44,7 +44,7 @@
    "in_list_view": 1,
    "label": "Field Label",
    "reqd": 1,
-   "description": "Display label shown to users (e.g., 'Applicant Name')"
+   "description": "Display label shown to users (e.g., 'Requester Name')"
   },
   {
    "fieldname": "field_type",

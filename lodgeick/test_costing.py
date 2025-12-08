@@ -99,8 +99,8 @@ def test_costing_calculations():
 		"request_type": "Building Consent",
 		"brief_description": "Test building consent for costing",
 		"property_address": "123 Test Street",
-		"applicant_name": "Test User",
-		"applicant_email": "test@example.com"
+		"requester_name": "Test User",
+		"requester_email": "test@example.com"
 	})
 	test_request.insert()
 	print(f"  - Created Request: {test_request.name}")

@@ -145,33 +145,33 @@
   },
   {
    "description": "Details about the person or entity submitting this request",
-   "fieldname": "section_break_applicant",
+   "fieldname": "section_break_requester",
    "fieldtype": "Section Break",
-   "label": "Applicant Information"
+   "label": "Requester Information"
   },
   {
-   "fieldname": "applicant",
+   "fieldname": "requester",
    "fieldtype": "Link",
-   "label": "Applicant",
+   "label": "Requester",
    "options": "User",
    "reqd": 1
   },
   {
-   "fetch_from": "applicant.full_name",
-   "fieldname": "applicant_name",
+   "fetch_from": "requester.full_name",
+   "fieldname": "requester_name",
    "fieldtype": "Data",
-   "label": "Applicant Name",
+   "label": "Requester Name",
    "read_only": 1
   },
   {
-   "fetch_from": "applicant.email",
-   "fieldname": "applicant_email",
+   "fetch_from": "requester.email",
+   "fieldname": "requester_email",
    "fieldtype": "Data",
    "label": "Email",
    "read_only": 1
   },
   {
-   "fieldname": "applicant_phone",
+   "fieldname": "requester_phone",
    "fieldtype": "Data",
    "label": "Phone"
   },
@@ -184,7 +184,7 @@
    "fieldtype": "Link",
    "label": "Agent/Representative",
    "options": "User",
-   "description": "Optional: Person or consultant acting on behalf of applicant"
+   "description": "Optional: Person or consultant acting on behalf of requester"
   },
   {
    "fetch_from": "agent.full_name",
@@ -403,15 +403,15 @@
    "fieldtype": "Link",
    "label": "Payment Account (Council Receives)",
    "options": "Council Payment Account",
-   "description": "Council bank account to receive payment from applicant",
+   "description": "Council bank account to receive payment from requester",
    "read_only": 0
   },
   {
    "fieldname": "selected_bank_account",
    "fieldtype": "Link",
-   "label": "Bank Account (Applicant Receives)",
+   "label": "Bank Account (Requester Receives)",
    "options": "User Bank Account",
-   "description": "Applicant's bank account to receive payment from council",
+   "description": "Requester's bank account to receive payment from council",
    "read_only": 0
   },
   {
@@ -626,7 +626,7 @@
    "write": 1
   }
  ],
- "search_fields": "request_number,applicant_name,brief_description,property_address",
+ "search_fields": "request_number,requester_name,brief_description,property_address",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

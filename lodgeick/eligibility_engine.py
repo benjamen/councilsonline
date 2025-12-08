@@ -18,7 +18,7 @@ class EligibilityEngine:
 	def __init__(self, request_id):
 		self.request = frappe.get_doc("Request", request_id)
 		self.request_type = frappe.get_doc("Request Type", self.request.request_type)
-		self.applicant = self.request.applicant_email
+		self.requester = self.request.requester_email
 		self.criteria_checks = []
 		self.total_score = 0
 		self.max_score = 0
@@ -49,7 +49,7 @@ class EligibilityEngine:
 		# Get KYC status
 		self.kyc = frappe.db.get_value(
 			"User Identity Verification",
-			{"user": self.applicant},
+			{"user": self.requester},
 			["verification_status", "philsys_id", "sss_number"],
 			as_dict=True
 		)
@@ -57,7 +57,7 @@ class EligibilityEngine:
 		# Get household record
 		self.household = frappe.db.get_value(
 			"Household Record",
-			{"head_of_household": self.applicant},
+			{"head_of_household": self.requester},
 			["*"],
 			as_dict=True
 		)
@@ -219,7 +219,7 @@ class EligibilityEngine:
 
 	def get_applicant_age(self):
 		"""Calculate applicant's age"""
-		user = frappe.get_doc("User", self.applicant)
+		user = frappe.get_doc("User", self.requester)
 		if user.birth_date:
 			today = getdate(nowdate())
 			birth = getdate(user.birth_date)
@@ -231,7 +231,7 @@ class EligibilityEngine:
 		"""Check if applicant already receives government benefits"""
 		# Check for existing SPISC approval
 		existing = frappe.db.exists("Request", {
-			"applicant_email": self.applicant,
+			"requester_email": self.requester,
 			"request_type": "Social Pension for Indigent Senior Citizens (SPISC)",
 			"status": ["in", ["Approved", "Active"]],
 			"name": ["!=", self.request.name]
@@ -250,7 +250,7 @@ class EligibilityEngine:
 			"doctype": "Eligibility Criteria Result",
 			"request": self.request.name,
 			"request_type": self.request.request_type,
-			"applicant": self.applicant,
+			"requester": self.requester,
 			"evaluated_by": frappe.session.user,
 			"overall_score": self.total_score,
 			"max_possible_score": self.max_score,

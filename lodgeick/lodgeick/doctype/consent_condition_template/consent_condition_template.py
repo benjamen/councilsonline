@@ -29,8 +29,8 @@ class ConsentConditionTemplate(Document):
 		if request_doc:
 			replacements = {
 				'{property_address}': request_doc.get('property_address', '[PROPERTY ADDRESS]'),
-				'{applicant_name}': request_doc.get('applicant_name', '[APPLICANT NAME]'),
-				'{consent_holder}': request_doc.get('applicant_name', '[CONSENT HOLDER]'),
+				'{applicant_name}': request_doc.get('requester_name', '[APPLICANT NAME]'),
+				'{consent_holder}': request_doc.get('requester_name', '[CONSENT HOLDER]'),
 				'{request_number}': request_doc.get('request_number', '[REQUEST NUMBER]'),
 			}
 

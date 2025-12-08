@@ -58,10 +58,10 @@ def test_create_request(request_type, property_id):
         "doctype": "Request",
         "request_type": request_type,
         "property": property_id,
-        "applicant": "Administrator",
-        "applicant_name": "John Smith",
-        "applicant_email": "john.smith@example.com",
-        "applicant_phone": "021 123 4567",
+        "requester": "Administrator",
+        "requester_name": "John Smith",
+        "requester_email": "john.smith@example.com",
+        "requester_phone": "021 123 4567",
         "applicant_address": "123 Main Street, Lower Hutt",
         "brief_description": "New 3-bedroom residential dwelling",
         "detailed_description": "<p>Construction of a new single-storey residential dwelling with 3 bedrooms, 2 bathrooms, open-plan kitchen/living, double garage, and deck.</p><p>Timber frame construction on concrete slab foundation with Colorsteel roof.</p>",
@@ -74,7 +74,7 @@ def test_create_request(request_type, property_id):
     print(f"  - Status: {request.status}")
     print(f"  - Type: {request.request_type}")
     print(f"  - Property: {request.property}")
-    print(f"  - Applicant: {request.applicant_name}")
+    print(f"  - Applicant: {request.requester_name}")
 
     return request
 

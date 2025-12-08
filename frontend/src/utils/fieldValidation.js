@@ -228,7 +228,7 @@ export function validateStep(stepConfig, formData) {
  *   validation: "eval:value === formData.password"
  *
  * Conditional validation:
- *   validation: "eval:formData.applicant_type !== 'Individual' || value.length > 0"
+ *   validation: "eval:formData.requester_type !== 'Individual' || value.length > 0"
  *
  * Date range:
  *   validation: "eval:new Date(value) >= new Date('2020-01-01')"

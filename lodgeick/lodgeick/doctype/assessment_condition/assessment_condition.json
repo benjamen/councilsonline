@@ -196,7 +196,7 @@
    "label": "Notes"
   },
   {
-   "description": "Internal notes (not visible to applicant)",
+   "description": "Internal notes (not visible to requester)",
    "fieldname": "internal_notes",
    "fieldtype": "Text Editor",
    "label": "Internal Notes"

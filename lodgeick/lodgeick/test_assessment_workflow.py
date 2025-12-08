@@ -62,11 +62,11 @@ def test_complete_workflow():
         frappe.db.commit()
 
     # Create test user if doesn't exist
-    if not frappe.db.exists("User", "test.applicant@example.com"):
+    if not frappe.db.exists("User", "test.requester@example.com"):
         print("  Creating test user")
         frappe.get_doc({
             "doctype": "User",
-            "email": "test.applicant@example.com",
+            "email": "test.requester@example.com",
             "first_name": "Test",
             "last_name": "Applicant",
             "send_welcome_email": 0
@@ -97,8 +97,8 @@ def test_complete_workflow():
         "request_category": "Resource Consent",
         "brief_description": "Test Resource Consent Application",
         "detailed_description": "This is a test application for assessment module testing",
-        "applicant": "test.applicant@example.com",
-        "applicant_phone": "021-123-4567",
+        "requester": "test.requester@example.com",
+        "requester_phone": "021-123-4567",
         "property": "TEST-PROP-001",
         "status": "Draft",
         "priority": "Standard"

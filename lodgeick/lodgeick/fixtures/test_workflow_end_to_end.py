@@ -46,8 +46,8 @@ def test_lim_workflow():
         "request_type": "LIM",
         "property_address": "123 Test Street, Test City",
         "brief_description": "LIM Request for property purchase",
-        "applicant_name": "Test Applicant",
-        "applicant_email": "test@example.com"
+        "requester_name": "Test Applicant",
+        "requester_email": "test@example.com"
     })
     lim.insert()
     frappe.db.commit()
@@ -114,8 +114,8 @@ def test_resource_consent_workflow():
         "request_type": "Resource Consent",
         "property_address": "456 Development Ave, Test City",
         "brief_description": "Subdivision consent for 3 lots",
-        "applicant_name": "Test Developer",
-        "applicant_email": "developer@example.com"
+        "requester_name": "Test Developer",
+        "requester_email": "developer@example.com"
     })
     rc.insert()
     frappe.db.commit()
@@ -192,8 +192,8 @@ def test_statutory_clock():
         "request_type": "Resource Consent",
         "property_address": "789 Clock Test St",
         "brief_description": "Clock test",
-        "applicant_name": "Clock Tester",
-        "applicant_email": "clock@example.com"
+        "requester_name": "Clock Tester",
+        "requester_email": "clock@example.com"
     })
     rc.insert()
     rc.submit()

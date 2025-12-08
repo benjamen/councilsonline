@@ -106,7 +106,7 @@ class SPISCApplication(Document):
 		# Get applicant name from parent Request
 		applicant_name = "Unknown"
 		if self.request:
-			applicant_name = frappe.db.get_value("Request", self.request, "applicant_name") or "Unknown"
+			applicant_name = frappe.db.get_value("Request", self.request, "requester_name") or "Unknown"
 
 		desc = f"{applicant_name} - SPISC Application"
 		if self.age:

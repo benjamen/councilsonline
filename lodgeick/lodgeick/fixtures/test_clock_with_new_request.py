@@ -23,10 +23,10 @@ def test():
         "request_type": "Resource Consent",
         "property_address": "789 Workflow Test Street, Wellington",
         "brief_description": "Test request for workflow statutory clock validation",
-        "applicant_name": "Workflow Tester",
-        "applicant_email": "workflow@test.com",
-        "applicant_phone": "021-555-0199",
-        "applicant_type": "Individual",
+        "requester_name": "Workflow Tester",
+        "requester_email": "workflow@test.com",
+        "requester_phone": "021-555-0199",
+        "requester_type": "Individual",
         "submitted_date": getdate()
     })
 

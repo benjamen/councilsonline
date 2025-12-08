@@ -165,12 +165,12 @@ class Request(Document):
 
     def send_acknowledgment_email(self):
         """Send acknowledgment email to applicant"""
-        if not self.applicant_email:
+        if not self.requester_email:
             return
 
         subject = f"Your request {self.request_number} has been received"
         message = f"""
-        <p>Hi {self.applicant_name},</p>
+        <p>Hi {self.requester_name},</p>
 
         <p>Thank you for submitting your request: {self.brief_description}.</p>
 
@@ -191,7 +191,7 @@ class Request(Document):
 
         try:
             frappe.sendmail(
-                recipients=[self.applicant_email],
+                recipients=[self.requester_email],
                 subject=subject,
                 message=message,
                 reference_doctype=self.doctype,
@@ -378,7 +378,7 @@ def get_my_requests(status=None):
     """Get requests for current user"""
     user = frappe.session.user
 
-    filters = {"applicant": user}
+    filters = {"requester": user}
     if status:
         filters["status"] = status
 
@@ -409,7 +409,7 @@ def get_my_applications():
 
     requests = frappe.get_all(
         "Request",
-        filters={"applicant": user},
+        filters={"requester": user},
         fields=[
             "name",
             "request_number",
@@ -441,7 +441,7 @@ def submit_request(request_id):
     doc = frappe.get_doc("Request", request_id)
 
     # Validate user has permission
-    if doc.applicant != frappe.session.user:
+    if doc.requester != frappe.session.user:
         frappe.throw("You don't have permission to submit this request")
 
     # Check if already submitted

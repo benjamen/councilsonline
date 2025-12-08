@@ -132,12 +132,12 @@ class RequestForInformation(Document):
     def send_rfi_notification(self):
         """Send email notification to applicant"""
         request = frappe.get_doc("Request", self.request)
-        if not request.applicant_email:
+        if not request.requester_email:
             return
 
         message = f"""
         <h3>Request for Information Issued</h3>
-        <p>Dear {request.applicant_name},</p>
+        <p>Dear {request.requester_name},</p>
         <p>We require additional information to process your application <strong>{request.request_number}</strong>.</p>
 
         <h4>RFI Details:</h4>
@@ -162,7 +162,7 @@ class RequestForInformation(Document):
 
         try:
             frappe.sendmail(
-                recipients=[request.applicant_email],
+                recipients=[request.requester_email],
                 subject=f"RFI Issued for Application {request.request_number}",
                 message=message,
                 reference_doctype=self.doctype,

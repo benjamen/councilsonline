@@ -70,7 +70,7 @@ def create_lodgeick_custom_fields():
 				"fieldname": "lodgeick_company_section",
 				"fieldtype": "Section Break",
 				"label": "Company Submission",
-				"insert_after": "applicant_email",
+				"insert_after": "requester_email",
 				"collapsible": 1
 			},
 			{
@@ -178,7 +178,7 @@ def create_lodgeick_custom_fields():
 				"default": "Applicant"
 			},
 			{
-				"fieldname": "applicant_type",
+				"fieldname": "requester_type",
 				"fieldtype": "Select",
 				"label": "Default Applicant Type",
 				"options": "\nIndividual\nCompany\nTrust\nPartnership\nOther",
@@ -190,7 +190,7 @@ def create_lodgeick_custom_fields():
 				"fieldname": "lodgeick_company_section",
 				"fieldtype": "Section Break",
 				"label": "Company Account",
-				"insert_after": "applicant_type",
+				"insert_after": "requester_type",
 				"collapsible": 1
 			},
 			{

@@ -80,7 +80,7 @@ export interface Request {
 	request_type: string
 	request_category?: string
 	status: RequestStatus
-	applicant: string
+	requester: string
 	applicant_name?: string
 	council?: string
 	property_address?: string

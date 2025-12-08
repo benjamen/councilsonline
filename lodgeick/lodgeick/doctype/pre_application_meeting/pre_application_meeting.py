@@ -56,10 +56,10 @@ class PreApplicationMeeting(Document):
 			})
 
 			# Add participants
-			if self.applicant_email:
+			if self.requester_email:
 				event.append("event_participants", {
 					"reference_doctype": "Contact",
-					"email": self.applicant_email
+					"email": self.requester_email
 				})
 
 			if self.council_planner:
@@ -114,7 +114,7 @@ class PreApplicationMeeting(Document):
 		<p><strong>Request:</strong> {request_doc.request_number}</p>
 		<p><strong>Request Type:</strong> {request_doc.request_type}</p>
 		<p><strong>Property:</strong> {request_doc.property_address or 'N/A'}</p>
-		<p><strong>Applicant:</strong> {self.applicant_name or 'N/A'}</p>
+		<p><strong>Requester:</strong> {self.requester_name or 'N/A'}</p>
 		"""
 
 		if self.meeting_location:
@@ -167,7 +167,7 @@ class PreApplicationMeeting(Document):
 
 	def send_meeting_confirmation(self):
 		"""Send email confirmation to applicant"""
-		if not self.applicant_email:
+		if not self.requester_email:
 			return
 
 		try:
@@ -175,7 +175,7 @@ class PreApplicationMeeting(Document):
 
 			# Build meeting details
 			meeting_details = f"""
-			<p>Dear {self.applicant_name},</p>
+			<p>Dear {self.requester_name},</p>
 			<p>Your {self.meeting_type} for application {request_doc.request_number} has been scheduled.</p>
 
 			<h3>Meeting Details:</h3>
@@ -209,7 +209,7 @@ class PreApplicationMeeting(Document):
 
 			# Send email
 			frappe.sendmail(
-				recipients=[self.applicant_email],
+				recipients=[self.requester_email],
 				subject=f"{self.meeting_type} Scheduled - {request_doc.request_number}",
 				message=meeting_details,
 				reference_doctype=self.doctype,
@@ -475,7 +475,7 @@ def accept_alternative_time(meeting_id, slot_index):
 
 def send_alternative_time_notification(meeting, slot_index):
 	"""Send email notification when planner proposes alternative time"""
-	if not meeting.applicant_email:
+	if not meeting.requester_email:
 		return
 
 	try:
@@ -483,7 +483,7 @@ def send_alternative_time_notification(meeting, slot_index):
 		request_doc = frappe.get_doc("Request", meeting.request)
 
 		message = f"""
-		<p>Dear {meeting.applicant_name},</p>
+		<p>Dear {meeting.requester_name},</p>
 		<p>The planner has proposed an alternative time for your {meeting.meeting_type} for application {request_doc.request_number}.</p>
 
 		<h3>Original Request:</h3>
@@ -500,7 +500,7 @@ def send_alternative_time_notification(meeting, slot_index):
 		"""
 
 		frappe.sendmail(
-			recipients=[meeting.applicant_email],
+			recipients=[meeting.requester_email],
 			subject=f"Alternative Meeting Time Proposed - {request_doc.request_number}",
 			message=message,
 			reference_doctype=meeting.doctype,

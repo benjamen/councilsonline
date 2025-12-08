@@ -33,7 +33,7 @@
    "label": "Step Code",
    "reqd": 1,
    "unique": 1,
-   "description": "Unique identifier for this step (e.g., 'applicant_info', 'property_details')"
+   "description": "Unique identifier for this step (e.g., 'requester_info', 'property_details')"
   },
   {
    "fieldname": "step_title",
@@ -41,7 +41,7 @@
    "in_list_view": 1,
    "label": "Step Title",
    "reqd": 1,
-   "description": "Display title shown to users (e.g., 'Applicant Information')"
+   "description": "Display title shown to users (e.g., 'Requester Information')"
   },
   {
    "fieldname": "step_description",
@@ -57,7 +57,7 @@
    "fieldname": "step_component",
    "fieldtype": "Data",
    "label": "Step Component",
-   "description": "Vue component name (e.g., 'Step1ApplicantProposal' or 'DynamicStepRenderer')",
+   "description": "Vue component name (e.g., 'Step1RequesterProposal' or 'DynamicStepRenderer')",
    "default": "DynamicStepRenderer"
   },
   {

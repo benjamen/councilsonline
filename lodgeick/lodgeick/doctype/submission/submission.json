@@ -95,7 +95,7 @@
    "fieldname": "submitter_type",
    "fieldtype": "Select",
    "label": "Submitter Type",
-   "options": "\nIndividual\nOrganization\nIwi/Hapū\nGovernment Agency\nOther"
+   "options": "\nIndividual\nOrganization\nIwi/Hap\u016b\nGovernment Agency\nOther"
   },
   {
    "fieldname": "column_break_submitter",
@@ -194,19 +194,19 @@
    "collapsible": 1,
    "fieldname": "section_break_response",
    "fieldtype": "Section Break",
-   "label": "Applicant Response"
+   "label": "Requester Response"
   },
   {
    "default": "0",
    "fieldname": "applicant_response_required",
    "fieldtype": "Check",
-   "label": "Applicant Response Required"
+   "label": "Requester Response Required"
   },
   {
    "depends_on": "applicant_response_required",
    "fieldname": "applicant_response",
    "fieldtype": "Text Editor",
-   "label": "Applicant Response"
+   "label": "Requester Response"
   },
   {
    "depends_on": "applicant_response_required",

@@ -213,7 +213,7 @@
    "fieldtype": "Column Break"
   },
   {
-   "description": "Core consent information provided by the applicant",
+   "description": "Core consent information provided by the requester",
    "fieldname": "section_break_consent",
    "fieldtype": "Section Break",
    "label": "Consent Type & Activity Status"
@@ -367,7 +367,7 @@
    "label": "Cultural/Heritage"
   },
   {
-   "description": "Planning assessment and mitigation measures proposed by applicant",
+   "description": "Planning assessment and mitigation measures proposed by requester",
    "fieldname": "section_break_planning",
    "fieldtype": "Section Break",
    "label": "Planning Assessment"
@@ -433,19 +433,19 @@
    "label": "Response Summary"
   },
   {
-   "description": "Specialist reports and technical assessments provided by the applicant",
+   "description": "Specialist reports and technical assessments provided by the requester",
    "fieldname": "section_break_reports",
    "fieldtype": "Section Break",
    "label": "Specialist Reports"
   },
   {
-   "description": "Conditions proposed by the applicant",
+   "description": "Conditions proposed by the requester",
    "fieldname": "section_break_conditions",
    "fieldtype": "Section Break",
    "label": "Proposed Conditions"
   },
   {
-   "description": "Conditions proposed by applicant - select from standard templates or create custom",
+   "description": "Conditions proposed by requester - select from standard templates or create custom",
    "fieldname": "proposed_conditions",
    "fieldtype": "Table",
    "label": "Proposed Conditions",
@@ -475,7 +475,7 @@
   },
   {
    "default": "0",
-   "description": "I confirm that I am authorised to submit this application on behalf of the applicant named in this application.",
+   "description": "I confirm that I am authorised to submit this application on behalf of the requester named in this application.",
    "fieldname": "declaration_authorized",
    "fieldtype": "Check",
    "label": "Authority to Submit",
@@ -1125,17 +1125,17 @@
    "label": "Signatures (FRD 11.2-11.4)"
   },
   {
-   "fieldname": "applicant_signature_first_name",
+   "fieldname": "requester_signature_first_name",
    "fieldtype": "Data",
-   "label": "Applicant First Name"
+   "label": "Requester First Name"
   },
   {
    "fieldname": "applicant_signature_last_name",
    "fieldtype": "Data",
-   "label": "Applicant Last Name"
+   "label": "Requester Last Name"
   },
   {
-   "fieldname": "applicant_signature_date",
+   "fieldname": "requester_signature_date",
    "fieldtype": "Date",
    "label": "Signature Date"
   },

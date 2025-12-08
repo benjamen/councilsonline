@@ -27,15 +27,15 @@
           <div class="grid md:grid-cols-2 gap-4">
             <div>
               <span class="text-sm text-gray-500">Name:</span>
-              <p class="font-medium">{{ modelValue.applicant_name || 'Not provided' }}</p>
+              <p class="font-medium">{{ modelValue.requester_name || 'Not provided' }}</p>
             </div>
             <div>
               <span class="text-sm text-gray-500">Email:</span>
-              <p class="font-medium">{{ modelValue.applicant_email || 'Not provided' }}</p>
+              <p class="font-medium">{{ modelValue.requester_email || 'Not provided' }}</p>
             </div>
             <div>
               <span class="text-sm text-gray-500">Phone:</span>
-              <p class="font-medium">{{ modelValue.applicant_phone || 'Not provided' }}</p>
+              <p class="font-medium">{{ modelValue.requester_phone || 'Not provided' }}</p>
             </div>
             <div v-if="modelValue.applicant_company">
               <span class="text-sm text-gray-500">Company:</span>
@@ -354,9 +354,9 @@
                   Public Information & Privacy Acknowledgment
                 </span>
               </div>
-              <div v-if="modelValue.applicant_signature" class="mt-4 pt-4 border-t border-gray-200">
+              <div v-if="modelValue.requester_signature" class="mt-4 pt-4 border-t border-gray-200">
                 <span class="text-sm text-gray-500">Signed by:</span>
-                <p class="font-medium">{{ modelValue.applicant_signature }}</p>
+                <p class="font-medium">{{ modelValue.requester_signature }}</p>
                 <p v-if="modelValue.signature_date" class="text-sm text-gray-500">
                   Date: {{ formatSignatureDate(modelValue.signature_date) }}
                 </p>
@@ -606,8 +606,8 @@ const isComplete = computed(() => {
   const hasBasicInfo = !!(
     props.modelValue.council &&
     props.modelValue.request_type &&
-    props.modelValue.applicant_name &&
-    props.modelValue.applicant_email &&
+    props.modelValue.requester_name &&
+    props.modelValue.requester_email &&
     props.modelValue.property_address &&
     props.modelValue.delivery_preference
   )

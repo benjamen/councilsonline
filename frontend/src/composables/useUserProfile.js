@@ -77,10 +77,10 @@ export function useUserProfile() {
 
     // STEP 4: Applicant & Proposal (FRD Step 1)
     // Basic Applicant Details
-    autoFillData.applicant_name = profile.full_name
-    autoFillData.applicant_email = profile.user // Email from User account
-    autoFillData.applicant_phone = profile.phone
-    autoFillData.applicant_type = profile.user_role // 'Individual' or 'Agent'
+    autoFillData.requester_name = profile.full_name
+    autoFillData.requester_email = profile.user // Email from User account
+    autoFillData.requester_phone = profile.phone
+    autoFillData.requester_type = profile.user_role // 'Individual' or 'Agent'
 
     // Individual: Postal Address
     if (profile.user_role === 'Individual') {

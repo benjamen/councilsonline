@@ -45,10 +45,10 @@
    "reqd": 1
   },
   {
-   "fetch_from": "request.applicant_name",
-   "fieldname": "applicant",
+   "fetch_from": "request.requester_name",
+   "fieldname": "requester",
    "fieldtype": "Data",
-   "label": "Applicant",
+   "label": "Requester",
    "read_only": 1
   },
   {

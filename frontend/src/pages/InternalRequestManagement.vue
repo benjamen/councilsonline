@@ -162,8 +162,8 @@
                     <div class="text-sm text-gray-900">{{ request.council || 'N/A' }}</div>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm text-gray-900">{{ request.applicant_name || request.applicant }}</div>
-                    <div class="text-sm text-gray-500">{{ request.applicant_email }}</div>
+                    <div class="text-sm text-gray-900">{{ request.requester_name || request.requester }}</div>
+                    <div class="text-sm text-gray-500">{{ request.requester_email }}</div>
                   </td>
                   <td class="px-6 py-4">
                     <div class="text-sm text-gray-900">{{ request.property_address }}</div>
@@ -393,7 +393,7 @@ const filteredRequests = computed(() => {
     data = data.filter(r =>
       r.request_number?.toLowerCase().includes(query) ||
       r.property_address?.toLowerCase().includes(query) ||
-      r.applicant_name?.toLowerCase().includes(query)
+      r.requester_name?.toLowerCase().includes(query)
     )
   }
 

@@ -76,13 +76,13 @@ class ConsentDecision(Document):
 			# Get applicant email from request
 			if rca.request:
 				request = frappe.get_doc("Request", rca.request)
-				if request.applicant_email:
+				if request.requester_email:
 					try:
 						frappe.sendmail(
-							recipients=[request.applicant_email],
+							recipients=[request.requester_email],
 							subject=f"Decision Ready: {self.resource_consent_application}",
 							message=f"""
-								<p>Dear {request.applicant_name},</p>
+								<p>Dear {request.requester_name},</p>
 								<p>A decision has been made on your resource consent application:</p>
 								<ul>
 									<li><strong>Application:</strong> {self.resource_consent_application}</li>

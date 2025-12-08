@@ -16,7 +16,7 @@
 /**
  * Safely evaluates a depends_on expression
  *
- * @param {string} expression - The depends_on expression (e.g., "eval:formData.applicant_type=='Company'")
+ * @param {string} expression - The depends_on expression (e.g., "eval:formData.requester_type=='Company'")
  * @param {object} formData - The current form data
  * @returns {boolean} - True if condition is met, false otherwise
  */
@@ -115,7 +115,7 @@ export function filterVisibleItems(items, formData, visibilityFn) {
 /**
  * Example expressions and their evaluations:
  *
- * Expression: "eval:formData.applicant_type=='Company'"
+ * Expression: "eval:formData.requester_type=='Company'"
  * formData: { applicant_type: 'Company' }
  * Result: true
  *

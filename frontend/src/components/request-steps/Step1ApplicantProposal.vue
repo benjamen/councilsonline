@@ -1078,13 +1078,13 @@ const showRFQModal = ref(false)
 // Only show for non-individual applicants or those acting on behalf of others
 const showAgentSection = computed(() => {
   // Check if applicant_type exists in modelValue (from parent)
-  const applicantType = props.modelValue?.applicant_type || props.userProfile?.applicant_type
+  const requesterType = props.modelValue?.requester_type || props.userProfile?.requester_type
   const actingOnBehalf = props.modelValue?.acting_on_behalf || false
 
   // Show agent section if:
   // 1. Acting on behalf of someone else, OR
   // 2. Applicant type is NOT Individual (i.e., Company, Trust, Organisation)
-  return actingOnBehalf || (applicantType && applicantType !== 'Individual')
+  return actingOnBehalf || (requesterType && requesterType !== 'Individual')
 })
 
 const openRFQModal = () => {

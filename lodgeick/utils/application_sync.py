@@ -30,7 +30,7 @@ def sync_to_request(application_doc, sync_config=None):
 			{
 				"property_address": lambda doc: doc.get_display_address(),
 				"brief_description": lambda doc: doc.get_display_description(),
-				"applicant_name": "applicant_full_name"  # Direct field mapping
+				"requester_name": "applicant_full_name"  # Direct field mapping
 			}
 
 	Returns:
@@ -149,7 +149,7 @@ def get_spisc_description(doc):
 	# Get applicant name from parent Request
 	applicant_name = "Unknown"
 	if doc.request:
-		applicant_name = frappe.db.get_value("Request", doc.request, "applicant_name") or "Unknown"
+		applicant_name = frappe.db.get_value("Request", doc.request, "requester_name") or "Unknown"
 
 	desc = f"{applicant_name} - SPISC Application"
 	if doc.age:
@@ -162,7 +162,7 @@ def get_resource_consent_description(doc):
 	# Get applicant name from parent Request
 	applicant_name = "Unknown"
 	if doc.request:
-		applicant_name = frappe.db.get_value("Request", doc.request, "applicant_name") or "Unknown"
+		applicant_name = frappe.db.get_value("Request", doc.request, "requester_name") or "Unknown"
 
 	desc = f"{applicant_name} - Resource Consent"
 
@@ -184,7 +184,7 @@ def get_building_consent_description(doc):
 	# Get applicant name from parent Request
 	applicant_name = "Unknown"
 	if doc.request:
-		applicant_name = frappe.db.get_value("Request", doc.request, "applicant_name") or "Unknown"
+		applicant_name = frappe.db.get_value("Request", doc.request, "requester_name") or "Unknown"
 
 	desc = f"{applicant_name} - Building Consent"
 

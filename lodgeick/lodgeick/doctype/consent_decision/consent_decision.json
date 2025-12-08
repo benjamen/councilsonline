@@ -310,7 +310,7 @@
    "default": "0",
    "fieldname": "served_to_applicant",
    "fieldtype": "Check",
-   "label": "Served to Applicant"
+   "label": "Served to Requester"
   },
   {
    "depends_on": "served_to_applicant",

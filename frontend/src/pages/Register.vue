@@ -55,72 +55,72 @@
             <div class="grid grid-cols-2 gap-3">
               <button
                 type="button"
-                @click="applicantType = 'Individual'"
+                @click="requesterType = 'Individual'"
                 :class="[
                   'p-4 border-2 rounded-lg text-center transition',
-                  applicantType === 'Individual'
+                  requesterType === 'Individual'
                     ? 'border-blue-600 bg-blue-50'
                     : 'border-gray-200 hover:border-gray-300'
                 ]"
               >
-                <svg class="w-8 h-8 mx-auto mb-2" :class="applicantType === 'Individual' ? 'text-blue-600' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-8 h-8 mx-auto mb-2" :class="requesterType === 'Individual' ? 'text-blue-600' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
-                <div class="text-sm font-medium" :class="applicantType === 'Individual' ? 'text-blue-900' : 'text-gray-700'">
+                <div class="text-sm font-medium" :class="requesterType === 'Individual' ? 'text-blue-900' : 'text-gray-700'">
                   Individual
                 </div>
                 <div class="text-xs text-gray-500 mt-1">Person/Civilian</div>
               </button>
               <button
                 type="button"
-                @click="applicantType = 'Company'"
+                @click="requesterType = 'Company'"
                 :class="[
                   'p-4 border-2 rounded-lg text-center transition',
-                  applicantType === 'Company'
+                  requesterType === 'Company'
                     ? 'border-blue-600 bg-blue-50'
                     : 'border-gray-200 hover:border-gray-300'
                 ]"
               >
-                <svg class="w-8 h-8 mx-auto mb-2" :class="applicantType === 'Company' ? 'text-blue-600' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-8 h-8 mx-auto mb-2" :class="requesterType === 'Company' ? 'text-blue-600' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
-                <div class="text-sm font-medium" :class="applicantType === 'Company' ? 'text-blue-900' : 'text-gray-700'">
+                <div class="text-sm font-medium" :class="requesterType === 'Company' ? 'text-blue-900' : 'text-gray-700'">
                   Company
                 </div>
                 <div class="text-xs text-gray-500 mt-1">NZ Registered</div>
               </button>
               <button
                 type="button"
-                @click="applicantType = 'Trust'"
+                @click="requesterType = 'Trust'"
                 :class="[
                   'p-4 border-2 rounded-lg text-center transition',
-                  applicantType === 'Trust'
+                  requesterType === 'Trust'
                     ? 'border-blue-600 bg-blue-50'
                     : 'border-gray-200 hover:border-gray-300'
                 ]"
               >
-                <svg class="w-8 h-8 mx-auto mb-2" :class="applicantType === 'Trust' ? 'text-blue-600' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-8 h-8 mx-auto mb-2" :class="requesterType === 'Trust' ? 'text-blue-600' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
-                <div class="text-sm font-medium" :class="applicantType === 'Trust' ? 'text-blue-900' : 'text-gray-700'">
+                <div class="text-sm font-medium" :class="requesterType === 'Trust' ? 'text-blue-900' : 'text-gray-700'">
                   Trust
                 </div>
                 <div class="text-xs text-gray-500 mt-1">Trust Entity</div>
               </button>
               <button
                 type="button"
-                @click="applicantType = 'Organisation'"
+                @click="requesterType = 'Organisation'"
                 :class="[
                   'p-4 border-2 rounded-lg text-center transition',
-                  applicantType === 'Organisation'
+                  requesterType === 'Organisation'
                     ? 'border-blue-600 bg-blue-50'
                     : 'border-gray-200 hover:border-gray-300'
                 ]"
               >
-                <svg class="w-8 h-8 mx-auto mb-2" :class="applicantType === 'Organisation' ? 'text-blue-600' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-8 h-8 mx-auto mb-2" :class="requesterType === 'Organisation' ? 'text-blue-600' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
-                <div class="text-sm font-medium" :class="applicantType === 'Organisation' ? 'text-blue-900' : 'text-gray-700'">
+                <div class="text-sm font-medium" :class="requesterType === 'Organisation' ? 'text-blue-900' : 'text-gray-700'">
                   Organisation
                 </div>
                 <div class="text-xs text-gray-500 mt-1">Charity/NPO</div>
@@ -210,7 +210,7 @@
               <div>
                 <h3 class="text-sm font-medium text-gray-900">Properties</h3>
                 <p class="text-xs text-gray-500 mt-1">
-                  {{ applicantType === 'Individual' ? 'Add your properties (at least one required)' : 'Add your properties (optional)' }}
+                  {{ requesterType === 'Individual' ? 'Add your properties (at least one required)' : 'Add your properties (optional)' }}
                 </p>
               </div>
               <button
@@ -344,21 +344,21 @@
           </div>
 
           <!-- Company/Organisation Details -->
-          <div v-if="applicantType === 'Company' || applicantType === 'Organisation'" class="space-y-4">
+          <div v-if="requesterType === 'Company' || requesterType === 'Organisation'" class="space-y-4">
             <div>
               <label for="organization_name" class="block text-sm font-medium text-gray-700 mb-2">
-                {{ applicantType === 'Company' ? 'Company Name' : 'Organisation Name' }} <span class="text-red-500">*</span>
+                {{ requesterType === 'Company' ? 'Company Name' : 'Organisation Name' }} <span class="text-red-500">*</span>
               </label>
               <Input
                 id="organization_name"
                 v-model="formData.organization_name"
                 type="text"
                 required
-                :placeholder="applicantType === 'Company' ? 'ABC Construction Ltd' : 'Community Trust'"
+                :placeholder="requesterType === 'Company' ? 'ABC Construction Ltd' : 'Community Trust'"
                 class="w-full"
               />
             </div>
-            <div v-if="applicantType === 'Company'">
+            <div v-if="requesterType === 'Company'">
               <label for="company_number" class="block text-sm font-medium text-gray-700 mb-2">
                 Company Number (Optional)
               </label>
@@ -373,7 +373,7 @@
           </div>
 
           <!-- Trust Details -->
-          <div v-if="applicantType === 'Trust'" class="space-y-4">
+          <div v-if="requesterType === 'Trust'" class="space-y-4">
             <div>
               <label for="trust_name" class="block text-sm font-medium text-gray-700 mb-2">
                 Trust Name <span class="text-red-500">*</span>
@@ -532,7 +532,7 @@ const router = useRouter()
 const route = useRoute()
 const councilStore = useCouncilStore()
 
-const applicantType = ref('Individual')
+const requesterType = ref('Individual')
 const selectedCouncil = ref(null)
 const selectedAddress = ref(null)
 const isLoading = ref(false)
@@ -724,17 +724,17 @@ function submit() {
   }
 
   // Validate account-type specific fields
-  if (applicantType.value === 'Individual' && properties.value.length === 0) {
+  if (requesterType.value === 'Individual' && properties.value.length === 0) {
     errorMessage.value = 'At least one property is required for individual requesters'
     return
   }
 
-  if ((applicantType.value === 'Company' || applicantType.value === 'Organisation') && !formData.value.organization_name) {
-    errorMessage.value = `${applicantType.value} name is required`
+  if ((requesterType.value === 'Company' || requesterType.value === 'Organisation') && !formData.value.organization_name) {
+    errorMessage.value = `${requesterType.value} name is required`
     return
   }
 
-  if (applicantType.value === 'Trust' && !formData.value.trust_name) {
+  if (requesterType.value === 'Trust' && !formData.value.trust_name) {
     errorMessage.value = 'Trust name is required'
     return
   }
@@ -754,15 +754,15 @@ function submit() {
     phone: formData.value.phone,
     password: formData.value.password,
     user_role: 'requester', // This is a requester registration
-    applicant_type: applicantType.value, // Individual, Company, Trust, Organisation (entity type)
+    applicant_type: requesterType.value, // Individual, Company, Trust, Organisation (entity type)
     properties: properties.value // Send all properties
   }
 
   // Add type-specific data
-  if (applicantType.value === 'Company' || applicantType.value === 'Organisation') {
+  if (requesterType.value === 'Company' || requesterType.value === 'Organisation') {
     userData.organization_name = formData.value.organization_name
     userData.company_number = formData.value.company_number
-  } else if (applicantType.value === 'Trust') {
+  } else if (requesterType.value === 'Trust') {
     userData.trust_name = formData.value.trust_name
   }
 

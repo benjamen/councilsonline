@@ -58,7 +58,7 @@
    "label": "Description"
   },
   {
-   "description": "Short description shown to applicants (50-100 words)",
+   "description": "Short description shown to requesters (50-100 words)",
    "fieldname": "brief_description",
    "fieldtype": "Small Text",
    "label": "Brief Description"
@@ -69,7 +69,7 @@
    "label": "Council Process"
   },
   {
-   "description": "Detailed HTML description of the council's process for this request type (shown to applicants)",
+   "description": "Detailed HTML description of the council's process for this request type (shown to requesters)",
    "fieldname": "process_description",
    "fieldtype": "Text Editor",
    "label": "Process Description"
@@ -93,7 +93,7 @@
    "label": "Internal Notes"
   },
   {
-   "description": "Internal notes (not shown to applicants)",
+   "description": "Internal notes (not shown to requesters)",
    "fieldname": "notes",
    "fieldtype": "Small Text",
    "label": "Internal Notes"

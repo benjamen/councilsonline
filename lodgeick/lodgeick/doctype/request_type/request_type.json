@@ -96,7 +96,7 @@
    "fieldtype": "Check",
    "label": "Council Meeting Available",
    "default": "1",
-   "description": "Allow applicants to schedule council meetings during the application process"
+   "description": "Allow requesters to schedule council meetings during the application process"
   },
   {
    "fieldname": "section_break_fees",
@@ -122,16 +122,16 @@
   {
    "fieldname": "collects_payment",
    "fieldtype": "Check",
-   "label": "Collects Payment from Applicant",
+   "label": "Collects Payment from Requester",
    "default": "0",
    "description": "Enable if this request type requires payment collection (fees, invoices). Automatically adds payment and invoice detail steps."
   },
   {
    "fieldname": "make_payment",
    "fieldtype": "Check",
-   "label": "Make Payment to Applicant",
+   "label": "Make Payment to Requester",
    "default": "0",
-   "description": "Enable if this request type involves making payments to the applicant (e.g., grants, pensions, reimbursements). Automatically adds bank account detail step."
+   "description": "Enable if this request type involves making payments to the requester (e.g., grants, pensions, reimbursements). Automatically adds bank account detail step."
   },
   {
    "fieldname": "section_break_form",
@@ -164,7 +164,7 @@
    "fieldtype": "Table",
    "label": "Step Configurations",
    "options": "Request Type Step Config",
-   "description": "Define the steps that applicants will complete for this request type"
+   "description": "Define the steps that requesters will complete for this request type"
   },
   {
    "fieldname": "section_break_step_sections",

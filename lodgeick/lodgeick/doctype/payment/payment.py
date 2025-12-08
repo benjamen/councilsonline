@@ -85,12 +85,12 @@ class Payment(Document):
     def send_payment_confirmation(self):
         """Send payment confirmation email"""
         request = frappe.get_doc("Request", self.request)
-        if not request.applicant_email:
+        if not request.requester_email:
             return
 
         message = f"""
         <h3>Payment Confirmation</h3>
-        <p>Dear {request.applicant_name},</p>
+        <p>Dear {request.requester_name},</p>
         <p>We have received your payment for application <strong>{request.request_number}</strong>.</p>
 
         <h4>Payment Details:</h4>
@@ -121,7 +121,7 @@ class Payment(Document):
 
         try:
             frappe.sendmail(
-                recipients=[request.applicant_email],
+                recipients=[request.requester_email],
                 subject=f"Payment Confirmation for Application {request.request_number}",
                 message=message,
                 reference_doctype=self.doctype,

@@ -38,10 +38,10 @@ export function useFormValidation(formData, currentStep, isResourceConsent) {
 
     // Step 4: Applicant Details & Delivery/Payment (merged)
     if (step === 4) {
-      const hasApplicantName = !!formData.value.applicant_name?.trim()
-      const hasApplicantEmail = !!formData.value.applicant_email?.trim()
-      const hasApplicantPhone = !!formData.value.applicant_phone?.trim()
-      const hasApplicantType = !!formData.value.applicant_type
+      const hasApplicantName = !!formData.value.requester_name?.trim()
+      const hasApplicantEmail = !!formData.value.requester_email?.trim()
+      const hasApplicantPhone = !!formData.value.requester_phone?.trim()
+      const hasApplicantType = !!formData.value.requester_type
 
       const ownerInfoValid = !formData.value.applicant_is_not_owner ||
         (formData.value.applicant_is_not_owner && !!formData.value.owner_name?.trim())
@@ -172,10 +172,10 @@ export function useFormValidation(formData, currentStep, isResourceConsent) {
     // Must have completed all required fields
     const hasCouncil = !!formData.value.council
     const hasRequestType = !!formData.value.request_type
-    const hasApplicantDetails = !!formData.value.applicant_name &&
-      !!formData.value.applicant_email &&
-      !!formData.value.applicant_phone &&
-      !!formData.value.applicant_type
+    const hasApplicantDetails = !!formData.value.requester_name &&
+      !!formData.value.requester_email &&
+      !!formData.value.requester_phone &&
+      !!formData.value.requester_type
     const hasPropertyAddress = !!formData.value.property_address
     const hasDeliveryPreference = !!formData.value.delivery_preference
     const hasInvoiceTo = !!formData.value.invoice_to

@@ -96,7 +96,7 @@ export class RequestService {
 			params: {
 				doctype: 'Request',
 				filters: { status },
-				fields: ['name', 'request_type', 'applicant_name', 'status', 'created_at', 'brief_description'],
+				fields: ['name', 'request_type', 'requester_name', 'status', 'created_at', 'brief_description'],
 				order_by: 'modified desc'
 			},
 			auto: true

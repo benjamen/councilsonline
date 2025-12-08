@@ -173,7 +173,7 @@
   },
   {
    "default": "0",
-   "description": "Internal communications not visible to applicants",
+   "description": "Internal communications not visible to requesters",
    "fieldname": "is_internal",
    "fieldtype": "Check",
    "label": "Internal Only"

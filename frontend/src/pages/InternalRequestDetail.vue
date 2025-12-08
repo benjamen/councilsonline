@@ -50,8 +50,8 @@
             <dl class="grid grid-cols-2 gap-4">
               <div>
                 <dt class="text-sm text-gray-600">Applicant</dt>
-                <dd class="mt-1 text-sm font-medium text-gray-900">{{ request.data.applicant_name }}</dd>
-                <dd class="text-xs text-gray-500">{{ request.data.applicant_email }}</dd>
+                <dd class="mt-1 text-sm font-medium text-gray-900">{{ request.data.requester_name }}</dd>
+                <dd class="text-xs text-gray-500">{{ request.data.requester_email }}</dd>
               </div>
               <div>
                 <dt class="text-sm text-gray-600">Property</dt>

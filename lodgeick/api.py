@@ -660,20 +660,20 @@ def create_draft_request(data, current_step=None, total_steps=None):
         # SPISC uses: full_name, mobile_number, email
         # Request uses: applicant_name, applicant_phone, applicant_email
         if data.get("full_name"):
-            data["applicant_name"] = data["full_name"]
+            data["requester_name"] = data["full_name"]
         if data.get("mobile_number"):
-            data["applicant_phone"] = data["mobile_number"]
-        if data.get("email") and not data.get("applicant_email"):
-            data["applicant_email"] = data["email"]
+            data["requester_phone"] = data["mobile_number"]
+        if data.get("email") and not data.get("requester_email"):
+            data["requester_email"] = data["email"]
 
         if acting_on_behalf:
             # Agent workflow - use client details provided in the form
-            applicant_name = data.get("applicant_name")
-            applicant_email = data.get("applicant_email")
+            applicant_name = data.get("requester_name")
+            applicant_email = data.get("requester_email")
         else:
             # Self-application - use current user's details
-            applicant_name = data.get("applicant_name") or frappe.get_value("User", frappe.session.user, "full_name")
-            applicant_email = data.get("applicant_email") or frappe.session.user
+            applicant_name = data.get("requester_name") or frappe.get_value("User", frappe.session.user, "full_name")
+            applicant_email = data.get("requester_email") or frappe.session.user
 
         # Serialize full form data to JSON
         import json
@@ -712,11 +712,11 @@ def create_draft_request(data, current_step=None, total_steps=None):
             "property_address": data.get("property_address"),
             "legal_description": data.get("legal_description"),
             "council": data.get("council"),  # Add council field
-            "applicant": frappe.session.user,  # The user who created it (may be agent)
-            "applicant_name": applicant_name,  # The actual applicant (client or self)
-            "applicant_email": applicant_email,  # The actual applicant email
-            "applicant_phone": data.get("applicant_phone"),
-            "applicant_type": data.get("applicant_type"),
+            "requester": frappe.session.user,  # The user who created it (may be agent)
+            "requester_name": applicant_name,  # The actual applicant (client or self)
+            "requester_email": applicant_email,  # The actual applicant email
+            "requester_phone": data.get("requester_phone"),
+            "requester_type": data.get("requester_type"),
             "acting_on_behalf": acting_on_behalf,  # Track if agent workflow
             "status": "Draft",
             "priority": data.get("priority", "Standard"),
@@ -794,7 +794,7 @@ def update_draft_request(request_id, data, current_step=None, total_steps=None):
         request_doc = frappe.get_doc("Request", request_id)
 
         # Validate user has permission to update
-        if request_doc.applicant != frappe.session.user:
+        if request_doc.requester != frappe.session.user:
             frappe.throw(_("You don't have permission to update this request"))
 
         # Check if it's still a draft
@@ -851,7 +851,7 @@ def load_draft_request(request_id):
         request_doc = frappe.get_doc("Request", request_id)
 
         # Validate user has permission to access
-        if request_doc.applicant != frappe.session.user:
+        if request_doc.requester != frappe.session.user:
             frappe.throw(_("You don't have permission to access this request"))
 
         # Check if it's still a draft
@@ -1082,7 +1082,7 @@ def book_council_meeting(request_id, meeting_type="Pre-Application Meeting", mee
                     <p><strong>Meeting Request:</strong> {meeting_doc.name}</p>
                     <p><strong>Request Number:</strong> {request_doc.request_number}</p>
                     <p><strong>Request Type:</strong> {request_doc.request_type}</p>
-                    <p><strong>Applicant:</strong> {request_doc.applicant_name or 'N/A'} ({request_doc.applicant_email})</p>
+                    <p><strong>Requester:</strong> {request_doc.requester_name or 'N/A'} ({request_doc.requester_email})</p>
                     <p><strong>Property:</strong> {request_doc.property_address or 'N/A'}</p>
                     <p><strong>Purpose:</strong> {meeting_purpose or 'N/A'}</p>
                     <br>
@@ -1162,9 +1162,9 @@ def get_meeting_details(meeting_id):
                 "meeting_location": meeting.meeting_location,
                 "meeting_room": meeting.meeting_room,
                 "google_meet_link": meeting.google_meet_link,
-                "applicant_name": meeting.applicant_name,
-                "applicant_email": meeting.applicant_email,
-                "applicant_phone": meeting.applicant_phone,
+                "requester_name": meeting.requester_name,
+                "requester_email": meeting.requester_email,
+                "requester_phone": meeting.requester_phone,
                 "council_planner": meeting.council_planner,
                 "meeting_purpose": meeting.meeting_purpose,
                 "discussion_points": meeting.discussion_points,
@@ -1347,10 +1347,10 @@ def reschedule_meeting(meeting_id, new_scheduled_start, new_scheduled_end, reaso
         meeting.add_comment("Comment", comment_text)
 
         # Send notification to applicant
-        if meeting.applicant_email:
+        if meeting.requester_email:
             request_doc = frappe.get_doc("Request", meeting.request)
             frappe.sendmail(
-                recipients=[meeting.applicant_email],
+                recipients=[meeting.requester_email],
                 subject=f"Meeting Rescheduled - {request_doc.request_number}",
                 message=f"""
                 <p>Your {meeting.meeting_type} has been rescheduled.</p>
@@ -1466,10 +1466,10 @@ def cancel_meeting(meeting_id, reason=None):
         meeting.add_comment("Comment", comment_text)
 
         # Send notification to applicant
-        if meeting.applicant_email:
+        if meeting.requester_email:
             request_doc = frappe.get_doc("Request", meeting.request)
             frappe.sendmail(
-                recipients=[meeting.applicant_email],
+                recipients=[meeting.requester_email],
                 subject=f"Meeting Cancelled - {request_doc.request_number}",
                 message=f"""
                 <p>Your {meeting.meeting_type} has been cancelled.</p>
@@ -1533,7 +1533,7 @@ def get_user_meetings(status=None, from_date=None, to_date=None):
             filters=filters,
             fields=[
                 "name", "request", "meeting_type", "status", "scheduled_start", "scheduled_end",
-                "meeting_format", "meeting_location", "applicant_name", "council_planner",
+                "meeting_format", "meeting_location", "requester_name", "council_planner",
                 "requested_date", "event"
             ],
             order_by="scheduled_start desc"
@@ -1950,7 +1950,7 @@ def get_council_requests(council_code):
     requests = frappe.get_all(
         "Request",
         filters={
-            "applicant": user,
+            "requester": user,
             "council": council_code
         },
         fields=[
@@ -2185,7 +2185,7 @@ def get_user_profile(user=None):
         "bio": user_doc.bio,
         "location": user_doc.location,
         "account_type": user_doc.get("account_type") or "Applicant",
-        "applicant_type": user_doc.get("applicant_type") or "Individual",
+        "requester_type": user_doc.get("requester_type") or "Individual",
         "default_council": user_doc.get("default_council"),
         "default_council_data": default_council_data,
         "organization": user_doc.get("organization"),
@@ -3645,7 +3645,7 @@ def create_payout(request_id, payout_amount, payment_method, payout_date=None,
 			"doctype": "Benefit Payout",
 			"request": request_id,
 			"request_type": request.request_type,
-			"beneficiary": request.applicant_email,
+			"beneficiary": request.requester_email,
 			"payout_amount": payout_amount,
 			"currency": "PHP",
 			"payout_date": payout_date or frappe.utils.nowdate(),
@@ -3662,7 +3662,7 @@ def create_payout(request_id, payout_amount, payment_method, payout_date=None,
 		frappe.db.commit()
 
 		# Add to beneficiary masterlist if not exists
-		add_to_masterlist(request.applicant_email, request.request_type, payout_amount)
+		add_to_masterlist(request.requester_email, request.request_type, payout_amount)
 
 		return {
 			"success": True,
@@ -3873,7 +3873,7 @@ def check_duplicate_application(user_email, request_type):
 		# Check for active requests
 		active_requests = frappe.get_all("Request",
 										filters={
-											"applicant_email": user_email,
+											"requester_email": user_email,
 											"request_type": request_type,
 											"status": ["in", ["Submitted", "Under Review", "Approved", "Active"]]
 										},

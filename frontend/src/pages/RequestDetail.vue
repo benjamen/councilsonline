@@ -119,15 +119,15 @@
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="text-sm font-medium text-gray-500">Name</label>
-                <p class="mt-1 text-sm text-gray-900">{{ request.data.applicant_name || 'N/A' }}</p>
+                <p class="mt-1 text-sm text-gray-900">{{ request.data.requester_name || 'N/A' }}</p>
               </div>
               <div>
                 <label class="text-sm font-medium text-gray-500">Email</label>
-                <p class="mt-1 text-sm text-gray-900">{{ request.data.applicant_email || 'N/A' }}</p>
+                <p class="mt-1 text-sm text-gray-900">{{ request.data.requester_email || 'N/A' }}</p>
               </div>
               <div>
                 <label class="text-sm font-medium text-gray-500">Phone</label>
-                <p class="mt-1 text-sm text-gray-900">{{ request.data.applicant_phone || 'N/A' }}</p>
+                <p class="mt-1 text-sm text-gray-900">{{ request.data.requester_phone || 'N/A' }}</p>
               </div>
               <div>
                 <label class="text-sm font-medium text-gray-500">Address</label>
