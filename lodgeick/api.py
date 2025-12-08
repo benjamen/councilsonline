@@ -2000,7 +2000,7 @@ def should_redirect_to_council_dashboard(council_code):
         }
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_council_settings(council_code):
     """
     Get council portal and website settings.
