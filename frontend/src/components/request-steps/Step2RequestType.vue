@@ -66,6 +66,6 @@ const selectType = (type) => {
 
   console.log('[Step2RequestType] Emitting updatedValue:', updatedValue)
   emit('update:modelValue', updatedValue)
-  emit('type-selected', type)
+  emit('type-selected', type.name)
 }
 </script>
