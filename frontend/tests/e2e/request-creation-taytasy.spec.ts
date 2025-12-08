@@ -99,11 +99,21 @@ test.describe('Request Creation - Tay Tasy Council', () => {
 		const firstRequestType = requestTypeCards.first()
 		await expect(firstRequestType).toBeVisible()
 
-		// Get the request type name before clicking
-		const requestTypeName = await firstRequestType.locator('h3').first().textContent()
-		console.log(`Selecting request type: ${requestTypeName}`)
+		// Select SPISC specifically (instead of first available)
+		const spiscCard = page.locator('text=Social Pension for Indigent Senior Citizens').first()
+		const isSpiscAvailable = await spiscCard.isVisible().catch(() => false)
 
-		await firstRequestType.click()
+		if (isSpiscAvailable) {
+			console.log('Selecting request type: SPISC')
+			const spiscOption = spiscCard.locator('xpath=ancestor::div[contains(@class, "border-2")]')
+			await spiscOption.click()
+		} else {
+			// Fallback to first available if SPISC not found
+			const firstRequestType = requestTypeCards.first()
+			const requestTypeName = await firstRequestType.locator('h3').first().textContent()
+			console.log(`SPISC not found, selecting: ${requestTypeName}`)
+			await firstRequestType.click()
+		}
 
 		// Wait for selection to register
 		await page.waitForTimeout(1000)
