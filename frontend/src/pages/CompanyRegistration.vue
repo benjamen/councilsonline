@@ -9,7 +9,7 @@
           </svg>
         </div>
         <h1 class="text-3xl font-bold text-gray-900 mb-2">Register as Agent</h1>
-        <p class="text-gray-600">Planning consultants who assist applicants with resource consent applications</p>
+        <p class="text-gray-600">Consultants or representatives who submit requests on behalf of clients</p>
       </div>
 
       <!-- Info Banner -->
@@ -20,7 +20,7 @@
           </svg>
           <div class="text-sm text-blue-800">
             <p class="font-medium">You are registering as an Agent</p>
-            <p class="mt-1">Agents are planning consultants who assist applicants with resource consent applications. You can be a sole trader or represent a company.</p>
+            <p class="mt-1">Agents are consultants or representatives who submit requests on behalf of clients. You can be a sole trader or represent a company.</p>
           </div>
         </div>
       </div>
@@ -564,9 +564,9 @@
       <!-- Back to Register -->
       <div class="text-center mt-6">
         <p class="text-sm text-gray-600">
-          Want to register as an applicant instead?
+          Want to register as a requester instead?
           <router-link :to="{ name: 'Register' }" class="font-medium text-blue-600 hover:text-blue-700">
-            Register as applicant
+            Register as requester
           </router-link>
         </p>
       </div>

@@ -12,7 +12,7 @@
         <p class="text-gray-600">Join thousands using Lodgeick for council requests</p>
       </div>
 
-      <!-- Applicant vs Agent Selection -->
+      <!-- Requester vs Agent Selection -->
       <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100 mb-6">
         <h2 class="text-lg font-semibold text-gray-900 mb-4 text-center">Choose Account Type</h2>
         <div class="grid grid-cols-2 gap-4">
@@ -21,8 +21,8 @@
               <svg class="w-12 h-12 mx-auto mb-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
-              <h3 class="text-lg font-semibold text-gray-900 mb-2">Register as Applicant</h3>
-              <p class="text-sm text-gray-600 mb-4">Apply for resource consents for yourself or your organization</p>
+              <h3 class="text-lg font-semibold text-gray-900 mb-2">Register as Requester</h3>
+              <p class="text-sm text-gray-600 mb-4">Submit requests for yourself or on behalf of an organization</p>
               <div class="text-sm text-blue-900 font-medium">✓ Currently selected</div>
             </div>
           </div>
@@ -36,7 +36,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
               <h3 class="text-lg font-semibold text-gray-900 mb-2">Register as Agent</h3>
-              <p class="text-sm text-gray-600 mb-4">Planning consultants assisting applicants with resource consents</p>
+              <p class="text-sm text-gray-600 mb-4">Consultants or representatives submitting on behalf of clients</p>
               <div class="text-sm text-blue-600 font-medium">Click to register as agent →</div>
             </div>
           </button>
@@ -46,12 +46,12 @@
       <!-- Registration Card -->
       <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
         <form @submit.prevent="submit" class="space-y-6">
-          <!-- Applicant Type Selection -->
+          <!-- Account Type Selection -->
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-3">
-              Applicant Type <span class="text-red-500">*</span>
+              Account Type <span class="text-red-500">*</span>
             </label>
-            <p class="text-xs text-gray-500 mb-3">Select the type of applicant you are</p>
+            <p class="text-xs text-gray-500 mb-3">Select the entity type you're registering as</p>
             <div class="grid grid-cols-2 gap-3">
               <button
                 type="button"
@@ -461,7 +461,7 @@
             class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-base font-medium"
           >
             <template v-if="!isLoading">
-              Create Applicant Account
+              Create Account
             </template>
             <template v-else>
               Creating account...
@@ -723,9 +723,9 @@ function submit() {
     return
   }
 
-  // Validate applicant-type specific fields
+  // Validate account-type specific fields
   if (applicantType.value === 'Individual' && properties.value.length === 0) {
-    errorMessage.value = 'At least one property is required for individual applicants'
+    errorMessage.value = 'At least one property is required for individual requesters'
     return
   }
 
@@ -753,8 +753,8 @@ function submit() {
     last_name: formData.value.last_name,
     phone: formData.value.phone,
     password: formData.value.password,
-    user_role: 'applicant', // This is an applicant registration
-    applicant_type: applicantType.value, // Individual, Company, Trust, Organisation
+    user_role: 'requester', // This is a requester registration
+    applicant_type: applicantType.value, // Individual, Company, Trust, Organisation (entity type)
     properties: properties.value // Send all properties
   }
 

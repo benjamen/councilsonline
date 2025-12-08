@@ -22,6 +22,16 @@ export { rfqService, RFQService } from './api/rfq.service'
 export { documentService, DocumentService } from './api/document.service'
 
 // Convenience: export all services as a single object
+// Import them locally to avoid referencing them before they're imported
+import { apiClient } from './api/base'
+import { requestService } from './api/request.service'
+import { councilService } from './api/council.service'
+import { userService } from './api/user.service'
+import { applicationService } from './api/application.service'
+import { requestTypeService } from './api/requestType.service'
+import { rfqService } from './api/rfq.service'
+import { documentService } from './api/document.service'
+
 export default {
 	apiClient,
 	requestService,
