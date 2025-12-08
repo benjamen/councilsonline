@@ -83,8 +83,8 @@ export const useRequestStore = defineStore('request', {
 					// Load existing draft
 					await this.loadDraft(draftId)
 				} else {
-					// Initialize empty form
-					this.formData = {}
+					// Initialize form, preserving existing data (like council selection)
+					this.formData = { ...this.formData }
 					this.currentStep = 0
 				}
 			} catch (error) {
