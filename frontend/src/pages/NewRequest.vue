@@ -209,8 +209,8 @@ function getCouncilName() {
 
 async function onCouncilChange(councilCode) {
 	// Load request types for selected council
-	const types = await councilStore.getCouncilRequestTypes(councilCode)
-	requestTypes.value = types || []
+	await councilStore.loadRequestTypesForCouncil(councilCode)
+	requestTypes.value = councilStore.requestTypes || []
 }
 
 async function selectRequestType(requestTypeCode) {
