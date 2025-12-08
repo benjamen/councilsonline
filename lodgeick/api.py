@@ -1779,32 +1779,43 @@ def get_locked_council():
     Returns:
         dict: Locked council info or {"is_locked": False}
     """
-    # Get from cache using session ID
-    locked_data = frappe.cache().hget("locked_council", frappe.session.sid)
-
-    if locked_data:
-        try:
-            data = frappe.parse_json(locked_data)
-            locked_council = data.get("locked_council_code")
-            council = frappe.get_doc("Council", locked_council)
-            return {
-                "council_code": locked_council,
-                "council_name": data.get("locked_council_name"),
-                "locked_at": data.get("locked_at"),
-                "source_url": data.get("source_url"),
-                "is_locked": True,
-                "council": council.as_dict(),
-                # Add portal settings for frontend routing
-                "redirect_dashboard_to_council": int(council.redirect_dashboard_to_council or 1),
-                "allow_system_wide_dashboard": int(council.allow_system_wide_dashboard or 0),
-                "show_council_switcher": int(council.show_council_switcher or 0)
-            }
-        except (frappe.DoesNotExistError, ValueError, KeyError):
-            # Council was deleted or data corrupted - clear session
-            clear_locked_council()
+    try:
+        # Get session ID - check if it exists
+        session_id = getattr(frappe.session, 'sid', None)
+        if not session_id:
             return {"is_locked": False}
 
-    return {"is_locked": False}
+        # Get from cache using session ID
+        locked_data = frappe.cache().hget("locked_council", session_id)
+
+        if locked_data:
+            try:
+                data = frappe.parse_json(locked_data)
+                locked_council = data.get("locked_council_code")
+                council = frappe.get_doc("Council", locked_council)
+                return {
+                    "council_code": locked_council,
+                    "council_name": data.get("locked_council_name"),
+                    "locked_at": data.get("locked_at"),
+                    "source_url": data.get("source_url"),
+                    "is_locked": True,
+                    "council": council.as_dict(),
+                    # Add portal settings for frontend routing
+                    "redirect_dashboard_to_council": int(council.redirect_dashboard_to_council or 1),
+                    "allow_system_wide_dashboard": int(council.allow_system_wide_dashboard or 0),
+                    "show_council_switcher": int(council.show_council_switcher or 0)
+                }
+            except (frappe.DoesNotExistError, ValueError, KeyError) as e:
+                # Council was deleted or data corrupted - clear session
+                frappe.log_error(f"Error loading locked council: {str(e)}")
+                clear_locked_council()
+                return {"is_locked": False}
+
+        return {"is_locked": False}
+    except Exception as e:
+        # Log error but don't fail
+        frappe.log_error(f"Error in get_locked_council: {str(e)}")
+        return {"is_locked": False}
 
 
 @frappe.whitelist(allow_guest=True)
@@ -1819,29 +1830,39 @@ def set_locked_council(council_code):
     Returns:
         dict: Success status and council info
     """
-    council_code = council_code.upper()
-
-    # Verify council exists and is active
     try:
-        council = frappe.get_doc("Council", council_code)
-        if not council.is_active:
-            frappe.throw(_("Council is not active"))
-    except frappe.DoesNotExistError:
-        frappe.throw(_("Council not found: {0}").format(council_code))
+        council_code = council_code.upper()
 
-    # Set in session using Frappe's session cache (persists across requests)
-    frappe.cache().hset("locked_council", frappe.session.sid, frappe.as_json({
-        "locked_council_code": council_code,
-        "locked_council_name": council.council_name,
-        "locked_at": frappe.utils.now(),
-        "source_url": frappe.request.headers.get("Referer", "")
-    }))
+        # Verify council exists and is active
+        try:
+            council = frappe.get_doc("Council", council_code)
+            if not council.is_active:
+                frappe.throw(_("Council is not active"))
+        except frappe.DoesNotExistError:
+            frappe.throw(_("Council not found: {0}").format(council_code))
 
-    return {
-        "success": True,
-        "council_code": council_code,
-        "council_name": council.council_name
-    }
+        # Get session ID - check if it exists
+        session_id = getattr(frappe.session, 'sid', None)
+        if not session_id:
+            frappe.log_error("No session ID available for set_locked_council")
+            return {"success": False, "error": "No session available"}
+
+        # Set in session using Frappe's session cache (persists across requests)
+        frappe.cache().hset("locked_council", session_id, frappe.as_json({
+            "locked_council_code": council_code,
+            "locked_council_name": council.council_name,
+            "locked_at": frappe.utils.now(),
+            "source_url": frappe.request.headers.get("Referer", "")
+        }))
+
+        return {
+            "success": True,
+            "council_code": council_code,
+            "council_name": council.council_name
+        }
+    except Exception as e:
+        frappe.log_error(f"Error in set_locked_council: {str(e)}")
+        return {"success": False, "error": str(e)}
 
 
 @frappe.whitelist(allow_guest=True)
@@ -1853,10 +1874,17 @@ def clear_locked_council():
     Returns:
         dict: Success status
     """
-    # Remove from cache
-    frappe.cache().hdel("locked_council", frappe.session.sid)
+    try:
+        # Get session ID - check if it exists
+        session_id = getattr(frappe.session, 'sid', None)
+        if session_id:
+            # Remove from cache
+            frappe.cache().hdel("locked_council", session_id)
 
-    return {"success": True}
+        return {"success": True}
+    except Exception as e:
+        frappe.log_error(f"Error in clear_locked_council: {str(e)}")
+        return {"success": False, "error": str(e)}
 
 
 @frappe.whitelist(allow_guest=True)
