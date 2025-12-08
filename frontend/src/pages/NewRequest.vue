@@ -144,7 +144,7 @@ const { errors: validationErrors, validateStep } = useStepValidation()
 // UI state
 const showSaveDraftModal = ref(false)
 const showValidationModal = ref(false)
-const requestTypes = ref([])
+const requestTypes = ref({ loading: false, data: [] })
 const selectedRequestTypeDetails = ref(null)
 
 // Computed
@@ -210,9 +210,13 @@ function getCouncilName() {
 async function onCouncilChange(councilCode) {
 	// Load request types for selected council
 	console.log('[NewRequest] onCouncilChange called with:', councilCode)
+	requestTypes.value.loading = true
 	await councilStore.loadRequestTypesForCouncil(councilCode)
 	console.log('[NewRequest] councilStore.requestTypes:', councilStore.requestTypes)
-	requestTypes.value = councilStore.requestTypes || []
+	requestTypes.value = {
+		loading: false,
+		data: councilStore.requestTypes || []
+	}
 	console.log('[NewRequest] requestTypes.value set to:', requestTypes.value)
 }
 
