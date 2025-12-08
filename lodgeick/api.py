@@ -52,7 +52,7 @@ def register_user(
     last_name,
     phone,
     password,
-    user_role="applicant",
+    user_role="requester",
     applicant_type="Individual",
     property_address=None,
     property_street=None,
@@ -67,7 +67,7 @@ def register_user(
     council_code=None
 ):
     """
-    Register a new APPLICANT for Lodgeick
+    Register a new REQUESTER for Lodgeick (requesters can submit on behalf of themselves or organizations)
 
     Args:
         email: User's email address
@@ -75,8 +75,8 @@ def register_user(
         last_name: Last name
         phone: Phone number (NZ format required)
         password: Password
-        user_role: Always 'applicant' for this endpoint
-        applicant_type: Individual, Company, Trust, or Organisation
+        user_role: User role type - 'requester' (submits requests) or 'agent' (consultant)
+        applicant_type: Individual, Company, Trust, or Organisation (entity type)
         property_address: Full property address
         property_street: Street address
         property_suburb: Suburb/locality
@@ -120,7 +120,7 @@ def register_user(
             "user_type": "Website User"
         })
 
-        # Add Applicant role
+        # Add Applicant role (Frappe role name remains "Applicant" for database consistency)
         user.append("roles", {"role": "Applicant"})
 
         # Save user
@@ -134,10 +134,10 @@ def register_user(
                 "user": email,
                 "full_name": f"{first_name} {last_name}",
                 "phone": phone,
-                "user_role": "Individual",  # For applicants, user_role is Individual (not Agent)
+                "user_role": "Individual",  # For requesters, user_role is Individual (not Agent)
             })
 
-            # Add address for Individual applicants
+            # Add address for Individual requesters
             if applicant_type == "Individual" and property_address:
                 profile.postal_street = property_street or property_address
                 profile.postal_suburb = property_suburb
@@ -172,7 +172,7 @@ def register_user(
                 user.default_council = council.name
                 user.save(ignore_permissions=True)
 
-        # Create organization record for Company/Organisation/Trust applicants
+        # Create organization record for Company/Organisation/Trust requesters
         if applicant_type in ["Company", "Organisation", "Trust"]:
             org_name = organization_name or trust_name
             if org_name:
@@ -198,13 +198,13 @@ def register_user(
 
         return {
             "success": True,
-            "message": _("Applicant account created successfully. Please check your email to verify your account."),
+            "message": _("Account created successfully. Please check your email to verify your account."),
             "user": email
         }
 
     except Exception as e:
         frappe.db.rollback()
-        frappe.log_error(f"Applicant Registration Error: {str(e)}")
+        frappe.log_error(f"User Registration Error: {str(e)}")
         frappe.throw(_("Registration failed. Please try again or contact support."))
 
 
@@ -287,7 +287,7 @@ def register_agent(
             "user_type": "Website User"
         })
 
-        # Add Agent role (Agents can also create applications, so add Applicant role too)
+        # Add Agent role (Agents can also submit requests, so add Applicant role too for permissions)
         user.append("roles", {"role": "Agent"})
         user.append("roles", {"role": "Applicant"})
 
