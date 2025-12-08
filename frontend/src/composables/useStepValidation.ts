@@ -4,6 +4,7 @@
  */
 
 import { ref, type Ref } from 'vue'
+import { validateField as utilValidateField } from '../utils/fieldValidation'
 
 export interface StepValidationReturn {
 	/** Object containing field names and error messages */
@@ -31,8 +32,6 @@ export interface StepValidationReturn {
 }
 
 export function useStepValidation(): StepValidationReturn {
-	const { validateField: utilValidateField } = require('../utils/fieldValidation')
-
 	const errors = ref<Record<string, string>>({})
 	const isValidating = ref(false)
 

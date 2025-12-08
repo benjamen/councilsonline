@@ -14,7 +14,6 @@ declare module 'vue' {
     ConsentTypeSelector: typeof import('./src/components/ConsentTypeSelector.vue')['default']
     ContactSelector: typeof import('./src/components/common/ContactSelector.vue')['default']
     CouncilSelector: typeof import('./src/components/CouncilSelector.vue')['default']
-    'CouncilSelector.OLD': typeof import('./src/components/CouncilSelector.OLD.vue')['default']
     DateTimePicker: typeof import('./src/components/common/DateTimePicker.vue')['default']
     DocumentsUploadForm: typeof import('./src/components/DocumentsUploadForm.vue')['default']
     DynamicFieldRenderer: typeof import('./src/components/DynamicFieldRenderer.vue')['default']

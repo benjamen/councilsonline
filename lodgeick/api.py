@@ -1557,6 +1557,48 @@ def get_user_meetings(status=None, from_date=None, to_date=None):
         frappe.throw(_("Failed to get user meetings: {0}").format(str(e)))
 
 
+@frappe.whitelist()
+def get_user_requests(status=None):
+    """
+    Get all requests for the current user
+
+    Args:
+        status: Filter by status (optional)
+
+    Returns:
+        list: User's requests with key information
+    """
+    try:
+        user = frappe.session.user
+
+        filters = {
+            "requester": user,
+            "docstatus": ["<", 2]  # Not cancelled documents
+        }
+
+        # Add status filter if provided
+        if status:
+            filters["status"] = status
+
+        requests = frappe.get_all(
+            "Request",
+            filters=filters,
+            fields=[
+                "name", "request_number", "request_type", "status",
+                "requester_name", "requester_email", "requester_phone",
+                "council", "brief_description", "creation", "modified",
+                "workflow_state", "current_step", "total_steps"
+            ],
+            order_by="modified desc"
+        )
+
+        return requests
+
+    except Exception as e:
+        frappe.log_error(f"Get User Requests Error: {str(e)}", "Request API Error")
+        frappe.throw(_("Failed to get user requests: {0}").format(str(e)))
+
+
 # ============================================================================
 # COUNCIL MANAGEMENT API ENDPOINTS
 # ============================================================================
