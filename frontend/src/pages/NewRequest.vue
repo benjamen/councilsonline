@@ -209,8 +209,11 @@ function getCouncilName() {
 
 async function onCouncilChange(councilCode) {
 	// Load request types for selected council
+	console.log('[NewRequest] onCouncilChange called with:', councilCode)
 	await councilStore.loadRequestTypesForCouncil(councilCode)
+	console.log('[NewRequest] councilStore.requestTypes:', councilStore.requestTypes)
 	requestTypes.value = councilStore.requestTypes || []
+	console.log('[NewRequest] requestTypes.value set to:', requestTypes.value)
 }
 
 async function selectRequestType(requestTypeCode) {
