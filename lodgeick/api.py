@@ -988,24 +988,29 @@ def get_request_type_config(request_type_code):
         dict: Complete request type configuration with steps, fields, and metadata
     """
     try:
+        # Handle if dict is accidentally passed (defensive)
+        if isinstance(request_type_code, dict):
+            request_type_code = request_type_code.get('name') or request_type_code.get('type_code')
+
         # Try to find by type_code first, then by name
         request_type = frappe.get_value(
             "Request Type",
             {"type_code": request_type_code},
             ["name", "type_code", "type_name", "category", "description", "base_fee",
-             "processing_sla_days", "fee_calculation_method", "requires_property", "requires_payment"],
+             "processing_sla_days", "fee_calculation_method"],
             as_dict=True
         )
 
         if not request_type:
             # Try finding by name
-            request_type = frappe.get_doc("Request Type", request_type_code)
-
-        if not request_type:
-            frappe.throw(f"Request Type {request_type_code} not found")
-
-        # Get the full document to access child tables
-        request_type_doc = frappe.get_doc("Request Type", request_type.name if isinstance(request_type, dict) else request_type.name)
+            try:
+                request_type_doc = frappe.get_doc("Request Type", request_type_code)
+                request_type = {"name": request_type_doc.name}
+            except:
+                frappe.throw(f"Request Type {request_type_code} not found")
+        else:
+            # Get the full document to access child tables
+            request_type_doc = frappe.get_doc("Request Type", request_type.name)
 
         # Get steps configuration
         steps = []
