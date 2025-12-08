@@ -32,7 +32,7 @@ def execute():
 
 
 def rename_request_fields():
-    """Rename applicant_* fields to requester_* in Request DocType"""
+    """Copy data from applicant_* to requester_* fields and drop old columns"""
 
     field_mappings = [
         ("applicant", "requester"),
@@ -40,27 +40,30 @@ def rename_request_fields():
         ("applicant_email", "requester_email"),
         ("applicant_phone", "requester_phone"),
         ("applicant_type", "requester_type"),
-        ("applicant_signature_first_name", "requester_signature_first_name"),
-        ("applicant_signature_date", "requester_signature_date"),
     ]
 
-    print("\n📦 Renaming Request fields...")
+    print("\n📦 Migrating Request field data...")
 
     for old_field, new_field in field_mappings:
         try:
-            # Check if old field exists and new field doesn't
-            if frappe.db.has_column("tabRequest", old_field):
-                if not frappe.db.has_column("tabRequest", new_field):
-                    print(f"  - Renaming: {old_field} → {new_field}")
-                    # Use SQL rename instead of rename_field for better control
-                    frappe.db.sql(f"ALTER TABLE `tabRequest` CHANGE `{old_field}` `{new_field}` VARCHAR(255)")
-                    frappe.db.commit()
-                else:
-                    print(f"  ⚠ Skipping {old_field}: {new_field} already exists")
+            # Check if both columns exist
+            if frappe.db.has_column("tabRequest", old_field) and frappe.db.has_column("tabRequest", new_field):
+                # Copy data from old field to new field
+                print(f"  - Copying data: {old_field} → {new_field}")
+                frappe.db.sql(f"UPDATE `tabRequest` SET `{new_field}` = `{old_field}` WHERE `{new_field}` IS NULL AND `{old_field}` IS NOT NULL")
+
+                # Drop old column
+                print(f"  - Dropping old column: {old_field}")
+                frappe.db.sql(f"ALTER TABLE `tabRequest` DROP COLUMN `{old_field}`")
+
+                frappe.db.commit()
+                print(f"  ✓ Successfully migrated {old_field}")
+            elif frappe.db.has_column("tabRequest", old_field):
+                print(f"  ⚠ Skipping {old_field}: new column {new_field} doesn't exist (will be created by sync)")
             else:
-                print(f"  ℹ Skipping {old_field}: column doesn't exist")
+                print(f"  ℹ Skipping {old_field}: already migrated")
         except Exception as e:
-            print(f"  ✗ Error renaming {old_field}: {str(e)}")
+            print(f"  ✗ Error migrating {old_field}: {str(e)}")
             # Continue with other fields even if one fails
 
 
