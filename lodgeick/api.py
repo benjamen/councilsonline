@@ -976,6 +976,83 @@ def get_request_form_meta(request_type=None):
         raise
 
 
+@frappe.whitelist(allow_guest=True)
+def get_request_type_config(request_type_code):
+    """
+    Get detailed configuration for a specific request type including steps and fields
+
+    Args:
+        request_type_code: The type_code or name of the Request Type
+
+    Returns:
+        dict: Complete request type configuration with steps, fields, and metadata
+    """
+    try:
+        # Try to find by type_code first, then by name
+        request_type = frappe.get_value(
+            "Request Type",
+            {"type_code": request_type_code},
+            ["name", "type_code", "type_name", "category", "description", "base_fee",
+             "processing_sla_days", "fee_calculation_method", "requires_property", "requires_payment"],
+            as_dict=True
+        )
+
+        if not request_type:
+            # Try finding by name
+            request_type = frappe.get_doc("Request Type", request_type_code)
+
+        if not request_type:
+            frappe.throw(f"Request Type {request_type_code} not found")
+
+        # Get the full document to access child tables
+        request_type_doc = frappe.get_doc("Request Type", request_type.name if isinstance(request_type, dict) else request_type.name)
+
+        # Get steps configuration
+        steps = []
+        if hasattr(request_type_doc, 'steps') and request_type_doc.steps:
+            for step in request_type_doc.steps:
+                step_data = {
+                    "step_number": step.step_number,
+                    "step_title": step.step_title,
+                    "step_description": step.step_description,
+                    "is_optional": step.is_optional if hasattr(step, 'is_optional') else 0,
+                    "fields": []
+                }
+
+                # Get fields for this step
+                if hasattr(step, 'fields'):
+                    for field in step.fields:
+                        step_data["fields"].append({
+                            "fieldname": field.fieldname,
+                            "label": field.label,
+                            "fieldtype": field.fieldtype,
+                            "required": field.required,
+                            "options": field.options,
+                            "description": field.description,
+                            "default_value": field.default_value if hasattr(field, 'default_value') else None
+                        })
+
+                steps.append(step_data)
+
+        return {
+            "name": request_type_doc.name,
+            "type_code": request_type_doc.type_code,
+            "type_name": request_type_doc.type_name,
+            "category": request_type_doc.category,
+            "description": request_type_doc.description if hasattr(request_type_doc, 'description') else "",
+            "base_fee": request_type_doc.base_fee,
+            "processing_sla_days": request_type_doc.processing_sla_days,
+            "fee_calculation_method": request_type_doc.fee_calculation_method,
+            "requires_property": request_type_doc.requires_property if hasattr(request_type_doc, 'requires_property') else 1,
+            "requires_payment": request_type_doc.requires_payment if hasattr(request_type_doc, 'requires_payment') else 1,
+            "steps": steps
+        }
+
+    except Exception as e:
+        frappe.log_error(f"Get Request Type Config Error: {str(e)}", "Request Type API Error")
+        frappe.throw(_("Failed to get request type configuration: {0}").format(str(e)))
+
+
 @frappe.whitelist()
 def get_staff_users():
     """
