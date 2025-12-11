@@ -565,19 +565,26 @@
           <!-- Contact Info -->
           <div class="bg-blue-50 rounded-lg border border-blue-200 p-6">
             <h3 class="text-sm font-semibold text-blue-900 mb-3">Need Help?</h3>
-            <p class="text-xs text-blue-800 mb-4">Contact our planning team for assistance with your application.</p>
-            <div class="space-y-2 text-xs text-blue-900">
-              <div class="flex items-center space-x-2">
+            <p class="text-xs text-blue-800 mb-4">Contact {{ councilDetails.data?.council_name || 'the council' }} for assistance with your application.</p>
+            <div v-if="councilDetails.loading" class="text-xs text-blue-800">
+              Loading contact information...
+            </div>
+            <div v-else-if="councilDetails.data" class="space-y-2 text-xs text-blue-900">
+              <div v-if="councilDetails.data.contact_email" class="flex items-center space-x-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                <span>consents@council.govt.nz</span>
+                <a :href="`mailto:${councilDetails.data.contact_email}`" class="hover:underline">
+                  {{ councilDetails.data.contact_email }}
+                </a>
               </div>
-              <div class="flex items-center space-x-2">
+              <div v-if="councilDetails.data.contact_phone" class="flex items-center space-x-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
-                <span>0800 LODGEICK</span>
+                <a :href="`tel:${councilDetails.data.contact_phone}`" class="hover:underline">
+                  {{ councilDetails.data.contact_phone }}
+                </a>
               </div>
             </div>
           </div>
@@ -648,11 +655,28 @@ const requestTypeConfig = createResource({
   auto: false,
 })
 
+// Get council details for contact information
+const councilDetails = createResource({
+  url: 'frappe.client.get',
+  auto: false,
+})
+
 // Watch for request data and load config
 watch(() => request.data?.request_type, (requestType) => {
   if (requestType) {
     // Pass params directly to fetch() instead of in createResource
     requestTypeConfig.fetch({ request_type_code: requestType })
+  }
+}, { immediate: true })
+
+// Watch for council code and load council details
+watch(() => request.data?.council, (councilCode) => {
+  if (councilCode) {
+    councilDetails.fetch({
+      doctype: 'Council',
+      name: councilCode,
+      fields: ['name', 'council_name', 'contact_email', 'contact_phone']
+    })
   }
 }, { immediate: true })
 
