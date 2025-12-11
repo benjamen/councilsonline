@@ -337,13 +337,24 @@ async function handleNext() {
     // This ensures the request has an ID for features like "Book Meeting" and "Send Message"
     if (store.currentStep === 2 && !store.currentRequestId) {
         console.log('[NewRequest] Auto-saving draft after Process Info step...')
+        console.log('[NewRequest] requestTypeConfig:', store.requestTypeConfig)
+        console.log('[NewRequest] usesConfigurableSteps:', usesConfigurableSteps.value)
+        console.log('[NewRequest] config steps:', store.requestTypeConfig?.steps)
+
         await store.saveDraft()
         console.log('[NewRequest] Draft saved with ID:', store.currentRequestId)
 
-        // Redirect to the request detail page with the new ID
-        if (store.currentRequestId) {
-            router.push(`/request/${store.currentRequestId}`)
-            return // Don't call nextStep, the redirect will handle navigation
+        // Only redirect if there are NO dynamic steps configured
+        // If there are dynamic steps, user needs to fill them out first
+        if (!usesConfigurableSteps.value) {
+            // No dynamic steps - redirect to detail page
+            if (store.currentRequestId) {
+                console.log('[NewRequest] No dynamic steps configured, redirecting to detail page...')
+                router.push(`/request/${store.currentRequestId}`)
+                return // Don't call nextStep, the redirect will handle navigation
+            }
+        } else {
+            console.log('[NewRequest] Dynamic steps configured, continuing to next step...')
         }
     }
 
