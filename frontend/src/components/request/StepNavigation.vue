@@ -18,6 +18,10 @@ const props = defineProps({
 		type: Boolean,
 		default: true
 	},
+	canSaveDraft: {
+		type: Boolean,
+		default: true
+	},
 	isSaving: {
 		type: Boolean,
 		default: false
@@ -69,8 +73,9 @@ const handleSubmit = () => {
 
 			<!-- Right side buttons -->
 			<div class="flex items-center space-x-3">
-				<!-- Save Draft Button -->
+				<!-- Save Draft Button - Only show after council, type, and process info steps -->
 				<Button
+					v-if="canSaveDraft"
 					@click="handleSaveDraft"
 					variant="outline"
 					:loading="isSaving"

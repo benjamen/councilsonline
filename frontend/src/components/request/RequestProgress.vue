@@ -40,7 +40,7 @@ const getStepStatus = (stepIndex) => {
 			</div>
 			<div class="flex justify-between mt-2">
 				<span class="text-sm font-medium text-gray-700">
-					Step {{ currentStep + 1 }} of {{ totalSteps }}
+					{{ stepTitles[currentStep] || `Step ${currentStep + 1}` }}
 				</span>
 				<span class="text-sm font-medium text-gray-700">
 					{{ progressPercentage }}% Complete
@@ -48,8 +48,8 @@ const getStepStatus = (stepIndex) => {
 			</div>
 		</div>
 
-		<!-- Step Indicators -->
-		<nav aria-label="Progress" v-if="stepTitles.length > 0">
+		<!-- Step Indicators (temporarily hidden) -->
+		<!-- <nav aria-label="Progress" v-if="stepTitles.length > 0">
 			<ol class="flex items-center">
 				<li
 					v-for="(title, index) in stepTitles"
@@ -59,7 +59,6 @@ const getStepStatus = (stepIndex) => {
 						index !== stepTitles.length - 1 ? 'pr-8 sm:pr-20 flex-1' : ''
 					]"
 				>
-					<!-- Connector Line -->
 					<div
 						v-if="index !== stepTitles.length - 1"
 						class="absolute inset-0 flex items-center"
@@ -73,7 +72,6 @@ const getStepStatus = (stepIndex) => {
 						></div>
 					</div>
 
-					<!-- Step Circle -->
 					<div class="relative flex items-center group">
 						<span
 							:class="[
@@ -99,7 +97,6 @@ const getStepStatus = (stepIndex) => {
 							</template>
 						</span>
 
-						<!-- Step Title Tooltip -->
 						<span
 							v-if="title"
 							:class="[
@@ -116,6 +113,6 @@ const getStepStatus = (stepIndex) => {
 					</div>
 				</li>
 			</ol>
-		</nav>
+		</nav> -->
 	</div>
 </template>

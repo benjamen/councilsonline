@@ -37,6 +37,13 @@
   "timezone",
   "default_sla_days",
   "column_break_4",
+  "meeting_settings_section",
+  "default_meeting_duration",
+  "available_meeting_durations",
+  "column_break_meeting",
+  "meeting_buffer_time",
+  "business_hours_section",
+  "business_hours",
   "licensing_section",
   "license_start_date",
   "license_expiry_date",
@@ -225,6 +232,49 @@
   {
    "fieldname": "column_break_4",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "meeting_settings_section",
+   "fieldtype": "Section Break",
+   "label": "Meeting Settings"
+  },
+  {
+   "default": "60",
+   "description": "Default duration for pre-application meetings in minutes",
+   "fieldname": "default_meeting_duration",
+   "fieldtype": "Int",
+   "label": "Default Meeting Duration (minutes)"
+  },
+  {
+   "default": "30,60,90",
+   "description": "Comma-separated list of available meeting durations in minutes",
+   "fieldname": "available_meeting_durations",
+   "fieldtype": "Small Text",
+   "label": "Available Durations"
+  },
+  {
+   "fieldname": "column_break_meeting",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "15",
+   "description": "Time buffer between consecutive meetings in minutes",
+   "fieldname": "meeting_buffer_time",
+   "fieldtype": "Int",
+   "label": "Buffer Time Between Meetings (minutes)"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "business_hours_section",
+   "fieldtype": "Section Break",
+   "label": "Business Hours"
+  },
+  {
+   "description": "Configure when meetings can be scheduled",
+   "fieldname": "business_hours",
+   "fieldtype": "Table",
+   "label": "Business Hours",
+   "options": "Council Business Hours"
   },
   {
    "fieldname": "licensing_section",

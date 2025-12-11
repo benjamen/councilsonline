@@ -16,6 +16,7 @@
   "workflow_template",
   "default_assessment_template",
   "council_meeting_available",
+  "default_response_role",
   "section_break_fees",
   "base_fee",
   "fee_calculation_method",
@@ -97,6 +98,13 @@
    "label": "Council Meeting Available",
    "default": "1",
    "description": "Allow requesters to schedule council meetings during the application process"
+  },
+  {
+   "fieldname": "default_response_role",
+   "fieldtype": "Link",
+   "label": "Default Response Role",
+   "options": "Role",
+   "description": "Role to assign message response tasks to (e.g., Consent Planner, Consent Officer)"
   },
   {
    "fieldname": "section_break_fees",

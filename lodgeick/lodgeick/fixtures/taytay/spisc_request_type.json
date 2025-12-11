@@ -3,6 +3,7 @@
  "category": "Social Assistance",
  "collects_payment": 0,
  "creation": "2025-12-04 12:02:32.722119",
+ "default_response_role": "Consent Planner",
  "description": "<p>The Social Pension for Indigent Senior Citizens (SPISC) is a monthly cash assistance program for senior citizens aged 60 and above who are frail, sickly, disabled, or living alone with no regular source of income or support from their families.</p>\n\t\t<p><strong>Eligibility Requirements:</strong></p>\n\t\t<ul>\n\t\t\t<li>60 years old or above</li>\n\t\t\t<li>Resident of Taytay for at least 6 months</li>\n\t\t\t<li>Income below the poverty threshold</li>\n\t\t\t<li>Not receiving pension from SSS, GSIS, or other government agencies</li>\n\t\t</ul>",
  "docstatus": 0,
  "doctype": "Request Type",

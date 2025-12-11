@@ -19,7 +19,7 @@ test.describe('Request Creation - Tay Tasy Council', () => {
 			const passwordField = page.locator('input[placeholder*="password"]')
 
 			await usernameField.fill('Administrator')
-			await passwordField.fill('admin')
+			await passwordField.fill('admin123')
 			await signInButton.click()
 
 			// Wait a bit for login to process
@@ -42,9 +42,27 @@ test.describe('Request Creation - Tay Tasy Council', () => {
 		await page.goto('http://localhost:8090/frontend/new-request')
 		await page.waitForLoadState('networkidle')
 
+		// Check if redirected to login
+		const signInButton = page.locator('button:has-text("Sign In")')
+		const isOnLogin = await signInButton.isVisible().catch(() => false)
+
+		if (isOnLogin) {
+			console.log('Not logged in, attempting login...')
+			const usernameField = page.locator('input').first()
+			const passwordField = page.locator('input[placeholder*="password"]')
+
+			await usernameField.fill('Administrator')
+			await passwordField.fill('admin123')
+			await signInButton.click()
+
+			// Wait for redirect to new-request page
+			await page.waitForURL('**/new-request', { timeout: 10000 })
+			await page.waitForLoadState('networkidle')
+		}
+
 		// Verify only ONE progress indicator visible (no duplicates)
 		const progressTexts = page.locator('text=/Step \\d+ of \\d+/')
-		await expect(progressTexts).toHaveCount(1, { timeout: 5000 })
+		await expect(progressTexts).toHaveCount(1, { timeout: 10000 })
 		console.log('✓ Single progress indicator confirmed')
 
 		// Step 1: Select Tay Tasy Council

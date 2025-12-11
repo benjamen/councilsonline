@@ -19,6 +19,7 @@
         <div class="relative">
           <input
             :id="field.field_name"
+            :name="field.field_name"
             type="text"
             v-model="localData[field.field_name]"
             @blur="handleFieldValidation(field)"
@@ -50,6 +51,7 @@
         <div class="relative">
           <select
             :id="field.field_name"
+            :name="field.field_name"
             v-model="localData[field.field_name]"
             @blur="handleFieldValidation(field)"
             :required="field.is_required"
@@ -90,6 +92,7 @@
           <div class="flex items-center h-5">
             <input
               :id="field.field_name"
+              :name="field.field_name"
               type="checkbox"
               v-model="localData[field.field_name]"
               @change="handleFieldValidation(field)"
@@ -118,6 +121,7 @@
         </label>
         <textarea
           :id="field.field_name"
+          :name="field.field_name"
           v-model="localData[field.field_name]"
           @blur="handleFieldValidation(field)"
           :required="field.is_required"
@@ -145,6 +149,7 @@
         <div class="relative">
           <input
             :id="field.field_name"
+            :name="field.field_name"
             type="date"
             v-model="localData[field.field_name]"
             @blur="handleFieldValidation(field)"
@@ -177,6 +182,7 @@
         <div class="relative">
           <input
             :id="field.field_name"
+            :name="field.field_name"
             type="number"
             v-model.number="localData[field.field_name]"
             :required="field.is_required"
@@ -203,6 +209,7 @@
         <div class="relative">
           <input
             :id="field.field_name"
+            :name="field.field_name"
             type="number"
             v-model.number="localData[field.field_name]"
             :required="field.is_required"
@@ -232,6 +239,7 @@
           </div>
           <input
             :id="field.field_name"
+            :name="field.field_name"
             type="number"
             v-model.number="localData[field.field_name]"
             @blur="handleFieldValidation(field)"
@@ -301,6 +309,25 @@ const localData = computed({
 // Filter visible fields based on depends_on logic
 const visibleFields = computed(() => {
   return props.fields.filter(field => {
+    // Hide individual address component fields if Philippines Address Input is being used
+    const parentSection = field.parent_section_code?.toLowerCase() || ''
+    const addressSections = ['address', 'residential_address', 'permanent_address', 'property_address', 'current_address', 'home_address']
+    const isInAddressSection = addressSections.includes(parentSection)
+    const addressComponentFields = ['barangay', 'municipality', 'province', 'city', 'region', 'zip_code', 'postal_code']
+
+    // Check if this section has an address_line field (which triggers PhilippinesAddressInput)
+    if (isInAddressSection) {
+      const hasAddressLineField = props.fields.some(f =>
+        f.parent_section_code === field.parent_section_code &&
+        f.field_name === 'address_line'
+      )
+
+      // If this section has address_line AND this field is one of the component fields, hide it
+      if (hasAddressLineField && addressComponentFields.includes(field.field_name)) {
+        return false
+      }
+    }
+
     return isFieldVisible(field, localData.value)
   })
 })

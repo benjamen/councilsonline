@@ -8,6 +8,8 @@
  "engine": "InnoDB",
  "field_order": [
   "request",
+  "account",
+  "message_category",
   "communication_number",
   "section_break_details",
   "communication_type",
@@ -42,7 +44,27 @@
    "in_list_view": 1,
    "label": "Request",
    "options": "Request",
-   "reqd": 1
+   "reqd": 0
+  },
+  {
+   "fieldname": "account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Account",
+   "options": "User",
+   "description": "User account for non-request communications"
+  },
+  {
+   "fieldname": "message_category",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Category",
+   "options": "Request-Related\nGeneral Inquiry\nPre-Application Query\nAccount Support\nOther",
+   "default": "Request-Related",
+   "reqd": 1,
+   "description": "Category of communication"
   },
   {
    "fieldname": "communication_number",

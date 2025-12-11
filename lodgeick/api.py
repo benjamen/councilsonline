@@ -765,22 +765,13 @@ def create_draft_request(data, current_step=None, total_steps=None):
         frappe.log_error(f"Create Draft Request Error: {str(e)}")
         raise
 
-
 @frappe.whitelist()
 def update_draft_request(request_id, data, current_step=None, total_steps=None):
     """
     Update an existing draft request
-
-    Args:
-        request_id: ID of the request to update
-        data: Dictionary containing updated request data
-        current_step: Current step in the form (1-indexed)
-        total_steps: Total number of steps in the form
-
-    Returns:
-        dict: Success message
+    # ... docstring ...
     """
-    try:
+    try: # <--- KEEP THIS TRY BLOCK
         # Parse data if it's a JSON string
         if isinstance(data, str):
             import json
@@ -829,9 +820,11 @@ def update_draft_request(request_id, data, current_step=None, total_steps=None):
             "request_number": request_doc.request_number
         }
 
+    # 🚨 ADD THIS EXCEPTION BLOCK 🚨
     except Exception as e:
         frappe.db.rollback()
         frappe.log_error(f"Update Draft Request Error: {str(e)}")
+        # Re-raise the error so the calling function/client receives a failure
         raise
 
 
@@ -881,6 +874,47 @@ def load_draft_request(request_id):
 
     except Exception as e:
         frappe.log_error(f"Load Draft Request Error: {str(e)}")
+        raise
+
+
+@frappe.whitelist()
+def submit_request(request_id):
+    """
+    Submit a draft request (move from Draft to Submitted status)
+
+    Args:
+        request_id: ID of the request to submit
+
+    Returns:
+        dict: Success message and request number
+    """
+    try:
+        doc = frappe.get_doc("Request", request_id)
+
+        # Validate user has permission
+        if doc.requester != frappe.session.user and not frappe.has_permission("Request", "submit", doc=doc):
+            frappe.throw(_("You don't have permission to submit this request"))
+
+        # Check if already submitted
+        if doc.docstatus == 1:
+            frappe.throw(_("Request is already submitted"))
+
+        # Validate required fields before submission
+        if not doc.request_type:
+            frappe.throw(_("Request Type is required"))
+
+        # Submit the document
+        doc.submit()
+
+        return {
+            "success": True,
+            "message": "Request submitted successfully",
+            "request_number": doc.request_number,
+            "request_id": doc.name
+        }
+
+    except Exception as e:
+        frappe.log_error(f"Submit Request Error: {str(e)}")
         raise
 
 
@@ -1012,30 +1046,53 @@ def get_request_type_config(request_type_code):
             # Get the full document to access child tables
             request_type_doc = frappe.get_doc("Request Type", request_type.name)
 
-        # Get steps configuration
+        # Get steps configuration from new flattened structure
         steps = []
-        if hasattr(request_type_doc, 'steps') and request_type_doc.steps:
-            for step in request_type_doc.steps:
+        if hasattr(request_type_doc, 'step_configs') and request_type_doc.step_configs:
+            for step_config in request_type_doc.step_configs:
+                # Build step data
                 step_data = {
-                    "step_number": step.step_number,
-                    "step_title": step.step_title,
-                    "step_description": step.step_description,
-                    "is_optional": step.is_optional if hasattr(step, 'is_optional') else 0,
-                    "fields": []
+                    "step_number": step_config.step_number,
+                    "step_title": step_config.step_title,
+                    "step_code": step_config.step_code,
+                    "step_component": step_config.step_component if hasattr(step_config, 'step_component') else "DynamicStepRenderer",
+                    "is_enabled": step_config.is_enabled if hasattr(step_config, 'is_enabled') else 1,
+                    "is_required": step_config.is_required if hasattr(step_config, 'is_required') else 1,
+                    "sections": []
                 }
 
-                # Get fields for this step
-                if hasattr(step, 'fields'):
-                    for field in step.fields:
-                        step_data["fields"].append({
-                            "fieldname": field.fieldname,
-                            "label": field.label,
-                            "fieldtype": field.fieldtype,
-                            "required": field.required,
-                            "options": field.options,
-                            "description": field.description,
-                            "default_value": field.default_value if hasattr(field, 'default_value') else None
-                        })
+                # Get sections for this step
+                if hasattr(request_type_doc, 'step_sections'):
+                    for section in request_type_doc.step_sections:
+                        if section.parent_step_code == step_config.step_code:
+                            section_data = {
+                                "section_code": section.section_code,
+                                "section_title": section.section_title,
+                                "section_type": section.section_type if hasattr(section, 'section_type') else "Section",
+                                "sequence": section.sequence if hasattr(section, 'sequence') else 1,
+                                "is_enabled": section.is_enabled if hasattr(section, 'is_enabled') else 1,
+                                "is_required": section.is_required if hasattr(section, 'is_required') else 1,
+                                "fields": []
+                            }
+
+                            # Get fields for this section
+                            if hasattr(request_type_doc, 'step_fields'):
+                                for field in request_type_doc.step_fields:
+                                    if field.parent_section_code == section.section_code:
+                                        section_data["fields"].append({
+                                            "field_name": field.field_name,
+                                            "field_label": field.field_label,
+                                            "field_type": field.field_type,
+                                            "is_required": field.is_required if hasattr(field, 'is_required') else 0,
+                                            "options": field.options if hasattr(field, 'options') else None,
+                                            "description": field.description if hasattr(field, 'description') else None,
+                                            "default_value": field.default_value if hasattr(field, 'default_value') else None,
+                                            "depends_on": field.depends_on if hasattr(field, 'depends_on') else None,
+                                            "show_on_review": field.show_on_review if hasattr(field, 'show_on_review') else 1,
+                                            "parent_section_code": field.parent_section_code if hasattr(field, 'parent_section_code') else None,
+                                        })
+
+                            step_data["sections"].append(section_data)
 
                 steps.append(step_data)
 
@@ -1050,6 +1107,10 @@ def get_request_type_config(request_type_code):
             "fee_calculation_method": request_type_doc.fee_calculation_method,
             "requires_property": request_type_doc.requires_property if hasattr(request_type_doc, 'requires_property') else 1,
             "requires_payment": request_type_doc.requires_payment if hasattr(request_type_doc, 'requires_payment') else 1,
+            "council_meeting_available": request_type_doc.council_meeting_available if hasattr(request_type_doc, 'council_meeting_available') else 1,
+            "collect_payment": request_type_doc.collect_payment if hasattr(request_type_doc, 'collect_payment') else 0,
+            "make_payment": request_type_doc.make_payment if hasattr(request_type_doc, 'make_payment') else 0,
+            "default_response_role": request_type_doc.default_response_role if hasattr(request_type_doc, 'default_response_role') else None,
             "steps": steps
         }
 
@@ -1098,75 +1159,153 @@ def get_staff_users():
 
 
 @frappe.whitelist()
-def book_council_meeting(request_id, meeting_type="Pre-Application Meeting", meeting_purpose=None):
+def book_council_meeting(request_id=None, request_type_code=None, meeting_type="Pre-Application Meeting",
+                         meeting_purpose=None, discussion_points=None, attendees=None, preferred_time_slots=None):
     """
-    Book a council meeting for a request and create a Pre-Application Meeting record with Event
+    Book a council meeting for a request (or standalone for pre-application) and create a Pre-Application Meeting record
 
     Args:
-        request_id: The Request document ID
+        request_id: The Request document ID (optional for draft/pre-application meetings)
+        request_type_code: Request type code if no request_id (for standalone meetings)
         meeting_type: Type of meeting (default: Pre-Application Meeting)
         meeting_purpose: Purpose/reason for the meeting
+        discussion_points: Key topics to discuss
+        attendees: List of additional attendees (dicts with attendee_name, attendee_email, attendee_role)
+        preferred_time_slots: List of preferred time slots (dicts with preference_order, preferred_start, preferred_end)
 
     Returns:
         dict: Success message with meeting details
     """
+    import json
+
     try:
-        # Verify the request exists
-        if not frappe.db.exists("Request", request_id):
-            frappe.throw(_("Request not found"))
+        # Parse JSON if strings
+        if isinstance(attendees, str):
+            attendees = json.loads(attendees) if attendees else []
+        if isinstance(preferred_time_slots, str):
+            preferred_time_slots = json.loads(preferred_time_slots) if preferred_time_slots else []
 
-        # Get the request document
-        request_doc = frappe.get_doc("Request", request_id)
+        attendees = attendees or []
+        preferred_time_slots = preferred_time_slots or []
 
-        # Check if a meeting already exists for this request
-        existing_meeting = frappe.db.get_value(
-            "Pre-Application Meeting",
-            {
-                "request": request_id,
-                "status": ["in", ["Requested", "Scheduled", "Confirmed"]]
-            },
-            "name"
-        )
+        request_doc = None
+        council_name = None
 
-        if existing_meeting:
-            return {
-                "success": True,
-                "meeting_id": existing_meeting,
-                "message": f"A meeting request already exists: {existing_meeting}"
-            }
+        # Handle draft/standalone meetings (no request_id yet)
+        if request_id and request_id != "draft":
+            # Verify the request exists
+            if not frappe.db.exists("Request", request_id):
+                frappe.throw(_("Request not found"))
+
+            # Get the request document
+            request_doc = frappe.get_doc("Request", request_id)
+            council_name = request_doc.council
+
+            # Check if a meeting already exists for this request
+            existing_meeting = frappe.db.get_value(
+                "Pre-Application Meeting",
+                {
+                    "request": request_id,
+                    "status": ["in", ["Requested", "Scheduled", "Confirmed"]]
+                },
+                "name"
+            )
+
+            if existing_meeting:
+                return {
+                    "success": True,
+                    "meeting_id": existing_meeting,
+                    "message": f"A meeting request already exists: {existing_meeting}"
+                }
+        else:
+            # For standalone/draft meetings, get council from session or default
+            # Try to get from locked council in session
+            locked_council = frappe.session.get("locked_council")
+            if locked_council:
+                council_name = locked_council
+            else:
+                # Get first available council as fallback
+                councils = frappe.get_all("Council", filters={"is_active": 1}, limit=1)
+                council_name = councils[0].name if councils else None
 
         # Create Pre-Application Meeting
         meeting_doc = frappe.get_doc({
             "doctype": "Pre-Application Meeting",
-            "request": request_id,
+            "request": request_id if (request_id and request_id != "draft") else None,
+            "council": council_name,
             "meeting_type": meeting_type,
             "status": "Requested",
-            "meeting_purpose": meeting_purpose or f"Discuss {request_doc.request_type} application",
+            "meeting_purpose": meeting_purpose or f"Discuss {request_type_code or 'application'} requirements",
+            "discussion_points": discussion_points,
             "requested_by": frappe.session.user,
             "requested_date": frappe.utils.now_datetime()
         })
 
+        # Add preferred time slots
+        for slot in preferred_time_slots:
+            if slot.get("preferred_start") and slot.get("preferred_end"):
+                meeting_doc.append("preferred_time_slots", {
+                    "preference_order": slot.get("preference_order", 1),
+                    "preferred_start": slot.get("preferred_start"),
+                    "preferred_end": slot.get("preferred_end"),
+                    "planner_response": "Pending"
+                })
+
+        # Add attendees
+        for attendee in attendees:
+            if attendee.get("attendee_name") and attendee.get("attendee_email"):
+                meeting_doc.append("meeting_attendees", {
+                    "attendee_name": attendee.get("attendee_name"),
+                    "attendee_email": attendee.get("attendee_email"),
+                    "role": attendee.get("attendee_role", "Representative")  # Map attendee_role to role field
+                })
+
         meeting_doc.insert(ignore_permissions=True)
 
-        # Add a comment to the request about the meeting booking
-        request_doc.add_comment(
-            "Comment",
-            f"{meeting_type} requested. Meeting record {meeting_doc.name} created. A council planner will contact you within 2 business days to schedule."
-        )
+        # Add a comment to the request about the meeting booking (if request exists)
+        if request_doc:
+            request_doc.add_comment(
+                "Comment",
+                f"{meeting_type} requested. Meeting record {meeting_doc.name} created. A council planner will contact you within 2 business days to schedule."
+            )
 
-        # Create a notification task for council team (optional - using WB Task)
+        # Create a notification task for council team
         try:
-            council_user = "Administrator"  # Or get from council configuration
+            # Get council planner role assignee
+            council_user = "Administrator"
+            if council_name:
+                # Try to find a Consent Planner for this council
+                users_with_role = frappe.get_all(
+                    "Has Role",
+                    filters={
+                        "role": "Consent Planner",
+                        "parenttype": "User"
+                    },
+                    fields=["parent"],
+                    limit=10
+                )
+
+                for user_role in users_with_role:
+                    user = user_role.parent
+                    if frappe.db.get_value("User", user, "enabled"):
+                        council_user = user
+                        break
+
             task_doc = frappe.get_doc({
                 "doctype": "WB Task",
-                "title": f"Schedule {meeting_type} - {request_doc.request_number}",
+                "title": f"Schedule {meeting_type} - {request_doc.request_number if request_doc else 'Pre-Application'}",
                 "description": f"""
                     <p><strong>Meeting Request:</strong> {meeting_doc.name}</p>
-                    <p><strong>Request Number:</strong> {request_doc.request_number}</p>
-                    <p><strong>Request Type:</strong> {request_doc.request_type}</p>
-                    <p><strong>Requester:</strong> {request_doc.requester_name or 'N/A'} ({request_doc.requester_email})</p>
-                    <p><strong>Property:</strong> {request_doc.property_address or 'N/A'}</p>
+                    {f'<p><strong>Request Number:</strong> {request_doc.request_number}</p>' if request_doc else ''}
+                    {f'<p><strong>Request Type:</strong> {request_doc.request_type}</p>' if request_doc else f'<p><strong>Request Type:</strong> {request_type_code}</p>' if request_type_code else ''}
+                    <p><strong>Requester:</strong> {frappe.session.user}</p>
                     <p><strong>Purpose:</strong> {meeting_purpose or 'N/A'}</p>
+                    {f'<p><strong>Property:</strong> {request_doc.property_address}</p>' if request_doc and request_doc.property_address else ''}
+                    <br>
+                    <p><strong>Preferred Time Slots:</strong></p>
+                    <ul>
+                    {"".join([f'<li>Option {slot.get("preference_order")}: {slot.get("preferred_start")} to {slot.get("preferred_end")}</li>' for slot in preferred_time_slots if slot.get("preferred_start")])}
+                    </ul>
                     <br>
                     <p>Please schedule this meeting with the applicant within 2 business days.</p>
                 """,
@@ -1174,9 +1313,9 @@ def book_council_meeting(request_id, meeting_type="Pre-Application Meeting", mee
                 "priority": "High",
                 "task_type": "Manual",
                 "due_date": frappe.utils.add_days(frappe.utils.today(), 2),
-                "assign_from": council_user,
+                "assign_from": frappe.session.user,
                 "assign_to": council_user,
-                "request": request_id
+                "request": request_id if (request_id and request_id != "draft") else None
             })
             task_doc.insert(ignore_permissions=True)
         except Exception as task_error:
@@ -1195,6 +1334,191 @@ def book_council_meeting(request_id, meeting_type="Pre-Application Meeting", mee
     except Exception as e:
         frappe.log_error(f"Book Council Meeting Error: {str(e)}", "Meeting Booking Error")
         frappe.throw(_("Failed to book meeting: {0}").format(str(e)))
+
+
+@frappe.whitelist()
+def send_request_message(request_id, subject, message, communication_type="Email"):
+    """
+    Send a message/communication to the council regarding a request.
+    Creates a Communication Log entry and sends email notification.
+
+    Args:
+        request_id: Request document name
+        subject: Message subject
+        message: Message content (HTML)
+        communication_type: Type of communication (Email, Phone, etc.)
+
+    Returns:
+        Communication Log document name
+    """
+    try:
+        # Validate request exists and user has permission
+        request_doc = frappe.get_doc("Request", request_id)
+
+        if request_doc.requester != frappe.session.user:
+            frappe.throw("You don't have permission to send messages for this request")
+
+        # Get council email
+        council_doc = frappe.get_doc("Council", request_doc.council)
+        council_email = council_doc.contact_email
+
+        # Create Communication Log
+        comm = frappe.get_doc({
+            "doctype": "Communication Log",
+            "request": request_id,
+            "communication_type": communication_type,
+            "direction": "Outgoing",
+            "subject": subject,
+            "content": message,
+            "sender": frappe.session.user,
+            "recipient": council_email,
+            "communication_date": frappe.utils.now_datetime(),
+            "requires_response": 1
+        })
+        comm.insert(ignore_permissions=True)
+
+        # Send email to council
+        frappe.sendmail(
+            recipients=[council_email],
+            subject=f"Message regarding {request_doc.request_number}: {subject}",
+            message=f"""
+            <p>A message has been received from the applicant regarding request {request_doc.request_number}:</p>
+            <p><strong>Subject:</strong> {subject}</p>
+            <div>{message}</div>
+            <hr>
+            <p><strong>Request Details:</strong></p>
+            <ul>
+                <li>Request Number: {request_doc.request_number}</li>
+                <li>Type: {request_doc.request_type}</li>
+                <li>Applicant: {request_doc.requester_name}</li>
+                <li>Email: {request_doc.requester_email}</li>
+            </ul>
+            """,
+            reference_doctype="Request",
+            reference_name=request_id
+        )
+
+        # Add comment to Request
+        request_doc.add_comment("Comment", f"Message sent to council: {subject}")
+
+        # Create WB Task for council team to respond
+        task_doc = None
+        assignee = None
+        try:
+            # Get request type and determine assignee
+            request_type = request_doc.request_type
+            assignee = frappe.session.user  # Default fallback
+
+            if request_type:
+                request_type_doc = frappe.get_doc("Request Type", request_type)
+
+                # Get user with required role (if specified)
+                if hasattr(request_type_doc, 'default_response_role') and request_type_doc.default_response_role:
+                    # Find first active user with this role
+                    users_with_role = frappe.get_all(
+                        "Has Role",
+                        filters={
+                            "role": request_type_doc.default_response_role,
+                            "parenttype": "User"
+                        },
+                        fields=["parent"],
+                        limit=10
+                    )
+
+                    # Find first enabled user
+                    for user_role in users_with_role:
+                        user = user_role.parent
+                        if frappe.db.get_value("User", user, "enabled"):
+                            assignee = user
+                            break
+
+                # If no role specified or no user found, try to use assigned_to from request
+                if assignee == frappe.session.user and request_doc.assigned_to:
+                    assignee = request_doc.assigned_to
+
+            # Create the task
+            task_doc = frappe.get_doc({
+                "doctype": "WB Task",
+                "title": f"Respond to Message - {request_doc.request_number}",
+                "description": f"""
+                    <h3>Message Received from Applicant</h3>
+                    <p><strong>Request:</strong> {request_doc.request_number}</p>
+                    <p><strong>Subject:</strong> {subject}</p>
+                    <p><strong>Message:</strong></p>
+                    <div style="border-left: 3px solid #ccc; padding-left: 15px; margin: 10px 0;">
+                        {message}
+                    </div>
+                    <p><strong>Sender:</strong> {frappe.session.user}</p>
+                    <p><strong>Date:</strong> {frappe.utils.now_datetime().strftime('%Y-%m-%d %H:%M')}</p>
+                    <hr>
+                    <p><em>Please review and respond to this message through the Request view.</em></p>
+                """,
+                "status": "Open",
+                "priority": "Medium",
+                "task_type": "Manual",
+                "due_date": frappe.utils.add_days(frappe.utils.today(), 3),  # 3 business days
+                "assign_from": frappe.session.user,
+                "assign_to": assignee,
+                "request": request_id
+            })
+            task_doc.insert(ignore_permissions=True)
+
+            frappe.logger().info(f"Created WB Task {task_doc.name} for message on {request_id}")
+
+        except Exception as e:
+            # Log error but don't fail the message sending
+            frappe.log_error(f"Failed to create task for message: {str(e)}", "Message Task Creation Error")
+
+        return {
+            "success": True,
+            "communication_id": comm.name,
+            "task_id": task_doc.name if task_doc else None,
+            "assigned_to": assignee if assignee else None,
+            "message": "Message sent successfully to council"
+        }
+
+    except Exception as e:
+        frappe.log_error(f"Send Message Error: {str(e)}", "Send Message Error")
+        frappe.throw(_("Failed to send message: {0}").format(str(e)))
+
+
+@frappe.whitelist()
+def get_request_communications(request_id):
+    """
+    Get all communications for a request (excluding internal notes).
+
+    Args:
+        request_id: Request document name
+
+    Returns:
+        List of communication records
+    """
+    try:
+        request_doc = frappe.get_doc("Request", request_id)
+
+        # Check permission
+        if request_doc.requester != frappe.session.user and not frappe.has_permission("Request", "read", request_doc):
+            frappe.throw("You don't have permission to view communications for this request")
+
+        communications = frappe.get_all(
+            "Communication Log",
+            filters={
+                "request": request_id,
+                "is_internal": 0  # Exclude internal notes
+            },
+            fields=[
+                "name", "communication_number", "communication_type", "direction",
+                "subject", "content", "sender", "recipient", "communication_date",
+                "email_status", "requires_response", "response_due_date", "responded_at"
+            ],
+            order_by="communication_date desc"
+        )
+
+        return communications
+
+    except Exception as e:
+        frappe.log_error(f"Get Communications Error: {str(e)}", "Get Communications Error")
+        frappe.throw(_("Failed to retrieve communications: {0}").format(str(e)))
 
 
 @frappe.whitelist()
@@ -2671,7 +2995,7 @@ def search_philippines_addresses(query):
     return []
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_council_request_types(council_code):
     """
     Get enabled request types for a specific council with council-specific configuration
@@ -2700,21 +3024,12 @@ def get_council_request_types(council_code):
             # Build result with council overrides
             rt_data = {
                 "name": request_type.name,
-                "request_type_name": request_type.request_type_name,
-                "category": request_type.category,
-                "description": council_rt.brief_description or request_type.description,
-                "base_fee": council_rt.base_fee_override or request_type.base_fee,
-                "sla_days": council_rt.sla_days_override or request_type.sla_days,
-                "process_description": council_rt.process_description or "",
-                "is_active": request_type.is_active,
-                "requires_property": request_type.requires_property,
-                "requires_payment": request_type.requires_payment,
-                "council_specific": {
-                    "brief_description": council_rt.brief_description,
-                    "process_description": council_rt.process_description,
-                    "base_fee_override": council_rt.base_fee_override,
-                    "sla_days_override": council_rt.sla_days_override
-                }
+                "type_name": request_type.type_name,
+                "category": getattr(request_type, 'category', None),
+                "description": council_rt.brief_description or getattr(request_type, 'description', ''),
+                "base_fee": council_rt.base_fee_override or getattr(request_type, 'base_fee', 0),
+                "processing_sla_days": council_rt.sla_days_override or getattr(request_type, 'processing_sla_days', 20),
+                "is_active": getattr(request_type, 'is_active', 1)
             }
 
             result.append(rt_data)
@@ -4798,6 +5113,211 @@ def load_request_type_config(request_type_name):
 
 	except Exception as e:
 		frappe.log_error(f"Load Request Type Config Error: {str(e)}")
+		return {
+			"success": False,
+			"error": str(e)
+		}
+
+
+# ============================================================
+# MEETING & CALENDAR AVAILABILITY APIs
+# ============================================================
+
+@frappe.whitelist()
+def get_meeting_config(council_code, meeting_type="Pre-Application Meeting"):
+	"""
+	Get meeting configuration for a specific council and meeting type
+
+	Args:
+		council_code: Council code (e.g., 'TYT', 'AKL')
+		meeting_type: Type of meeting (default: 'Pre-Application Meeting')
+
+	Returns:
+		dict: Meeting configuration including duration, buffer time, etc.
+	"""
+	try:
+		# Get council document
+		council = frappe.get_doc("Council", {"council_code": council_code})
+
+		if not council:
+			frappe.throw(_("Council not found"))
+
+		# Default configuration from council
+		config = {
+			"duration_minutes": cint(council.get("default_meeting_duration") or 60),
+			"buffer_time": cint(council.get("meeting_buffer_time") or 15),
+			"available_durations": [int(d.strip()) for d in (council.get("available_meeting_durations") or "30,60,90").split(",")],
+			"meeting_type": meeting_type,
+			"council_name": council.council_name
+		}
+
+		return {
+			"success": True,
+			"config": config
+		}
+
+	except Exception as e:
+		frappe.log_error(f"Get Meeting Config Error: {str(e)}")
+		return {
+			"success": False,
+			"error": str(e)
+		}
+
+
+@frappe.whitelist()
+def get_available_meeting_slots(council_code, meeting_type="Pre-Application Meeting", start_date=None, end_date=None, duration_minutes=None):
+	"""
+	Get available meeting time slots for a council based on business hours and existing bookings
+
+	Args:
+		council_code: Council code
+		meeting_type: Type of meeting
+		start_date: Start date for availability check (YYYY-MM-DD)
+		end_date: End date for availability check (YYYY-MM-DD)
+		duration_minutes: Override duration in minutes (optional)
+
+	Returns:
+		dict: Available time slots
+	"""
+	try:
+		from datetime import datetime, timedelta, time as datetime_time
+		import json
+
+		# Get council document
+		council = frappe.get_doc("Council", {"council_code": council_code})
+
+		if not council:
+			frappe.throw(_("Council not found"))
+
+		# Parse dates
+		if not start_date:
+			start_date = datetime.now().date()
+		else:
+			start_date = getdate(start_date)
+
+		if not end_date:
+			end_date = start_date + timedelta(days=30)
+		else:
+			end_date = getdate(end_date)
+
+		# Get meeting configuration
+		meeting_duration = cint(duration_minutes or council.get("default_meeting_duration") or 60)
+		buffer_time = cint(council.get("meeting_buffer_time") or 15)
+
+		# Get business hours
+		business_hours = {}
+		if council.get("business_hours"):
+			for bh in council.business_hours:
+				if bh.is_open:
+					# Convert timedelta to time objects if needed
+					start_time = bh.start_time
+					end_time = bh.end_time
+
+					# If they're timedelta objects, convert them
+					if isinstance(start_time, timedelta):
+						total_seconds = int(start_time.total_seconds())
+						hours = total_seconds // 3600
+						minutes = (total_seconds % 3600) // 60
+						start_time = datetime_time(hours, minutes)
+
+					if isinstance(end_time, timedelta):
+						total_seconds = int(end_time.total_seconds())
+						hours = total_seconds // 3600
+						minutes = (total_seconds % 3600) // 60
+						end_time = datetime_time(hours, minutes)
+
+					business_hours[bh.day_of_week] = {
+						"start_time": start_time,
+						"end_time": end_time
+					}
+		else:
+			# Default business hours (Monday-Friday, 9 AM - 5 PM)
+			default_hours = {
+				"start_time": datetime_time(9, 0),
+				"end_time": datetime_time(17, 0)
+			}
+			for day in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]:
+				business_hours[day] = default_hours
+
+		# Get all booked events in the date range
+		booked_events = frappe.get_all(
+			"Event",
+			filters={
+				"event_category": "Meeting",
+				"starts_on": ["between", [start_date, end_date]],
+				"status": ["!=", "Cancelled"]
+			},
+			fields=["starts_on", "ends_on"]
+		)
+
+		# Convert booked events to list of datetime ranges
+		booked_slots = []
+		for event in booked_events:
+			booked_slots.append({
+				"start": event.starts_on,
+				"end": event.ends_on
+			})
+
+		# Generate available slots
+		available_slots = []
+		current_date = start_date
+
+		while current_date <= end_date:
+			day_name = current_date.strftime("%A")
+
+			# Check if council is open on this day
+			if day_name not in business_hours:
+				current_date += timedelta(days=1)
+				continue
+
+			day_hours = business_hours[day_name]
+			day_start = datetime.combine(current_date, day_hours["start_time"])
+			day_end = datetime.combine(current_date, day_hours["end_time"])
+
+			# Generate time slots for this day
+			current_slot_start = day_start
+
+			while current_slot_start + timedelta(minutes=meeting_duration) <= day_end:
+				current_slot_end = current_slot_start + timedelta(minutes=meeting_duration)
+
+				# Check if this slot conflicts with any booked event
+				is_available = True
+				for booked in booked_slots:
+					# Check for overlap
+					if (current_slot_start < booked["end"] and current_slot_end > booked["start"]):
+						is_available = False
+						break
+
+				# Add slot if available
+				if is_available:
+					available_slots.append({
+						"start": current_slot_start.isoformat(),
+						"end": current_slot_end.isoformat(),
+						"start_display": current_slot_start.strftime("%Y-%m-%d %I:%M %p"),
+						"end_display": current_slot_end.strftime("%I:%M %p"),
+						"day": day_name,
+						"duration_minutes": meeting_duration
+					})
+
+				# Move to next slot (with buffer time)
+				current_slot_start += timedelta(minutes=meeting_duration + buffer_time)
+
+			current_date += timedelta(days=1)
+
+		return {
+			"success": True,
+			"slots": available_slots,
+			"total_slots": len(available_slots),
+			"config": {
+				"duration_minutes": meeting_duration,
+				"buffer_time": buffer_time,
+				"start_date": start_date.isoformat(),
+				"end_date": end_date.isoformat()
+			}
+		}
+
+	except Exception as e:
+		frappe.log_error(f"Get Available Meeting Slots Error: {str(e)}")
 		return {
 			"success": False,
 			"error": str(e)

@@ -90,27 +90,21 @@
             </div>
           </div>
 
-          <!-- Property Information -->
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <!-- Property Information - only show if request type has property -->
+          <div v-if="hasPropertyDetails" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Property Information</h2>
 
             <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="text-sm font-medium text-gray-500">Property ID</label>
-                <p class="mt-1 text-sm text-gray-900">{{ request.data.property || 'N/A' }}</p>
-              </div>
-              <div>
+              <div v-if="request.data.property_address">
                 <label class="text-sm font-medium text-gray-500">Address</label>
-                <p class="mt-1 text-sm text-gray-900">{{ request.data.property_address || 'N/A' }}</p>
+                <p class="mt-1 text-sm text-gray-900">{{ request.data.property_address }}</p>
+              </div>
+              <div v-if="request.data.legal_description">
+                <label class="text-sm font-medium text-gray-500">Legal Description</label>
+                <p class="mt-1 text-sm text-gray-900">{{ request.data.legal_description }}</p>
               </div>
             </div>
           </div>
-
-          <!-- Resource Consent Details (if applicable) -->
-          <ResourceConsentDetails
-            v-if="request.data?.request_category === 'Resource Consent'"
-            :request-id="request.data.name"
-          />
 
           <!-- Applicant Information -->
           <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -133,11 +127,167 @@
                 <label class="text-sm font-medium text-gray-500">Address</label>
                 <p class="mt-1 text-sm text-gray-900">{{ request.data.applicant_address || 'N/A' }}</p>
               </div>
+              <div v-if="request.data.applicant_company">
+                <label class="text-sm font-medium text-gray-500">Company/Organization</label>
+                <p class="mt-1 text-sm text-gray-900">{{ request.data.applicant_company }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Delivery & Payment Preferences - only show if request type collects payment -->
+          <div v-if="requestTypeConfig.data?.collect_payment" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Delivery & Payment Preferences</h2>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div v-if="request.data.delivery_preference">
+                <label class="text-sm font-medium text-gray-500">Delivery Preference</label>
+                <p class="mt-1 text-sm text-gray-900">{{ request.data.delivery_preference }}</p>
+              </div>
+              <div v-if="request.data.invoice_to">
+                <label class="text-sm font-medium text-gray-500">Invoice To</label>
+                <p class="mt-1 text-sm text-gray-900">{{ request.data.invoice_to }}</p>
+              </div>
+              <div v-if="request.data.invoice_recipient_name">
+                <label class="text-sm font-medium text-gray-500">Invoice Recipient Name</label>
+                <p class="mt-1 text-sm text-gray-900">{{ request.data.invoice_recipient_name }}</p>
+              </div>
+              <div v-if="request.data.invoice_recipient_email">
+                <label class="text-sm font-medium text-gray-500">Invoice Recipient Email</label>
+                <p class="mt-1 text-sm text-gray-900">{{ request.data.invoice_recipient_email }}</p>
+              </div>
+              <div v-if="request.data.purchase_order_number" class="col-span-2">
+                <label class="text-sm font-medium text-gray-500">Purchase Order Number</label>
+                <p class="mt-1 text-sm text-gray-900">{{ request.data.purchase_order_number }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Council Meeting Section -->
+          <div v-if="requestTypeConfig.data?.council_meeting_available" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <h2 class="text-lg font-semibold text-gray-900">Council Meeting</h2>
+                <p class="text-sm text-gray-600 mt-1">
+                  Schedule a meeting with council planners to discuss your application
+                </p>
+              </div>
+
+              <!-- Status Badge if meeting exists -->
+              <span
+                v-if="meetings.data && meetings.data.length > 0"
+                class="px-3 py-1 rounded-full text-sm font-medium"
+                :class="{
+                  'bg-yellow-100 text-yellow-800': meetings.data[0].status === 'Requested',
+                  'bg-blue-100 text-blue-800': meetings.data[0].status === 'Scheduled',
+                  'bg-green-100 text-green-800': meetings.data[0].status === 'Completed',
+                  'bg-gray-100 text-gray-800': meetings.data[0].status === 'Cancelled'
+                }"
+              >
+                {{ meetings.data[0].status }}
+              </span>
+            </div>
+
+            <!-- Meeting Details (if exists) -->
+            <div v-if="meetings.data && meetings.data.length > 0" class="space-y-3">
+              <div v-for="meeting in meetings.data" :key="meeting.name" class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded">
+                <div class="grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <span class="font-medium text-gray-700">Type:</span>
+                    <span class="ml-2 text-gray-900">{{ meeting.meeting_type }}</span>
+                  </div>
+                  <div>
+                    <span class="font-medium text-gray-700">Status:</span>
+                    <span class="ml-2 text-gray-900">{{ meeting.status }}</span>
+                  </div>
+                  <div v-if="meeting.scheduled_start" class="col-span-2">
+                    <span class="font-medium text-gray-700">Scheduled:</span>
+                    <span class="ml-2 text-gray-900">{{ formatMeetingDate(meeting.scheduled_start) }}</span>
+                  </div>
+                  <div v-if="meeting.meeting_format" class="col-span-2">
+                    <span class="font-medium text-gray-700">Format:</span>
+                    <span class="ml-2 text-gray-900">{{ meeting.meeting_format }}</span>
+                  </div>
+                  <div v-if="meeting.meeting_location" class="col-span-2">
+                    <span class="font-medium text-gray-700">Location:</span>
+                    <span class="ml-2 text-gray-900">{{ meeting.meeting_location }}</span>
+                  </div>
+                  <div v-if="meeting.google_meet_link" class="col-span-2">
+                    <span class="font-medium text-gray-700">Meeting Link:</span>
+                    <a :href="meeting.google_meet_link" target="_blank" class="ml-2 text-blue-600 hover:underline">Join Meeting</a>
+                  </div>
+                </div>
+
+                <div v-if="meeting.meeting_purpose" class="mt-3 pt-3 border-t border-blue-200">
+                  <span class="font-medium text-gray-700 text-sm">Purpose:</span>
+                  <p class="mt-1 text-sm text-gray-900">{{ meeting.meeting_purpose }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Request Meeting Button (if no meeting) -->
+            <div v-else class="text-center py-6">
+              <svg class="mx-auto h-12 w-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <p class="text-sm text-gray-600 mb-4">
+                No meeting scheduled yet. Book a meeting to discuss your application with council planners.
+              </p>
+              <button
+                @click="handleBookMeeting"
+                class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Request Council Meeting
+              </button>
+            </div>
+          </div>
+
+          <!-- Dynamic Application Data (using step configuration OR fallback to raw data) -->
+          <template v-if="reviewSections.length > 0">
+            <div
+              v-for="step in reviewSections"
+              :key="step.step_code"
+              class="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+            >
+              <h2 class="text-lg font-semibold text-gray-900 mb-4">{{ step.step_title }}</h2>
+              <div class="space-y-4">
+                <div
+                  v-for="section in step.sections.filter(s => s.show_on_review)"
+                  :key="section.section_code"
+                >
+                  <h3 v-if="section.section_title" class="text-md font-medium text-gray-700 mb-3">
+                    {{ section.section_title }}
+                  </h3>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div
+                      v-for="field in section.fields.filter(f => f.show_on_review)"
+                      :key="field.field_name"
+                      class="border-b border-gray-100 pb-3"
+                    >
+                      <label class="text-sm font-medium text-gray-500">{{ field.review_label || field.field_label }}</label>
+                      <p class="mt-1 text-sm text-gray-900">{{ formatFieldValue(field, request.data[field.field_name]) }}</p>
+                    </div>
+                  </div>
+                </div>
+                <p v-if="!hasReviewContent(step)" class="text-gray-500 text-sm">
+                  No information to display
+                </p>
+              </div>
+            </div>
+          </template>
+
+          <!-- Fallback: Show raw application data if config not loaded -->
+          <div v-else-if="parsedFormData && Object.keys(parsedFormData).length > 0" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Application Details</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div v-for="(value, fieldName) in parsedFormData" :key="fieldName" class="border-b border-gray-100 pb-3">
+                <label class="text-sm font-medium text-gray-500">{{ formatFieldLabel(fieldName) }}</label>
+                <p class="mt-1 text-sm text-gray-900">{{ formatSimpleValue(value) }}</p>
+              </div>
             </div>
           </div>
 
           <!-- Fees & Payments -->
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div v-if="requestTypeConfig.data?.collect_payment" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div class="flex justify-between items-center mb-4">
               <h2 class="text-lg font-semibold text-gray-900">Fees & Payments</h2>
               <span class="text-sm font-medium" :class="request.data.payment_status === 'Paid' ? 'text-green-600' : 'text-orange-600'">
@@ -169,6 +319,50 @@
             >
               Make Payment
             </Button>
+          </div>
+
+          <!-- Payment to be Received (for social services / benefits) -->
+          <div v-if="requestTypeConfig.data?.make_payment" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-lg font-semibold text-gray-900">Payment to be Received</h2>
+              <span class="text-sm font-medium" :class="request.data.payment_status === 'Paid' ? 'text-green-600' : 'text-orange-600'">
+                {{ request.data.payment_status || 'Pending' }}
+              </span>
+            </div>
+
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <div class="flex items-start">
+                <svg class="h-5 w-5 text-blue-600 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div class="flex-1">
+                  <p class="text-sm font-medium text-blue-900">Benefit Payment Information</p>
+                  <p class="text-sm text-blue-700 mt-1">
+                    Once your application is approved, you will receive payment from the council.
+                    Please ensure your bank details are up to date.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                <span class="text-sm text-gray-600">Benefit Amount</span>
+                <span class="text-sm font-semibold text-gray-900">
+                  ${{ requestTypeConfig.data?.base_fee ? requestTypeConfig.data.base_fee.toFixed(2) : '0.00' }}
+                </span>
+              </div>
+              <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                <span class="text-sm text-gray-600">Payment Status</span>
+                <span class="text-sm font-semibold" :class="request.data.payment_status === 'Paid' ? 'text-green-600' : 'text-orange-600'">
+                  {{ request.data.payment_status || 'Pending Approval' }}
+                </span>
+              </div>
+              <div v-if="request.data.selected_bank_account" class="flex justify-between items-center py-2">
+                <span class="text-sm text-gray-600">Payment Method</span>
+                <span class="text-sm font-medium text-gray-900">Bank Transfer</span>
+              </div>
+            </div>
           </div>
 
           <!-- Documents -->
@@ -311,6 +505,21 @@
 
             <div class="space-y-3">
               <Button
+                v-if="request.data.status === 'Draft'"
+                @click="handleEditDraft"
+                variant="solid"
+                theme="blue"
+                class="w-full justify-start"
+              >
+                <template #prefix>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </template>
+                Edit Draft
+              </Button>
+
+              <Button
                 @click="handleSendMessage"
                 variant="outline"
                 class="w-full justify-start"
@@ -345,26 +554,10 @@
               >
                 <template #prefix>
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 1 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
                 </template>
                 Delete Draft
-              </Button>
-
-              <Button
-                v-if="request.data.request_category === 'Resource Consent'"
-                @click="handleBookMeeting"
-                variant="outline"
-                class="w-full justify-start text-green-600 hover:text-green-700"
-                :loading="bookingMeeting"
-              >
-                <template #prefix>
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </template>
-                Book Council Meeting
               </Button>
             </div>
           </div>
@@ -391,15 +584,31 @@
         </div>
       </div>
     </div>
+
+    <!-- Modals -->
+    <SendMessageModal
+      v-model:show="showSendMessageModal"
+      :request-id="route.params.id"
+      @sent="handleMessageSent"
+    />
+
+    <BookMeetingModal
+      v-model:show="showBookMeetingModal"
+      :request-id="route.params.id"
+      :request-type-code="requestTypeConfig.data?.type_code"
+      :council-code="request.data?.council"
+      @booked="handleMeetingBooked"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { createResource, Button } from 'frappe-ui'
 import StatusBadge from '../components/StatusBadge.vue'
-import ResourceConsentDetails from '../components/ResourceConsentDetails.vue'
+import SendMessageModal from '../components/modals/SendMessageModal.vue'
+import BookMeetingModal from '../components/modals/BookMeetingModal.vue'
 import { useStatutoryClock } from '../composables/useStatutoryClock'
 
 const route = useRoute()
@@ -411,6 +620,8 @@ const uploading = ref(false)
 const submitting = ref(false)
 const deleting = ref(false)
 const bookingMeeting = ref(false)
+const showSendMessageModal = ref(false)
+const showBookMeetingModal = ref(false)
 
 // Get request details
 const request = createResource({
@@ -431,11 +642,200 @@ const meetings = createResource({
   auto: true,
 })
 
+// Get request type configuration
+const requestTypeConfig = createResource({
+  url: 'lodgeick.api.get_request_type_config',
+  auto: false,
+})
+
+// Watch for request data and load config
+watch(() => request.data?.request_type, (requestType) => {
+  if (requestType) {
+    // Pass params directly to fetch() instead of in createResource
+    requestTypeConfig.fetch({ request_type_code: requestType })
+  }
+}, { immediate: true })
+
 // Get statutory clock data from appropriate source (RC Application or Request)
 const { clockData, progressPercent } = useStatutoryClock(request)
 
+// Parse form data from draft_full_data as fallback
+const parsedFormData = computed(() => {
+  if (!request.data) return {}
+
+  try {
+    let formData = null
+    if (request.data.draft_full_data) {
+      formData = typeof request.data.draft_full_data === 'string'
+        ? JSON.parse(request.data.draft_full_data)
+        : request.data.draft_full_data
+    }
+
+    if (!formData) return {}
+
+    // Filter out standard fields
+    const standardFields = [
+      'name', 'owner', 'creation', 'modified', 'modified_by', 'docstatus', 'idx',
+      'council', 'request_type', 'request_number', 'status', 'requester',
+      'requester_name', 'requester_email', 'requester_phone', 'requester_signature',
+      'applicant_address', 'applicant_company', 'property', 'property_address',
+      'legal_description', 'brief_description', 'detailed_description',
+      'delivery_preference', 'invoice_to', 'invoice_recipient_name',
+      'invoice_recipient_email', 'purchase_order_number', 'total_fees',
+      'total_paid', 'payment_status', 'request_category', 'draft_current_step',
+      'draft_total_steps', 'draft_full_data', 'form_data', 'signature_date'
+    ]
+
+    const filtered = {}
+    Object.keys(formData).forEach(key => {
+      if (!standardFields.includes(key) && formData[key] !== null && formData[key] !== '') {
+        filtered[key] = formData[key]
+      }
+    })
+
+    return filtered
+  } catch (error) {
+    console.error('Error parsing form data:', error)
+    return {}
+  }
+})
+
+// Get review sections from request type configuration (same logic as ReviewStep)
+const reviewSections = computed(() => {
+  if (!requestTypeConfig.data?.steps) return []
+
+  // Filter steps that should show on review
+  return requestTypeConfig.data.steps.filter(step => step.show_on_review)
+})
+
+// Check if property details should be displayed (same logic as ReviewStep)
+const hasPropertyDetails = computed(() => {
+  // Show if request has property address
+  if (request.data?.property_address) {
+    return true
+  }
+
+  // Check if request type config indicates property is needed
+  if (requestTypeConfig.data?.property_required) {
+    return true
+  }
+
+  return false
+})
+
+// Check if a step has any content to show on review
+const hasReviewContent = (step) => {
+  if (!step.sections) return false
+
+  for (const section of step.sections) {
+    if (!section.show_on_review) continue
+
+    for (const field of section.fields) {
+      if (field.show_on_review && request.data[field.field_name]) {
+        return true
+      }
+    }
+  }
+
+  return false
+}
+
+// Format field value for display (same as ReviewStep)
+const formatFieldValue = (field, value) => {
+  if (value === undefined || value === null || value === '') {
+    return 'Not provided'
+  }
+
+  // Check field type
+  if (field.field_type === 'Check') {
+    return value ? 'Yes' : 'No'
+  }
+
+  if (field.field_type === 'Date' && value) {
+    // Format date nicely
+    try {
+      return new Date(value).toLocaleDateString('en-NZ', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      })
+    } catch (e) {
+      return value
+    }
+  }
+
+  if (field.field_type === 'Currency' && value) {
+    return `$${parseFloat(value).toFixed(2)}`
+  }
+
+  if (Array.isArray(value)) {
+    return value.join(', ')
+  }
+
+  return value
+}
+
+// Helper function to format field labels (convert snake_case to Title Case)
+const formatFieldLabel = (fieldName) => {
+  return fieldName
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
+}
+
+// Helper function to format simple values (for fallback display)
+const formatSimpleValue = (value) => {
+  if (value === null || value === undefined || value === '') {
+    return 'Not provided'
+  }
+
+  if (typeof value === 'boolean') {
+    return value ? 'Yes' : 'No'
+  }
+
+  if (Array.isArray(value)) {
+    return value.join(', ')
+  }
+
+  if (typeof value === 'object') {
+    return JSON.stringify(value)
+  }
+
+  // Handle dates
+  if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}/.test(value)) {
+    try {
+      return new Date(value).toLocaleDateString('en-NZ', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      })
+    } catch (e) {
+      return value
+    }
+  }
+
+  return value
+}
+
 const goBack = () => {
   router.push({ name: 'Dashboard' })
+}
+
+// Format meeting date with time
+const formatMeetingDate = (dateStr) => {
+  if (!dateStr) return 'Not scheduled'
+  try {
+    return new Date(dateStr).toLocaleString('en-NZ', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  } catch (e) {
+    return dateStr
+  }
 }
 
 const formatDate = (dateStr) => {
@@ -489,12 +889,32 @@ const handleFileUpload = async (event) => {
 }
 
 const handleSendMessage = () => {
-  // TODO: Implement message modal/dialog
-  alert('Send Message feature - Coming soon!\n\nFor now, please contact us at:\nconsents@council.govt.nz\n0800 LODGEICK')
+  showSendMessageModal.value = true
+}
+
+const handleMessageSent = () => {
+  // Toast notification would be better than alert to avoid blocking modal close
+  // alert('Message sent successfully! The council will respond within 2-3 business days.')
+  request.reload()
 }
 
 const handlePrintApplication = () => {
   window.print()
+}
+
+const handleEditDraft = () => {
+  if (!request.data) {
+    alert('Error: Request data not loaded')
+    return
+  }
+
+  if (!request.data.request_type) {
+    alert('Error: Request type missing')
+    return
+  }
+
+  const url = `/request/new?type=${encodeURIComponent(request.data.request_type)}&draft=${encodeURIComponent(request.data.name)}`
+  router.push(url)
 }
 
 const handleDeleteDraft = async () => {
@@ -565,35 +985,13 @@ const handleMakePayment = () => {
   alert('Payment feature - Coming soon!\n\nYou will receive an invoice via email.')
 }
 
-const handleBookMeeting = async () => {
-  bookingMeeting.value = true
-  try {
-    const response = await fetch('/api/method/lodgeick.api.book_council_meeting', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Frappe-CSRF-Token': window.csrf_token
-      },
-      body: JSON.stringify({
-        request_id: request.data.name,
-        meeting_type: 'Council Meeting'
-      })
-    })
+const handleBookMeeting = () => {
+  showBookMeetingModal.value = true
+}
 
-    const result = await response.json()
-
-    if (result.message && result.message.success) {
-      alert(`Council Meeting request has been submitted! A council officer will contact you within 2 business days to schedule the meeting. Meeting ID: ${result.message.meeting_id}`)
-      // Refresh meetings list to show the new meeting
-      await meetings.reload()
-    } else {
-      throw new Error(result.message || 'Failed to book meeting')
-    }
-  } catch (error) {
-    console.error('Error booking meeting:', error)
-    alert('Failed to book council meeting. Please try again.')
-  } finally {
-    bookingMeeting.value = false
-  }
+const handleMeetingBooked = async (meetingData) => {
+  alert(`Meeting request submitted successfully!\n\nMeeting ID: ${meetingData.meeting_id}\nStatus: ${meetingData.status}\n\nA council planner will contact you within 2 business days.`)
+  // Reload meetings list
+  await meetings.reload()
 }
 </script>

@@ -163,44 +163,45 @@
           <table class="w-full">
             <thead class="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Request #</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Council</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Days Elapsed</th>
-                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Request #</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Council</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Days Elapsed</th>
+                <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
               <tr v-for="request in filteredRequests" :key="request.name" class="hover:bg-gray-50 transition cursor-pointer" @click="viewRequest(request.name)">
-                <td class="px-6 py-4 whitespace-nowrap">
+                <td class="px-4 py-3 whitespace-nowrap">
                   <div class="text-sm font-medium text-blue-600">{{ request.request_number }}</div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{{ request.council || 'N/A' }}</div>
+                <td class="px-4 py-3 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">{{ getCouncilShortName(request.council) }}</div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{{ request.request_type }}</div>
-                </td>
-                <td class="px-6 py-4">
-                  <div class="text-sm text-gray-900">{{ request.property_address || 'N/A' }}</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <StatusBadge :status="request.status" />
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-500">{{ formatDate(request.creation) }}</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{{ request.working_days_elapsed || 0 }} days</div>
-                  <div v-if="request.statutory_clock_started" class="text-xs text-gray-500">
-                    of 20 day limit
+                <td class="px-4 py-3 max-w-xs">
+                  <div class="text-sm text-gray-900 truncate" :title="request.request_type">
+                    {{ request.request_type }}
                   </div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button @click.stop="viewRequest(request.name)" class="text-blue-600 hover:text-blue-900 mr-4">
+                <td class="px-4 py-3 max-w-xs">
+                  <div class="text-sm text-gray-900 truncate" :title="request.property_address">
+                    {{ request.property_address || 'N/A' }}
+                  </div>
+                </td>
+                <td class="px-4 py-3 whitespace-nowrap">
+                  <StatusBadge :status="request.status" />
+                </td>
+                <td class="px-4 py-3 whitespace-nowrap">
+                  <div class="text-sm text-gray-500">{{ formatDate(request.creation) }}</div>
+                </td>
+                <td class="px-4 py-3 whitespace-nowrap text-center">
+                  <div class="text-sm font-medium text-gray-900">{{ request.working_days_elapsed || 0 }} days</div>
+                </td>
+                <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
+                  <button @click.stop="viewRequest(request.name)" class="text-blue-600 hover:text-blue-900 mr-3">
                     View
                   </button>
                   <button v-if="request.status === 'Draft'" @click.stop="editRequest(request.name)" class="text-gray-600 hover:text-gray-900">
@@ -310,6 +311,13 @@ const formatDate = (dateStr) => {
     month: 'short',
     day: 'numeric'
   })
+}
+
+// Get short council name
+const getCouncilShortName = (councilName) => {
+  if (!councilName) return 'N/A'
+  // Extract council code from names like "TAYTAY-PH"
+  return councilName.split('-')[0]
 }
 
 // Navigation
