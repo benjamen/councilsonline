@@ -720,11 +720,7 @@ def create_draft_request(data, current_step=None, total_steps=None):
             "acting_on_behalf": acting_on_behalf,  # Track if agent workflow
             "status": "Draft",
             "priority": data.get("priority", "Standard"),
-            # Draft metadata
-            "draft_current_step": current_step,
-            "draft_total_steps": total_steps,
-            "draft_created_at": frappe.utils.now(),
-            "draft_updated_at": frappe.utils.now(),
+            # Draft metadata - store in draft_full_data JSON
             "draft_full_data": full_data_json
         })
 
@@ -801,12 +797,7 @@ def update_draft_request(request_id, data, current_step=None, total_steps=None):
             if hasattr(request_doc, key) and key not in ["name", "creation", "modified", "owner"]:
                 setattr(request_doc, key, value)
 
-        # Update draft metadata
-        if current_step is not None:
-            request_doc.draft_current_step = current_step
-        if total_steps is not None:
-            request_doc.draft_total_steps = total_steps
-        request_doc.draft_updated_at = frappe.utils.now()
+        # Update draft metadata - only store in draft_full_data JSON
         request_doc.draft_full_data = full_data_json
 
         request_doc.flags.ignore_mandatory = True
@@ -864,10 +855,10 @@ def load_draft_request(request_id):
             "success": True,
             "request_id": request_doc.name,
             "request_number": request_doc.request_number,
-            "current_step": request_doc.draft_current_step or 1,
-            "total_steps": request_doc.draft_total_steps,
-            "created_at": request_doc.draft_created_at,
-            "updated_at": request_doc.draft_updated_at,
+            "current_step": form_data.get("current_step", 1),
+            "total_steps": form_data.get("total_steps"),
+            "created_at": request_doc.creation,
+            "updated_at": request_doc.modified,
             "form_data": form_data,
             "status": request_doc.status
         }
