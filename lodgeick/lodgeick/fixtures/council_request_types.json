@@ -1,0 +1,29 @@
+[
+  {
+    "doctype": "Council Request Type",
+    "council": "TAYTAY-PH",
+    "request_type": "Social Pension for Indigent Senior Citizens (SPISC)",
+    "is_active": 1,
+    "brief_description": "Monthly pension support for senior citizens aged 60 and above who are indigent or poor",
+    "base_fee_override": 0,
+    "sla_days_override": 30
+  },
+  {
+    "doctype": "Council Request Type",
+    "council": "TAYTAY-PH",
+    "request_type": "Local Senior Assistance / Financial Aid for Elderly",
+    "is_active": 1,
+    "brief_description": "One-time or recurring financial assistance for elderly residents",
+    "base_fee_override": 0,
+    "sla_days_override": 20
+  },
+  {
+    "doctype": "Council Request Type",
+    "council": "TAYTAY-PH",
+    "request_type": "Burial / Medical Support for Seniors",
+    "is_active": 1,
+    "brief_description": "Financial assistance for burial expenses or medical costs for senior citizens",
+    "base_fee_override": 0,
+    "sla_days_override": 15
+  }
+]

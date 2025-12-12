@@ -165,5 +165,21 @@
         "notes": "Check 3 waters capacity"
       }
     ]
+  },
+  {
+    "doctype": "Council",
+    "name": "TAYTAY-PH",
+    "council_code": "TAYTAY-PH",
+    "council_name": "Taytay Council",
+    "country": "Philippines",
+    "is_active": 1,
+    "license_start_date": "2025-12-04",
+    "license_expiry_date": "2026-12-04",
+    "subscription_tier": "Premium",
+    "contact_email": "info@taytay.gov.ph",
+    "contact_phone": "+63 2 8571 4510",
+    "enabled_modules": ["Requests", "Meetings", "Messages"],
+    "custom_branding_enabled": 1,
+    "enabled_request_types": []
   }
 ]

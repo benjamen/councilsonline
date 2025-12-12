@@ -100,7 +100,8 @@ after_install = "lodgeick.install.after_install"
 fixtures = [
 	{"dt": "Print Format", "filters": [["module", "=", "Lodgeick"]]},
 	"lodgeick.lodgeick.fixtures.request_types",
-	"lodgeick.lodgeick.fixtures.councils"
+	"lodgeick.lodgeick.fixtures.councils",
+	"lodgeick.lodgeick.fixtures.council_request_types"
 ]
 
 # Uninstallation
