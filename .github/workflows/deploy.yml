@@ -58,6 +58,11 @@ jobs:
             echo '🔨 Building frontend...'
             yarn build
 
+            # Clear Python bytecode cache
+            echo '🧹 Clearing Python bytecode cache...'
+            find ${{ env.BENCH_PATH }}/apps/${{ env.APP_NAME }} -type f -name '*.pyc' -delete
+            find ${{ env.BENCH_PATH }}/apps/${{ env.APP_NAME }} -type d -name '__pycache__' -exec rm -rf {} + 2>/dev/null || true
+
             # Build backend assets
             echo '🔨 Building backend assets...'
             cd ${{ env.BENCH_PATH }}
