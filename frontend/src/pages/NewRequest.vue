@@ -255,6 +255,21 @@ const canSaveDraft = computed(() => {
     return store.currentStep >= 3
 })
 
+// Get configuration for current step (for dynamic validation)
+const currentStepConfig = computed(() => {
+    if (!store.requestTypeConfig?.steps) return null
+
+    // Steps 0-2 are fixed (Council, Type, Process Info)
+    // Dynamic steps start at index 3
+    const dynamicStepIndex = store.currentStep - 3
+
+    if (dynamicStepIndex >= 0 && dynamicStepIndex < store.requestTypeConfig.steps.length) {
+        return store.requestTypeConfig.steps[dynamicStepIndex]
+    }
+
+    return null
+})
+
 // Show meeting banner after Process Info (step 3) if council meetings are available
 const shouldShowMeetingBanner = computed(() => {
     return store.currentStep > 2 && // After Process Info step
