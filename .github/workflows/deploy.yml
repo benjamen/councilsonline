@@ -1,4 +1,4 @@
-name: Deploy to Production
+name: Deploy Lodgeick to Production
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
       - name: Setup SSH Key
         uses: webfactory/ssh-agent@v0.9.0
         with:
-          ssh-private-key: ${{ secrets.LODGEICK_DEPLOY_KEY }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Add Server to Known Hosts
         run: |
@@ -38,11 +38,12 @@ jobs:
             set -e
             echo '🚀 Starting Lodgeick deployment...'
 
-            # Mark repo as safe for git
+            # Mark repo as safe
             git config --global --add safe.directory ${{ env.BENCH_PATH }}/apps/${{ env.APP_NAME }}
 
-            # Pull latest code using the deploy key configured on the server
+            # Pull latest code using the private SSH key
             echo '📥 Pulling latest code...'
+            export GIT_SSH_COMMAND='ssh -i ~/.ssh/id_ed25519_benja_repo -o StrictHostKeyChecking=no'
             cd ${{ env.BENCH_PATH }}/apps/${{ env.APP_NAME }}
             git fetch origin main
             git reset --hard origin/main
@@ -62,7 +63,7 @@ jobs:
             cd ${{ env.BENCH_PATH }}
             bench build --app ${{ env.APP_NAME }}
 
-            # Run database migrations
+            # Database migrations
             echo '🗄️ Migrating database...'
             bench --site ${{ env.SITE_NAME }} migrate
 
@@ -75,7 +76,7 @@ jobs:
             echo '🔄 Restarting bench services...'
             bench restart
 
-            # Reload nginx and supervisor
+            # Reload nginx and supervisor via sudo
             echo '🔁 Reloading nginx and supervisor...'
             sudo systemctl reload nginx
             sudo supervisorctl reread
