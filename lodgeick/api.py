@@ -1737,17 +1737,28 @@ def get_request_meetings(request_id):
             fields=[
                 "name", "meeting_type", "status", "scheduled_start", "scheduled_end",
                 "meeting_format", "meeting_location", "council_planner", "requested_date",
-                "meeting_purpose", "event"
+                "meeting_purpose", "event", "preferred_time_slots", "google_meet_link"
             ],
             order_by="requested_date desc"
         )
 
-        # Enrich with event details
+        # Enrich with event details and process preferred slots
         for meeting in meetings:
             if meeting.event:
                 event = frappe.get_doc("Event", meeting.event)
                 meeting.event_status = event.status
                 meeting.event_subject = event.subject
+
+            # Parse preferred_time_slots if it's a child table
+            if meeting.preferred_time_slots:
+                meeting.proposed_slots = frappe.get_all(
+                    "Meeting Time Slot",
+                    filters={"parent": meeting.name},
+                    fields=["proposed_datetime"],
+                    order_by="proposed_datetime asc"
+                )
+                # Extract just the datetime values
+                meeting.proposed_slots = [slot.proposed_datetime for slot in meeting.proposed_slots]
 
         return meetings
 
@@ -1899,6 +1910,83 @@ def reschedule_meeting(meeting_id, new_scheduled_start, new_scheduled_end, reaso
     except Exception as e:
         frappe.log_error(f"Reschedule Meeting Error: {str(e)}", "Meeting API Error")
         frappe.throw(_("Failed to reschedule meeting: {0}").format(str(e)))
+
+
+@frappe.whitelist()
+def cancel_meeting(meeting_id, reason=None):
+    """
+    Cancel a meeting request
+
+    Args:
+        meeting_id: Pre-Application Meeting ID
+        reason: Reason for cancellation (optional)
+
+    Returns:
+        dict: Cancellation confirmation
+    """
+    try:
+        meeting = frappe.get_doc("Pre-Application Meeting", meeting_id)
+
+        # Check permission
+        if not meeting.has_permission("write"):
+            frappe.throw(_("You do not have permission to cancel this meeting"))
+
+        # Only allow cancellation if not already completed
+        if meeting.status == "Completed":
+            frappe.throw(_("Cannot cancel a completed meeting"))
+
+        # Update meeting status
+        old_status = meeting.status
+        meeting.status = "Cancelled"
+        meeting.save(ignore_permissions=True)
+
+        # Cancel associated event if exists
+        if meeting.event:
+            try:
+                event = frappe.get_doc("Event", meeting.event)
+                event.status = "Cancelled"
+                event.save(ignore_permissions=True)
+            except Exception as e:
+                frappe.log_error(f"Failed to cancel event: {str(e)}", "Cancel Event Error")
+
+        # Add comment to meeting
+        comment_text = f"Meeting cancelled (was {old_status})"
+        if reason:
+            comment_text += f"\nReason: {reason}"
+
+        meeting.add_comment("Comment", comment_text)
+
+        # Send notification to requester
+        if meeting.requester_email:
+            try:
+                request_doc = frappe.get_doc("Request", meeting.request)
+                frappe.sendmail(
+                    recipients=[meeting.requester_email],
+                    subject=f"Meeting Cancelled - {request_doc.request_number}",
+                    message=f"""
+                    <p>Your {meeting.meeting_type} has been cancelled.</p>
+                    {f'<p><strong>Scheduled Time:</strong> {meeting.scheduled_start}</p>' if meeting.scheduled_start else ''}
+                    {f'<p><strong>Reason:</strong> {reason}</p>' if reason else ''}
+                    <p>If you would like to reschedule, please submit a new meeting request.</p>
+                    """,
+                    reference_doctype=meeting.doctype,
+                    reference_name=meeting.name
+                )
+            except Exception as e:
+                frappe.log_error(f"Failed to send cancellation email: {str(e)}", "Email Error")
+
+        return {
+            "success": True,
+            "meeting_id": meeting.name,
+            "status": meeting.status,
+            "message": _("Meeting cancelled successfully")
+        }
+
+    except frappe.DoesNotExistError:
+        frappe.throw(_("Meeting not found"))
+    except Exception as e:
+        frappe.log_error(f"Cancel Meeting Error: {str(e)}", "Meeting API Error")
+        frappe.throw(_("Failed to cancel meeting: {0}").format(str(e)))
 
 
 @frappe.whitelist()

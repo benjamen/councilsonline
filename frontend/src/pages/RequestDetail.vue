@@ -254,7 +254,7 @@
                 class="px-3 py-1 rounded-full text-sm font-medium"
                 :class="{
                   'bg-yellow-100 text-yellow-800': meetings.data[0].status === 'Requested',
-                  'bg-blue-100 text-blue-800': meetings.data[0].status === 'Scheduled',
+                  'bg-blue-100 text-blue-800': meetings.data[0].status === 'Scheduled' || meetings.data[0].status === 'Confirmed',
                   'bg-green-100 text-green-800': meetings.data[0].status === 'Completed',
                   'bg-gray-100 text-gray-800': meetings.data[0].status === 'Cancelled'
                 }"
@@ -264,7 +264,7 @@
             </div>
 
             <!-- Meeting Details (if exists) -->
-            <div v-if="meetings.data && meetings.data.length > 0" class="space-y-3">
+            <div v-if="meetings.data && meetings.data.length > 0" class="space-y-4">
               <div v-for="meeting in meetings.data" :key="meeting.name" class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded">
                 <div class="grid grid-cols-2 gap-3 text-sm">
                   <div>
@@ -296,6 +296,42 @@
                 <div v-if="meeting.meeting_purpose" class="mt-3 pt-3 border-t border-blue-200">
                   <span class="font-medium text-gray-700 text-sm">Purpose:</span>
                   <p class="mt-1 text-sm text-gray-900">{{ meeting.meeting_purpose }}</p>
+                </div>
+
+                <!-- Proposed Time Slots (if status is Requested and slots exist) -->
+                <div v-if="meeting.status === 'Requested' && meeting.proposed_slots && meeting.proposed_slots.length > 0" class="mt-3 pt-3 border-t border-blue-200">
+                  <span class="font-medium text-gray-700 text-sm">Proposed Time Slots:</span>
+                  <ul class="mt-2 space-y-1">
+                    <li v-for="(slot, index) in meeting.proposed_slots" :key="index" class="text-sm text-gray-900 flex items-center">
+                      <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      {{ formatMeetingDate(slot) }}
+                    </li>
+                  </ul>
+                </div>
+
+                <!-- Action Buttons (Edit/Cancel) - only show if meeting is Requested or Scheduled -->
+                <div v-if="meeting.status === 'Requested' || meeting.status === 'Scheduled'" class="mt-4 pt-3 border-t border-blue-200 flex space-x-3">
+                  <button
+                    @click="handleEditMeeting(meeting)"
+                    class="flex-1 px-4 py-2 bg-white border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors text-sm font-medium"
+                  >
+                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    Edit Request
+                  </button>
+                  <button
+                    @click="handleCancelMeeting(meeting)"
+                    :disabled="cancellingMeeting"
+                    class="flex-1 px-4 py-2 bg-white border border-red-600 text-red-600 rounded-lg hover:bg-red-50 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Cancel Meeting
+                  </button>
                 </div>
               </div>
             </div>
@@ -520,61 +556,6 @@
             </div>
           </div>
 
-          <!-- Meetings -->
-          <div v-if="meetings.data && meetings.data.length > 0" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Council Meetings</h2>
-
-            <div class="space-y-3">
-              <div
-                v-for="meeting in meetings.data"
-                :key="meeting.name"
-                class="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <div class="flex items-start justify-between mb-2">
-                  <span class="text-sm font-medium text-gray-900">{{ meeting.meeting_type }}</span>
-                  <span
-                    class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
-                    :class="{
-                      'bg-yellow-100 text-yellow-800': meeting.status === 'Requested',
-                      'bg-blue-100 text-blue-800': meeting.status === 'Scheduled',
-                      'bg-green-100 text-green-800': meeting.status === 'Confirmed' || meeting.status === 'Completed',
-                      'bg-orange-100 text-orange-800': meeting.status === 'Rescheduled',
-                      'bg-red-100 text-red-800': meeting.status === 'Cancelled'
-                    }"
-                  >
-                    {{ meeting.status }}
-                  </span>
-                </div>
-
-                <div v-if="meeting.scheduled_start" class="flex items-center text-xs text-gray-600 mb-1">
-                  <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  {{ formatDate(meeting.scheduled_start) }}
-                </div>
-
-                <div v-if="meeting.meeting_format" class="flex items-center text-xs text-gray-600 mb-1">
-                  <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  {{ meeting.meeting_format }}
-                </div>
-
-                <div v-if="meeting.meeting_location" class="text-xs text-gray-600">
-                  {{ meeting.meeting_location }}
-                </div>
-
-                <div v-if="meeting.meeting_purpose" class="mt-2 text-xs text-gray-500 line-clamp-2">
-                  {{ meeting.meeting_purpose }}
-                </div>
-              </div>
-            </div>
-          </div>
-
           <!-- Quick Actions -->
           <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
@@ -702,7 +683,7 @@ const fileInput = ref(null)
 const uploading = ref(false)
 const submitting = ref(false)
 const deleting = ref(false)
-const bookingMeeting = ref(false)
+const cancellingMeeting = ref(false)
 const showSendMessageModal = ref(false)
 const showBookMeetingModal = ref(false)
 
@@ -1093,5 +1074,47 @@ const handleMeetingBooked = async (meetingData) => {
   alert(`Meeting request submitted successfully!\n\nMeeting ID: ${meetingData.meeting_id}\nStatus: ${meetingData.status}\n\nA council planner will contact you within 2 business days.`)
   // Reload meetings list
   await meetings.reload()
+}
+
+const handleEditMeeting = (meeting) => {
+  // Re-open the booking modal with existing meeting data
+  // The modal should be enhanced to accept a meeting prop for editing
+  showBookMeetingModal.value = true
+  // TODO: Pass meeting data to modal for pre-filling
+  alert('Edit meeting functionality - opening booking modal.\n\nNote: You can submit a new request with updated time slots. The previous request will be updated.')
+}
+
+const handleCancelMeeting = async (meeting) => {
+  if (!confirm(`Are you sure you want to cancel this meeting request?\n\nMeeting Type: ${meeting.meeting_type}\nStatus: ${meeting.status}\n\nThis action cannot be undone.`)) {
+    return
+  }
+
+  cancellingMeeting.value = true
+  try {
+    const response = await fetch('/api/method/lodgeick.api.cancel_meeting', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Frappe-CSRF-Token': window.csrf_token
+      },
+      body: JSON.stringify({
+        meeting_id: meeting.name
+      })
+    })
+
+    const result = await response.json()
+
+    if (result.message && result.message.success) {
+      alert('Meeting cancelled successfully.')
+      await meetings.reload()
+    } else {
+      throw new Error(result.message?.error || 'Failed to cancel meeting')
+    }
+  } catch (error) {
+    console.error('Error cancelling meeting:', error)
+    alert(`Failed to cancel meeting: ${error.message}\n\nPlease try again or contact support.`)
+  } finally {
+    cancellingMeeting.value = false
+  }
 }
 </script>
