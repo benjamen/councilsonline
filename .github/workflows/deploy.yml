@@ -54,8 +54,9 @@ jobs:
             cd frontend
             yarn install --frozen-lockfile || yarn install
 
-            # Build frontend
+            # Build frontend with cache busting
             echo '🔨 Building frontend...'
+            export VITE_BUILD_TIME=$(date +%s)
             yarn build
 
             # Clear Python bytecode cache
@@ -72,10 +73,13 @@ jobs:
             echo '🗄️ Migrating database...'
             bench --site ${{ env.SITE_NAME }} migrate
 
-            # Clear cache
-            echo '🧹 Clearing cache...'
+            # Clear cache aggressively
+            echo '🧹 Clearing all caches...'
             bench --site ${{ env.SITE_NAME }} clear-cache
             bench --site ${{ env.SITE_NAME }} clear-website-cache
+
+            # Clear Redis cache to force new asset loading
+            redis-cli FLUSHALL || true
 
             # Restart bench services (gracefully handle supervisor errors)
             echo '🔄 Restarting bench services...'
