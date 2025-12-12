@@ -173,9 +173,9 @@ jobs:
           check_endpoint "NewRequest Bundle Available" \
             "curl -s $SITE_URL/assets/lodgeick/frontend/ | grep -q 'NewRequest-.*\.js' || curl -f -s -o /dev/null $SITE_URL/frontend"
 
-          # Test 5: API Responds to Auth Check
+          # Test 5: API Responds to Auth Check (accepts 200, 401, 403 as valid)
           check_endpoint "Auth API Responding" \
-            "curl -f -s -o /dev/null $SITE_URL/api/method/frappe.auth.get_logged_user"
+            "curl -s -o /dev/null -w '%{http_code}' $SITE_URL/api/method/frappe.auth.get_logged_user | grep -qE '200|401|403'"
 
           # Results
           echo ""
