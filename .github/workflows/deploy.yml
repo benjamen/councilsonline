@@ -77,16 +77,28 @@ jobs:
             bench --site ${{ env.SITE_NAME }} clear-cache
             bench --site ${{ env.SITE_NAME }} clear-website-cache
 
-            # Restart bench services
+            # Restart bench services (gracefully handle supervisor errors)
             echo '🔄 Restarting bench services...'
-            bench restart
+            bench restart || true
 
-            # Reload nginx and supervisor via sudo
-            echo '🔁 Reloading nginx and supervisor...'
-            sudo systemctl reload nginx
+            # Stop all supervisor processes
+            echo '🛑 Stopping supervisor processes...'
+            sudo supervisorctl stop all || true
+            sleep 2
+
+            # Reload supervisor configuration
+            echo '🔁 Reloading supervisor configuration...'
             sudo supervisorctl reread
             sudo supervisorctl update
-            sudo supervisorctl restart all
+
+            # Start all supervisor processes
+            echo '▶️ Starting supervisor processes...'
+            sudo supervisorctl start all || true
+            sleep 2
+
+            # Reload nginx
+            echo '🔁 Reloading nginx...'
+            sudo systemctl reload nginx
 
             echo '✅ Lodgeick deployment completed successfully!'
             echo '🌐 Site: https://${{ env.SITE_NAME }}'
