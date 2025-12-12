@@ -5,11 +5,39 @@
     <link rel="icon" href="/assets/lodgeick/frontend/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Frappe UI Starter</title>
-    <script type="module" crossorigin src="/assets/lodgeick/frontend/assets/index-DWx27wDU.js"></script>
+    <script type="module" crossorigin src="/assets/lodgeick/frontend/assets/index-D85DaLkN.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/lodgeick/frontend/assets/index-Blwy4hZY.css">
   </head>
   <body>
     <div id="app"></div>
+    <script>
+      // Initialize CSRF token from Frappe backend
+      (function initCSRFToken() {
+        // Try to get CSRF token from cookie first
+        const getCookie = (name) => {
+          const value = `; ${document.cookie}`;
+          const parts = value.split(`; ${name}=`);
+          if (parts.length === 2) return parts.pop().split(';').shift();
+        };
+
+        window.csrf_token = getCookie('csrf_token') || '';
+
+        // If not in cookie, fetch from backend
+        if (!window.csrf_token) {
+          fetch('/api/method/frappe.auth.get_logged_user', {
+            credentials: 'include'
+          })
+            .then(r => r.json())
+            .then(data => {
+              window.csrf_token = data.csrf_token || '';
+            })
+            .catch(err => {
+              console.warn('Failed to fetch CSRF token:', err);
+              window.csrf_token = '';
+            });
+        }
+      })();
+    </script>
   
           <script>
               {% for key in boot %}

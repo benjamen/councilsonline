@@ -134,6 +134,82 @@
             </div>
           </div>
 
+          <!-- SPISC Application Details - only show if request is SPISC -->
+          <div v-if="request.data?.request_type?.includes('SPISC') && request.data.application_name" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">SPISC Application Details</h2>
+
+            <div class="space-y-6">
+              <!-- Personal Information -->
+              <div>
+                <h3 class="text-sm font-semibold text-gray-700 mb-3">Personal Information</h3>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Birth Date</label>
+                    <p class="mt-1 text-sm text-gray-900">{{ formatDate(request.data.birth_date) || 'N/A' }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Age</label>
+                    <p class="mt-1 text-sm text-gray-900">{{ request.data.age || 'N/A' }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Sex</label>
+                    <p class="mt-1 text-sm text-gray-900">{{ request.data.sex || 'N/A' }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Civil Status</label>
+                    <p class="mt-1 text-sm text-gray-900">{{ request.data.civil_status || 'N/A' }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Household & Economic Information -->
+              <div>
+                <h3 class="text-sm font-semibold text-gray-700 mb-3">Household & Economic Information</h3>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Household Size</label>
+                    <p class="mt-1 text-sm text-gray-900">{{ request.data.household_size || 'N/A' }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Living Arrangement</label>
+                    <p class="mt-1 text-sm text-gray-900">{{ request.data.living_arrangement || 'N/A' }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Monthly Income</label>
+                    <p class="mt-1 text-sm text-gray-900">₱{{ request.data.monthly_income || '0' }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Income Source</label>
+                    <p class="mt-1 text-sm text-gray-900">{{ request.data.income_source || 'N/A' }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">4Ps Beneficiary</label>
+                    <p class="mt-1 text-sm text-gray-900">{{ request.data.is_4ps_beneficiary ? 'Yes' : 'No' }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Identity Documents -->
+              <div>
+                <h3 class="text-sm font-semibold text-gray-700 mb-3">Identity Documents</h3>
+                <div class="grid grid-cols-2 gap-4">
+                  <div v-if="request.data.philsys_id">
+                    <label class="text-sm font-medium text-gray-500">PhilSys ID</label>
+                    <p class="mt-1 text-sm text-gray-900">{{ request.data.philsys_id }}</p>
+                  </div>
+                  <div v-if="request.data.sss_number">
+                    <label class="text-sm font-medium text-gray-500">SSS Number</label>
+                    <p class="mt-1 text-sm text-gray-900">{{ request.data.sss_number }}</p>
+                  </div>
+                  <div v-if="request.data.osca_id">
+                    <label class="text-sm font-medium text-gray-500">OSCA ID</label>
+                    <p class="mt-1 text-sm text-gray-900">{{ request.data.osca_id }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Delivery & Payment Preferences - only show if request type collects payment -->
           <div v-if="requestTypeConfig.data?.collect_payment" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Delivery & Payment Preferences</h2>

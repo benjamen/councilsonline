@@ -329,7 +329,15 @@ const onMunicipalityChange = () => {
 }
 
 const updateAddress = () => {
-  emit('update:modelValue', fullAddress.value)
+  // Emit both the full address string and individual fields
+  emit('update:modelValue', {
+    full_address: fullAddress.value,
+    address_line: localAddress.value.street,
+    barangay: localAddress.value.barangay,
+    municipality: localAddress.value.municipality,
+    province: localAddress.value.province,
+    zip_code: localAddress.value.zipCode
+  })
 }
 
 // Initialize from modelValue if provided

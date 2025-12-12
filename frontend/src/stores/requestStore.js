@@ -210,13 +210,14 @@ export const useRequestStore = defineStore('request', {
                     await this.saveProgress()
                 }
 
-                // Submit the request
-                await requestService.submitRequest(this.currentRequestId)
+                // Submit the request and get result
+                const result = await requestService.submitRequest(this.currentRequestId)
 
                 // Clear state
                 this.reset()
 
-                return true
+                // Return submission result with SLA info
+                return result
             } catch (error) {
                 console.error('Submit failed:', error)
                 this.error = error.message || 'Failed to submit request'

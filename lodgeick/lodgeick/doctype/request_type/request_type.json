@@ -57,7 +57,7 @@
    "fieldname": "category",
    "fieldtype": "Select",
    "label": "Category",
-   "options": "Resource Consent\nBuilding Consent\nService Request\nLicense\nComplaint\nSocial Assistance",
+   "options": "Resource Consent\nBuilding Consent\nService Request\nLicense\nPermit\nComplaint\nInformation Request\nSocial Assistance\nOther",
    "reqd": 1
   },
   {

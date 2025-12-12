@@ -62,6 +62,7 @@ declare module 'vue' {
     Step9SiteEnvironment: typeof import('./src/components/request-steps/Step9SiteEnvironment.vue')['default']
     Step9Submission: typeof import('./src/components/request-steps/Step9Submission.vue')['default']
     StepNavigation: typeof import('./src/components/request/StepNavigation.vue')['default']
+    SubmissionSuccessModal: typeof import('./src/components/modals/SubmissionSuccessModal.vue')['default']
     TaskDialog: typeof import('./src/components/TaskDialog.vue')['default']
     TaskManagement: typeof import('./src/components/TaskManagement.vue')['default']
     Tooltip: typeof import('./src/components/Tooltip.vue')['default']

@@ -18,12 +18,19 @@ export function useUserProfile() {
     error.value = null
 
     try {
+      const headers = {
+        'Content-Type': 'application/json'
+      };
+
+      // Add CSRF token if available
+      if (window.csrf_token) {
+        headers['X-Frappe-CSRF-Token'] = window.csrf_token;
+      }
+
       const response = await fetch('/api/method/lodgeick.api.get_user_profile', {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Frappe-CSRF-Token': window.csrf_token
-        }
+        headers: headers,
+        credentials: 'include'
       })
 
       const result = await response.json()

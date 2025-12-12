@@ -159,18 +159,29 @@
             :council-code="store.formData.council"
             @booked="handleMeetingBooked"
         />
+
+        <SubmissionSuccessModal
+            :open="showSubmissionSuccessModal"
+            :request-number="submissionResult?.request_number"
+            :request-id="submissionResult?.request_id"
+            :sla-info="submissionResult?.sla_info"
+            @close="showSubmissionSuccessModal = false"
+            @view-request="handleViewRequestFromModal"
+            @go-to-dashboard="handleGoToDashboardFromModal"
+        />
     </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import { Button } from 'frappe-ui'
 
 // Store and composables
 import { useRequestStore } from '../stores/requestStore'
 import { useCouncilStore } from '../stores/councilStore'
 import { useStepValidation } from '../composables/useStepValidation'
+import { useUserProfile } from '../composables/useUserProfile'
 
 // Components
 import RequestProgress from '../components/request/RequestProgress.vue'
@@ -178,6 +189,7 @@ import StepNavigation from '../components/request/StepNavigation.vue'
 import SaveDraftModal from '../components/modals/SaveDraftModal.vue'
 import ValidationErrorModal from '../components/modals/ValidationErrorModal.vue'
 import BookMeetingModal from '../components/modals/BookMeetingModal.vue'
+import SubmissionSuccessModal from '../components/modals/SubmissionSuccessModal.vue'
 
 // Step components
 import Step1CouncilSelection from '../components/request-steps/Step1CouncilSelection.vue'
@@ -200,6 +212,8 @@ const { errors: validationErrors, validateStep } = useStepValidation()
 const showSaveDraftModal = ref(false)
 const showValidationModal = ref(false)
 const showMeetingModal = ref(false)
+const showSubmissionSuccessModal = ref(false)
+const submissionResult = ref(null)
 const requestTypes = ref({ loading: false, data: [] })
 const selectedRequestTypeDetails = ref(null)
 
@@ -333,6 +347,23 @@ async function handleNext() {
         return
     }
 
+    // Validate current step before allowing navigation (for dynamic steps)
+    if (store.currentStep >= 2 && usesConfigurableSteps.value && currentStepConfig.value) {
+        const { validateStep } = useStepValidation()
+        const { isValid, errors } = await validateStep(
+            store.currentStep,
+            store.formData,
+            currentStepConfig.value
+        )
+
+        if (!isValid) {
+            console.error('[NewRequest] Validation failed:', errors)
+            showValidationErrors.value = true
+            validationErrors.value = errors
+            return // Block navigation
+        }
+    }
+
     // Auto-save after Process Info step (step 2) to create draft
     // This ensures the request has an ID for features like "Book Meeting" and "Send Message"
     if (store.currentStep === 2 && !store.currentRequestId) {
@@ -398,14 +429,13 @@ async function handleSubmit() {
     // Validation logic (omitted for brevity)
 
     try {
-        await store.submitRequest()
-        // Redirect to council-specific dashboard instead of generic dashboard
-        const councilCode = store.formData.council
-        if (councilCode) {
-            router.push(`/council/${councilCode}/dashboard`)
-        } else {
-            router.push('/dashboard')
-        }
+        const result = await store.submitRequest()
+
+        // Store submission result for modal
+        submissionResult.value = result
+
+        // Show success modal with SLA info
+        showSubmissionSuccessModal.value = true
     } catch (error) {
         console.error('Failed to submit request:', error)
     }
@@ -415,10 +445,62 @@ function goBack() {
     router.push('/dashboard')
 }
 
+/**
+ * Handle view request from success modal
+ */
+function handleViewRequestFromModal(requestId) {
+    showSubmissionSuccessModal.value = false
+    router.push(`/request/${requestId}`)
+}
+
+/**
+ * Handle go to dashboard from success modal
+ */
+function handleGoToDashboardFromModal() {
+    showSubmissionSuccessModal.value = false
+    // Redirect to council-specific dashboard if available
+    const councilCode = store.formData.council
+    if (councilCode) {
+        router.push(`/council/${councilCode}/dashboard`)
+    } else {
+        router.push('/dashboard')
+    }
+}
+
 // Watch block for step changes
 watch(() => store.currentStep, () => {
     // Step changed - trigger reactivity
 }, { immediate: true })
+
+// Watch birth_date for age calculation (SPISC applications)
+watch(() => store.formData.birth_date, (newDate) => {
+    if (newDate && store.formData.request_type?.includes('SPISC')) {
+        // Calculate age
+        const today = new Date()
+        const born = new Date(newDate)
+        let age = today.getFullYear() - born.getFullYear()
+        const m = today.getMonth() - born.getMonth()
+        if (m < 0 || (m === 0 && today.getDate() < born.getDate())) {
+            age--
+        }
+
+        // Update age in form data
+        store.updateField('age', age)
+
+        // Validate minimum age for SPISC (60 years)
+        if (age < 60) {
+            validationErrors.value.push({
+                field: 'birth_date',
+                message: 'Applicant must be 60 years or older for SPISC'
+            })
+        } else {
+            // Clear birth_date validation errors if age is valid
+            validationErrors.value = validationErrors.value.filter(
+                e => e.field !== 'birth_date'
+            )
+        }
+    }
+})
 
 // Initialize
 onMounted(async () => {
@@ -426,6 +508,19 @@ onMounted(async () => {
     const draftId = route.query.draft
     const councilCode = route.query.council
     const isLocked = route.query.locked === 'true'
+
+    // Auto-fill user profile data for new requests (not drafts)
+    if (!draftId) {
+        const { getApplicationAutoFill, applyAutoFill } = useUserProfile()
+        try {
+            await getApplicationAutoFill()
+            applyAutoFill(store.formData, {
+                overrideExisting: false // Don't overwrite user input
+            })
+        } catch (error) {
+            console.warn('[NewRequest] Failed to load user profile for auto-fill:', error)
+        }
+    }
 
     // Handle draft loading (this takes precedence)
     if (draftId && requestTypeCode) {
@@ -459,6 +554,26 @@ onMounted(async () => {
         await store.initialize(requestTypeCode)
         selectedRequestTypeDetails.value = store.requestTypeConfig
         store.updateField('request_type', requestTypeCode)
+    }
+})
+
+// Navigation guard - warn about unsaved changes
+onBeforeRouteLeave((to, from, next) => {
+    // Allow navigation if submitting or no unsaved changes
+    if (store.isSubmitting || !store.currentRequestId) {
+        next()
+        return
+    }
+
+    // Check if there are unsaved changes
+    const hasChanges = store.formData && Object.keys(store.formData).some(key =>
+        store.formData[key] !== undefined && store.formData[key] !== null && store.formData[key] !== ''
+    )
+
+    if (hasChanges && !confirm('You have unsaved changes. Do you want to leave without saving?')) {
+        next(false) // Cancel navigation
+    } else {
+        next() // Allow navigation
     }
 })
 </script>

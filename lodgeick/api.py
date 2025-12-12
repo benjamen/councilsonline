@@ -538,6 +538,21 @@ def create_spisc_application(request_name, data):
         full_name, mobile_number, and email are now stored in Request DocType (not here)
         SPISC Application only stores domain-specific fields (birth_date, age, sex, etc.)
     """
+    # Check if SPISC Application already exists for this request (idempotency)
+    existing = frappe.db.get_value(
+        "SPISC Application",
+        {"request": request_name},
+        "name"
+    )
+
+    if existing:
+        # Return existing application and update it instead of creating duplicate
+        spisc_app = frappe.get_doc("SPISC Application", existing)
+        update_spisc_application(spisc_app, data)
+        spisc_app.flags.ignore_mandatory = True
+        spisc_app.save(ignore_mandatory=True)
+        return spisc_app
+
     spisc_app = frappe.get_doc({
         "doctype": "SPISC Application",
         "request": request_name,
@@ -588,6 +603,82 @@ def create_spisc_application(request_name, data):
     spisc_app.insert(ignore_mandatory=True)
 
     return spisc_app
+
+
+def update_spisc_application(spisc_app, data):
+    """
+    Update existing SPISC Application with new data
+
+    Args:
+        spisc_app: Existing SPISC Application document
+        data: Form data dictionary with updated values
+    """
+    # Personal Information
+    if data.get("birth_date"):
+        spisc_app.birth_date = data.get("birth_date")
+    if data.get("sex"):
+        spisc_app.sex = data.get("sex")
+    if data.get("civil_status"):
+        spisc_app.civil_status = data.get("civil_status")
+
+    # Address Information
+    if data.get("address_line"):
+        spisc_app.address_line = data.get("address_line")
+    if data.get("barangay"):
+        spisc_app.barangay = data.get("barangay")
+    if data.get("municipality"):
+        spisc_app.municipality = data.get("municipality")
+    if data.get("province"):
+        spisc_app.province = data.get("province")
+
+    # Household Information
+    if data.get("household_size"):
+        spisc_app.household_size = data.get("household_size")
+    if data.get("living_arrangement"):
+        spisc_app.living_arrangement = data.get("living_arrangement")
+
+    # Economic Status
+    if data.get("monthly_income") is not None:
+        spisc_app.monthly_income = data.get("monthly_income")
+    if data.get("income_source"):
+        spisc_app.income_source = data.get("income_source")
+    if "is_4ps_beneficiary" in data:
+        spisc_app.is_4ps_beneficiary = cint(data.get("is_4ps_beneficiary", 0))
+
+    # Identity Documents
+    if data.get("philsys_id"):
+        spisc_app.philsys_id = data.get("philsys_id")
+    if data.get("sss_number"):
+        spisc_app.sss_number = data.get("sss_number")
+    if data.get("osca_id"):
+        spisc_app.osca_id = data.get("osca_id")
+    if data.get("other_id"):
+        spisc_app.other_id = data.get("other_id")
+
+    # Supporting Documents
+    if data.get("barangay_cert_indigency"):
+        spisc_app.barangay_cert_indigency = data.get("barangay_cert_indigency")
+    if data.get("birth_certificate"):
+        spisc_app.birth_certificate = data.get("birth_certificate")
+    if data.get("valid_id_copy"):
+        spisc_app.valid_id_copy = data.get("valid_id_copy")
+    if data.get("recent_photo"):
+        spisc_app.recent_photo = data.get("recent_photo")
+    if data.get("medical_certificate"):
+        spisc_app.medical_certificate = data.get("medical_certificate")
+    if data.get("indigency_certificate"):
+        spisc_app.indigency_certificate = data.get("indigency_certificate")
+
+    # Declarations
+    if "declaration_truth" in data:
+        spisc_app.declaration_truth = cint(data.get("declaration_truth", 0))
+    if "declaration_consent" in data:
+        spisc_app.declaration_consent = cint(data.get("declaration_consent", 0))
+    if data.get("signature"):
+        spisc_app.signature = data.get("signature")
+    if data.get("signature_date"):
+        spisc_app.signature_date = data.get("signature_date")
+
 
 @frappe.whitelist()
 def create_draft_request(data, current_step=None, total_steps=None):
@@ -800,6 +891,30 @@ def update_draft_request(request_id, data, current_step=None, total_steps=None):
         # Update draft metadata - only store in draft_full_data JSON
         request_doc.draft_full_data = full_data_json
 
+        # Check if application already exists and update it (prevent duplicates)
+        if request_doc.application_doctype and request_doc.application_name:
+            # Update existing application
+            if request_doc.application_doctype == "SPISC Application":
+                app_doc = frappe.get_doc("SPISC Application", request_doc.application_name)
+                update_spisc_application(app_doc, data)
+                app_doc.flags.ignore_mandatory = True
+                app_doc.save(ignore_mandatory=True)
+            elif request_doc.application_doctype == "RC Application":
+                # Similar update for RC if needed
+                pass
+        else:
+            # Create application if it doesn't exist yet
+            application = None
+            if request_doc.request_category == "Resource Consent":
+                application = create_rc_application(request_doc.name, data)
+            elif request_doc.request_type and "SPISC" in request_doc.request_type:
+                application = create_spisc_application(request_doc.name, data)
+
+            # Set polymorphic link if application was created
+            if application:
+                request_doc.db_set("application_doctype", application.doctype, update_modified=False)
+                request_doc.db_set("application_name", application.name, update_modified=False)
+
         request_doc.flags.ignore_mandatory = True
         request_doc.save(ignore_mandatory=True)
         frappe.db.commit()
@@ -897,11 +1012,21 @@ def submit_request(request_id):
         # Submit the document
         doc.submit()
 
+        # Get SLA info from request type
+        sla_info = {}
+        if doc.request_type:
+            request_type_doc = frappe.get_doc("Request Type", doc.request_type)
+            sla_info = {
+                "processing_days": request_type_doc.processing_sla_days or 20,
+                "expected_completion_date": doc.target_completion_date
+            }
+
         return {
             "success": True,
             "message": "Request submitted successfully",
             "request_number": doc.request_number,
-            "request_id": doc.name
+            "request_id": doc.name,
+            "sla_info": sla_info
         }
 
     except Exception as e:

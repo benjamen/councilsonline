@@ -37,15 +37,17 @@ export class BaseAPIClient {
 			? error.exc_type
 			: error?.message || 'An unexpected error occurred'
 
-		// Store error in global error state
-		try {
-			const { useErrorStore } = require('../../stores/errorStore')
-			const errorStore = useErrorStore()
-			errorStore.addError({ message, type: 'api_error', context: error })
-		} catch (e) {
-			// Fail silently if store not available
-			console.error('Could not add error to store:', e)
-		}
+		// Store error in global error state (async to avoid blocking)
+		// Using dynamic import to avoid issues in browser environments
+		import('../../stores/errorStore')
+			.then(({ useErrorStore }) => {
+				const errorStore = useErrorStore()
+				errorStore.addError({ message, type: 'api_error', context: error })
+			})
+			.catch((e) => {
+				// Fail silently if store not available
+				console.error('Could not add error to store:', e)
+			})
 
 		return { error: message }
 	}
@@ -67,12 +69,19 @@ export class BaseAPIClient {
 	 */
 	async call(method, args = {}) {
 		try {
+			const headers = {
+				'Content-Type': 'application/json'
+			};
+
+			// Add CSRF token if available
+			if (window.csrf_token) {
+				headers['X-Frappe-CSRF-Token'] = window.csrf_token;
+			}
+
 			const response = await fetch('/api/method/' + method, {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-Frappe-CSRF-Token': window.csrf_token
-				},
+				headers: headers,
+				credentials: 'include',
 				body: JSON.stringify(args)
 			})
 
@@ -111,11 +120,17 @@ export class BaseAPIClient {
 				formData.append('is_private', options.is_private ? '1' : '0')
 			}
 
+			const headers = {};
+
+			// Add CSRF token if available
+			if (window.csrf_token) {
+				headers['X-Frappe-CSRF-Token'] = window.csrf_token;
+			}
+
 			const response = await fetch('/api/method/upload_file', {
 				method: 'POST',
-				headers: {
-					'X-Frappe-CSRF-Token': window.csrf_token
-				},
+				headers: headers,
+				credentials: 'include',
 				body: formData
 			})
 

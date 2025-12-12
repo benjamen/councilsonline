@@ -107,7 +107,7 @@
    "fieldname": "request_category",
    "fieldtype": "Select",
    "label": "Category",
-   "options": "Resource Consent\nBuilding Consent\nService Request\nLicense\nPermit\nComplaint\nInformation Request\nOther",
+   "options": "Resource Consent\nBuilding Consent\nService Request\nLicense\nPermit\nComplaint\nInformation Request\nSocial Assistance\nOther",
    "reqd": 0,
    "description": "General category for this request. Can be left blank if request type already defines category."
   },
