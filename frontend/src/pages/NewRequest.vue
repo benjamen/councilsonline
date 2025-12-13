@@ -373,7 +373,7 @@ async function handleNext() {
 
         if (!isValid) {
             console.error('[NewRequest] Validation failed:', errors)
-            showValidationErrors.value = true
+            showValidationModal.value = true
             validationErrors.value = errors
             return // Block navigation
         }

@@ -6,7 +6,7 @@
         <PropertyAddressSelector
           v-model="localData[field.field_name]"
           :label="field.field_label"
-          :required="field.is_required"
+          :required="Boolean(field.is_required)"
         />
       </div>
 
