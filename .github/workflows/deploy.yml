@@ -199,9 +199,9 @@ jobs:
           check_endpoint "Frontend Loading" \
             "curl -f -s -o /dev/null -w '%{http_code}' $SITE_URL/frontend | grep -q 200"
 
-          # Test 3: Boot Data in HTML (replaces CSRF check)
+          # Test 3: Boot Data in HTML (updated to look for SPA root)
           check_endpoint "Boot Data Initialization" \
-            "curl -s $SITE_URL/frontend | grep -q 'window\[\"csrf_token\"\]'"
+            "curl -s $SITE_URL/frontend | grep -q '<div id=\"app\"'"
 
           # Test 4: NewRequest Bundle Exists
           check_endpoint "NewRequest Bundle Available" \
