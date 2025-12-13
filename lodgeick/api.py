@@ -553,6 +553,21 @@ def create_spisc_application(request_name, data):
         spisc_app.save(ignore_mandatory=True)
         return spisc_app
 
+    # Handle address_line - it might be a string or a nested object from PhilippineAddressInput
+    address_line_value = data.get("address_line")
+    if isinstance(address_line_value, dict):
+        # Extract individual components from nested object
+        address_line_str = address_line_value.get("address_line", "")
+        barangay = address_line_value.get("barangay", "")
+        municipality = address_line_value.get("municipality", "Taytay")
+        province = address_line_value.get("province", "Rizal")
+    else:
+        # Use top-level values
+        address_line_str = address_line_value or ""
+        barangay = data.get("barangay", "")
+        municipality = data.get("municipality", "Taytay")
+        province = data.get("province", "Rizal")
+
     spisc_app = frappe.get_doc({
         "doctype": "SPISC Application",
         "request": request_name,
@@ -563,10 +578,10 @@ def create_spisc_application(request_name, data):
         "civil_status": data.get("civil_status"),
 
         # Address Information
-        "address_line": data.get("address_line"),
-        "barangay": data.get("barangay"),
-        "municipality": data.get("municipality", "Taytay"),
-        "province": data.get("province", "Rizal"),
+        "address_line": address_line_str,
+        "barangay": barangay,
+        "municipality": municipality,
+        "province": province,
 
         # Household Information
         "household_size": data.get("household_size"),
@@ -621,14 +636,28 @@ def update_spisc_application(spisc_app, data):
     if data.get("civil_status"):
         spisc_app.civil_status = data.get("civil_status")
 
-    # Address Information
-    if data.get("address_line"):
-        spisc_app.address_line = data.get("address_line")
-    if data.get("barangay"):
+    # Address Information - handle nested address object from PhilippineAddressInput
+    address_line_value = data.get("address_line")
+    if address_line_value:
+        if isinstance(address_line_value, dict):
+            # Extract from nested object
+            spisc_app.address_line = address_line_value.get("address_line", "")
+            if address_line_value.get("barangay"):
+                spisc_app.barangay = address_line_value.get("barangay")
+            if address_line_value.get("municipality"):
+                spisc_app.municipality = address_line_value.get("municipality")
+            if address_line_value.get("province"):
+                spisc_app.province = address_line_value.get("province")
+        else:
+            # Use as string directly
+            spisc_app.address_line = address_line_value
+
+    # Update from top-level fields if present
+    if data.get("barangay") and not isinstance(address_line_value, dict):
         spisc_app.barangay = data.get("barangay")
-    if data.get("municipality"):
+    if data.get("municipality") and not isinstance(address_line_value, dict):
         spisc_app.municipality = data.get("municipality")
-    if data.get("province"):
+    if data.get("province") and not isinstance(address_line_value, dict):
         spisc_app.province = data.get("province")
 
     # Household Information
@@ -1131,7 +1160,7 @@ def get_request_form_meta(request_type=None):
 
 
 @frappe.whitelist(allow_guest=True)
-def get_request_type_config(request_type_code):
+def get_request_type_config(request_type_code=None):
     """
     Get detailed configuration for a specific request type including steps and fields
 
@@ -1142,6 +1171,10 @@ def get_request_type_config(request_type_code):
         dict: Complete request type configuration with steps, fields, and metadata
     """
     try:
+        # Validate required parameter
+        if not request_type_code:
+            frappe.throw("Request type code is required")
+
         # Handle if dict is accidentally passed (defensive)
         if isinstance(request_type_code, dict):
             request_type_code = request_type_code.get('name') or request_type_code.get('type_code')
