@@ -566,7 +566,8 @@
    "fieldtype": "Int",
    "label": "Days Remaining",
    "no_copy": 1,
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "amended_from",
