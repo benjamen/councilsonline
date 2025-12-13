@@ -215,7 +215,7 @@ doc_events = {
 # Request Events
 # ----------------
 # before_request = ["lodgeick.utils.before_request"]
-# after_request = ["lodgeick.utils.after_request"]
+after_request = ["lodgeick.utils.after_request"]
 
 # Job Events
 # ----------
