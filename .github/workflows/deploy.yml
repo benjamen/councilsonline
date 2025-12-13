@@ -21,26 +21,54 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup SSH Key
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: Add Server to Known Hosts
+      - name: Setup SSH
         run: |
+          # Setup SSH directory
           mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts
+          chmod 700 ~/.ssh
+
+          # Add SSH key
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+          # Configure SSH to use the key
+          cat >> ~/.ssh/config <<EOF
+          Host ${{ env.SERVER_HOST }}
+            IdentityFile ~/.ssh/deploy_key
+            StrictHostKeyChecking no
+          EOF
+          chmod 600 ~/.ssh/config
+
+          # Add server to known hosts
+          ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
+
+          # Start SSH agent and add key
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/deploy_key
 
       - name: Pre-Deployment Verification
         run: |
           echo '🔍 Running pre-deployment checks...'
 
-          # Check critical bug fixes are present in code
-          if ! grep -q "window.csrf_token" frontend/index.html; then
-            echo "❌ CSRF token initialization missing"
+          # Bug 4 & Bug 1: Check CSRF token initialization with async/await
+          if ! grep -q "async function initFrappeAndCSRF" frontend/index.html; then
+            echo "❌ Bug 4 & Bug 1 fix missing: CSRF async initialization"
             exit 1
           fi
 
+          # Bug 6: Check locked request flow handling
+          if ! grep -q "Locked flow detected" frontend/src/pages/NewRequest.vue; then
+            echo "❌ Bug 6 fix missing: Locked request flow handling"
+            exit 1
+          fi
+
+          # Bug 5: Check PropertyAddressSelector component exists
+          if ! test -f frontend/src/components/PropertyAddressSelector.vue; then
+            echo "❌ Bug 5 fix missing: PropertyAddressSelector component"
+            exit 1
+          fi
+
+          # Original checks
           if ! grep -q "Check if SPISC Application already exists" lodgeick/api.py; then
             echo "❌ SPISC idempotency check missing"
             exit 1
@@ -51,11 +79,11 @@ jobs:
             exit 1
           fi
 
-          echo '✅ All pre-deployment checks passed'
+          echo '✅ All pre-deployment checks passed (Bugs 1, 4, 5, 6 verified)'
 
       - name: Deploy to Production Server
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "
+          ssh ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "
             set -e
             echo '🚀 Starting Lodgeick deployment (v1.2 - Bug Fixes)...'
 
@@ -194,7 +222,7 @@ jobs:
 
       - name: Database Verification
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "
+          ssh ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "
             set +e
             echo '🗄️ Verifying database state...'
             cd ${{ env.BENCH_PATH }}
@@ -227,7 +255,9 @@ jobs:
           echo "- **Site:** $SITE_URL" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Bug Fixes Deployed" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ CSRF Token Handling" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **Bug 4 & Bug 1:** CSRF Token & Frontend Boot (CRITICAL)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **Bug 6:** Locked Request Flow Parameter Handling (CRITICAL)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **Bug 5:** Property Address Defaulting & Management (HIGH)" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ SPISC Duplicate Prevention" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Form Validation Blocking" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Auto-fill User Data" >> $GITHUB_STEP_SUMMARY
@@ -237,7 +267,8 @@ jobs:
           echo "- ✅ Age Auto-calculation" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Navigation Guard" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Socket.io Setup Available" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Easy Council Workspace" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Easy Council Email & Communications Workspace" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Council Meeting Section Consolidation" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Performance Metrics" >> $GITHUB_STEP_SUMMARY
           echo "- **API Response Time:** ${RESPONSE_TIME}s" >> $GITHUB_STEP_SUMMARY
