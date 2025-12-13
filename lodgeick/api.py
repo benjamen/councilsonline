@@ -681,7 +681,7 @@ def update_spisc_application(spisc_app, data):
 
 
 @frappe.whitelist()
-def create_draft_request(data, current_step=None, total_steps=None):
+def create_draft_request(data=None, current_step=None, total_steps=None):
     """
     Create or update a draft request that can be saved without submission
 
@@ -694,6 +694,10 @@ def create_draft_request(data, current_step=None, total_steps=None):
         dict: Created request details
     """
     try:
+        # Validate required data parameter
+        if not data:
+            frappe.throw("Request data is required")
+
         # Parse data if it's a JSON string
         if isinstance(data, str):
             import json
