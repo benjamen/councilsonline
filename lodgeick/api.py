@@ -709,7 +709,7 @@ def update_spisc_application(spisc_app, data):
         spisc_app.signature_date = data.get("signature_date")
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def create_draft_request(data=None, current_step=None, total_steps=None):
     """
     Create or update a draft request that can be saved without submission
