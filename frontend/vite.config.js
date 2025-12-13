@@ -40,7 +40,7 @@ export default defineConfig({
 		port: 8080,
 		proxy: {
 			'^/(app|api|assets|files)': {
-				target: 'http://127.0.0.1:8000',
+				target: 'http://127.0.0.1:8090',
 				ws: true,
 				changeOrigin: true,
 				secure: false,
