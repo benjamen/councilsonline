@@ -5,6 +5,8 @@
     <link rel="icon" href="/assets/lodgeick/frontend/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Frappe UI Starter</title>
+    <script type="module" crossorigin src="/assets/lodgeick/frontend/assets/index-CFVJVh2N.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/lodgeick/frontend/assets/index-Ab5MKwMf.css">
   </head>
   <body>
     <div id="app"></div>
@@ -58,12 +60,6 @@
         }
 
         console.log('[Lodgeick] Boot initialized. CSRF token:', csrfToken ? 'Available' : 'Not available');
-
-        // Load Vue app after initialization is complete
-        const script = document.createElement('script');
-        script.type = 'module';
-        script.src = '/src/main.js';
-        document.body.appendChild(script);
       })();
     </script>
   

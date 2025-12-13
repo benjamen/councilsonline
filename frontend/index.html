@@ -58,13 +58,8 @@
         }
 
         console.log('[Lodgeick] Boot initialized. CSRF token:', csrfToken ? 'Available' : 'Not available');
-
-        // Load Vue app after initialization is complete
-        const script = document.createElement('script');
-        script.type = 'module';
-        script.src = '/src/main.js';
-        document.body.appendChild(script);
       })();
     </script>
+    <script type="module" src="/src/main.js"></script>
   </body>
 </html>

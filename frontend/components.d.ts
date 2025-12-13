@@ -26,6 +26,7 @@ declare module 'vue' {
     PersonalInfoForm: typeof import('./src/components/PersonalInfoForm.vue')['default']
     PhilippinesAddressInput: typeof import('./src/components/PhilippinesAddressInput.vue')['default']
     ProcessStep: typeof import('./src/components/ProcessStep.vue')['default']
+    PropertyAddressSelector: typeof import('./src/components/PropertyAddressSelector.vue')['default']
     PropertyManager: typeof import('./src/components/registration/PropertyManager.vue')['default']
     RequestHeader: typeof import('./src/components/request/RequestHeader.vue')['default']
     RequestProgress: typeof import('./src/components/request/RequestProgress.vue')['default']
