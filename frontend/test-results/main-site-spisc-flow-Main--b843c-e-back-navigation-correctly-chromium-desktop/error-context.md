@@ -1,0 +1,61 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e4]:
+  - banner [ref=e5]:
+    - generic [ref=e8]:
+      - button [ref=e9] [cursor=pointer]:
+        - img [ref=e10]
+      - heading "New Application" [level=1] [ref=e13]
+  - generic [ref=e20]:
+    - generic [ref=e21]: Process Info
+    - generic [ref=e22]: 33% Complete
+  - main [ref=e23]:
+    - generic [ref=e26]:
+      - heading "Council Process Information" [level=2] [ref=e27]
+      - paragraph [ref=e28]: Understanding TayTay Council's process for this application
+      - generic [ref=e29]:
+        - generic [ref=e30]:
+          - generic [ref=e32]:
+            - heading [level=3]
+            - paragraph [ref=e33]: Social Assistance
+          - generic [ref=e34]:
+            - generic [ref=e35]:
+              - generic [ref=e36]: Application Fee
+              - generic [ref=e37]: $0
+              - generic [ref=e38]: Plus any additional costs
+            - generic [ref=e39]:
+              - generic [ref=e40]: Processing Time
+              - generic [ref=e41]: N/A days
+              - generic [ref=e42]: Standard timeframe
+            - generic [ref=e43]:
+              - generic [ref=e44]: Payment Required
+              - generic [ref=e45]: "Yes"
+              - generic [ref=e46]: Before processing
+        - generic [ref=e47]:
+          - heading "About This Application" [level=4] [ref=e48]
+          - generic [ref=e49]:
+            - paragraph [ref=e50]: The Social Pension for Indigent Senior Citizens (SPISC) is a monthly cash assistance program for senior citizens aged 60 and above who are frail, sickly, disabled, or living alone with no regular source of income or support from their families.
+            - paragraph [ref=e51]:
+              - strong [ref=e52]: "Eligibility Requirements:"
+            - list [ref=e53]:
+              - listitem [ref=e54]: 60 years old or above
+              - listitem [ref=e55]: Resident of Taytay for at least 6 months
+              - listitem [ref=e56]: Income below the poverty threshold
+              - listitem [ref=e57]: Not receiving pension from SSS, GSIS, or other government agencies
+        - generic [ref=e59]:
+          - img [ref=e60]
+          - generic [ref=e62]:
+            - heading "Before You Continue" [level=5] [ref=e63]
+            - paragraph [ref=e64]: Please review this information carefully. Make sure you understand the process, fees, and timeframes before proceeding with your application.
+        - button "I Understand - Continue to Application" [ref=e66] [cursor=pointer]
+    - generic [ref=e67]:
+      - generic [ref=e68]:
+        - button "Previous" [ref=e70] [cursor=pointer]:
+          - img [ref=e71]
+          - generic [ref=e73]: Previous
+        - button "Next" [active] [ref=e75] [cursor=pointer]:
+          - generic [ref=e76]: Next
+          - img [ref=e77]
+      - paragraph [ref=e80]: Your progress is automatically saved. You can return to complete this application later.
+```

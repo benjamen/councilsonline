@@ -1,0 +1,163 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-12-14 00:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "test_suite",
+  "test_type",
+  "test_file",
+  "column_break_1",
+  "status",
+  "started_at",
+  "completed_at",
+  "duration",
+  "section_break_results",
+  "total_tests",
+  "passed_tests",
+  "failed_tests",
+  "skipped_tests",
+  "column_break_results",
+  "success_rate",
+  "section_break_output",
+  "output",
+  "error_output"
+ ],
+ "fields": [
+  {
+   "fieldname": "test_suite",
+   "fieldtype": "Select",
+   "label": "Test Suite",
+   "options": "Frontend Unit Tests\nFrontend E2E Tests\nBackend Unit Tests\nBackend Integration Tests\nAll Tests",
+   "reqd": 1
+  },
+  {
+   "fieldname": "test_type",
+   "fieldtype": "Select",
+   "label": "Test Type",
+   "options": "Unit\nIntegration\nE2E\nAll",
+   "default": "All"
+  },
+  {
+   "fieldname": "test_file",
+   "fieldtype": "Data",
+   "label": "Test File",
+   "description": "Specific test file to run (optional)"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Pending\nRunning\nCompleted\nFailed\nCancelled",
+   "default": "Pending",
+   "read_only": 1
+  },
+  {
+   "fieldname": "started_at",
+   "fieldtype": "Datetime",
+   "label": "Started At",
+   "read_only": 1
+  },
+  {
+   "fieldname": "completed_at",
+   "fieldtype": "Datetime",
+   "label": "Completed At",
+   "read_only": 1
+  },
+  {
+   "fieldname": "duration",
+   "fieldtype": "Float",
+   "label": "Duration (seconds)",
+   "read_only": 1,
+   "precision": "2"
+  },
+  {
+   "fieldname": "section_break_results",
+   "fieldtype": "Section Break",
+   "label": "Test Results"
+  },
+  {
+   "fieldname": "total_tests",
+   "fieldtype": "Int",
+   "label": "Total Tests",
+   "read_only": 1
+  },
+  {
+   "fieldname": "passed_tests",
+   "fieldtype": "Int",
+   "label": "Passed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "failed_tests",
+   "fieldtype": "Int",
+   "label": "Failed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "skipped_tests",
+   "fieldtype": "Int",
+   "label": "Skipped",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_results",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "success_rate",
+   "fieldtype": "Percent",
+   "label": "Success Rate",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_output",
+   "fieldtype": "Section Break",
+   "label": "Output"
+  },
+  {
+   "fieldname": "output",
+   "fieldtype": "Code",
+   "label": "Test Output",
+   "options": "Text",
+   "read_only": 1
+  },
+  {
+   "fieldname": "error_output",
+   "fieldtype": "Code",
+   "label": "Error Output",
+   "options": "Text",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-12-14 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Test Runner",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
