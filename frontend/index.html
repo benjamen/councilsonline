@@ -9,33 +9,62 @@
   <body>
     <div id="app"></div>
     <script>
-      // Initialize CSRF token from Frappe backend
-      (function initCSRFToken() {
-        // Try to get CSRF token from cookie first
+      // Initialize CSRF token and boot data before Vue app loads
+      (async function initFrappeAndCSRF() {
+        // Helper to get cookie value
         const getCookie = (name) => {
           const value = `; ${document.cookie}`;
           const parts = value.split(`; ${name}=`);
           if (parts.length === 2) return parts.pop().split(';').shift();
         };
 
-        window.csrf_token = getCookie('csrf_token') || '';
+        // Try to get CSRF token from cookie first
+        let csrfToken = getCookie('csrf_token') || '';
 
-        // If not in cookie, fetch from backend
-        if (!window.csrf_token) {
-          fetch('/api/method/frappe.auth.get_logged_user', {
-            credentials: 'include'
-          })
-            .then(r => r.json())
-            .then(data => {
-              window.csrf_token = data.csrf_token || '';
-            })
-            .catch(err => {
-              console.warn('Failed to fetch CSRF token:', err);
-              window.csrf_token = '';
+        // If not in cookie, fetch from backend synchronously
+        if (!csrfToken) {
+          try {
+            const response = await fetch('/api/method/frappe.auth.get_logged_user', {
+              credentials: 'include',
+              headers: {
+                'Accept': 'application/json'
+              }
             });
+            const data = await response.json();
+            csrfToken = data.csrf_token || data.message?.csrf_token || '';
+          } catch (err) {
+            console.error('[Lodgeick] Failed to fetch CSRF token:', err);
+            csrfToken = '';
+          }
         }
+
+        // Set global CSRF token
+        window.csrf_token = csrfToken;
+
+        // Initialize minimal frappe object if not present
+        if (typeof window.frappe === 'undefined') {
+          window.frappe = {
+            csrf_token: csrfToken,
+            _messages: [],
+            ready_events: [],
+            ready(fn) {
+              if (typeof fn === 'function') {
+                fn();
+              }
+            }
+          };
+        } else {
+          window.frappe.csrf_token = csrfToken;
+        }
+
+        console.log('[Lodgeick] Boot initialized. CSRF token:', csrfToken ? 'Available' : 'Not available');
+
+        // Load Vue app after initialization is complete
+        const script = document.createElement('script');
+        script.type = 'module';
+        script.src = '/src/main.js';
+        document.body.appendChild(script);
       })();
     </script>
-    <script type="module" src="/src/main.js"></script>
   </body>
 </html>

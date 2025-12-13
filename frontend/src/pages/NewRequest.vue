@@ -524,6 +524,8 @@ onMounted(async () => {
     const councilCode = route.query.council
     const isLocked = route.query.locked === 'true'
 
+    console.log('[NewRequest] Initialization - locked:', isLocked, 'council:', councilCode, 'type:', requestTypeCode)
+
     // Auto-fill user profile data for new requests (not drafts)
     if (!draftId) {
         const { getApplicationAutoFill, applyAutoFill } = useUserProfile()
@@ -545,24 +547,43 @@ onMounted(async () => {
         return
     }
 
-    // Handle council pre-selection from URL (e.g., from council website)
-    if (councilCode && !draftId) {
+    // Handle locked request flow from council website (council + type both locked)
+    if (isLocked && councilCode && requestTypeCode && !draftId) {
+        console.log('[NewRequest] Locked flow detected - skipping to step 2')
+
+        // Set council (locked)
         store.updateField('council', councilCode)
 
         // Pre-load request types for this council
         await onCouncilChange(councilCode)
 
-        // If council is locked (from council website), skip to step 1 (Type selection)
-        if (isLocked) {
-            store.currentStep = 1
+        // Initialize request type config
+        await store.initialize(requestTypeCode)
+        selectedRequestTypeDetails.value = store.requestTypeConfig
+        store.updateField('request_type', requestTypeCode)
 
-            // If request type is also provided, load config and skip to step 2 (Process Info)
-            if (requestTypeCode) {
-                await store.initialize(requestTypeCode)
-                selectedRequestTypeDetails.value = store.requestTypeConfig
-                store.updateField('request_type', requestTypeCode)
-                store.currentStep = 2
-            }
+        // Skip directly to step 2 (Process Info)
+        store.currentStep = 2
+        console.log('[NewRequest] Locked flow complete - currentStep:', store.currentStep)
+        return
+    }
+
+    // Handle council pre-selection from URL (not locked, just pre-selected)
+    if (councilCode && !draftId && !isLocked) {
+        store.updateField('council', councilCode)
+
+        // Pre-load request types for this council
+        await onCouncilChange(councilCode)
+
+        // If request type is also provided, advance to step 2
+        if (requestTypeCode) {
+            await store.initialize(requestTypeCode)
+            selectedRequestTypeDetails.value = store.requestTypeConfig
+            store.updateField('request_type', requestTypeCode)
+            store.currentStep = 2
+        } else {
+            // Just council provided, advance to step 1 (Type selection)
+            store.currentStep = 1
         }
     } else if (requestTypeCode && !draftId && !councilCode) {
         // Just request type provided (unusual case, but handle it)

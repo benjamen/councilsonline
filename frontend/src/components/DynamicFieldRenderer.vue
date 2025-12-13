@@ -1,10 +1,11 @@
 <template>
   <div class="space-y-6">
     <div v-for="field in visibleFields" :key="field.field_name" class="field-wrapper">
-      <!-- Philippines Address Input (special handling for address fields) -->
+      <!-- Property Address Selector (special handling for address fields) -->
       <div v-if="isAddressField(field)" class="form-group">
-        <PhilippinesAddressInput
+        <PropertyAddressSelector
           v-model="localData[field.field_name]"
+          :label="field.field_label"
           :required="field.is_required"
         />
       </div>
@@ -284,6 +285,7 @@
 import { computed, watch, ref } from 'vue'
 import CameraUpload from './CameraUpload.vue'
 import PhilippinesAddressInput from './PhilippinesAddressInput.vue'
+import PropertyAddressSelector from './PropertyAddressSelector.vue'
 import Tooltip from './Tooltip.vue'
 import { isFieldVisible } from '../utils/conditionalLogic'
 import { validateField } from '../utils/fieldValidation'
