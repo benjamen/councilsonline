@@ -5,65 +5,11 @@
     <link rel="icon" href="/assets/lodgeick/frontend/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Frappe UI Starter</title>
-    <script type="module" crossorigin src="/assets/lodgeick/frontend/assets/index-BIoKGU7a.js"></script>
+    <script type="module" crossorigin src="/assets/lodgeick/frontend/assets/index-B_HHlVgW.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/lodgeick/frontend/assets/index-Ab5MKwMf.css">
   </head>
   <body>
     <div id="app"></div>
-
-    <!-- CSRF token initialization (runs immediately on page load) -->
-    <script>
-      (function initFrappeAndCSRF() {
-        // Helper to get cookie value
-        const getCookie = (name) => {
-          const value = `; ${document.cookie}`;
-          const parts = value.split(`; ${name}=`);
-          if (parts.length === 2) return parts.pop().split(';').shift();
-        };
-
-        // Try to get CSRF token from multiple sources
-        let csrfToken = '';
-
-        // 1. Check if already set by Frappe boot
-        if (window.csrf_token) {
-          csrfToken = window.csrf_token;
-        }
-        // 2. Check cookie
-        else if (getCookie('csrf_token')) {
-          csrfToken = getCookie('csrf_token');
-        }
-        // 3. Check if frappe object exists with token
-        else if (window.frappe?.csrf_token) {
-          csrfToken = window.frappe.csrf_token;
-        }
-
-        // Set global CSRF token
-        window.csrf_token = csrfToken;
-
-        // Initialize minimal frappe object if not present
-        if (typeof window.frappe === 'undefined') {
-          window.frappe = {
-            csrf_token: csrfToken,
-            _messages: [],
-            ready_events: [],
-            ready(fn) {
-              if (typeof fn === 'function') {
-                fn();
-              }
-            },
-            form: {} // Add empty form object to prevent errors
-          };
-        } else {
-          window.frappe.csrf_token = csrfToken;
-          if (!window.frappe.form) {
-            window.frappe.form = {}; // Add empty form object to prevent errors
-          }
-        }
-
-        console.log('[Lodgeick] Boot initialized. CSRF token:', csrfToken ? 'Available' : 'Not available');
-        console.log('[Lodgeick] Cookies:', document.cookie);
-      })();
-    </script>
   
           <script>
               {% for key in boot %}

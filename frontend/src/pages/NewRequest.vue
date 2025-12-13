@@ -364,17 +364,14 @@ async function handleNext() {
 
     // Validate current step before allowing navigation (for dynamic steps)
     if (store.currentStep >= 2 && usesConfigurableSteps.value && currentStepConfig.value) {
-        const { validateStep } = useStepValidation()
-        const { isValid, errors } = await validateStep(
-            store.currentStep,
-            store.formData,
-            currentStepConfig.value
+        const isValid = await validateStep(
+            currentStepConfig.value,
+            store.formData
         )
 
         if (!isValid) {
-            console.error('[NewRequest] Validation failed:', errors)
+            console.error('[NewRequest] Validation failed:', validationErrors.value)
             showValidationModal.value = true
-            validationErrors.value = errors
             return // Block navigation
         }
     }
@@ -504,15 +501,10 @@ watch(() => store.formData.birth_date, (newDate) => {
 
         // Validate minimum age for SPISC (60 years)
         if (age < 60) {
-            validationErrors.value.push({
-                field: 'birth_date',
-                message: 'Applicant must be 60 years or older for SPISC'
-            })
+            validationErrors.value['birth_date'] = 'Applicant must be 60 years or older for SPISC'
         } else {
             // Clear birth_date validation errors if age is valid
-            validationErrors.value = validationErrors.value.filter(
-                e => e.field !== 'birth_date'
-            )
+            delete validationErrors.value['birth_date']
         }
     }
 })

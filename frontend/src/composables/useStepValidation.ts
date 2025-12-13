@@ -89,7 +89,19 @@ export function useStepValidation(): StepValidationReturn {
 					if (!shouldShow) continue
 				}
 
-				const value = formData[field.field_name]
+				// Get field value - check for nested address fields
+				let value = formData[field.field_name]
+
+				// Philippine address component fields are nested in address_line object
+				const addressComponentFields = ['barangay', 'municipality', 'province', 'city', 'region', 'zip_code', 'postal_code']
+				if (addressComponentFields.includes(field.field_name) && !value) {
+					// Check if there's an address_line object containing this field
+					const addressLineData = formData['address_line'] || formData['street'] || formData['residential_address'] || formData['property_address']
+					if (addressLineData && typeof addressLineData === 'object') {
+						value = addressLineData[field.field_name]
+					}
+				}
+
 				const fieldValid = validateConfigField(field.field_name, value, field, formData)
 
 				if (!fieldValid) {

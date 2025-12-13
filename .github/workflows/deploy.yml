@@ -50,12 +50,6 @@ jobs:
         run: |
           echo '🔍 Running pre-deployment checks...'
 
-          # Bug 4 & Bug 1: Check CSRF token initialization with async/await
-          if ! grep -q "async function initFrappeAndCSRF" frontend/index.html; then
-            echo "❌ Bug 4 & Bug 1 fix missing: CSRF async initialization"
-            exit 1
-          fi
-
           # Bug 6: Check locked request flow handling
           if ! grep -q "Locked flow detected" frontend/src/pages/NewRequest.vue; then
             echo "❌ Bug 6 fix missing: Locked request flow handling"
@@ -65,6 +59,18 @@ jobs:
           # Bug 5: Check PropertyAddressSelector component exists
           if ! test -f frontend/src/components/PropertyAddressSelector.vue; then
             echo "❌ Bug 5 fix missing: PropertyAddressSelector component"
+            exit 1
+          fi
+
+          # User Profile Fix: Check response parsing
+          if ! grep -q "Backend returns profile data directly in result.message" frontend/src/composables/useUserProfile.js; then
+            echo "❌ User profile fix missing: Response parsing"
+            exit 1
+          fi
+
+          # Validation Fix: Check nested address field support
+          if ! grep -q "Philippine address component fields are nested" frontend/src/composables/useStepValidation.ts; then
+            echo "❌ Validation fix missing: Nested address fields"
             exit 1
           fi
 
@@ -79,7 +85,7 @@ jobs:
             exit 1
           fi
 
-          echo '✅ All pre-deployment checks passed (Bugs 1, 4, 5, 6 verified)'
+          echo '✅ All pre-deployment checks passed (Bug fixes verified)'
 
       - name: Deploy to Production Server
         run: |
@@ -193,9 +199,9 @@ jobs:
           check_endpoint "Frontend Loading" \
             "curl -f -s -o /dev/null -w '%{http_code}' $SITE_URL/frontend | grep -q 200"
 
-          # Test 3: CSRF Token in HTML
-          check_endpoint "CSRF Token Initialization" \
-            "curl -s $SITE_URL/frontend | grep -q 'window.csrf_token'"
+          # Test 3: Boot Data in HTML (replaces CSRF check)
+          check_endpoint "Boot Data Initialization" \
+            "curl -s $SITE_URL/frontend | grep -q 'window\[\"csrf_token\"\]'"
 
           # Test 4: NewRequest Bundle Exists
           check_endpoint "NewRequest Bundle Available" \
@@ -255,7 +261,9 @@ jobs:
           echo "- **Site:** $SITE_URL" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Bug Fixes Deployed" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ **Bug 4 & Bug 1:** CSRF Token & Frontend Boot (CRITICAL)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **User Profile Loading:** Fixed response parsing (CRITICAL)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **Validation Errors:** Fixed nested address field validation (CRITICAL)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **Birth Date Validation:** Fixed TypeError with object vs array (HIGH)" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ **Bug 6:** Locked Request Flow Parameter Handling (CRITICAL)" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ **Bug 5:** Property Address Defaulting & Management (HIGH)" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ SPISC Duplicate Prevention" >> $GITHUB_STEP_SUMMARY

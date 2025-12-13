@@ -35,11 +35,13 @@ export function useUserProfile() {
 
       const result = await response.json()
 
-      if (result.message && result.message.success) {
-        userProfile.value = result.message.profile
+      // Backend returns profile data directly in result.message
+      // No need to check for success flag
+      if (result.message) {
+        userProfile.value = result.message
         return userProfile.value
       } else {
-        throw new Error(result.message?.error || 'Failed to load profile')
+        throw new Error('Failed to load profile')
       }
     } catch (err) {
       error.value = err.message
