@@ -56,8 +56,10 @@ describe('RequestStore', () => {
 
     it('should identify last step correctly', () => {
       const store = useRequestStore()
+      // With 3 dynamic steps: totalSteps = 3 + 4 static = 7 (indices 0-6)
+      // Last step is index 6
       store.requestTypeConfig = { steps: [{}, {}, {}] }
-      store.currentStep = 2
+      store.currentStep = 6
 
       expect(store.isLastStep).toBe(true)
 
@@ -67,15 +69,19 @@ describe('RequestStore', () => {
 
     it('should calculate completion percentage', () => {
       const store = useRequestStore()
+      // With 4 dynamic steps: totalSteps = 4 + 4 static = 8
       store.requestTypeConfig = { steps: [{}, {}, {}, {}] }
 
       store.currentStep = 0
-      expect(store.completionPercentage).toBe(25)
+      // Step 1/8 = 12.5% (rounds to 13)
+      expect(store.completionPercentage).toBe(13)
 
       store.currentStep = 2
-      expect(store.completionPercentage).toBe(75)
+      // Step 3/8 = 37.5% (rounds to 38)
+      expect(store.completionPercentage).toBe(38)
 
-      store.currentStep = 3
+      store.currentStep = 7
+      // Step 8/8 = 100%
       expect(store.completionPercentage).toBe(100)
     })
   })
@@ -93,12 +99,14 @@ describe('RequestStore', () => {
 
     it('should not navigate past last step', () => {
       const store = useRequestStore()
+      // With 2 dynamic steps: totalSteps = 2 + 4 = 6, last index is 5
       store.requestTypeConfig = { steps: [{}, {}] }
-      store.currentStep = 1
+      store.currentStep = 5
 
       store.nextStep()
 
-      expect(store.currentStep).toBe(1)
+      // Should not increment past last step
+      expect(store.currentStep).toBe(5)
     })
 
     it('should navigate to previous step', () => {
@@ -130,11 +138,14 @@ describe('RequestStore', () => {
 
     it('should not jump to invalid step', () => {
       const store = useRequestStore()
+      // With 2 dynamic steps: totalSteps = 2 + 4 = 6 (indices 0-5)
       store.requestTypeConfig = { steps: [{}, {}] }
       store.currentStep = 0
 
-      store.goToStep(5)
+      // Try to jump to step 10 (invalid - beyond totalSteps)
+      store.goToStep(10)
 
+      // Should remain at current step
       expect(store.currentStep).toBe(0)
     })
   })
@@ -150,11 +161,13 @@ describe('RequestStore', () => {
 
       await store.saveProgress()
 
+      // After bug fix c822b40, formData should include request_id after first save
       expect(requestService.createDraft).toHaveBeenCalledWith(
-        { applicant_name: 'John Doe' },
+        { applicant_name: 'John Doe', request_id: 'REQ-001' },
         1
       )
       expect(store.currentRequestId).toBe('REQ-001')
+      expect(store.formData.request_id).toBe('REQ-001')
       expect(store.lastSaved).toBeInstanceOf(Date)
       expect(store.isSaving).toBe(false)
     })
