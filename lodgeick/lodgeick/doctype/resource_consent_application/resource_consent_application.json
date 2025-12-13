@@ -564,6 +564,7 @@
    "description": "Working days remaining before statutory deadline",
    "fieldname": "working_days_remaining",
    "fieldtype": "Int",
+   "in_standard_filter": 1,
    "label": "Days Remaining",
    "no_copy": 1,
    "read_only": 1,

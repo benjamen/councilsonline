@@ -184,6 +184,8 @@ export const useRequestStore = defineStore('request', {
 
                 if (!this.currentRequestId) {
                     this.currentRequestId = result.request_id
+                    // Ensure subsequent saves include request_id to update existing draft
+                    this.formData.request_id = result.request_id
                 }
 
                 this.lastSaved = new Date()
