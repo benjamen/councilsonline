@@ -550,7 +550,8 @@ def create_spisc_application(request_name, data):
         spisc_app = frappe.get_doc("SPISC Application", existing)
         update_spisc_application(spisc_app, data)
         spisc_app.flags.ignore_mandatory = True
-        spisc_app.save(ignore_mandatory=True)
+        spisc_app.flags.ignore_permissions = True
+        spisc_app.save(ignore_mandatory=True, ignore_permissions=True)
         return spisc_app
 
     # Handle address_line - it might be a string or a nested object from PhilippineAddressInput
@@ -613,9 +614,9 @@ def create_spisc_application(request_name, data):
         "signature_date": data.get("signature_date")
     })
 
-    spisc_app.flags.ignore_permissions = False
+    spisc_app.flags.ignore_permissions = True
     spisc_app.flags.ignore_mandatory = True
-    spisc_app.insert(ignore_mandatory=True)
+    spisc_app.insert(ignore_mandatory=True, ignore_permissions=True)
 
     return spisc_app
 
@@ -854,9 +855,10 @@ def create_draft_request(data=None, current_step=None, total_steps=None):
 
         # Save as draft (docstatus = 0)
         # Ignore mandatory field validation for drafts
-        request_doc.flags.ignore_permissions = False
+        # Allow guest users to create draft requests
+        request_doc.flags.ignore_permissions = True
         request_doc.flags.ignore_mandatory = True
-        request_doc.insert(ignore_mandatory=True)
+        request_doc.insert(ignore_mandatory=True, ignore_permissions=True)
 
         # Create Application DocType based on request category/type
         application = None
@@ -904,8 +906,8 @@ def update_draft_request(request_id, data, current_step=None, total_steps=None):
         # Get the request document
         request_doc = frappe.get_doc("Request", request_id)
 
-        # Validate user has permission to update
-        if request_doc.requester != frappe.session.user:
+        # Validate user has permission to update (allow Guest for draft requests)
+        if request_doc.requester != frappe.session.user and frappe.session.user != "Guest":
             frappe.throw(_("You don't have permission to update this request"))
 
         # Check if it's still a draft
@@ -949,7 +951,8 @@ def update_draft_request(request_id, data, current_step=None, total_steps=None):
                 request_doc.db_set("application_name", application.name, update_modified=False)
 
         request_doc.flags.ignore_mandatory = True
-        request_doc.save(ignore_mandatory=True)
+        request_doc.flags.ignore_permissions = True
+        request_doc.save(ignore_mandatory=True, ignore_permissions=True)
         frappe.db.commit()
 
         return {
