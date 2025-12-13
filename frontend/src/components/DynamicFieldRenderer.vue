@@ -336,16 +336,25 @@ const visibleFields = computed(() => {
 
 // Check if field is an address field
 const isAddressField = (field) => {
-  // Only trigger for the actual address collection section, not individual address parts
-  // Check if this is part of an address section AND is the primary address field
+  // Check if this is an address field that should use the PropertyAddressSelector
+  const fieldName = field.field_name?.toLowerCase() || ''
+  const fieldLabel = field.field_label?.toLowerCase() || ''
   const parentSection = field.parent_section_code?.toLowerCase() || ''
-  const addressSections = ['address', 'residential_address', 'permanent_address', 'property_address', 'current_address', 'home_address']
 
-  // Only show Philippines/Address component for the main address field in an address section
-  // This prevents duplication where both the section and individual fields trigger the component
-  return addressSections.includes(parentSection) &&
-         field.field_name === 'address_line' &&
-         field.field_type === 'Data'
+  // Address field indicators
+  const addressFieldNames = ['address_line', 'street', 'residential_address', 'property_address', 'home_address', 'current_address', 'permanent_address']
+  const addressSections = ['address', 'residential_address', 'permanent_address', 'property_address', 'current_address', 'home_address']
+  const addressLabels = ['residential address', 'property address', 'home address', 'current address', 'permanent address', 'street / house number', 'street address']
+
+  // Trigger PropertyAddressSelector if:
+  // 1. Field name matches address patterns, OR
+  // 2. Parent section is an address section and this is the first field (address_line or street), OR
+  // 3. Field label indicates it's a main address field
+  return (
+    (addressFieldNames.includes(fieldName) && field.field_type === 'Data') ||
+    (addressSections.includes(parentSection) && (fieldName === 'address_line' || fieldName === 'street') && field.field_type === 'Data') ||
+    (addressLabels.some(label => fieldLabel.includes(label)) && field.field_type === 'Data' && !fieldLabel.includes('zip') && !fieldLabel.includes('postal'))
+  )
 }
 
 // Get placeholder text for field
