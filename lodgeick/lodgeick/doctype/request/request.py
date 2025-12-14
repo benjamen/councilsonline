@@ -10,8 +10,12 @@ from datetime import datetime, timedelta
 class Request(Document):
     def autoname(self):
         """Generate request number based on type and year"""
+        # For draft requests without request_type, use generic DRAFT prefix
         if not self.request_type:
-            frappe.throw("Request Type is required")
+            from frappe.model.naming import make_autoname
+            self.name = make_autoname("DRAFT-.YYYY.-.#####")
+            self.request_number = self.name
+            return
 
         # Get prefix from request type
         request_type_doc = frappe.get_doc("Request Type", self.request_type)
