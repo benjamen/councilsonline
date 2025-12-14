@@ -551,6 +551,7 @@ def create_spisc_application(request_name, data):
         update_spisc_application(spisc_app, data)
         spisc_app.flags.ignore_mandatory = True
         spisc_app.flags.ignore_permissions = True
+        spisc_app.flags.ignore_validate = True
         spisc_app.save()
         return spisc_app
 
@@ -858,6 +859,7 @@ def create_draft_request(data=None, current_step=None, total_steps=None):
         # Allow guest users to create draft requests
         request_doc.flags.ignore_permissions = True
         request_doc.flags.ignore_mandatory = True
+        request_doc.flags.ignore_validate = True
         request_doc.insert(ignore_mandatory=True, ignore_permissions=True)
 
         # Create Application DocType based on request category/type
@@ -934,6 +936,7 @@ def update_draft_request(request_id, data, current_step=None, total_steps=None):
                 update_spisc_application(app_doc, data)
                 app_doc.flags.ignore_mandatory = True
                 app_doc.flags.ignore_permissions = True
+                app_doc.flags.ignore_validate = True
                 app_doc.save()
             elif request_doc.application_doctype == "RC Application":
                 # Similar update for RC if needed
@@ -953,6 +956,8 @@ def update_draft_request(request_id, data, current_step=None, total_steps=None):
 
         request_doc.flags.ignore_mandatory = True
         request_doc.flags.ignore_permissions = True
+        request_doc.flags.ignore_validate = True
+        request_doc.flags.ignore_links = True
         request_doc.save()
         frappe.db.commit()
 
