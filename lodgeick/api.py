@@ -551,7 +551,7 @@ def create_spisc_application(request_name, data):
         update_spisc_application(spisc_app, data)
         spisc_app.flags.ignore_mandatory = True
         spisc_app.flags.ignore_permissions = True
-        spisc_app.save(ignore_mandatory=True, ignore_permissions=True)
+        spisc_app.save()
         return spisc_app
 
     # Handle address_line - it might be a string or a nested object from PhilippineAddressInput
@@ -933,7 +933,8 @@ def update_draft_request(request_id, data, current_step=None, total_steps=None):
                 app_doc = frappe.get_doc("SPISC Application", request_doc.application_name)
                 update_spisc_application(app_doc, data)
                 app_doc.flags.ignore_mandatory = True
-                app_doc.save(ignore_mandatory=True)
+                app_doc.flags.ignore_permissions = True
+                app_doc.save()
             elif request_doc.application_doctype == "RC Application":
                 # Similar update for RC if needed
                 pass
@@ -952,7 +953,7 @@ def update_draft_request(request_id, data, current_step=None, total_steps=None):
 
         request_doc.flags.ignore_mandatory = True
         request_doc.flags.ignore_permissions = True
-        request_doc.save(ignore_mandatory=True, ignore_permissions=True)
+        request_doc.save()
         frappe.db.commit()
 
         return {
