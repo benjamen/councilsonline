@@ -158,14 +158,8 @@ fixtures = [
 # Hook on document methods and events
 
 doc_events = {
-	"WB Task": {
-		"validate": "lodgeick.wb_task_hooks.wb_task_validate",
-		"on_update": "lodgeick.wb_task_hooks.wb_task_on_update"
-	},
-	"Project Task": {
-		# Project Task handles costing in its own validate/on_update methods
-		# No external hooks needed
-	}
+	# Project Task handles all validation and costing in its own class methods
+	# No external hooks needed
 }
 
 # Scheduled Tasks

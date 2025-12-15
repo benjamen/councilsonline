@@ -8,7 +8,6 @@
  "field_order": [
   "title",
   "priority",
-  "has_checklist",
   "column_break_basic",
   "status",
   "due_date",
@@ -32,11 +31,7 @@
   "actual_hours",
   "hourly_rate",
   "column_break_costing",
-  "total_cost",
-  "tab_checklist",
-  "checklist_template",
-  "section_break_checklist_items",
-  "checklist_items"
+  "total_cost"
  ],
  "fields": [
   {
@@ -66,12 +61,6 @@
   {
    "fieldname": "column_break_basic",
    "fieldtype": "Column Break"
-  },
-  {
-   "default": "0",
-   "fieldname": "has_checklist",
-   "fieldtype": "Check",
-   "label": "Has Checklist"
   },
   {
    "fieldname": "due_date",
@@ -198,30 +187,6 @@
    "label": "Total Cost",
    "precision": "2",
    "read_only": 1
-  },
-  {
-   "depends_on": "eval:doc.has_checklist==1",
-   "fieldname": "tab_checklist",
-   "fieldtype": "Tab Break",
-   "label": "Checklist"
-  },
-  {
-   "fieldname": "checklist_template",
-   "fieldtype": "Link",
-   "label": "Checklist Template",
-   "mandatory_depends_on": "eval:doc.has_checklist == 1",
-   "options": "WB Task Checklist Template"
-  },
-  {
-   "depends_on": "checklist_template",
-   "fieldname": "section_break_checklist_items",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "checklist_items",
-   "fieldtype": "Table",
-   "label": "Checklist Items",
-   "options": "WB Task Checklist Details"
   }
  ],
  "index_web_pages_for_search": 1,

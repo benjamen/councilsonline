@@ -26,28 +26,28 @@ class AssessmentStageInstance(Document):
 			self.completed_date = None
 
 	def create_primary_task(self, project_name, board=None):
-		"""Create a WB Task for this stage"""
+		"""Create a Project Task for this stage"""
 		if self.primary_task:
 			frappe.throw("Primary task already exists for this stage")
 
 		# Get parent assessment project
 		assessment_project = frappe.get_doc("Assessment Project", project_name)
+		from frappe.utils import today, add_days
 
-		# Create WB Task
+		# Create Project Task
 		task = frappe.get_doc({
-			"doctype": "WB Task",
-			"subject": f"{self.stage_name} - {assessment_project.request}",
+			"doctype": "Project Task",
+			"title": f"{self.stage_name} - {assessment_project.request}",
 			"description": self.notes or f"Assessment stage: {self.stage_name}",
-			"board": board,
+			"status": "Open",
+			"priority": "Medium",
+			"due_date": add_days(today(), 14),
+			"assigned_to": self.assigned_to or "Administrator",
+			"assigned_by": "Administrator",
 			"assessment_project": project_name,
 			"assessment_stage": self.stage_name,
-			"allocated_to": self.assigned_to,
-			"checklist_template": self.checklist_template
+			"task_type": "Auto"
 		})
-
-		# Set estimated time if available
-		if self.estimated_hours:
-			task.estimated_time = self.estimated_hours
 
 		task.insert()
 

@@ -6,14 +6,14 @@ import frappe
 
 @frappe.whitelist()
 def get_my_tasks():
-    """Get tasks - WB Task integration disabled"""
-    # Note: WB Task doctype from Workboard app is not installed
-    # Returning empty list until Workboard integration is configured
+    """Get tasks - migrated to Project Task"""
+    # Note: Migrated from WB Task (Workboard app) to native Project Task
+    # TODO: Implement get_my_tasks for Project Task doctype
     return []
 
-    # Original code commented out - requires Workboard app installation:
+    # Legacy code (used WB Task from Workboard app - now removed):
     # return frappe.get_all(
-    #     "WB Task",
+    #     "Project Task",
     #     fields=[
     #         "name",
     #         "title",

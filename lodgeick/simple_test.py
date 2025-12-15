@@ -5,9 +5,9 @@ import frappe
 from frappe.utils import today
 
 
-def test_wb_task_costing():
-	"""Create a simple WB Task and test costing"""
-	print("\n=== Testing WB Task Costing ===\n")
+def test_project_task_costing():
+	"""Create a simple Project Task and test costing"""
+	print("\n=== Testing Project Task Costing ===\n")
 
 	# 1. Test get_hourly_rate API
 	print("1. Testing Role Rate API...")
@@ -16,21 +16,21 @@ def test_wb_task_costing():
 	rate = get_hourly_rate("Planner", today())
 	print(f"   Planner hourly rate: ${rate.get('hourly_rate', 0)}")
 
-	# 2. Create a test WB Task
-	print("\n2. Creating test WB Task...")
+	# 2. Create a test Project Task
+	print("\n2. Creating test Project Task...")
 	from frappe.utils import add_days
 	task = frappe.get_doc({
-		"doctype": "WB Task",
+		"doctype": "Project Task",
 		"title": "Test Costing - Document Review",
 		"description": "Testing automatic cost calculation",
 		"status": "Open",
 		"priority": "Medium",
 		"due_date": add_days(today(), 7),
-		"assign_from": "Administrator",
-		"assign_to": "Administrator",
+		"assigned_by": "Administrator",
+		"assigned_to": "Administrator",
 		"assigned_role": "Planner",
-		"estimated_hours": 2.0,
-		"actual_hours": 2.5
+		"actual_hours": 2.5,
+		"task_type": "Manual"
 	})
 	task.insert()
 

@@ -105,29 +105,23 @@ def test_costing_calculations():
 	test_request.insert()
 	print(f"  - Created Request: {test_request.name}")
 
-	# 2. Create WB Tasks linked to this Request
-	print("\n2. Creating WB Tasks...")
+	# 2. Create Project Tasks linked to this Request
+	print("\n2. Creating Project Tasks...")
 
 	tasks_data = [
 		{
 			"title": "Initial Document Review",
-			"activity_type": "Document Review",
 			"assigned_role": "Consent Officer",
-			"estimated_hours": 2.0,
 			"actual_hours": 2.5
 		},
 		{
 			"title": "Site Inspection",
-			"activity_type": "Site Inspection",
 			"assigned_role": "Building Inspector",
-			"estimated_hours": 3.0,
 			"actual_hours": 3.5
 		},
 		{
 			"title": "Planning Review",
-			"activity_type": "Consultation Meeting",
 			"assigned_role": "Planner",
-			"estimated_hours": 1.5,
 			"actual_hours": 2.0
 		}
 	]
@@ -135,15 +129,18 @@ def test_costing_calculations():
 	created_tasks = []
 	for task_data in tasks_data:
 		task = frappe.get_doc({
-			"doctype": "WB Task",
+			"doctype": "Project Task",
 			"title": task_data["title"],
 			"description": f"Test task: {task_data['title']}",
 			"status": "Open",
+			"priority": "Medium",
+			"due_date": add_days(today(), 7),
+			"assigned_to": "Administrator",
+			"assigned_by": "Administrator",
 			"request": test_request.name,
-			"activity_type": task_data["activity_type"],
 			"assigned_role": task_data["assigned_role"],
-			"estimated_hours": task_data["estimated_hours"],
-			"actual_hours": task_data["actual_hours"]
+			"actual_hours": task_data["actual_hours"],
+			"task_type": "Manual"
 		})
 		task.insert()
 		created_tasks.append(task)
@@ -203,7 +200,7 @@ def cleanup_test_data(test_info):
 	# Delete tasks
 	for task_name in test_info.get("tasks", []):
 		try:
-			frappe.delete_doc("WB Task", task_name, force=1)
+			frappe.delete_doc("Project Task", task_name, force=1)
 			print(f"  - Deleted Task: {task_name}")
 		except:
 			pass
