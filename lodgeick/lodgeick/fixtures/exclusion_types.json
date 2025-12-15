@@ -1,0 +1,85 @@
+[
+ {
+  "doctype": "Exclusion Type",
+  "exclusion_type_name": "RFI Issued",
+  "exclusion_code": "RFI",
+  "is_standard": 1,
+  "applies_to_countries": "NZ, AU",
+  "legislation_reference": "RMA Section 92",
+  "description": "<p>Request for Information (RFI) issued to applicant. Clock stops until response received.</p>",
+  "auto_calculate_days": 1,
+  "default_duration_days": 20
+ },
+ {
+  "doctype": "Exclusion Type",
+  "exclusion_type_name": "Section 37",
+  "exclusion_code": "S37",
+  "is_standard": 1,
+  "applies_to_countries": "NZ",
+  "legislation_reference": "RMA Section 37",
+  "description": "<p>Extension of time limits under RMA Section 37. Requires consent of applicant or extended by consent authority.</p>",
+  "auto_calculate_days": 0
+ },
+ {
+  "doctype": "Exclusion Type",
+  "exclusion_type_name": "Section 91",
+  "exclusion_code": "S91",
+  "is_standard": 1,
+  "applies_to_countries": "NZ",
+  "legislation_reference": "RMA Section 91",
+  "description": "<p>Request for further information under Section 91. Similar to Section 92 but specifically for further information after initial RFI.</p>",
+  "auto_calculate_days": 1
+ },
+ {
+  "doctype": "Exclusion Type",
+  "exclusion_type_name": "Section 92",
+  "exclusion_code": "S92",
+  "is_standard": 1,
+  "applies_to_countries": "NZ",
+  "legislation_reference": "RMA Section 92",
+  "description": "<p>Request for further information under Section 92. Statutory clock stops during RFI period.</p>",
+  "auto_calculate_days": 1,
+  "default_duration_days": 20
+ },
+ {
+  "doctype": "Exclusion Type",
+  "exclusion_type_name": "Notification Period",
+  "exclusion_code": "NOTIFY",
+  "is_standard": 1,
+  "applies_to_countries": "NZ",
+  "legislation_reference": "RMA",
+  "description": "<p>Public notification period for notified consents. Time for submissions from affected parties.</p>",
+  "auto_calculate_days": 0,
+  "default_duration_days": 20
+ },
+ {
+  "doctype": "Exclusion Type",
+  "exclusion_type_name": "Hearing Period",
+  "exclusion_code": "HEARING",
+  "is_standard": 1,
+  "applies_to_countries": "NZ",
+  "legislation_reference": "RMA",
+  "description": "<p>Time required for hearings and deliberation on notified consents.</p>",
+  "auto_calculate_days": 0
+ },
+ {
+  "doctype": "Exclusion Type",
+  "exclusion_type_name": "Applicant Delay",
+  "exclusion_code": "DELAY",
+  "is_standard": 1,
+  "applies_to_countries": "",
+  "legislation_reference": "",
+  "description": "<p>Delays caused by applicant (e.g., slow response, incomplete information, missed meetings).</p>",
+  "auto_calculate_days": 1
+ },
+ {
+  "doctype": "Exclusion Type",
+  "exclusion_type_name": "Custom",
+  "exclusion_code": "CUSTOM",
+  "is_standard": 1,
+  "applies_to_countries": "",
+  "legislation_reference": "",
+  "description": "<p>Custom exclusion type for council-specific circumstances not covered by standard types.</p>",
+  "auto_calculate_days": 0
+ }
+]

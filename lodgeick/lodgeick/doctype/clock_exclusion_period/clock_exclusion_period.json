@@ -22,10 +22,10 @@
  "fields": [
   {
    "fieldname": "exclusion_type",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Exclusion Type",
-   "options": "RFI Issued\nSection 37\nSection 91\nSection 92\nNotification Period\nHearing Period\nApplicant Delay\nCustom",
+   "options": "Exclusion Type",
    "reqd": 1
   },
   {

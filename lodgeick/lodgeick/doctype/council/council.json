@@ -51,6 +51,8 @@
   "max_requests_per_month",
   "request_types_section",
   "enabled_request_types",
+  "exclusion_types_section",
+  "exclusion_types",
   "payment_accounts_section",
   "payment_accounts"
  ],
@@ -313,6 +315,19 @@
    "fieldtype": "Table",
    "label": "Enabled Request Types",
    "options": "Council Request Type"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "exclusion_types_section",
+   "fieldtype": "Section Break",
+   "label": "SLA Clock Exclusion Types"
+  },
+  {
+   "description": "Configure which exclusion types are available for this council and specific request types",
+   "fieldname": "exclusion_types",
+   "fieldtype": "Table",
+   "label": "Exclusion Types",
+   "options": "Council Exclusion Type"
   },
   {
    "fieldname": "payment_accounts_section",
