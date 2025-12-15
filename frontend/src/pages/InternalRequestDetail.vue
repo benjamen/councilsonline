@@ -164,10 +164,10 @@
           <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h3 class="text-sm font-semibold text-gray-900 mb-4">Timeline</h3>
 
-            <!-- Statutory Clock -->
+            <!-- SLA / Statutory Clock -->
             <div v-if="clockData.statutory_clock_started" class="mb-6">
               <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-medium text-gray-700">Statutory Clock</span>
+                <span class="text-xs font-medium text-gray-700">SLA / Statutory Clock</span>
                 <span class="text-xs text-gray-600">
                   {{ clockData.working_days_elapsed }} / {{ request.data.statutory_timeframe || 20 }} days
                 </span>

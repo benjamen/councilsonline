@@ -511,10 +511,10 @@
           <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Processing Timeline</h2>
 
-            <!-- Statutory Clock -->
+            <!-- SLA / Statutory Clock -->
             <div v-if="clockData.statutory_clock_started" class="mb-6 p-4 bg-blue-50 rounded-lg">
               <div class="flex items-center justify-between mb-2">
-                <span class="text-sm font-medium text-blue-900">Statutory Clock</span>
+                <span class="text-sm font-medium text-blue-900">SLA / Statutory Clock</span>
                 <span class="text-xs text-blue-700">{{ clockData.working_days_elapsed }} of 20 days</span>
               </div>
               <div class="w-full bg-blue-200 rounded-full h-2">

@@ -143,14 +143,14 @@
    "collapsible": 1,
    "fieldname": "section_break_clock",
    "fieldtype": "Section Break",
-   "label": "Statutory Clock"
+   "label": "SLA / Statutory Clock"
   },
   {
    "default": "1",
-   "description": "If checked, statutory clock will be stopped when RFI is issued",
+   "description": "If checked, SLA / statutory clock will be stopped when RFI is issued",
    "fieldname": "stops_statutory_clock",
    "fieldtype": "Check",
-   "label": "Stops Statutory Clock"
+   "label": "Stops SLA / Statutory Clock"
   },
   {
    "fieldname": "clock_stopped_date",

@@ -103,13 +103,13 @@
   {
    "fieldname": "section_break_clock",
    "fieldtype": "Section Break",
-   "label": "Statutory Clock"
+   "label": "SLA / Statutory Clock"
   },
   {
    "description": "Working days allowed for decision (e.g. 20 for notified RC)",
    "fieldname": "statutory_clock_days",
    "fieldtype": "Int",
-   "label": "Statutory Clock Days"
+   "label": "SLA / Statutory Clock Days"
   },
   {
    "fieldname": "started_date",
@@ -123,7 +123,7 @@
   {
    "fieldname": "statutory_deadline",
    "fieldtype": "Date",
-   "label": "Statutory Deadline",
+   "label": "SLA Deadline",
    "read_only": 1
   },
   {

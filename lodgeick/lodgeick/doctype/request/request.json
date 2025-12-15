@@ -1,21 +1,25 @@
 {
  "actions": [],
- "allow_rename": 0,
  "autoname": "field:request_number",
  "creation": "2025-11-05 19:00:00",
  "doctype": "DocType",
  "document_type": "Document",
  "engine": "InnoDB",
  "field_order": [
+  "summary_tab",
+  "summary_section",
   "request_number",
-  "request_type",
-  "council",
   "request_category",
-  "status",
+  "request_type",
+  "column_break_pazx",
+  "council",
   "priority",
-  "column_break_1",
+  "status",
   "workflow_state",
   "is_overdue",
+  "section_break_history",
+  "status_history",
+  "request_details_tab",
   "section_break_requester",
   "requester",
   "requester_name",
@@ -27,24 +31,18 @@
   "agent_email",
   "agent_phone",
   "organization",
-  "section_break_application",
-  "application_doctype",
-  "application_name",
-  "column_break_application",
-  "property_address",
   "section_break_proposal",
   "brief_description",
   "detailed_description",
-  "section_break_dates",
-  "submitted_date",
-  "acknowledged_date",
-  "target_completion_date",
-  "actual_completion_date",
-  "column_break_4",
-  "section_break_assignment",
-  "assigned_to",
-  "assigned_team",
-  "processing_notes",
+  "application_details_tab",
+  "section_break_application",
+  "application_doctype",
+  "application_name",
+  "addresses_section",
+  "property_address",
+  "section_break_delivery",
+  "delivery_preference",
+  "tab_break_asdq",
   "section_break_assessment",
   "assessment_project",
   "assessment_status",
@@ -52,14 +50,18 @@
   "column_break_assessment",
   "assessment_template",
   "assessment_owner",
-  "section_break_attachments",
-  "attachments",
+  "section_break_assignment",
+  "assigned_to",
+  "assigned_team",
+  "processing_notes",
+  "payments_and_invoicing_tab",
   "section_break_fees",
   "selected_payment_account",
   "selected_bank_account",
   "total_fees_excl_gst",
   "gst_amount",
   "total_fees_incl_gst",
+  "section_break_tfuj",
   "column_break_5",
   "payment_status",
   "fees",
@@ -70,10 +72,16 @@
   "column_break_invoicing",
   "invoice_address",
   "purchase_order_number",
-  "section_break_delivery",
-  "delivery_preference",
-  "section_break_history",
-  "status_history",
+  "timeframes_tab",
+  "section_break_dates",
+  "submitted_date",
+  "acknowledged_date",
+  "target_completion_date",
+  "actual_completion_date",
+  "attachments_tab",
+  "section_break_attachments",
+  "attachments",
+  "tab_break_bkdb",
   "section_break_related",
   "related_requests",
   "amended_from"
@@ -90,26 +98,25 @@
    "fieldname": "request_type",
    "fieldtype": "Link",
    "label": "Request Type",
-   "options": "Request Type",
-   "mandatory_depends_on": "eval:doc.status!='Draft'"
+   "mandatory_depends_on": "eval:doc.status!='Draft'",
+   "options": "Request Type"
   },
   {
+   "description": "The council processing this request",
    "fieldname": "council",
    "fieldtype": "Link",
-   "label": "Council",
-   "options": "Council",
-   "reqd": 1,
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "description": "The council processing this request"
+   "label": "Council",
+   "options": "Council",
+   "reqd": 1
   },
   {
+   "description": "General category for this request. Can be left blank if request type already defines category.",
    "fieldname": "request_category",
    "fieldtype": "Select",
    "label": "Category",
-   "options": "Resource Consent\nBuilding Consent\nService Request\nLicense\nPermit\nComplaint\nInformation Request\nSocial Assistance\nOther",
-   "reqd": 0,
-   "description": "General category for this request. Can be left blank if request type already defines category."
+   "options": "Resource Consent\nBuilding Consent\nService Request\nLicense\nPermit\nComplaint\nInformation Request\nSocial Assistance\nOther"
   },
   {
    "allow_on_submit": 1,
@@ -126,10 +133,6 @@
    "options": "Low\nStandard\nHigh\nUrgent"
   },
   {
-   "fieldname": "column_break_1",
-   "fieldtype": "Column Break"
-  },
-  {
    "allow_on_submit": 1,
    "fieldname": "workflow_state",
    "fieldtype": "Link",
@@ -138,6 +141,7 @@
    "read_only": 1
   },
   {
+   "default": "0",
    "fieldname": "is_overdue",
    "fieldtype": "Check",
    "label": "Is Overdue",
@@ -180,11 +184,11 @@
    "fieldtype": "Column Break"
   },
   {
+   "description": "Optional: Person or consultant acting on behalf of requester",
    "fieldname": "agent",
    "fieldtype": "Link",
    "label": "Agent/Representative",
-   "options": "User",
-   "description": "Optional: Person or consultant acting on behalf of requester"
+   "options": "User"
   },
   {
    "fetch_from": "agent.full_name",
@@ -206,50 +210,41 @@
    "label": "Agent Phone"
   },
   {
+   "description": "Optional: Organization associated with this request",
    "fieldname": "organization",
    "fieldtype": "Link",
    "label": "Organization",
-   "options": "Organization",
-   "description": "Optional: Organization associated with this request"
+   "options": "Organization"
   },
   {
    "description": "Link to the type-specific application document (e.g., Resource Consent Application, SPISC Application)",
    "fieldname": "section_break_application",
    "fieldtype": "Section Break",
-   "label": "Application Details",
-   "collapsible": 1
+   "label": "Application Details"
   },
   {
+   "description": "The DocType of the associated application (e.g., 'Resource Consent Application', 'SPISC Application')",
    "fieldname": "application_doctype",
    "fieldtype": "Link",
-   "options": "DocType",
    "label": "Application DocType",
-   "read_only": 1,
-   "description": "The DocType of the associated application (e.g., 'Resource Consent Application', 'SPISC Application')",
-   "in_list_view": 0,
-   "in_standard_filter": 0
+   "options": "DocType",
+   "read_only": 1
   },
   {
+   "description": "Link to the associated application record",
    "fieldname": "application_name",
    "fieldtype": "Dynamic Link",
-   "options": "application_doctype",
    "label": "Application",
-   "read_only": 1,
-   "description": "Link to the associated application record",
-   "in_list_view": 0
+   "options": "application_doctype",
+   "read_only": 1
   },
   {
-   "fieldname": "column_break_application",
-   "fieldtype": "Column Break"
-  },
-  {
+   "description": "Display-only field for list views. Synced from Application DocType.",
    "fieldname": "property_address",
    "fieldtype": "Small Text",
-   "label": "Property/Location",
-   "read_only": 1,
-   "description": "Display-only field for list views. Synced from Application DocType.",
    "in_list_view": 1,
-   "in_standard_filter": 0
+   "label": "Property/Location",
+   "read_only": 1
   },
   {
    "description": "Describe what is being requested. Brief description is shown in listings and reports. Detailed description is used for assessment.",
@@ -262,7 +257,6 @@
    "fieldname": "brief_description",
    "fieldtype": "Small Text",
    "label": "Brief Description",
-   "max_length": 200,
    "reqd": 1
   },
   {
@@ -291,21 +285,17 @@
   },
   {
    "allow_on_submit": 1,
+   "description": "Calculated based on request type SLA",
    "fieldname": "target_completion_date",
    "fieldtype": "Date",
    "label": "Target Completion Date",
-   "read_only": 1,
-   "description": "Calculated based on request type SLA"
+   "read_only": 1
   },
   {
    "allow_on_submit": 1,
    "fieldname": "actual_completion_date",
    "fieldtype": "Date",
    "label": "Actual Completion Date"
-  },
-  {
-   "fieldname": "column_break_4",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "section_break_assignment",
@@ -325,10 +315,10 @@
    "label": "Assigned Team"
   },
   {
+   "description": "Internal notes for processing this request",
    "fieldname": "processing_notes",
    "fieldtype": "Text Editor",
-   "label": "Processing Notes",
-   "description": "Internal notes for processing this request"
+   "label": "Processing Notes"
   },
   {
    "collapsible": 1,
@@ -400,20 +390,18 @@
    "label": "Fees & Payments"
   },
   {
+   "description": "Council bank account to receive payment from requester",
    "fieldname": "selected_payment_account",
    "fieldtype": "Link",
    "label": "Payment Account (Council Receives)",
-   "options": "Council Payment Account",
-   "description": "Council bank account to receive payment from requester",
-   "read_only": 0
+   "options": "Council Payment Account"
   },
   {
+   "description": "Requester's bank account to receive payment from council",
    "fieldname": "selected_bank_account",
    "fieldtype": "Link",
    "label": "Bank Account (Requester Receives)",
-   "options": "User Bank Account",
-   "description": "Requester's bank account to receive payment from council",
-   "read_only": 0
+   "options": "User Bank Account"
   },
   {
    "fieldname": "total_fees_excl_gst",
@@ -460,11 +448,11 @@
    "label": "Invoicing Details"
   },
   {
+   "default": "Applicant",
    "fieldname": "invoice_to",
    "fieldtype": "Select",
    "label": "Invoice To",
-   "options": "Applicant\nAgent/Representative\nOrganization\nOther",
-   "default": "Applicant"
+   "options": "Applicant\nAgent/Representative\nOrganization\nOther"
   },
   {
    "depends_on": "eval:doc.invoice_to=='Other'",
@@ -478,8 +466,8 @@
    "fieldname": "invoice_email",
    "fieldtype": "Data",
    "label": "Invoice Email",
-   "options": "Email",
-   "mandatory_depends_on": "eval:doc.invoice_to=='Other'"
+   "mandatory_depends_on": "eval:doc.invoice_to=='Other'",
+   "options": "Email"
   },
   {
    "fieldname": "column_break_invoicing",
@@ -497,18 +485,17 @@
    "label": "Purchase Order Number"
   },
   {
-   "collapsible": 1,
    "description": "Choose how you would like to receive communications",
    "fieldname": "section_break_delivery",
    "fieldtype": "Section Break",
    "label": "Delivery Preferences"
   },
   {
+   "default": "Email",
    "fieldname": "delivery_preference",
    "fieldtype": "Select",
    "label": "Delivery Preference",
-   "options": "Email\nPost\nPortal\nSMS",
-   "default": "Email"
+   "options": "Email\nPost\nPortal\nSMS"
   },
   {
    "collapsible": 1,
@@ -530,10 +517,10 @@
    "label": "Related Requests"
   },
   {
+   "description": "Comma-separated list of related request numbers",
    "fieldname": "related_requests",
    "fieldtype": "Small Text",
-   "label": "Related Request Numbers",
-   "description": "Comma-separated list of related request numbers"
+   "label": "Related Request Numbers"
   },
   {
    "fieldname": "amended_from",
@@ -541,6 +528,64 @@
    "label": "Amended From",
    "options": "Request",
    "read_only": 1
+  },
+  {
+   "fieldname": "timeframes_tab",
+   "fieldtype": "Tab Break",
+   "label": "Timeframes"
+  },
+  {
+   "fieldname": "tab_break_asdq",
+   "fieldtype": "Tab Break",
+   "label": "Assignment"
+  },
+  {
+   "fieldname": "tab_break_bkdb",
+   "fieldtype": "Tab Break",
+   "label": "Related Requests"
+  },
+  {
+   "fieldname": "request_details_tab",
+   "fieldtype": "Tab Break",
+   "label": "Request Details"
+  },
+  {
+   "fieldname": "application_details_tab",
+   "fieldtype": "Tab Break",
+   "label": "Application Details"
+  },
+  {
+   "fieldname": "summary_tab",
+   "fieldtype": "Tab Break",
+   "label": "Summary"
+  },
+  {
+   "fieldname": "addresses_section",
+   "fieldtype": "Section Break",
+   "label": "Addresses"
+  },
+  {
+   "fieldname": "payments_and_invoicing_tab",
+   "fieldtype": "Tab Break",
+   "label": "Payments and Invoicing"
+  },
+  {
+   "fieldname": "attachments_tab",
+   "fieldtype": "Tab Break",
+   "label": "Attachments"
+  },
+  {
+   "fieldname": "section_break_tfuj",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_pazx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "summary_section",
+   "fieldtype": "Section Break",
+   "label": "Summary"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -562,7 +607,7 @@
    "link_fieldname": "reference_name"
   }
  ],
- "modified": "2025-12-05 23:59:00",
+ "modified": "2025-12-15 18:20:27.516260",
  "modified_by": "Administrator",
  "module": "Lodgeick",
  "name": "Request",
@@ -571,7 +616,6 @@
  "permissions": [
   {
    "create": 1,
-   "delete": 0,
    "email": 1,
    "export": 1,
    "if_owner": 1,
@@ -585,7 +629,6 @@
   },
   {
    "create": 1,
-   "delete": 0,
    "email": 1,
    "export": 1,
    "print": 1,
@@ -598,9 +641,6 @@
   },
   {
    "amend": 1,
-   "cancel": 0,
-   "create": 0,
-   "delete": 0,
    "email": 1,
    "export": 1,
    "print": 1,
@@ -608,7 +648,6 @@
    "report": 1,
    "role": "Planner",
    "share": 1,
-   "submit": 0,
    "write": 1
   },
   {
