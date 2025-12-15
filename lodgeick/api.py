@@ -743,7 +743,33 @@ def create_draft_request(data=None, current_step=None, total_steps=None):
 
         if existing_draft_id and frappe.db.exists("Request", existing_draft_id):
             # Update existing draft
+            frappe.logger().info(f"Updating existing draft: {existing_draft_id}")
             return update_draft_request(existing_draft_id, data, current_step, total_steps)
+
+        # Before creating new draft, check for recent duplicates
+        # This is a safety net in case frontend state is lost
+        request_type = data.get("request_type")
+        if frappe.session.user != "Guest":
+            recent_draft = frappe.db.get_value(
+                "Request",
+                filters={
+                    "requester": frappe.session.user,
+                    "request_type": request_type or "",
+                    "status": "Draft",
+                    "creation": [">", frappe.utils.add_to_date(frappe.utils.now(), minutes=-5)]
+                },
+                fieldname="name"
+            )
+
+            if recent_draft:
+                frappe.log_error(
+                    f"Potential duplicate draft detected. Updating existing: {recent_draft}",
+                    "Duplicate Draft Prevention"
+                )
+                # Update existing instead of creating new
+                return update_draft_request(recent_draft, data, current_step, total_steps)
+
+        frappe.logger().info(f"Creating new draft for user: {frappe.session.user}")
 
         # Get request type to determine category
         request_type = data.get("request_type")

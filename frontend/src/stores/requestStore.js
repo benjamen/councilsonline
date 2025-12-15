@@ -173,6 +173,25 @@ export const useRequestStore = defineStore('request', {
         },
 
         async saveProgress() {
+            // Prevent concurrent saves
+            if (this.isSaving) {
+                console.log('[RequestStore] Save already in progress, skipping')
+                return
+            }
+
+            // Ensure formData has request_id if store has one
+            if (this.currentRequestId && !this.formData.request_id) {
+                console.warn('[RequestStore] Syncing request_id to formData')
+                this.formData.request_id = this.currentRequestId
+            }
+
+            console.log('[RequestStore] saveProgress called', {
+                hasRequestId: !!this.currentRequestId,
+                formDataHasId: !!this.formData.request_id,
+                currentStep: this.currentStep,
+                isSaving: this.isSaving
+            })
+
             this.isSaving = true
             this.error = null
 
@@ -186,9 +205,14 @@ export const useRequestStore = defineStore('request', {
                     this.currentRequestId = result.request_id
                     // Ensure subsequent saves include request_id to update existing draft
                     this.formData.request_id = result.request_id
+
+                    // Backup to localStorage
+                    localStorage.setItem('current_draft_id', result.request_id)
                 }
 
                 this.lastSaved = new Date()
+
+                return result  // Return for caller
             } catch (error) {
                 console.error('Save failed:', error)
                 this.error = error.message || 'Failed to save progress'
@@ -246,16 +270,27 @@ export const useRequestStore = defineStore('request', {
         },
 
         reset() {
+            console.log('[RequestStore] reset() called - clearing all state')
+
             this.currentRequestId = null
             this.requestTypeCode = null
             this.requestTypeConfig = null
-            this.formData = {}
+
+            // Clear formData completely - don't just reassign
+            Object.keys(this.formData).forEach(key => {
+                delete this.formData[key]
+            })
+            this.formData = {}  // Reset to empty object
+
             this.currentStep = 0
             this.stepValidationStatus = {}
             this.isSaving = false
             this.isSubmitting = false
             this.lastSaved = null
             this.error = null
+
+            // Clear localStorage backup
+            localStorage.removeItem('current_draft_id')
         }
     }
 })

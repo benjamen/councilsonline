@@ -430,10 +430,12 @@ async function handleSaveDraft() {
 async function handleSaveAndClose() {
     try {
         await store.saveDraft()
+        store.reset()  // Clear state after successful save
         // Redirect to dashboard
         router.push({ name: 'Dashboard' })
     } catch (error) {
         console.error('Failed to save draft:', error)
+        // Don't reset on error - preserve state for retry
     }
 }
 
@@ -454,6 +456,7 @@ async function handleSubmit() {
 }
 
 function goBack() {
+    store.reset()  // Clear all state before navigation
     router.push('/dashboard')
 }
 
@@ -517,6 +520,11 @@ onMounted(async () => {
     const isLocked = route.query.locked === 'true'
 
     console.log('[NewRequest] Initialization - locked:', isLocked, 'council:', councilCode, 'type:', requestTypeCode)
+
+    // If starting fresh request (no draft ID), ensure clean state
+    if (!draftId && !route.query.draft) {
+        store.reset()  // Clear any lingering state
+    }
 
     // Auto-fill user profile data for new requests (not drafts)
     if (!draftId) {
@@ -587,8 +595,9 @@ onMounted(async () => {
 
 // Navigation guard - warn about unsaved changes
 onBeforeRouteLeave((to, from, next) => {
-    // Allow navigation if submitting or no unsaved changes
+    // Allow navigation if submitting or no draft exists
     if (store.isSubmitting || !store.currentRequestId) {
+        store.reset()  // Clear state when leaving without draft
         next()
         return
     }
@@ -601,6 +610,10 @@ onBeforeRouteLeave((to, from, next) => {
     if (hasChanges && !confirm('You have unsaved changes. Do you want to leave without saving?')) {
         next(false) // Cancel navigation
     } else {
+        // User confirmed or no unsaved changes
+        if (!to.path.includes('/request/')) {
+            store.reset()  // Clear state when navigating away from requests
+        }
         next() // Allow navigation
     }
 })
