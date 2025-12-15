@@ -5628,3 +5628,231 @@ def get_available_meeting_slots(council_code, meeting_type="Pre-Application Meet
 			"success": False,
 			"error": str(e)
 		}
+
+
+# =============================================================================
+# Assessment Template Builder API Endpoints
+# =============================================================================
+
+@frappe.whitelist()
+def get_assessment_templates():
+	"""
+	List all assessment templates with metadata for builder
+
+	Returns:
+		list: Assessment templates with name, request_type, is_active, stage_count
+	"""
+	try:
+		templates = frappe.get_all(
+			"Assessment Template",
+			fields=[
+				"name",
+				"template_name",
+				"request_type",
+				"is_active",
+				"default_budget_hours",
+				"description",
+				"modified"
+			],
+			order_by="modified desc"
+		)
+
+		# Enrich with stage count and request type name
+		for template in templates:
+			# Get stage count
+			stage_count = frappe.db.count(
+				"Assessment Template Stage",
+				{"parent": template.name}
+			)
+			template["stage_count"] = stage_count
+
+			# Get request type name
+			if template.get("request_type"):
+				request_type_name = frappe.db.get_value(
+					"Request Type",
+					template.request_type,
+					"type_name"
+				)
+				template["request_type_name"] = request_type_name
+
+		return {
+			"success": True,
+			"templates": templates
+		}
+
+	except Exception as e:
+		frappe.log_error(f"Get Assessment Templates Error: {str(e)}")
+		return {
+			"success": False,
+			"error": str(e)
+		}
+
+
+@frappe.whitelist()
+def load_assessment_template(template_name):
+	"""
+	Load assessment template with all stages for editing
+
+	Args:
+		template_name: Name of the Assessment Template
+
+	Returns:
+		dict: Template configuration with stages
+	"""
+	try:
+		# Get template document
+		template = frappe.get_doc("Assessment Template", template_name)
+
+		# Build configuration object
+		config = {
+			"name": template.name,
+			"template_name": template.template_name,
+			"request_type": template.request_type,
+			"is_active": template.is_active,
+			"default_budget_hours": template.default_budget_hours,
+			"description": template.description,
+			"stages": []
+		}
+
+		# Get request type name if linked
+		if template.request_type:
+			request_type_name = frappe.db.get_value(
+				"Request Type",
+				template.request_type,
+				"type_name"
+			)
+			config["request_type_name"] = request_type_name
+
+		# Add stages
+		for stage in template.stages:
+			stage_data = {
+				"stage_number": stage.stage_number,
+				"stage_type": stage.stage_type,
+				"estimated_hours": stage.estimated_hours,
+				"required": stage.required,
+				"description": stage.description
+			}
+
+			# Get stage type details
+			if stage.stage_type:
+				stage_type_doc = frappe.get_doc("Assessment Stage Type", stage.stage_type)
+				stage_data["stage_type_name"] = stage_type_doc.stage_type_name
+				stage_data["stage_type_description"] = stage_type_doc.description
+				stage_data["stage_type_color"] = stage_type_doc.color
+
+			config["stages"].append(stage_data)
+
+		return {
+			"success": True,
+			"template": config
+		}
+
+	except Exception as e:
+		frappe.log_error(f"Load Assessment Template Error: {str(e)}")
+		return {
+			"success": False,
+			"error": str(e)
+		}
+
+
+@frappe.whitelist()
+def save_assessment_template(config):
+	"""
+	Validate and save assessment template configuration
+
+	Args:
+		config: JSON configuration with template and stages
+
+	Returns:
+		dict: Success status and saved template name
+	"""
+	try:
+		import json
+
+		# Parse config if string
+		if isinstance(config, str):
+			config = json.loads(config)
+
+		# Determine if creating new or updating existing
+		template_name = config.get("name")
+
+		if template_name and frappe.db.exists("Assessment Template", template_name):
+			# Update existing template
+			template = frappe.get_doc("Assessment Template", template_name)
+		else:
+			# Create new template
+			template = frappe.new_doc("Assessment Template")
+
+		# Set basic fields
+		template.template_name = config.get("template_name")
+		template.request_type = config.get("request_type")
+		template.is_active = config.get("is_active", 1)
+		template.default_budget_hours = config.get("default_budget_hours")
+		template.description = config.get("description")
+
+		# Clear existing stages
+		template.stages = []
+
+		# Add stages from config
+		for stage_config in config.get("stages", []):
+			template.append("stages", {
+				"stage_number": stage_config.get("stage_number"),
+				"stage_type": stage_config.get("stage_type"),
+				"estimated_hours": stage_config.get("estimated_hours"),
+				"required": stage_config.get("required", 0),
+				"description": stage_config.get("description")
+			})
+
+		# Save (validation will run automatically)
+		if template.is_new():
+			template.insert()
+		else:
+			template.save()
+
+		return {
+			"success": True,
+			"message": "Assessment template saved successfully",
+			"template_name": template.name
+		}
+
+	except Exception as e:
+		frappe.log_error(f"Save Assessment Template Error: {str(e)}")
+		return {
+			"success": False,
+			"error": str(e)
+		}
+
+
+@frappe.whitelist()
+def get_assessment_stage_types():
+	"""
+	Get master list of available assessment stage types
+
+	Returns:
+		list: Assessment stage types with name, description, color
+	"""
+	try:
+		stage_types = frappe.get_all(
+			"Assessment Stage Type",
+			fields=[
+				"name",
+				"stage_type_name",
+				"description",
+				"color",
+				"is_active"
+			],
+			filters={"is_active": 1},
+			order_by="stage_type_name"
+		)
+
+		return {
+			"success": True,
+			"stage_types": stage_types
+		}
+
+	except Exception as e:
+		frappe.log_error(f"Get Assessment Stage Types Error: {str(e)}")
+		return {
+			"success": False,
+			"error": str(e)
+		}

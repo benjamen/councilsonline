@@ -71,6 +71,18 @@ const routes = [
 		meta: { requiresAdmin: true }
 	},
 	{
+		path: "/admin/assessment-template-builder",
+		name: "AssessmentTemplateBuilder",
+		component: () => import("@/pages/AssessmentTemplateBuilder.vue"),
+		meta: { requiresAdmin: true }
+	},
+	{
+		path: "/admin/assessment-template-builder/:id",
+		name: "AssessmentTemplateBuilderEdit",
+		component: () => import("@/pages/AssessmentTemplateBuilder.vue"),
+		meta: { requiresAdmin: true }
+	},
+	{
 		path: "/company",
 		name: "CompanyManagement",
 		component: () => import("@/pages/CompanyManagement.vue"),
