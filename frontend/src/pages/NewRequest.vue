@@ -1,41 +1,27 @@
 <template>
     <div class="min-h-screen bg-gray-50">
-        <header class="bg-white shadow-sm border-b border-gray-200">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between py-4">
-                    <div class="flex items-center space-x-3">
-                        <button @click="goBack" class="text-gray-500 hover:text-gray-700">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                            </svg>
-                        </button>
-                        <div>
-                            <h1 class="text-xl font-bold text-gray-900">New Application</h1>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <Button
-                            v-if="canSaveDraft"
-                            @click="handleSaveDraft"
-                            variant="outline"
-                            theme="gray"
-                            :loading="store.isSaving"
-                        >
-                            Save Draft
-                        </Button>
-                        <Button
-                            v-if="canSaveDraft"
-                            @click="handleSaveAndClose"
-                            variant="outline"
-                            theme="gray"
-                            :loading="store.isSaving"
-                        >
-                            Save and Close
-                        </Button>
-                    </div>
-                </div>
-            </div>
-        </header>
+        <RequestHeader title="New Application" @back="goBack">
+            <template #actions>
+                <Button
+                    v-if="canSaveDraft"
+                    @click="handleSaveDraft"
+                    variant="outline"
+                    theme="gray"
+                    :loading="store.isSaving"
+                >
+                    Save Draft
+                </Button>
+                <Button
+                    v-if="canSaveDraft"
+                    @click="handleSaveAndClose"
+                    variant="outline"
+                    theme="gray"
+                    :loading="store.isSaving"
+                >
+                    Save and Close
+                </Button>
+            </template>
+        </RequestHeader>
 
         <div class="bg-white border-b border-gray-200">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -184,6 +170,7 @@ import { useStepValidation } from '../composables/useStepValidation'
 import { useUserProfile } from '../composables/useUserProfile'
 
 // Components
+import RequestHeader from '../components/request/RequestHeader.vue'
 import RequestProgress from '../components/request/RequestProgress.vue'
 import StepNavigation from '../components/request/StepNavigation.vue'
 import SaveDraftModal from '../components/modals/SaveDraftModal.vue'

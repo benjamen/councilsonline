@@ -1,36 +1,25 @@
 <template>
   <div class="min-h-screen bg-gray-50">
     <!-- Header -->
-    <header class="bg-white shadow-sm border-b border-gray-200">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center py-4">
-          <div class="flex items-center space-x-4">
-            <button @click="goBack" class="text-gray-600 hover:text-gray-900">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg>
-            </button>
-            <div>
-              <h1 class="text-xl font-bold text-gray-900">{{ request.data?.request_number || 'Loading...' }}</h1>
-              <p class="text-sm text-gray-500">{{ request.data?.request_type }}</p>
-            </div>
-          </div>
-
-          <div class="flex items-center space-x-3">
-            <StatusBadge v-if="request.data" :status="request.data.status" />
-            <Button
-              v-if="request.data?.status === 'Draft'"
-              @click="handleSubmitApplication"
-              variant="solid"
-              theme="blue"
-              :loading="submitting"
-            >
-              Submit Application
-            </Button>
-          </div>
-        </div>
-      </div>
-    </header>
+    <RequestHeader
+      :title="request.data?.request_number || 'Loading...'"
+      :subtitle="request.data?.request_type"
+      :loading="request.loading"
+      @back="goBack"
+    >
+      <template #actions>
+        <StatusBadge v-if="request.data" :status="request.data.status" />
+        <Button
+          v-if="request.data?.status === 'Draft'"
+          @click="handleSubmitApplication"
+          variant="solid"
+          theme="blue"
+          :loading="submitting"
+        >
+          Submit Application
+        </Button>
+      </template>
+    </RequestHeader>
 
     <!-- Hidden file input -->
     <input
@@ -670,6 +659,7 @@
 import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { createResource, Button } from 'frappe-ui'
+import RequestHeader from '../components/request/RequestHeader.vue'
 import StatusBadge from '../components/StatusBadge.vue'
 import SendMessageModal from '../components/modals/SendMessageModal.vue'
 import BookMeetingModal from '../components/modals/BookMeetingModal.vue'
