@@ -83,22 +83,22 @@ class AssessmentProject(Document):
 		self.current_stage = "All Stages Complete"
 
 	def rollup_time_and_cost(self):
-		"""Rollup actual hours and cost from linked Project Tasks"""
-		# Get all Project Tasks linked to this assessment project
+		"""Rollup actual hours and cost from linked WB Tasks"""
+		# Get all WB Tasks linked to this assessment project
 		tasks = frappe.get_all(
-			"Project Task",
+			"WB Task",
 			filters={"assessment_project": self.name},
-			fields=["name", "actual_hours", "total_cost"]
+			fields=["name", "actual_time", "total_costing_amount"]
 		)
 
 		total_hours = 0
 		total_cost = 0
 
 		for task in tasks:
-			if task.actual_hours:
-				total_hours += task.actual_hours
-			if task.total_cost:
-				total_cost += task.total_cost
+			if task.actual_time:
+				total_hours += task.actual_time
+			if task.total_costing_amount:
+				total_cost += task.total_costing_amount
 
 		self.actual_hours = total_hours
 		self.actual_cost = total_cost
@@ -132,7 +132,7 @@ class AssessmentProject(Document):
 
 	def create_tasks_from_template(self):
 		"""
-		Auto-create Project Tasks from Task Templates for all stages
+		Auto-create WB Tasks from Task Templates for all stages
 		This creates a complete project plan with all tasks assigned
 		"""
 		if not self.stages:
@@ -175,16 +175,16 @@ class AssessmentProject(Document):
 				# Render task description with context
 				task_description = self.render_task_description(template, stage_instance)
 
-				# Create Project Task
+				# Create WB Task
 				task = frappe.get_doc({
-					"doctype": "Project Task",
+					"doctype": "WB Task",
 					"title": template.task_title,
 					"description": task_description,
 					"assessment_project": self.name,
 					"assessment_stage": stage_instance.stage_name,
 					"request": self.request,
-					"assigned_by": self.project_owner or frappe.session.user,
-					"assigned_to": assignee,
+					"assign_from": self.project_owner or frappe.session.user,
+					"assign_to": assignee,
 					"assigned_role": template.required_role,
 					"estimated_hours": template.estimated_hours,
 					"priority": template.priority,
