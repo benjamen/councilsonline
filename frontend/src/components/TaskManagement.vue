@@ -225,7 +225,7 @@ const toggleTaskStatus = async (task) => {
 
   try {
     await call('frappe.client.set_value', {
-      doctype: 'WB Task',
+      doctype: 'Project Task',
       name: task.name,
       fieldname: 'status',
       value: newStatus

@@ -91,12 +91,12 @@
           </div>
 
           <div>
-            <label for="assign_to" class="block text-sm font-medium text-gray-700 mb-2">
+            <label for="assigned_to" class="block text-sm font-medium text-gray-700 mb-2">
               Assign To <span class="text-red-500">*</span>
             </label>
             <Input
-              id="assign_to"
-              v-model="formData.assign_to"
+              id="assigned_to"
+              v-model="formData.assigned_to"
               type="text"
               required
               placeholder="User email"
@@ -267,8 +267,8 @@ const defaultFormData = () => ({
   priority: 'Medium',
   status: 'Open',
   due_date: '',
-  assign_to: '',
-  assign_from: '',
+  assigned_to: '',
+  assigned_by: '',
   request: '',
   activity_type: '',
   assigned_role: '',
@@ -284,8 +284,8 @@ const totalCost = computed(() => {
   return hours * hourlyRate.value
 })
 
-// Fetch user role and hourly rate when assign_to changes
-watch(() => formData.value.assign_to, async (newUser) => {
+// Fetch user role and hourly rate when assigned_to changes
+watch(() => formData.value.assigned_to, async (newUser) => {
   if (newUser) {
     try {
       // Get user's primary role
@@ -336,8 +336,8 @@ watch(() => props.task, (newTask) => {
       priority: newTask.priority || 'Medium',
       status: newTask.status || 'Open',
       due_date: newTask.due_date || '',
-      assign_to: newTask.assign_to || '',
-      assign_from: newTask.assign_from || '',
+      assigned_to: newTask.assigned_to || '',
+      assigned_by: newTask.assigned_by || '',
       request: newTask.request || '',
       activity_type: newTask.activity_type || '',
       assigned_role: newTask.assigned_role || '',
@@ -367,16 +367,16 @@ const handleSubmit = async () => {
     if (isEditMode.value) {
       // Update existing task
       await call('frappe.client.set_value', {
-        doctype: 'WB Task',
+        doctype: 'Project Task',
         name: props.task.name,
         fieldname: formData.value
       })
     } else {
       // Create new task
       const taskData = {
-        doctype: 'WB Task',
+        doctype: 'Project Task',
         ...formData.value,
-        assign_from: formData.value.assign_from || 'Administrator'
+        assigned_by: formData.value.assigned_by || 'Administrator'
       }
 
       await call('frappe.client.insert', {

@@ -1158,7 +1158,7 @@ def assign_request(request_id, assigned_to, notes=None):
         add({
             "doctype": "Request",
             "name": request_id,
-            "assign_to": [assigned_to],
+            "assigned_to": [assigned_to],
             "description": notes or f"Request {request_doc.request_number} assigned"
         })
 
@@ -1510,7 +1510,7 @@ def book_council_meeting(request_id=None, request_type_code=None, meeting_type="
                         break
 
             task_doc = frappe.get_doc({
-                "doctype": "WB Task",
+                "doctype": "Project Task",
                 "title": f"Schedule {meeting_type} - {request_doc.request_number if request_doc else 'Pre-Application'}",
                 "description": f"""
                     <p><strong>Meeting Request:</strong> {meeting_doc.name}</p>
@@ -1531,8 +1531,8 @@ def book_council_meeting(request_id=None, request_type_code=None, meeting_type="
                 "priority": "High",
                 "task_type": "Manual",
                 "due_date": frappe.utils.add_days(frappe.utils.today(), 2),
-                "assign_from": frappe.session.user,
-                "assign_to": council_user,
+                "assigned_by": frappe.session.user,
+                "assigned_to": council_user,
                 "request": request_id if (request_id and request_id != "draft") else None
             })
             task_doc.insert(ignore_permissions=True)
@@ -1656,7 +1656,7 @@ def send_request_message(request_id, subject, message, communication_type="Email
 
             # Create the task
             task_doc = frappe.get_doc({
-                "doctype": "WB Task",
+                "doctype": "Project Task",
                 "title": f"Respond to Message - {request_doc.request_number}",
                 "description": f"""
                     <h3>Message Received from Applicant</h3>
@@ -1675,13 +1675,13 @@ def send_request_message(request_id, subject, message, communication_type="Email
                 "priority": "Medium",
                 "task_type": "Manual",
                 "due_date": frappe.utils.add_days(frappe.utils.today(), 3),  # 3 business days
-                "assign_from": frappe.session.user,
-                "assign_to": assignee,
+                "assigned_by": frappe.session.user,
+                "assigned_to": assignee,
                 "request": request_id
             })
             task_doc.insert(ignore_permissions=True)
 
-            frappe.logger().info(f"Created WB Task {task_doc.name} for message on {request_id}")
+            frappe.logger().info(f"Created Project Task {task_doc.name} for message on {request_id}")
 
         except Exception as e:
             # Log error but don't fail the message sending
