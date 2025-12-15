@@ -532,7 +532,7 @@
    "description": "Statutory timeframes under RMA Sections 91-115. Clock starts when request is acknowledged and stops during RFI periods.",
    "fieldname": "section_break_statutory_clock",
    "fieldtype": "Section Break",
-   "label": "RMA Statutory Clock"
+   "label": "SLA / Statutory Clock"
   },
   {
    "description": "Date and time when the RMA statutory timeframe clock begins",
