@@ -196,8 +196,29 @@ export const useRequestStore = defineStore('request', {
             this.error = null
 
             try {
+                // Sanitize formData to remove File objects (files need separate upload)
+                const sanitizedData = {}
+                for (const [key, value] of Object.entries(this.formData)) {
+                    // Skip File objects - they should be uploaded separately
+                    if (value instanceof File) {
+                        console.warn(`[RequestStore] Skipping File object for key: ${key}`)
+                        continue
+                    }
+                    // Skip undefined/null but allow empty strings and false
+                    if (value !== undefined && value !== null) {
+                        sanitizedData[key] = value
+                    }
+                }
+
+                // Ensure we have some data to send
+                if (Object.keys(sanitizedData).length === 0 && !this.currentRequestId) {
+                    throw new Error('No form data to save. Please fill in at least one field.')
+                }
+
+                console.log('[RequestStore] Sending sanitized data with', Object.keys(sanitizedData).length, 'fields')
+
                 const result = await requestService.createDraft(
-                    this.formData,
+                    sanitizedData,
                     this.currentStep
                 )
 

@@ -725,14 +725,44 @@ def create_draft_request(data=None, current_step=None, total_steps=None):
         dict: Created request details
     """
     try:
+        # Log incoming request for debugging
+        frappe.logger().debug(f"create_draft_request called - data type: {type(data)}, current_step: {current_step}")
+
         # Validate required data parameter
         if not data:
-            frappe.throw("Request data is required")
+            # Log the full request to understand what's being sent
+            frappe.log_error(
+                f"Empty data received. Form dict: {frappe.form_dict}",
+                "create_draft_request - Empty Data"
+            )
+            frappe.throw("Request data is required. Please ensure all form fields are filled and try again.")
 
         # Parse data if it's a JSON string
         if isinstance(data, str):
             import json
-            data = json.loads(data)
+            try:
+                data = json.loads(data)
+            except json.JSONDecodeError as e:
+                frappe.log_error(
+                    f"JSON decode error: {str(e)}. Data received: {data[:500]}",
+                    "create_draft_request - JSON Parse Error"
+                )
+                frappe.throw("Invalid data format. Please refresh the page and try again.")
+
+        # Check if data is essentially empty (e.g., only has metadata fields)
+        # This can happen when File objects fail to serialize
+        metadata_fields = {'current_step', 'total_steps', 'request_id', 'name'}
+        actual_data_fields = set(data.keys()) - metadata_fields
+
+        if len(actual_data_fields) == 0 and not data.get("request_id"):
+            frappe.log_error(
+                f"No actual data fields found. Data keys: {list(data.keys())}",
+                "create_draft_request - Empty Data Fields"
+            )
+            frappe.throw(
+                "No form data received. This may be due to file upload in progress. Please wait for uploads to complete before proceeding.",
+                title="Upload in Progress"
+            )
 
         # Extract draft metadata
         current_step = current_step or data.pop("current_step", 1)
