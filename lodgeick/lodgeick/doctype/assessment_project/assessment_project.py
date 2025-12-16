@@ -155,9 +155,27 @@ class AssessmentProject(Document):
 
 			created_tasks_in_stage = []
 
+			# Batch fetch all templates to avoid N+1 query
+			template_names = [t.name for t in task_templates]
+			templates_data = frappe.get_all(
+				"Task Template",
+				filters={"name": ["in", template_names]},
+				fields=["*"]
+			)
+			# Create lookup map
+			templates_map = {t.name: t for t in templates_data}
+
 			for template_data in task_templates:
-				# Get full template document
-				template = frappe.get_doc("Task Template", template_data.name)
+				# Get template from pre-fetched map
+				template = templates_map.get(template_data.name)
+				if not template:
+					continue
+				# Convert dict to object-like access
+				class TemplateObj:
+					def __init__(self, data):
+						for key, value in data.items():
+							setattr(self, key, value)
+				template = TemplateObj(template)
 
 				# Calculate due date based on stage timeline and task sequence
 				task_due_date = self.calculate_task_due_date(

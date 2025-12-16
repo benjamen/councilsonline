@@ -234,6 +234,17 @@
    "write": 1
   }
  ],
+ "indexes": [
+  {
+   "columns": "assessment_project,status"
+  },
+  {
+   "columns": "request,status"
+  },
+  {
+   "columns": "assigned_to,status"
+  }
+ ],
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

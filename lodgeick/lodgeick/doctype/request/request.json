@@ -666,6 +666,21 @@
    "write": 1
   }
  ],
+ "index_web_pages_for_search": 1,
+ "indexes": [
+  {
+   "columns": "council,status"
+  },
+  {
+   "columns": "requester,status"
+  },
+  {
+   "columns": "request_type,council"
+  },
+  {
+   "columns": "submitted_date,status"
+  }
+ ],
  "search_fields": "request_number,requester_name,brief_description,property_address",
  "sort_field": "modified",
  "sort_order": "DESC",

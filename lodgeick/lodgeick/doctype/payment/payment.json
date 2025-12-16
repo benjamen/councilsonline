@@ -254,6 +254,14 @@
    "write": 1
   }
  ],
+ "indexes": [
+  {
+   "columns": "request,payment_status,docstatus"
+  },
+  {
+   "columns": "requester,payment_status"
+  }
+ ],
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

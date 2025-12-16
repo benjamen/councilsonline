@@ -5,6 +5,7 @@ import frappe
 from frappe import _
 from frappe.utils import cint, flt, getdate
 import re
+from lodgeick.utils.rate_limit import rate_limit
 
 
 def validate_nz_phone_number(phone):
@@ -46,6 +47,7 @@ def validate_nz_phone_number(phone):
 
 
 @frappe.whitelist(allow_guest=True)
+@rate_limit(calls=3, period=300)  # 3 registrations per 5 minutes to prevent spam accounts
 def register_user(
     email,
     first_name,
@@ -712,6 +714,7 @@ def update_spisc_application(spisc_app, data):
 
 
 @frappe.whitelist(allow_guest=True)
+@rate_limit(calls=10, period=60)  # 10 drafts per minute to prevent spam
 def create_draft_request(data=None, current_step=None, total_steps=None):
     """
     Create or update a draft request that can be saved without submission
@@ -865,14 +868,14 @@ def create_draft_request(data=None, current_step=None, total_steps=None):
         # Format: DRAFT-YYYY-XXXX (e.g., DRAFT-2025-0001)
         from frappe.utils import nowdate
         year = nowdate()[:4]
-        # Get the last draft number for this year
+        # Get the last draft number for this year - using parameterized query to prevent SQL injection
         last_draft = frappe.db.sql("""
             SELECT request_number
             FROM `tabRequest`
-            WHERE request_number LIKE 'DRAFT-{year}-%'
+            WHERE request_number LIKE %(pattern)s
             ORDER BY creation DESC
             LIMIT 1
-        """.format(year=year), as_dict=True)
+        """, {"pattern": f"DRAFT-{year}-%"}, as_dict=True)
 
         if last_draft:
             # Extract number and increment

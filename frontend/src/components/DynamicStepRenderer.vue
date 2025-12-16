@@ -131,16 +131,20 @@ const localData = computed({
     set: (value) => emit('update:modelValue', value)
 })
 
-// === DEBUG CHANGE 1: Conditional Visibility Filter DISABLED ===
 const visibleSections = computed(() => {
-    if (!props.stepConfig.sections) return []
+	if (!props.stepConfig.sections) return []
 
-    // Temporarily return all sections to check if conditional logic is hiding them.
-    return props.stepConfig.sections // .filter(section => {
-    //   return isSectionVisible(section, localData.value)
-    // })
+	// Filter sections based on depends_on expressions
+	return props.stepConfig.sections.filter(section => {
+		if (!section.depends_on) return true
+		try {
+			return isSectionVisible(section, localData.value)
+		} catch (error) {
+			console.error(`Error evaluating section visibility for ${section.section_code}:`, error)
+			return true  // Fail open - show section on error
+		}
+	})
 })
-// =============================================================
 
 // Get tabs for tab-based sections (placeholder)
 const getTabsForSection = (section) => {

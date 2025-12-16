@@ -168,41 +168,20 @@ class Request(Document):
         })
 
     def send_acknowledgment_email(self):
-        """Send acknowledgment email to applicant"""
+        """Queue acknowledgment email to be sent in background (non-blocking)"""
         if not self.requester_email:
             return
 
-        subject = f"Your request {self.request_number} has been received"
-        message = f"""
-        <p>Hi {self.requester_name},</p>
-
-        <p>Thank you for submitting your request: {self.brief_description}.</p>
-
-        <p><strong>Request Details:</strong></p>
-        <ul>
-            <li>Request Number: {self.request_number}</li>
-            <li>Submitted: {format_date(self.submitted_date)}</li>
-            <li>Type: {self.request_type}</li>
-        </ul>
-
-        <p>We will review your request and notify you once it has been accepted for processing.</p>
-
-        <p>You can track your request status at any time through the portal.</p>
-
-        <p>Kind regards,<br>
-        {frappe.db.get_value('Council', self.council, 'council_name') if self.council else 'Council'} Team</p>
-        """
-
-        try:
-            frappe.sendmail(
-                recipients=[self.requester_email],
-                subject=subject,
-                message=message,
-                reference_doctype=self.doctype,
-                reference_name=self.name
-            )
-        except Exception as e:
-            frappe.log_error(f"Failed to send acknowledgment email: {str(e)}")
+        # Enqueue email to background job - prevents blocking request processing
+        frappe.enqueue(
+            method="lodgeick.emails.send_acknowledgment",
+            queue="short",
+            timeout=300,
+            is_async=True,
+            request=self.name,
+            recipient=self.requester_email
+        )
+        frappe.logger().info(f"Acknowledgment email queued for {self.name}")
 
     def handle_workflow_state_change(self, old_state, new_state):
         """Handle business logic for workflow state transitions"""
@@ -386,24 +365,38 @@ def get_my_requests(status=None):
     if status:
         filters["status"] = status
 
-    requests = frappe.get_all(
-        "Request",
-        filters=filters,
-        fields=[
-            "name", "request_number", "status",
-            "brief_description", "submitted_date", "target_completion_date",
-            "is_overdue", "request_type", "request_category", "council", "creation"
-        ],
-        order_by="modified desc"
-    )
-
-    # Enrich with council name
-    for req in requests:
-        if req.get("council"):
-            council_name = frappe.db.get_value("Council", req["council"], "council_name")
-            req["council_name"] = council_name
+    # Use SQL JOIN to avoid N+1 query - fetch council name in single query
+    requests = frappe.db.sql("""
+        SELECT
+            r.name, r.request_number, r.status,
+            r.brief_description, r.submitted_date, r.target_completion_date,
+            r.is_overdue, r.request_type, r.request_category, r.council, r.creation,
+            c.council_name
+        FROM `tabRequest` r
+        LEFT JOIN `tabCouncil` c ON r.council = c.name
+        WHERE {conditions}
+        ORDER BY r.modified DESC
+    """.format(conditions=get_filter_conditions(filters)), as_dict=True)
 
     return requests
+
+
+def get_filter_conditions(filters):
+    """Build WHERE conditions from filters dict"""
+    if not filters:
+        return "1=1"
+
+    conditions = []
+    for key, value in filters.items():
+        if isinstance(value, list):
+            # Handle IN clause
+            values = ', '.join([frappe.db.escape(v) for v in value])
+            conditions.append(f"r.{key} IN ({values})")
+        else:
+            # Handle equality
+            conditions.append(f"r.{key} = {frappe.db.escape(value)}")
+
+    return " AND ".join(conditions) if conditions else "1=1"
 
 
 @frappe.whitelist()

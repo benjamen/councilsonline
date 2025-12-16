@@ -284,6 +284,14 @@
    "write": 0
   }
  ],
+ "indexes": [
+  {
+   "columns": "request,is_internal"
+  },
+  {
+   "columns": "request,communication_type"
+  }
+ ],
  "sort_field": "communication_date",
  "sort_order": "DESC",
  "states": [],
