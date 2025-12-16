@@ -23,6 +23,7 @@ declare module 'vue' {
     FeatureCard: typeof import('./src/components/FeatureCard.vue')['default']
     FormSection: typeof import('./src/components/FormSection.vue')['default']
     NZAddressInput: typeof import('./src/components/NZAddressInput.vue')['default']
+    PaginatedList: typeof import('./src/components/PaginatedList.vue')['default']
     PersonalInfoForm: typeof import('./src/components/PersonalInfoForm.vue')['default']
     PhilippinesAddressInput: typeof import('./src/components/PhilippinesAddressInput.vue')['default']
     ProcessStep: typeof import('./src/components/ProcessStep.vue')['default']
@@ -69,5 +70,6 @@ declare module 'vue' {
     Tooltip: typeof import('./src/components/Tooltip.vue')['default']
     UniversalAddressLookup: typeof import('./src/components/UniversalAddressLookup.vue')['default']
     ValidationErrorModal: typeof import('./src/components/modals/ValidationErrorModal.vue')['default']
+    VirtualScrollList: typeof import('./src/components/VirtualScrollList.vue')['default']
   }
 }

@@ -357,13 +357,43 @@ def is_public_holiday(date):
 
 
 @frappe.whitelist()
-def get_my_requests(status=None):
-    """Get requests for current user"""
+def get_my_requests(status=None, page=1, page_size=20):
+    """
+    Get requests for current user with pagination support
+
+    Args:
+        status: Filter by status (optional)
+        page: Page number (1-indexed, default: 1)
+        page_size: Items per page (default: 20, max: 100)
+
+    Returns:
+        dict: {
+            "data": [...],
+            "total": int,
+            "page": int,
+            "page_size": int,
+            "total_pages": int
+        }
+    """
     user = frappe.session.user
+
+    # Validate and sanitize pagination params
+    page = max(1, int(page))
+    page_size = min(100, max(1, int(page_size)))  # Max 100 items per page
+    offset = (page - 1) * page_size
 
     filters = {"requester": user}
     if status:
         filters["status"] = status
+
+    conditions = get_filter_conditions(filters)
+
+    # Get total count
+    total = frappe.db.sql("""
+        SELECT COUNT(*)
+        FROM `tabRequest` r
+        WHERE {conditions}
+    """.format(conditions=conditions))[0][0]
 
     # Use SQL JOIN to avoid N+1 query - fetch council name in single query
     requests = frappe.db.sql("""
@@ -376,9 +406,20 @@ def get_my_requests(status=None):
         LEFT JOIN `tabCouncil` c ON r.council = c.name
         WHERE {conditions}
         ORDER BY r.modified DESC
-    """.format(conditions=get_filter_conditions(filters)), as_dict=True)
+        LIMIT {page_size} OFFSET {offset}
+    """.format(
+        conditions=conditions,
+        page_size=page_size,
+        offset=offset
+    ), as_dict=True)
 
-    return requests
+    return {
+        "data": requests,
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+        "total_pages": (total + page_size - 1) // page_size  # Ceiling division
+    }
 
 
 def get_filter_conditions(filters):
@@ -513,33 +554,59 @@ def calculate_fees(request_type, building_value=None):
 
 
 @frappe.whitelist()
-def get_all_requests_for_staff():
-    """Get all requests for internal staff view"""
-    requests = frappe.get_all(
-        "Request",
-        fields=[
-            "name",
-            "request_number",
-            "request_type",
-            "request_category",
-            "brief_description",
-            "council",
-            "status",
-            "submitted_date",
-            "target_completion_date",
-            "assigned_to",
-            "priority",
-            "owner",
-            "creation",
-            "modified"
-        ],
-        order_by="creation desc"
-    )
+def get_all_requests_for_staff(page=1, page_size=20, status=None, council=None):
+    """
+    Get all requests for internal staff view with pagination
 
-    # Enrich with council name
-    for req in requests:
-        if req.get("council"):
-            council_name = frappe.db.get_value("Council", req["council"], "council_name")
-            req["council_name"] = council_name
+    Args:
+        page: Page number (1-indexed, default: 1)
+        page_size: Items per page (default: 20, max: 100)
+        status: Filter by status (optional)
+        council: Filter by council (optional)
 
-    return requests
+    Returns:
+        dict: Paginated results with metadata
+    """
+    # Validate and sanitize pagination params
+    page = max(1, int(page))
+    page_size = min(100, max(1, int(page_size)))
+    offset = (page - 1) * page_size
+
+    # Build filters
+    filters = {}
+    if status:
+        filters["status"] = status
+    if council:
+        filters["council"] = council
+
+    # Get total count
+    total = frappe.db.count("Request", filters=filters)
+
+    # Use SQL JOIN to avoid N+1 query
+    where_clause = "1=1"
+    if status:
+        where_clause += f" AND r.status = {frappe.db.escape(status)}"
+    if council:
+        where_clause += f" AND r.council = {frappe.db.escape(council)}"
+
+    requests = frappe.db.sql(f"""
+        SELECT
+            r.name, r.request_number, r.request_type, r.request_category,
+            r.brief_description, r.council, r.status, r.submitted_date,
+            r.target_completion_date, r.assigned_to, r.priority,
+            r.owner, r.creation, r.modified,
+            c.council_name
+        FROM `tabRequest` r
+        LEFT JOIN `tabCouncil` c ON r.council = c.name
+        WHERE {where_clause}
+        ORDER BY r.creation DESC
+        LIMIT {page_size} OFFSET {offset}
+    """, as_dict=True)
+
+    return {
+        "data": requests,
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+        "total_pages": (total + page_size - 1) // page_size
+    }
