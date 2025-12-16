@@ -656,13 +656,14 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, defineAsyncComponent } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { createResource, Button } from 'frappe-ui'
 import RequestHeader from '../components/request/RequestHeader.vue'
 import StatusBadge from '../components/StatusBadge.vue'
-import SendMessageModal from '../components/modals/SendMessageModal.vue'
-import BookMeetingModal from '../components/modals/BookMeetingModal.vue'
+// Lazy-loaded modals (load on demand to reduce bundle size)
+const SendMessageModal = defineAsyncComponent(() => import('../components/modals/SendMessageModal.vue'))
+const BookMeetingModal = defineAsyncComponent(() => import('../components/modals/BookMeetingModal.vue'))
 import { useStatutoryClock } from '../composables/useStatutoryClock'
 
 const route = useRoute()

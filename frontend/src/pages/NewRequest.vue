@@ -159,7 +159,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, defineAsyncComponent } from 'vue'
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import { Button } from 'frappe-ui'
 
@@ -173,16 +173,18 @@ import { useUserProfile } from '../composables/useUserProfile'
 import RequestHeader from '../components/request/RequestHeader.vue'
 import RequestProgress from '../components/request/RequestProgress.vue'
 import StepNavigation from '../components/request/StepNavigation.vue'
-import SaveDraftModal from '../components/modals/SaveDraftModal.vue'
-import ValidationErrorModal from '../components/modals/ValidationErrorModal.vue'
-import BookMeetingModal from '../components/modals/BookMeetingModal.vue'
-import SubmissionSuccessModal from '../components/modals/SubmissionSuccessModal.vue'
+// Lazy-loaded modals (load on demand to reduce bundle size)
+const SaveDraftModal = defineAsyncComponent(() => import('../components/modals/SaveDraftModal.vue'))
+const ValidationErrorModal = defineAsyncComponent(() => import('../components/modals/ValidationErrorModal.vue'))
+const BookMeetingModal = defineAsyncComponent(() => import('../components/modals/BookMeetingModal.vue'))
+const SubmissionSuccessModal = defineAsyncComponent(() => import('../components/modals/SubmissionSuccessModal.vue'))
 
 // Step components
 import Step1CouncilSelection from '../components/request-steps/Step1CouncilSelection.vue'
 import Step2RequestType from '../components/request-steps/Step2RequestType.vue'
 import Step3ProcessInfo from '../components/request-steps/Step3ProcessInfo.vue'
-import DynamicStepRenderer from '../components/DynamicStepRenderer.vue'
+// Lazy-load DynamicStepRenderer (large component with complex logic)
+const DynamicStepRenderer = defineAsyncComponent(() => import('../components/DynamicStepRenderer.vue'))
 import ReviewStep from '../components/request-steps/ReviewStep.vue'
 
 const route = useRoute()

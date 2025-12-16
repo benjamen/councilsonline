@@ -10,7 +10,9 @@ export const useCouncilStore = defineStore('council', {
     loading: false,
     error: null,
     lockedCouncil: null,       // NEW: Locked council from session
-    isCouncilLocked: false     // NEW: Lock state
+    isCouncilLocked: false,    // NEW: Lock state
+    councilsLastFetched: null, // Cache timestamp
+    requestTypesCache: {}      // Cache request types by council
   }),
 
   getters: {
@@ -27,13 +29,27 @@ export const useCouncilStore = defineStore('council', {
   },
 
   actions: {
-    async loadCouncils() {
+    async loadCouncils(forceRefresh = false) {
+      // Cache for 5 minutes
+      const CACHE_DURATION = 5 * 60 * 1000
+      const now = Date.now()
+
+      // Return cached data if available and not expired
+      if (!forceRefresh && this.councils.length > 0 && this.councilsLastFetched) {
+        const cacheAge = now - this.councilsLastFetched
+        if (cacheAge < CACHE_DURATION) {
+          console.log('[councilStore] Using cached councils data')
+          return
+        }
+      }
+
       this.loading = true
       this.error = null
 
       try {
         const response = await call('lodgeick.api.get_active_councils')
         this.councils = response || []
+        this.councilsLastFetched = now
 
         // If there's a preselected council from URL, set it
         if (this.preselectedFromUrl && !this.selectedCouncil) {
@@ -85,10 +101,23 @@ export const useCouncilStore = defineStore('council', {
       }
     },
 
-    async loadRequestTypesForCouncil(councilCode) {
+    async loadRequestTypesForCouncil(councilCode, forceRefresh = false) {
       if (!councilCode) {
         this.requestTypes = []
         return
+      }
+
+      // Check cache first (cache for 10 minutes)
+      const CACHE_DURATION = 10 * 60 * 1000
+      const cached = this.requestTypesCache[councilCode]
+
+      if (!forceRefresh && cached && cached.timestamp) {
+        const cacheAge = Date.now() - cached.timestamp
+        if (cacheAge < CACHE_DURATION) {
+          console.log('[councilStore] Using cached request types for', councilCode)
+          this.requestTypes = cached.data
+          return
+        }
       }
 
       this.loading = true
@@ -99,6 +128,12 @@ export const useCouncilStore = defineStore('council', {
           council_code: councilCode
         })
         this.requestTypes = response || []
+
+        // Cache the result
+        this.requestTypesCache[councilCode] = {
+          data: this.requestTypes,
+          timestamp: Date.now()
+        }
       } catch (err) {
         this.error = err.message || 'Failed to load request types'
         console.error('Error loading request types:', err)
