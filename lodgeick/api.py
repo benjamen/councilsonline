@@ -614,12 +614,32 @@ def create_spisc_application(request_name, data):
         "declaration_truth": cint(data.get("declaration_truth", 0)),
         "declaration_consent": cint(data.get("declaration_consent", 0)),
         "signature": data.get("signature"),
-        "signature_date": data.get("signature_date")
+        "signature_date": data.get("signature_date"),
+
+        # Payment Information
+        "payment_method": data.get("payment_method"),
+        "bank_name": data.get("bank_name"),
+        "bank_account_number": data.get("bank_account_number"),
+        "pickup_location": data.get("pickup_location")
     })
 
     spisc_app.flags.ignore_permissions = True
     spisc_app.flags.ignore_mandatory = True
     spisc_app.insert(ignore_mandatory=True, ignore_permissions=True)
+
+    # Create or update User Bank Account if payment method is Bank Deposit
+    if data.get("payment_method") == "Bank Deposit":
+        if data.get("bank_name") and data.get("bank_account_number"):
+            from lodgeick.utils.bank_account_helper import create_or_update_user_bank_account
+
+            account_holder_name = data.get("account_holder_name") or data.get("full_name")
+            create_or_update_user_bank_account(
+                user=frappe.session.user,
+                bank_name=data.get("bank_name"),
+                account_number=data.get("bank_account_number"),
+                account_holder_name=account_holder_name,
+                is_default=1
+            )
 
     return spisc_app
 
@@ -712,9 +732,33 @@ def update_spisc_application(spisc_app, data):
     if data.get("signature_date"):
         spisc_app.signature_date = data.get("signature_date")
 
+    # Payment Information
+    if data.get("payment_method"):
+        spisc_app.payment_method = data.get("payment_method")
+    if data.get("bank_name"):
+        spisc_app.bank_name = data.get("bank_name")
+    if data.get("bank_account_number"):
+        spisc_app.bank_account_number = data.get("bank_account_number")
+    if data.get("pickup_location"):
+        spisc_app.pickup_location = data.get("pickup_location")
+
+    # Create or update User Bank Account if payment method is Bank Deposit
+    if data.get("payment_method") == "Bank Deposit":
+        if data.get("bank_name") and data.get("bank_account_number"):
+            from lodgeick.utils.bank_account_helper import create_or_update_user_bank_account
+
+            account_holder_name = data.get("account_holder_name") or data.get("full_name")
+            create_or_update_user_bank_account(
+                user=frappe.session.user,
+                bank_name=data.get("bank_name"),
+                account_number=data.get("bank_account_number"),
+                account_holder_name=account_holder_name,
+                is_default=1
+            )
+
 
 @frappe.whitelist(allow_guest=True)
-@rate_limit(calls=10, period=60)  # 10 drafts per minute to prevent spam
+@rate_limit(calls=10, period=60, guest_only=True)  # 10 drafts per minute for guests, unlimited for authenticated users
 def create_draft_request(data=None, current_step=None, total_steps=None):
     """
     Create or update a draft request that can be saved without submission
@@ -729,7 +773,9 @@ def create_draft_request(data=None, current_step=None, total_steps=None):
     """
     try:
         # Log incoming request for debugging
-        frappe.logger().debug(f"create_draft_request called - data type: {type(data)}, current_step: {current_step}")
+        frappe.logger().info(f"create_draft_request called - data type: {type(data)}, current_step: {current_step}")
+        frappe.logger().info(f"create_draft_request - data value: {data}")
+        frappe.logger().info(f"create_draft_request - frappe.form_dict: {frappe.form_dict}")
 
         # Validate required data parameter
         if not data:
@@ -1842,7 +1888,7 @@ def get_request_meetings(request_id):
             fields=[
                 "name", "meeting_type", "status", "scheduled_start", "scheduled_end",
                 "meeting_format", "meeting_location", "council_planner", "requested_date",
-                "meeting_purpose", "event", "preferred_time_slots", "google_meet_link"
+                "meeting_purpose", "event", "google_meet_link"
             ],
             order_by="requested_date desc"
         )
@@ -1854,15 +1900,16 @@ def get_request_meetings(request_id):
                 meeting.event_status = event.status
                 meeting.event_subject = event.subject
 
-            # Parse preferred_time_slots if it's a child table
-            if meeting.preferred_time_slots:
-                meeting.proposed_slots = frappe.get_all(
-                    "Meeting Time Slot",
-                    filters={"parent": meeting.name},
-                    fields=["proposed_datetime"],
-                    order_by="proposed_datetime asc"
-                )
-                # Extract just the datetime values
+            # Fetch preferred time slots from child table
+            # Note: preferred_time_slots is a Table field, so we fetch it separately
+            meeting.proposed_slots = frappe.get_all(
+                "Meeting Preferred Time Slot",
+                filters={"parent": meeting.name},
+                fields=["proposed_datetime"],
+                order_by="proposed_datetime asc"
+            )
+            # Extract just the datetime values
+            if meeting.proposed_slots:
                 meeting.proposed_slots = [slot.proposed_datetime for slot in meeting.proposed_slots]
 
         return meetings
@@ -5859,3 +5906,106 @@ def get_assessment_stage_types():
 			"success": False,
 			"error": str(e)
 		}
+
+
+# ==================== SPISC APPLICATION ACTION BAR APIS ====================
+
+@frappe.whitelist()
+def get_spisc_summary_data(request_id):
+	"""
+	Get summary data for SPISC Application dashboard
+
+	Args:
+		request_id: Request ID
+
+	Returns:
+		dict: Summary metrics
+	"""
+	try:
+		# Get tasks count
+		tasks_count = frappe.db.count("Project Task", {
+			"request": request_id,
+			"status": ["in", ["Open", "In Progress"]]
+		})
+
+		# Get meetings count
+		meetings_count = frappe.db.count("Pre-Application Meeting", {
+			"request": request_id
+		})
+
+		# Get communications count
+		communications_count = frappe.db.count("Communication Log", {
+			"request": request_id
+		})
+
+		# Get assessment project status
+		assessment = frappe.db.get_value("Assessment Project",
+			{"request": request_id},
+			["overall_status"],
+			as_dict=True
+		)
+		assessment_status = assessment.overall_status if assessment else "Not Started"
+
+		# Get eligibility status from SPISC Application
+		spisc_app = frappe.get_all("SPISC Application",
+			filters={"request": request_id},
+			fields=["eligibility_status"],
+			limit=1
+		)
+		eligibility_status = spisc_app[0].eligibility_status if spisc_app else "Pending"
+
+		return {
+			"tasks_count": tasks_count,
+			"meetings_count": meetings_count,
+			"communications_count": communications_count,
+			"assessment_status": assessment_status,
+			"eligibility_status": eligibility_status
+		}
+
+	except Exception as e:
+		frappe.log_error(f"Get SPISC Summary Error: {str(e)}", "SPISC API Error")
+		frappe.throw(_("Failed to get SPISC summary data: {0}").format(str(e)))
+
+
+@frappe.whitelist()
+def create_assessment_project_for_request(request, request_type):
+	"""
+	Create Assessment Project for a SPISC request
+
+	Args:
+		request: Request ID
+		request_type: Request Type name
+
+	Returns:
+		dict: Created Assessment Project
+	"""
+	try:
+		# Check if Assessment Project already exists
+		existing = frappe.db.exists("Assessment Project", {"request": request})
+		if existing:
+			return frappe.get_doc("Assessment Project", existing)
+
+		# Get Assessment Template for SPISC
+		template = frappe.db.get_value("Assessment Template",
+			{"request_type": request_type},
+			"name"
+		)
+
+		if not template:
+			frappe.throw(_("No Assessment Template found for {0}").format(request_type))
+
+		# Create Assessment Project
+		assessment_project = frappe.get_doc({
+			"doctype": "Assessment Project",
+			"request": request,
+			"assessment_template": template,
+			"status": "Not Started"
+		})
+		assessment_project.insert(ignore_permissions=True)
+		frappe.db.commit()
+
+		return assessment_project
+
+	except Exception as e:
+		frappe.log_error(f"Create Assessment Project Error: {str(e)}", "Assessment API Error")
+		frappe.throw(_("Failed to create Assessment Project: {0}").format(str(e)))

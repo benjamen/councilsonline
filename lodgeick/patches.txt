@@ -10,3 +10,5 @@ lodgeick.lodgeick.patches.v1_2.rename_applicant_to_requester
 lodgeick.patches.v1_3.import_taytay_fixtures
 lodgeick.patches.v1_3.add_payment_child_tables
 lodgeick.patches.v1_3.create_default_landing_pages
+lodgeick.lodgeick.patches.sync_spisc_payment_step
+lodgeick.lodgeick.patches.create_spisc_assessment_infrastructure

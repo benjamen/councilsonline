@@ -11,6 +11,7 @@ class SPISCApplication(Document):
 	def validate(self):
 		"""Validate SPISC application before saving"""
 		self.calculate_age()
+		self.set_full_address_display()
 		self.check_eligibility_criteria()
 
 	def calculate_age(self):
@@ -21,6 +22,21 @@ class SPISCApplication(Document):
 			self.age = today_date.year - born.year - (
 				(today_date.month, today_date.day) < (born.month, born.day)
 			)
+
+	def set_full_address_display(self):
+		"""Build full address display string for easy viewing"""
+		address_parts = []
+
+		if self.address_line:
+			address_parts.append(self.address_line)
+		if self.barangay:
+			address_parts.append(f"Brgy. {self.barangay}")
+		if self.municipality:
+			address_parts.append(self.municipality)
+		if self.province:
+			address_parts.append(self.province)
+
+		self.full_address_display = ", ".join(filter(None, address_parts))
 
 	def check_eligibility_criteria(self):
 		"""Validate SPISC eligibility requirements"""
@@ -114,3 +130,23 @@ class SPISCApplication(Document):
 		if self.eligibility_status and self.eligibility_status != "Pending":
 			desc += f" - {self.eligibility_status}"
 		return desc
+
+
+# ==================== WHITELISTED API METHODS ====================
+
+@frappe.whitelist()
+def assess_eligibility(name):
+	"""
+	Whitelist wrapper for assess_eligibility method
+	Allows JavaScript to call this via frappe.call()
+
+	Args:
+		name: SPISC Application name
+
+	Returns:
+		dict: Updated SPISC Application
+	"""
+	doc = frappe.get_doc("SPISC Application", name)
+	doc.assess_eligibility(assessed_by=frappe.session.user)
+	doc.save()
+	return doc
