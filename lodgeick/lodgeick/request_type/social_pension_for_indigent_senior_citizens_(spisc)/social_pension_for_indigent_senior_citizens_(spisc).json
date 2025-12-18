@@ -49,10 +49,19 @@
   {
    "is_enabled": 1,
    "is_required": 1,
+   "show_on_review": 1,
+   "step_code": "payment_details",
+   "step_component": "DynamicStepRenderer",
+   "step_number": 4,
+   "step_title": "Payment Details"
+  },
+  {
+   "is_enabled": 1,
+   "is_required": 1,
    "show_on_review": 0,
    "step_code": "supporting_documents",
    "step_component": "DynamicStepRenderer",
-   "step_number": 4,
+   "step_number": 5,
    "step_title": "Supporting Documents"
   },
   {
@@ -61,7 +70,7 @@
    "show_on_review": 1,
    "step_code": "declaration",
    "step_component": "DynamicStepRenderer",
-   "step_number": 5,
+   "step_number": 6,
    "step_title": "Declaration & Submission"
   }
  ],
@@ -228,6 +237,54 @@
    "show_on_review": 1
   },
   {
+   "field_label": "Preferred Payment Method",
+   "field_name": "payment_method",
+   "field_type": "Select",
+   "is_required": 1,
+   "options": "Bank Deposit\nCash Pickup",
+   "parent_section_code": "payment_information",
+   "review_label": "Payment Method",
+   "show_on_review": 1
+  },
+  {
+   "depends_on": "eval:doc.payment_method=='Bank Deposit'",
+   "description": "Name as it appears on your bank account",
+   "field_label": "Account Holder Name",
+   "field_name": "account_holder_name",
+   "field_type": "Data",
+   "is_required": 1,
+   "parent_section_code": "payment_information",
+   "show_on_review": 1
+  },
+  {
+   "depends_on": "eval:doc.payment_method=='Bank Deposit'",
+   "field_label": "Bank Name",
+   "field_name": "bank_name",
+   "field_type": "Data",
+   "is_required": 1,
+   "parent_section_code": "payment_information",
+   "show_on_review": 1
+  },
+  {
+   "depends_on": "eval:doc.payment_method=='Bank Deposit'",
+   "field_label": "Account Number",
+   "field_name": "bank_account_number",
+   "field_type": "Data",
+   "is_required": 1,
+   "parent_section_code": "payment_information",
+   "show_on_review": 1
+  },
+  {
+   "depends_on": "eval:doc.payment_method=='Cash Pickup'",
+   "field_label": "Preferred Pickup Location",
+   "field_name": "pickup_location",
+   "field_type": "Select",
+   "is_required": 1,
+   "options": "Barangay Hall\nMunicipal Treasury Office\nOSCA Office",
+   "parent_section_code": "payment_information",
+   "show_on_review": 1
+  },
+  {
    "field_label": "Barangay Certificate of Indigency",
    "field_name": "barangay_cert_indigency",
    "field_type": "Attach",
@@ -368,6 +425,17 @@
    "parent_step_code": "identity_verification",
    "section_code": "identity_documents",
    "section_title": "Identity Documents",
+   "section_type": "Section",
+   "sequence": 1,
+   "show_on_review": 1
+  },
+  {
+   "is_enabled": 1,
+   "is_required": 1,
+   "parent_step_code": "payment_details",
+   "section_code": "payment_information",
+   "section_description": "Please specify how you would like to receive your monthly pension",
+   "section_title": "Preferred Payment Method",
    "section_type": "Section",
    "sequence": 1,
    "show_on_review": 1

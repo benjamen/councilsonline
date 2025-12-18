@@ -1,46 +1,46 @@
 <script setup>
-import { ref, computed, watch } from 'vue'
-import { Dialog, createResource } from 'frappe-ui'
+import { Dialog, createResource } from "frappe-ui"
+import { computed, ref, watch } from "vue"
 
 const props = defineProps({
 	show: {
 		type: Boolean,
-		required: true
+		required: true,
 	},
 	requestId: {
 		type: String,
-		default: null  // Allow null for draft requests
+		default: null, // Allow null for draft requests
 	},
 	requestTypeCode: {
 		type: String,
-		default: null
+		default: null,
 	},
 	councilCode: {
 		type: String,
-		default: null
-	}
+		default: null,
+	},
 })
 
-const emit = defineEmits(['update:show', 'booked'])
+const emit = defineEmits(["update:show", "booked"])
 
 const isOpen = computed({
 	get: () => props.show,
-	set: (value) => emit('update:show', value)
+	set: (value) => emit("update:show", value),
 })
 
-const meetingType = ref('Pre-Application Meeting')
-const meetingPurpose = ref('')
-const discussionPoints = ref('')
+const meetingType = ref("Pre-Application Meeting")
+const meetingPurpose = ref("")
+const discussionPoints = ref("")
 const booking = ref(false)
 const error = ref(null)
 const success = ref(false)
-const emailError = ref('')
+const emailError = ref("")
 
 // Attendees
 const attendees = ref([])
-const newAttendeeName = ref('')
-const newAttendeeEmail = ref('')
-const newAttendeeRole = ref('')
+const newAttendeeName = ref("")
+const newAttendeeEmail = ref("")
+const newAttendeeRole = ref("")
 
 // Constants
 const MEETING_DURATION_MS = 60 * 60 * 1000 // 1 hour in milliseconds
@@ -50,68 +50,71 @@ const showAvailableSlots = ref(false)
 
 // Fetch meeting configuration
 const meetingConfig = createResource({
-	url: 'lodgeick.api.get_meeting_config',
+	url: "lodgeick.api.get_meeting_config",
 	auto: false,
 })
 
 // Fetch available slots
 const availableSlots = createResource({
-	url: 'lodgeick.api.get_available_meeting_slots',
+	url: "lodgeick.api.get_available_meeting_slots",
 	auto: false,
 })
 
 // Watch for modal open to fetch slots if council code is available
-watch(() => props.show, (newVal) => {
-	if (newVal && props.councilCode) {
-		// Pass params directly to fetch() to avoid circular JSON reference
-		meetingConfig.fetch({
-			council_code: props.councilCode,
-			meeting_type: meetingType.value
-		})
+watch(
+	() => props.show,
+	(newVal) => {
+		if (newVal && props.councilCode) {
+			// Pass params directly to fetch() to avoid circular JSON reference
+			meetingConfig.fetch({
+				council_code: props.councilCode,
+				meeting_type: meetingType.value,
+			})
 
-		const today = new Date()
-		const endDate = new Date()
-		endDate.setDate(today.getDate() + 30) // Next 30 days
+			const today = new Date()
+			const endDate = new Date()
+			endDate.setDate(today.getDate() + 30) // Next 30 days
 
-		availableSlots.fetch({
-			council_code: props.councilCode,
-			meeting_type: meetingType.value,
-			start_date: today.toISOString().split('T')[0],
-			end_date: endDate.toISOString().split('T')[0]
-		})
-	}
-})
+			availableSlots.fetch({
+				council_code: props.councilCode,
+				meeting_type: meetingType.value,
+				start_date: today.toISOString().split("T")[0],
+				end_date: endDate.toISOString().split("T")[0],
+			})
+		}
+	},
+)
 
 // Preferred Time Slots (3 options)
 const preferredTimes = ref([
-	{ preference_order: 1, preferred_start: '' },
-	{ preference_order: 2, preferred_start: '' },
-	{ preference_order: 3, preferred_start: '' }
+	{ preference_order: 1, preferred_start: "" },
+	{ preference_order: 2, preferred_start: "" },
+	{ preference_order: 3, preferred_start: "" },
 ])
 
 // Auto-calculate end time (1 hour after start time)
 const calculateEndTime = (startTime) => {
-	if (!startTime) return ''
+	if (!startTime) return ""
 	try {
 		const start = new Date(startTime)
-		if (isNaN(start.getTime())) throw new Error('Invalid date')
+		if (isNaN(start.getTime())) throw new Error("Invalid date")
 		const end = new Date(start.getTime() + MEETING_DURATION_MS)
 		return end.toISOString().slice(0, 16) // Format for datetime-local input
 	} catch (e) {
-		console.error('Error calculating end time:', e)
-		return ''
+		console.error("Error calculating end time:", e)
+		return ""
 	}
 }
 
 // Format end time for display
 const formatEndTime = (startTime) => {
-	if (!startTime) return ''
+	if (!startTime) return ""
 	try {
 		const endTime = calculateEndTime(startTime)
-		if (!endTime) return 'Invalid date'
+		if (!endTime) return "Invalid date"
 		return new Date(endTime).toLocaleString()
 	} catch (e) {
-		return 'Invalid date'
+		return "Invalid date"
 	}
 }
 
@@ -124,33 +127,33 @@ const isValid = computed(() => {
 	if (!meetingType.value || !meetingPurpose.value.trim()) return false
 
 	// At least one preferred time slot must have a start time (end time is auto-calculated)
-	const hasAtLeastOneTimeSlot = preferredTimes.value.some(slot => {
-		return slot.preferred_start && slot.preferred_start.trim() !== ''
+	const hasAtLeastOneTimeSlot = preferredTimes.value.some((slot) => {
+		return slot.preferred_start && slot.preferred_start.trim() !== ""
 	})
 
 	return hasAtLeastOneTimeSlot
 })
 
 const addAttendee = () => {
-	emailError.value = ''
+	emailError.value = ""
 
 	if (newAttendeeName.value.trim() && newAttendeeEmail.value.trim()) {
 		// Validate email format
 		if (!isValidEmail(newAttendeeEmail.value.trim())) {
-			emailError.value = 'Please enter a valid email address'
+			emailError.value = "Please enter a valid email address"
 			return
 		}
 
 		attendees.value.push({
 			attendee_name: newAttendeeName.value.trim(),
 			attendee_email: newAttendeeEmail.value.trim(),
-			attendee_role: newAttendeeRole.value.trim() || 'Applicant Representative'
+			attendee_role: newAttendeeRole.value.trim() || "Applicant Representative",
 		})
 
 		// Clear form
-		newAttendeeName.value = ''
-		newAttendeeEmail.value = ''
-		newAttendeeRole.value = ''
+		newAttendeeName.value = ""
+		newAttendeeEmail.value = ""
+		newAttendeeRole.value = ""
 	}
 }
 
@@ -175,26 +178,26 @@ const toggleAvailableSlotsView = () => {
 		availableSlots.fetch({
 			council_code: props.councilCode,
 			meeting_type: meetingType.value,
-			start_date: today.toISOString().split('T')[0],
-			end_date: endDate.toISOString().split('T')[0]
+			start_date: today.toISOString().split("T")[0],
+			end_date: endDate.toISOString().split("T")[0],
 		})
 	}
 }
 
 const handleClose = () => {
 	if (!booking.value) {
-		meetingType.value = 'Pre-Application Meeting'
-		meetingPurpose.value = ''
-		discussionPoints.value = ''
+		meetingType.value = "Pre-Application Meeting"
+		meetingPurpose.value = ""
+		discussionPoints.value = ""
 		attendees.value = []
 		preferredTimes.value = [
-			{ preference_order: 1, preferred_start: '' },
-			{ preference_order: 2, preferred_start: '' },
-			{ preference_order: 3, preferred_start: '' }
+			{ preference_order: 1, preferred_start: "" },
+			{ preference_order: 2, preferred_start: "" },
+			{ preference_order: 3, preferred_start: "" },
 		]
 		error.value = null
 		success.value = false
-		emit('update:show', false)
+		emit("update:show", false)
 	}
 }
 
@@ -207,28 +210,33 @@ const handleBook = async () => {
 	try {
 		// Filter out empty time slots and add calculated end times
 		const filledTimeSlots = preferredTimes.value
-			.filter(slot => slot.preferred_start && slot.preferred_start.trim() !== '')
-			.map(slot => ({
+			.filter(
+				(slot) => slot.preferred_start && slot.preferred_start.trim() !== "",
+			)
+			.map((slot) => ({
 				...slot,
-				preferred_end: calculateEndTime(slot.preferred_start)
+				preferred_end: calculateEndTime(slot.preferred_start),
 			}))
 
-		const response = await fetch('/api/method/lodgeick.api.book_council_meeting', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'X-Frappe-CSRF-Token': window.csrf_token
+		const response = await fetch(
+			"/api/method/lodgeick.api.book_council_meeting",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"X-Frappe-CSRF-Token": window.csrf_token,
+				},
+				body: JSON.stringify({
+					request_id: props.requestId || "draft",
+					request_type_code: props.requestTypeCode,
+					meeting_type: meetingType.value,
+					meeting_purpose: meetingPurpose.value,
+					discussion_points: discussionPoints.value,
+					attendees: attendees.value,
+					preferred_time_slots: filledTimeSlots,
+				}),
 			},
-			body: JSON.stringify({
-				request_id: props.requestId || 'draft',
-				request_type_code: props.requestTypeCode,
-				meeting_type: meetingType.value,
-				meeting_purpose: meetingPurpose.value,
-				discussion_points: discussionPoints.value,
-				attendees: attendees.value,
-				preferred_time_slots: filledTimeSlots
-			})
-		})
+		)
 
 		const data = await response.json()
 
@@ -238,18 +246,19 @@ const handleBook = async () => {
 			error.value = null
 
 			// Emit booked event immediately
-			emit('booked', data.message)
+			emit("booked", data.message)
 
 			// Close modal after 2 seconds so user sees success message
 			setTimeout(() => {
 				handleClose()
 			}, 2000)
 		} else {
-			error.value = data.exc || data._server_messages || 'Failed to book meeting'
+			error.value =
+				data.exc || data._server_messages || "Failed to book meeting"
 		}
 	} catch (err) {
-		console.error('Book meeting error:', err)
-		error.value = 'Network error. Please try again.'
+		console.error("Book meeting error:", err)
+		error.value = "Network error. Please try again."
 	} finally {
 		booking.value = false
 	}

@@ -59,16 +59,16 @@ export interface FieldConfig {
 }
 
 export type FieldType =
-	| 'Data'
-	| 'Select'
-	| 'Text'
-	| 'Date'
-	| 'Currency'
-	| 'Check'
-	| 'Int'
-	| 'Float'
-	| 'Attach'
-	| 'Link'
+	| "Data"
+	| "Select"
+	| "Text"
+	| "Date"
+	| "Currency"
+	| "Check"
+	| "Int"
+	| "Float"
+	| "Attach"
+	| "Link"
 
 // ============================================================================
 // Request Document
@@ -102,17 +102,17 @@ export interface Request {
 }
 
 export type RequestStatus =
-	| 'Draft'
-	| 'Submitted'
-	| 'Acknowledged'
-	| 'Under Review'
-	| 'RFI Issued'
-	| 'Approved'
-	| 'Approved with Conditions'
-	| 'Declined'
-	| 'Withdrawn'
-	| 'Cancelled'
-	| 'Completed'
+	| "Draft"
+	| "Submitted"
+	| "Acknowledged"
+	| "Under Review"
+	| "RFI Issued"
+	| "Approved"
+	| "Approved with Conditions"
+	| "Declined"
+	| "Withdrawn"
+	| "Cancelled"
+	| "Completed"
 
 // ============================================================================
 // Application Documents
@@ -278,7 +278,7 @@ export interface AssessmentTask {
 export interface ToastNotification {
 	id: number
 	message: string
-	type: 'info' | 'success' | 'warning' | 'error'
+	type: "info" | "success" | "warning" | "error"
 	duration: number
 	timestamp: Date
 }

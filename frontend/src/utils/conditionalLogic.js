@@ -4,13 +4,15 @@
  * Evaluates `depends_on` expressions from step_configs, step_sections, and step_fields
  *
  * Expression formats supported:
- * - eval:formData.field_name=='value'
+ * - eval:formData.field_name=='value'  (frontend style)
+ * - eval:doc.field_name=='value'       (Frappe backend style - alias for formData)
  * - eval:formData.field_name!='value'
  * - eval:formData.field_name
  * - eval:!formData.field_name
  * - eval:formData.field_name>5
  * - eval:formData.field_name=='value1' || formData.field_name=='value2'
  * - eval:formData.field_name=='value1' && formData.other_field=='value2'
+ * - eval:doc.payment_method=='Bank Deposit'  (Frappe style - commonly used)
  */
 
 /**
@@ -21,21 +23,25 @@
  * @returns {boolean} - True if condition is met, false otherwise
  */
 export function evaluateCondition(expression, formData) {
-  // If no expression, always show
-  if (!expression || expression.trim() === '') {
-    return true
-  }
+	// If no expression, always show
+	if (!expression || expression.trim() === "") {
+		return true
+	}
 
-  // Remove 'eval:' prefix if present
-  let cleanExpression = expression.trim()
-  if (cleanExpression.startsWith('eval:')) {
-    cleanExpression = cleanExpression.substring(5).trim()
-  }
+	// Remove 'eval:' prefix if present
+	let cleanExpression = expression.trim()
+	if (cleanExpression.startsWith("eval:")) {
+		cleanExpression = cleanExpression.substring(5).trim()
+	}
 
-  try {
-    // Create a safe evaluation context with only formData
-    // This prevents access to dangerous globals like window, document, etc.
-    const safeEval = new Function('formData', `
+	try {
+		// Create a safe evaluation context with both formData and doc (alias)
+		// This prevents access to dangerous globals like window, document, etc.
+		// 'doc' is an alias for formData to support Frappe-style expressions
+		const safeEval = new Function(
+			"formData",
+			"doc",
+			`
       'use strict';
       try {
         return Boolean(${cleanExpression});
@@ -43,15 +49,21 @@ export function evaluateCondition(expression, formData) {
         console.warn('[Conditional Logic] Evaluation error:', e.message);
         return false;
       }
-    `)
+    `,
+		)
 
-    const result = safeEval(formData)
-    return result
-  } catch (error) {
-    console.error('[Conditional Logic] Failed to evaluate expression:', expression, error)
-    // On error, default to showing the field/section (fail open)
-    return true
-  }
+		// Pass formData as both parameters so both 'formData' and 'doc' work
+		const result = safeEval(formData, formData)
+		return result
+	} catch (error) {
+		console.error(
+			"[Conditional Logic] Failed to evaluate expression:",
+			expression,
+			error,
+		)
+		// On error, default to showing the field/section (fail open)
+		return true
+	}
 }
 
 /**
@@ -62,11 +74,11 @@ export function evaluateCondition(expression, formData) {
  * @returns {boolean} - Whether step should be visible
  */
 export function isStepVisible(step, formData) {
-  if (!step) return false
-  if (!step.is_enabled) return false
-  if (!step.depends_on) return true
+	if (!step) return false
+	if (!step.is_enabled) return false
+	if (!step.depends_on) return true
 
-  return evaluateCondition(step.depends_on, formData)
+	return evaluateCondition(step.depends_on, formData)
 }
 
 /**
@@ -77,11 +89,11 @@ export function isStepVisible(step, formData) {
  * @returns {boolean} - Whether section should be visible
  */
 export function isSectionVisible(section, formData) {
-  if (!section) return false
-  if (!section.is_enabled) return false
-  if (!section.depends_on) return true
+	if (!section) return false
+	if (!section.is_enabled) return false
+	if (!section.depends_on) return true
 
-  return evaluateCondition(section.depends_on, formData)
+	return evaluateCondition(section.depends_on, formData)
 }
 
 /**
@@ -92,10 +104,10 @@ export function isSectionVisible(section, formData) {
  * @returns {boolean} - Whether field should be visible
  */
 export function isFieldVisible(field, formData) {
-  if (!field) return false
-  if (!field.depends_on) return true
+	if (!field) return false
+	if (!field.depends_on) return true
 
-  return evaluateCondition(field.depends_on, formData)
+	return evaluateCondition(field.depends_on, formData)
 }
 
 /**
@@ -107,9 +119,9 @@ export function isFieldVisible(field, formData) {
  * @returns {array} - Filtered array of visible items
  */
 export function filterVisibleItems(items, formData, visibilityFn) {
-  if (!items || !Array.isArray(items)) return []
+	if (!items || !Array.isArray(items)) return []
 
-  return items.filter(item => visibilityFn(item, formData))
+	return items.filter((item) => visibilityFn(item, formData))
 }
 
 /**

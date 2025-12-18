@@ -263,79 +263,93 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
-import FormSection from './FormSection.vue'
-import CameraUpload from './CameraUpload.vue'
+import { computed, ref, watch } from "vue"
+import CameraUpload from "./CameraUpload.vue"
+import FormSection from "./FormSection.vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  },
-  municipality: {
-    type: String,
-    default: 'Taytay'
-  },
-  province: {
-    type: String,
-    default: 'Rizal'
-  },
-  barangayList: {
-    type: Array,
-    default: () => [
-      'San Juan', 'Dolores', 'San Isidro', 'Muzon', 'Sta. Ana',
-      'Bamban', 'Calantipay', 'Mauway', 'Resettlement'
-    ]
-  },
-  photoRequired: {
-    type: Boolean,
-    default: false
-  }
+	modelValue: {
+		type: Object,
+		required: true,
+	},
+	municipality: {
+		type: String,
+		default: "Taytay",
+	},
+	province: {
+		type: String,
+		default: "Rizal",
+	},
+	barangayList: {
+		type: Array,
+		default: () => [
+			"San Juan",
+			"Dolores",
+			"San Isidro",
+			"Muzon",
+			"Sta. Ana",
+			"Bamban",
+			"Calantipay",
+			"Mauway",
+			"Resettlement",
+		],
+	},
+	photoRequired: {
+		type: Boolean,
+		default: false,
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
 const formData = computed({
-  get: () => ({
-    ...props.modelValue,
-    municipality: props.municipality,
-    province: props.province,
-    photos: props.modelValue.photos || []
-  }),
-  set: (value) => emit('update:modelValue', value)
+	get: () => ({
+		...props.modelValue,
+		municipality: props.municipality,
+		province: props.province,
+		photos: props.modelValue.photos || [],
+	}),
+	set: (value) => emit("update:modelValue", value),
 })
 
 // Computed: Age from date of birth
 const age = computed(() => {
-  if (!formData.value.date_of_birth) return null
-  const today = new Date()
-  const birthDate = new Date(formData.value.date_of_birth)
-  let age = today.getFullYear() - birthDate.getFullYear()
-  const monthDiff = today.getMonth() - birthDate.getMonth()
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-    age--
-  }
-  return age
+	if (!formData.value.date_of_birth) return null
+	const today = new Date()
+	const birthDate = new Date(formData.value.date_of_birth)
+	let age = today.getFullYear() - birthDate.getFullYear()
+	const monthDiff = today.getMonth() - birthDate.getMonth()
+	if (
+		monthDiff < 0 ||
+		(monthDiff === 0 && today.getDate() < birthDate.getDate())
+	) {
+		age--
+	}
+	return age
 })
 
 // Computed: Max date (today)
 const maxDate = computed(() => {
-  return new Date().toISOString().split('T')[0]
+	return new Date().toISOString().split("T")[0]
 })
 
 // Handle photo upload
 const handlePhotoUpload = (fileData, callback) => {
-  // Parent component should handle actual upload to server
-  console.log('Photo upload:', fileData)
+	// Parent component should handle actual upload to server
+	console.log("Photo upload:", fileData)
 
-  // Simulate upload completion
-  setTimeout(() => {
-    callback()
-  }, 500)
+	// Simulate upload completion
+	setTimeout(() => {
+		callback()
+	}, 500)
 }
 
 // Watch for changes and emit
-watch(formData, (newValue) => {
-  emit('update:modelValue', newValue)
-}, { deep: true })
+watch(
+	formData,
+	(newValue) => {
+		emit("update:modelValue", newValue)
+	},
+	{ deep: true },
+)
 </script>

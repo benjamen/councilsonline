@@ -15,17 +15,17 @@
 
 <script setup>
 defineProps({
-  number: {
-    type: String,
-    required: true
-  },
-  title: {
-    type: String,
-    required: true
-  },
-  description: {
-    type: String,
-    required: true
-  }
+	number: {
+		type: String,
+		required: true,
+	},
+	title: {
+		type: String,
+		required: true,
+	},
+	description: {
+		type: String,
+		required: true,
+	},
 })
 </script>

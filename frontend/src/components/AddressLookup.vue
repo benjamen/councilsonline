@@ -92,167 +92,170 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
-import { call } from 'frappe-ui'
+import { call } from "frappe-ui"
+import { ref, watch } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    default: null
-  },
-  id: {
-    type: String,
-    default: 'address-lookup'
-  },
-  label: {
-    type: String,
-    default: 'Property Address'
-  },
-  placeholder: {
-    type: String,
-    default: 'Start typing address... e.g., 123 Main Street'
-  },
-  description: {
-    type: String,
-    default: 'Type to search for addresses in New Zealand'
-  },
-  required: {
-    type: Boolean,
-    default: false
-  },
-  apiMethod: {
-    type: String,
-    default: 'lodgeick.api.search_property_addresses'
-  }
+	modelValue: {
+		type: Object,
+		default: null,
+	},
+	id: {
+		type: String,
+		default: "address-lookup",
+	},
+	label: {
+		type: String,
+		default: "Property Address",
+	},
+	placeholder: {
+		type: String,
+		default: "Start typing address... e.g., 123 Main Street",
+	},
+	description: {
+		type: String,
+		default: "Type to search for addresses in New Zealand",
+	},
+	required: {
+		type: Boolean,
+		default: false,
+	},
+	apiMethod: {
+		type: String,
+		default: "lodgeick.api.search_property_addresses",
+	},
 })
 
-const emit = defineEmits(['update:modelValue', 'address-selected'])
+const emit = defineEmits(["update:modelValue", "address-selected"])
 
-const searchQuery = ref('')
+const searchQuery = ref("")
 const searchResults = ref([])
 const loading = ref(false)
 const showDropdown = ref(false)
 const selectedAddress = ref(props.modelValue)
-const validationError = ref('')
+const validationError = ref("")
 let searchTimeout = null
 
 // Watch for external changes to modelValue
-watch(() => props.modelValue, (newVal) => {
-  selectedAddress.value = newVal
-  if (newVal) {
-    searchQuery.value = newVal.full_address || ''
-  }
-})
+watch(
+	() => props.modelValue,
+	(newVal) => {
+		selectedAddress.value = newVal
+		if (newVal) {
+			searchQuery.value = newVal.full_address || ""
+		}
+	},
+)
 
 // Handle search input
 const handleSearch = async () => {
-  if (searchTimeout) {
-    clearTimeout(searchTimeout)
-  }
+	if (searchTimeout) {
+		clearTimeout(searchTimeout)
+	}
 
-  const query = searchQuery.value.trim()
+	const query = searchQuery.value.trim()
 
-  // Clear validation error
-  validationError.value = ''
+	// Clear validation error
+	validationError.value = ""
 
-  // Clear selected address if user is typing new search
-  if (selectedAddress.value && query !== selectedAddress.value.full_address) {
-    selectedAddress.value = null
-    emit('update:modelValue', null)
-  }
+	// Clear selected address if user is typing new search
+	if (selectedAddress.value && query !== selectedAddress.value.full_address) {
+		selectedAddress.value = null
+		emit("update:modelValue", null)
+	}
 
-  if (query.length < 3) {
-    searchResults.value = []
-    return
-  }
+	if (query.length < 3) {
+		searchResults.value = []
+		return
+	}
 
-  searchTimeout = setTimeout(async () => {
-    loading.value = true
-    try {
-      // TODO: Replace with actual LINZ API integration
-      // For now, we'll use the existing property search or create a stub
-      const results = await searchAddresses(query)
-      searchResults.value = results || []
-    } catch (error) {
-      console.error('[AddressLookup] Error searching addresses:', error)
-      searchResults.value = []
-      validationError.value = 'Error searching addresses. Please try again.'
-    } finally {
-      loading.value = false
-    }
-  }, 300)
+	searchTimeout = setTimeout(async () => {
+		loading.value = true
+		try {
+			// TODO: Replace with actual LINZ API integration
+			// For now, we'll use the existing property search or create a stub
+			const results = await searchAddresses(query)
+			searchResults.value = results || []
+		} catch (error) {
+			console.error("[AddressLookup] Error searching addresses:", error)
+			searchResults.value = []
+			validationError.value = "Error searching addresses. Please try again."
+		} finally {
+			loading.value = false
+		}
+	}, 300)
 }
 
 // Search for addresses - integrates with backend API
 const searchAddresses = async (query) => {
-  try {
-    // Call backend API that searches LINZ or property database
-    const results = await call(props.apiMethod, {
-      query: query
-    })
+	try {
+		// Call backend API that searches LINZ or property database
+		const results = await call(props.apiMethod, {
+			query: query,
+		})
 
-    // Transform results to standardized format
-    return results.map(result => ({
-      full_address: result.address || result.full_address,
-      street_address: result.street_address || extractStreet(result.address),
-      suburb: result.suburb || result.locality,
-      city: result.city || result.town,
-      postcode: result.postcode || result.postal_code,
-      address_id: result.address_id || result.id,
-      // Additional property data if available
-      property_id: result.property?.parcel_id,
-      legal_description: result.property?.legal_description,
-      title_no: result.property?.title_no,
-      valuation_reference: result.property?.valuation_reference,
-      zone: result.property?.zone
-    }))
-  } catch (error) {
-    console.error('[AddressLookup] API error:', error)
-    // Return empty array or stub data for development
-    return []
-  }
+		// Transform results to standardized format
+		return results.map((result) => ({
+			full_address: result.address || result.full_address,
+			street_address: result.street_address || extractStreet(result.address),
+			suburb: result.suburb || result.locality,
+			city: result.city || result.town,
+			postcode: result.postcode || result.postal_code,
+			address_id: result.address_id || result.id,
+			// Additional property data if available
+			property_id: result.property?.parcel_id,
+			legal_description: result.property?.legal_description,
+			title_no: result.property?.title_no,
+			valuation_reference: result.property?.valuation_reference,
+			zone: result.property?.zone,
+		}))
+	} catch (error) {
+		console.error("[AddressLookup] API error:", error)
+		// Return empty array or stub data for development
+		return []
+	}
 }
 
 // Extract street address from full address
 const extractStreet = (fullAddress) => {
-  if (!fullAddress) return ''
-  // Simple extraction - take first part before comma
-  return fullAddress.split(',')[0]?.trim() || fullAddress
+	if (!fullAddress) return ""
+	// Simple extraction - take first part before comma
+	return fullAddress.split(",")[0]?.trim() || fullAddress
 }
 
 // Select an address from search results
 const selectAddress = (address) => {
-  selectedAddress.value = address
-  searchQuery.value = address.full_address
-  searchResults.value = []
-  showDropdown.value = false
-  validationError.value = ''
+	selectedAddress.value = address
+	searchQuery.value = address.full_address
+	searchResults.value = []
+	showDropdown.value = false
+	validationError.value = ""
 
-  emit('update:modelValue', address)
-  emit('address-selected', address)
+	emit("update:modelValue", address)
+	emit("address-selected", address)
 }
 
 // Clear selected address
 const clearAddress = () => {
-  selectedAddress.value = null
-  searchQuery.value = ''
-  searchResults.value = []
-  validationError.value = ''
+	selectedAddress.value = null
+	searchQuery.value = ""
+	searchResults.value = []
+	validationError.value = ""
 
-  emit('update:modelValue', null)
-  emit('address-selected', null)
+	emit("update:modelValue", null)
+	emit("address-selected", null)
 }
 
 // Handle blur event (delayed to allow click on dropdown)
 const handleBlur = () => {
-  setTimeout(() => {
-    showDropdown.value = false
-  }, 200)
+	setTimeout(() => {
+		showDropdown.value = false
+	}, 200)
 }
 
 // Expose methods for parent component
 defineExpose({
-  clearAddress,
-  selectedAddress
+	clearAddress,
+	selectedAddress,
 })
 </script>

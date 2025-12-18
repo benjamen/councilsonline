@@ -1,53 +1,53 @@
 <script setup>
-import { Button } from 'frappe-ui'
+import { Button } from "frappe-ui"
 
 const props = defineProps({
 	currentStep: {
 		type: Number,
-		required: true
+		required: true,
 	},
 	totalSteps: {
 		type: Number,
-		required: true
+		required: true,
 	},
 	isLastStep: {
 		type: Boolean,
-		default: false
+		default: false,
 	},
 	canGoNext: {
 		type: Boolean,
-		default: true
+		default: true,
 	},
 	canSaveDraft: {
 		type: Boolean,
-		default: true
+		default: true,
 	},
 	isSaving: {
 		type: Boolean,
-		default: false
+		default: false,
 	},
 	isSubmitting: {
 		type: Boolean,
-		default: false
-	}
+		default: false,
+	},
 })
 
-const emit = defineEmits(['next', 'previous', 'save-draft', 'submit'])
+const emit = defineEmits(["next", "previous", "save-draft", "submit"])
 
 const handleNext = () => {
-	emit('next')
+	emit("next")
 }
 
 const handlePrevious = () => {
-	emit('previous')
+	emit("previous")
 }
 
 const handleSaveDraft = () => {
-	emit('save-draft')
+	emit("save-draft")
 }
 
 const handleSubmit = () => {
-	emit('submit')
+	emit("submit")
 }
 </script>
 

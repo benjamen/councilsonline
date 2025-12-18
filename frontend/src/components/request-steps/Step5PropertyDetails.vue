@@ -186,136 +186,147 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref, watch } from 'vue'
-import { call } from 'frappe-ui'
+import { call } from "frappe-ui"
+import { defineEmits, defineProps, ref, watch } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  },
-  properties: {
-    type: Object,
-    required: true
-  }
+	modelValue: {
+		type: Object,
+		required: true,
+	},
+	properties: {
+		type: Object,
+		required: true,
+	},
 })
 
-const emit = defineEmits(['update:modelValue', 'property-select'])
+const emit = defineEmits(["update:modelValue", "property-select"])
 
 // Local data
 const localData = ref({
-  property: props.modelValue.property || '',
-  property_address: props.modelValue.property_address || '',
-  legal_description: props.modelValue.legal_description || '',
-  ct_reference: props.modelValue.ct_reference || '',
-  certificate_of_title_document: props.modelValue.certificate_of_title_document || '',
-  valuation_reference: props.modelValue.valuation_reference || '',
-  parcel_id: props.modelValue.parcel_id || '',
-  zone: props.modelValue.zone || ''
+	property: props.modelValue.property || "",
+	property_address: props.modelValue.property_address || "",
+	legal_description: props.modelValue.legal_description || "",
+	ct_reference: props.modelValue.ct_reference || "",
+	certificate_of_title_document:
+		props.modelValue.certificate_of_title_document || "",
+	valuation_reference: props.modelValue.valuation_reference || "",
+	parcel_id: props.modelValue.parcel_id || "",
+	zone: props.modelValue.zone || "",
 })
 
 // Property search state
-const propertySearchQuery = ref('')
+const propertySearchQuery = ref("")
 const propertySearchResults = ref([])
 const propertySearchLoading = ref(false)
 const showPropertyDropdown = ref(false)
 let searchTimeout = null
 
 // Watch for external changes
-watch(() => props.modelValue, (newVal) => {
-  localData.value.property = newVal.property || ''
-  localData.value.property_address = newVal.property_address || ''
-  localData.value.legal_description = newVal.legal_description || ''
-  localData.value.ct_reference = newVal.ct_reference || ''
-  localData.value.certificate_of_title_document = newVal.certificate_of_title_document || ''
-  localData.value.valuation_reference = newVal.valuation_reference || ''
-  localData.value.parcel_id = newVal.parcel_id || ''
-  localData.value.zone = newVal.zone || ''
-}, { deep: true })
+watch(
+	() => props.modelValue,
+	(newVal) => {
+		localData.value.property = newVal.property || ""
+		localData.value.property_address = newVal.property_address || ""
+		localData.value.legal_description = newVal.legal_description || ""
+		localData.value.ct_reference = newVal.ct_reference || ""
+		localData.value.certificate_of_title_document =
+			newVal.certificate_of_title_document || ""
+		localData.value.valuation_reference = newVal.valuation_reference || ""
+		localData.value.parcel_id = newVal.parcel_id || ""
+		localData.value.zone = newVal.zone || ""
+	},
+	{ deep: true },
+)
 
 // Watch local changes and emit
-watch(localData, (newVal) => {
-  emit('update:modelValue', {
-    ...props.modelValue,
-    property: newVal.property,
-    property_address: newVal.property_address,
-    legal_description: newVal.legal_description,
-    ct_reference: newVal.ct_reference,
-    certificate_of_title_document: newVal.certificate_of_title_document,
-    valuation_reference: newVal.valuation_reference,
-    parcel_id: newVal.parcel_id,
-    zone: newVal.zone
-  })
-}, { deep: true })
+watch(
+	localData,
+	(newVal) => {
+		emit("update:modelValue", {
+			...props.modelValue,
+			property: newVal.property,
+			property_address: newVal.property_address,
+			legal_description: newVal.legal_description,
+			ct_reference: newVal.ct_reference,
+			certificate_of_title_document: newVal.certificate_of_title_document,
+			valuation_reference: newVal.valuation_reference,
+			parcel_id: newVal.parcel_id,
+			zone: newVal.zone,
+		})
+	},
+	{ deep: true },
+)
 
 // Property selection
 const handlePropertySelect = () => {
-  emit('property-select')
+	emit("property-select")
 }
 
 // Property search
 const handlePropertySearch = async () => {
-  if (searchTimeout) {
-    clearTimeout(searchTimeout)
-  }
+	if (searchTimeout) {
+		clearTimeout(searchTimeout)
+	}
 
-  const query = propertySearchQuery.value.trim()
-  if (query.length < 3) {
-    propertySearchResults.value = []
-    return
-  }
+	const query = propertySearchQuery.value.trim()
+	if (query.length < 3) {
+		propertySearchResults.value = []
+		return
+	}
 
-  searchTimeout = setTimeout(async () => {
-    propertySearchLoading.value = true
-    try {
-      const results = await call('lodgeick.api.search_property_addresses', {
-        query: query
-      })
-      propertySearchResults.value = results || []
-    } catch (error) {
-      console.error('[Step5PropertyDetails] Error searching properties:', error)
-      propertySearchResults.value = []
-    } finally {
-      propertySearchLoading.value = false
-    }
-  }, 300)
+	searchTimeout = setTimeout(async () => {
+		propertySearchLoading.value = true
+		try {
+			const results = await call("lodgeick.api.search_property_addresses", {
+				query: query,
+			})
+			propertySearchResults.value = results || []
+		} catch (error) {
+			console.error("[Step5PropertyDetails] Error searching properties:", error)
+			propertySearchResults.value = []
+		} finally {
+			propertySearchLoading.value = false
+		}
+	}, 300)
 }
 
 // Select property from search results
 const selectProperty = (result) => {
-  localData.value.property_address = result.address
-  localData.value.legal_description = result.property?.legal_description || ''
-  localData.value.ct_reference = result.property?.title_no || ''
-  localData.value.valuation_reference = result.property?.valuation_reference || ''
-  localData.value.parcel_id = result.property?.parcel_id || ''
-  localData.value.zone = result.property?.zone || ''
+	localData.value.property_address = result.address
+	localData.value.legal_description = result.property?.legal_description || ""
+	localData.value.ct_reference = result.property?.title_no || ""
+	localData.value.valuation_reference =
+		result.property?.valuation_reference || ""
+	localData.value.parcel_id = result.property?.parcel_id || ""
+	localData.value.zone = result.property?.zone || ""
 
-  showPropertyDropdown.value = false
-  propertySearchQuery.value = ''
-  propertySearchResults.value = []
+	showPropertyDropdown.value = false
+	propertySearchQuery.value = ""
+	propertySearchResults.value = []
 }
 
 // Clear property address
 const clearPropertyAddress = () => {
-  localData.value.property = ''
-  localData.value.property_address = ''
-  localData.value.legal_description = ''
-  localData.value.ct_reference = ''
-  localData.value.valuation_reference = ''
-  localData.value.parcel_id = ''
-  localData.value.zone = ''
-  propertySearchQuery.value = ''
+	localData.value.property = ""
+	localData.value.property_address = ""
+	localData.value.legal_description = ""
+	localData.value.ct_reference = ""
+	localData.value.valuation_reference = ""
+	localData.value.parcel_id = ""
+	localData.value.zone = ""
+	propertySearchQuery.value = ""
 }
 
 // Handle CT upload
 const handleCTUpload = (event) => {
-  const file = event.target.files[0]
-  if (file) {
-    // File upload will be handled by the parent component
-    emit('update:modelValue', {
-      ...props.modelValue,
-      certificate_of_title_document: file.name
-    })
-  }
+	const file = event.target.files[0]
+	if (file) {
+		// File upload will be handled by the parent component
+		emit("update:modelValue", {
+			...props.modelValue,
+			certificate_of_title_document: file.name,
+		})
+	}
 }
 </script>

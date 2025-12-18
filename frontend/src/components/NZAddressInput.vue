@@ -91,41 +91,45 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { onMounted, ref, watch } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    default: () => ({})
-  },
-  required: {
-    type: Boolean,
-    default: false
-  }
+	modelValue: {
+		type: Object,
+		default: () => ({}),
+	},
+	required: {
+		type: Boolean,
+		default: false,
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
 const localAddress = ref({
-  street_address: '',
-  suburb: '',
-  city: '',
-  postcode: ''
+	street_address: "",
+	suburb: "",
+	city: "",
+	postcode: "",
 })
 
 onMounted(() => {
-  if (props.modelValue) {
-    localAddress.value = { ...localAddress.value, ...props.modelValue }
-  }
+	if (props.modelValue) {
+		localAddress.value = { ...localAddress.value, ...props.modelValue }
+	}
 })
 
-watch(() => props.modelValue, (newVal) => {
-  if (newVal) {
-    localAddress.value = { ...localAddress.value, ...newVal }
-  }
-}, { deep: true })
+watch(
+	() => props.modelValue,
+	(newVal) => {
+		if (newVal) {
+			localAddress.value = { ...localAddress.value, ...newVal }
+		}
+	},
+	{ deep: true },
+)
 
 function emitUpdate() {
-  emit('update:modelValue', localAddress.value)
+	emit("update:modelValue", localAddress.value)
 }
 </script>

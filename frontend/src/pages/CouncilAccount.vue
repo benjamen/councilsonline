@@ -197,11 +197,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { Input, Button, call } from 'frappe-ui'
-import { useCouncilStore } from '../stores/councilStore'
-import { userResource } from '../data/user'
+import { Button, Input, call } from "frappe-ui"
+import { computed, onMounted, ref } from "vue"
+import { useRoute, useRouter } from "vue-router"
+import { userResource } from "../data/user"
+import { useCouncilStore } from "../stores/councilStore"
 
 const router = useRouter()
 const route = useRoute()
@@ -216,92 +216,99 @@ const changePasswordModal = ref(false)
 // Profile data
 const profile = ref({})
 const profileForm = ref({
-  first_name: '',
-  last_name: '',
-  mobile_no: '',
-  phone: '',
+	first_name: "",
+	last_name: "",
+	mobile_no: "",
+	phone: "",
 })
 
 // Computed
-const primaryColor = computed(() => councilSettings.value?.primary_color || '#2563eb')
+const primaryColor = computed(
+	() => councilSettings.value?.primary_color || "#2563eb",
+)
 
 const userInitials = computed(() => {
-  const name = profile.value.full_name || ''
-  const parts = name.split(' ')
-  if (parts.length >= 2) {
-    return (parts[0][0] + parts[1][0]).toUpperCase()
-  }
-  return name.substring(0, 2).toUpperCase()
+	const name = profile.value.full_name || ""
+	const parts = name.split(" ")
+	if (parts.length >= 2) {
+		return (parts[0][0] + parts[1][0]).toUpperCase()
+	}
+	return name.substring(0, 2).toUpperCase()
 })
 
 // Load data
 onMounted(async () => {
-  try {
-    // Load council settings
-    councilSettings.value = await councilStore.getCouncilSettings(councilCode.value)
+	try {
+		// Load council settings
+		councilSettings.value = await councilStore.getCouncilSettings(
+			councilCode.value,
+		)
 
-    // Load user profile from userResource
-    await userResource.promise
-    profile.value = userResource.data || {}
+		// Load user profile from userResource
+		await userResource.promise
+		profile.value = userResource.data || {}
 
-    // Initialize form
-    profileForm.value = {
-      first_name: profile.value.first_name || '',
-      last_name: profile.value.last_name || '',
-      mobile_no: profile.value.mobile_no || '',
-      phone: profile.value.phone || '',
-    }
-  } catch (error) {
-    console.error('Failed to load account data:', error)
-  } finally {
-    isLoading.value = false
-  }
+		// Initialize form
+		profileForm.value = {
+			first_name: profile.value.first_name || "",
+			last_name: profile.value.last_name || "",
+			mobile_no: profile.value.mobile_no || "",
+			phone: profile.value.phone || "",
+		}
+	} catch (error) {
+		console.error("Failed to load account data:", error)
+	} finally {
+		isLoading.value = false
+	}
 })
 
 // Format date
 const formatDate = (dateStr) => {
-  if (!dateStr) return 'N/A'
-  const date = new Date(dateStr)
-  return date.toLocaleDateString('en-NZ', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
+	if (!dateStr) return "N/A"
+	const date = new Date(dateStr)
+	return date.toLocaleDateString("en-NZ", {
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+	})
 }
 
 // Update profile
 const updateProfile = async () => {
-  saving.value = true
-  try {
-    await call('frappe.client.set_value', {
-      doctype: 'User',
-      name: profile.value.name,
-      fieldname: profileForm.value
-    })
+	saving.value = true
+	try {
+		await call("frappe.client.set_value", {
+			doctype: "User",
+			name: profile.value.name,
+			fieldname: profileForm.value,
+		})
 
-    // Reload user resource
-    await userResource.reload()
-    profile.value = userResource.data || {}
+		// Reload user resource
+		await userResource.reload()
+		profile.value = userResource.data || {}
 
-    alert('Profile updated successfully!')
-  } catch (error) {
-    console.error('Failed to update profile:', error)
-    alert('Failed to update profile. Please try again.')
-  } finally {
-    saving.value = false
-  }
+		alert("Profile updated successfully!")
+	} catch (error) {
+		console.error("Failed to update profile:", error)
+		alert("Failed to update profile. Please try again.")
+	} finally {
+		saving.value = false
+	}
 }
 
 const resetProfileForm = () => {
-  profileForm.value = {
-    first_name: profile.value.first_name || '',
-    last_name: profile.value.last_name || '',
-    mobile_no: profile.value.mobile_no || '',
-    phone: profile.value.phone || '',
-  }
+	profileForm.value = {
+		first_name: profile.value.first_name || "",
+		last_name: profile.value.last_name || "",
+		mobile_no: profile.value.mobile_no || "",
+		phone: profile.value.phone || "",
+	}
 }
 
 const goBack = () => {
-  router.push({ name: 'CouncilDashboard', params: { councilCode: councilCode.value } })
+	router.push({
+		name: "CouncilDashboard",
+		params: { councilCode: councilCode.value },
+	})
 }
 </script>

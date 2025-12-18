@@ -299,91 +299,98 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, computed } from 'vue'
+import { computed, defineEmits, defineProps } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  }
+	modelValue: {
+		type: Object,
+		required: true,
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
 const localData = computed({
-  get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value)
+	get: () => props.modelValue,
+	set: (value) => emit("update:modelValue", value),
 })
 
 // Handle file upload
 const handleFileUpload = (event, category) => {
-  const files = Array.from(event.target.files)
-  if (files.length === 0) return
+	const files = Array.from(event.target.files)
+	if (files.length === 0) return
 
-  const updatedData = { ...props.modelValue }
-  if (!updatedData.application_documents) {
-    updatedData.application_documents = []
-  }
+	const updatedData = { ...props.modelValue }
+	if (!updatedData.application_documents) {
+		updatedData.application_documents = []
+	}
 
-  files.forEach(file => {
-    // Validate file size (max 20MB)
-    const maxSize = 20 * 1024 * 1024
-    if (file.size > maxSize) {
-      alert(`File ${file.name} exceeds 20MB. Please upload a smaller file.`)
-      return
-    }
+	files.forEach((file) => {
+		// Validate file size (max 20MB)
+		const maxSize = 20 * 1024 * 1024
+		if (file.size > maxSize) {
+			alert(`File ${file.name} exceeds 20MB. Please upload a smaller file.`)
+			return
+		}
 
-    // Format file size
-    const fileSize = formatFileSize(file.size)
+		// Format file size
+		const fileSize = formatFileSize(file.size)
 
-    // Add document to array
-    updatedData.application_documents.push({
-      file_name: file.name,
-      category: category,
-      file_size: fileSize,
-      upload_date: new Date().toISOString()
-    })
-  })
+		// Add document to array
+		updatedData.application_documents.push({
+			file_name: file.name,
+			category: category,
+			file_size: fileSize,
+			upload_date: new Date().toISOString(),
+		})
+	})
 
-  emit('update:modelValue', updatedData)
+	emit("update:modelValue", updatedData)
 
-  // Clear the input
-  event.target.value = ''
+	// Clear the input
+	event.target.value = ""
 }
 
 // Remove document
 const removeDocument = (index) => {
-  if (confirm('Remove this document?')) {
-    const updatedData = { ...props.modelValue }
-    updatedData.application_documents.splice(index, 1)
-    emit('update:modelValue', updatedData)
-  }
+	if (confirm("Remove this document?")) {
+		const updatedData = { ...props.modelValue }
+		updatedData.application_documents.splice(index, 1)
+		emit("update:modelValue", updatedData)
+	}
 }
 
 // Get documents by category
 const getDocumentsByCategory = (category) => {
-  return localData.value.application_documents?.filter(doc => doc.category === category) || []
+	return (
+		localData.value.application_documents?.filter(
+			(doc) => doc.category === category,
+		) || []
+	)
 }
 
 // Check if written approvals uploaded
 const hasWrittenApprovals = computed(() => {
-  return localData.value.application_documents?.some(doc =>
-    doc.file_name.toLowerCase().includes('approval') ||
-    doc.file_name.toLowerCase().includes('consent')
-  ) || false
+	return (
+		localData.value.application_documents?.some(
+			(doc) =>
+				doc.file_name.toLowerCase().includes("approval") ||
+				doc.file_name.toLowerCase().includes("consent"),
+		) || false
+	)
 })
 
 // Check if specialist reports uploaded
 const hasSpecialistReports = computed(() => {
-  return getDocumentsByCategory('Supporting Documents').length > 0
+	return getDocumentsByCategory("Supporting Documents").length > 0
 })
 
 // Format file size
 const formatFileSize = (bytes) => {
-  if (bytes === 0) return '0 Bytes'
-  const k = 1024
-  const sizes = ['Bytes', 'KB', 'MB', 'GB']
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
-  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i]
+	if (bytes === 0) return "0 Bytes"
+	const k = 1024
+	const sizes = ["Bytes", "KB", "MB", "GB"]
+	const i = Math.floor(Math.log(bytes) / Math.log(k))
+	return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i]
 }
 </script>

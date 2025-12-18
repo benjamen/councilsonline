@@ -317,71 +317,79 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref, watch } from 'vue'
+import { defineEmits, defineProps, ref, watch } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  }
+	modelValue: {
+		type: Object,
+		required: true,
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
 // Local data for brief and detailed descriptions
 const localData = ref({
-  brief_description: props.modelValue.brief_description || '',
-  detailed_description: props.modelValue.detailed_description || ''
+	brief_description: props.modelValue.brief_description || "",
+	detailed_description: props.modelValue.detailed_description || "",
 })
 
 // Watch for external changes
-watch(() => [props.modelValue.brief_description, props.modelValue.detailed_description],
-  ([newBrief, newDetailed]) => {
-    localData.value.brief_description = newBrief || ''
-    localData.value.detailed_description = newDetailed || ''
-  }
+watch(
+	() => [
+		props.modelValue.brief_description,
+		props.modelValue.detailed_description,
+	],
+	([newBrief, newDetailed]) => {
+		localData.value.brief_description = newBrief || ""
+		localData.value.detailed_description = newDetailed || ""
+	},
 )
 
 // Watch local changes and emit
-watch(localData, (newVal) => {
-  emit('update:modelValue', {
-    ...props.modelValue,
-    brief_description: newVal.brief_description,
-    detailed_description: newVal.detailed_description
-  })
-}, { deep: true })
+watch(
+	localData,
+	(newVal) => {
+		emit("update:modelValue", {
+			...props.modelValue,
+			brief_description: newVal.brief_description,
+			detailed_description: newVal.detailed_description,
+		})
+	},
+	{ deep: true },
+)
 
 const addProposalDetail = () => {
-  const updatedData = { ...props.modelValue }
-  if (!updatedData.proposal_details) {
-    updatedData.proposal_details = []
-  }
-  updatedData.proposal_details.push({
-    detail_type: '',
-    building_height_m: null,
-    total_floor_area_m2: null,
-    earthworks_description: '',
-    traffic_description: '',
-    operations_description: '',
-    subdivision_lots: null,
-    subdivision_lot_sizes: '',
-    discharge_type: '',
-    discharge_receiver: '',
-    discharge_treatment: '',
-    water_source: '',
-    water_max_take_m3: null,
-    water_rate: '',
-    coastal_structure_type: '',
-    coastal_navigation_effects: ''
-  })
-  emit('update:modelValue', updatedData)
+	const updatedData = { ...props.modelValue }
+	if (!updatedData.proposal_details) {
+		updatedData.proposal_details = []
+	}
+	updatedData.proposal_details.push({
+		detail_type: "",
+		building_height_m: null,
+		total_floor_area_m2: null,
+		earthworks_description: "",
+		traffic_description: "",
+		operations_description: "",
+		subdivision_lots: null,
+		subdivision_lot_sizes: "",
+		discharge_type: "",
+		discharge_receiver: "",
+		discharge_treatment: "",
+		water_source: "",
+		water_max_take_m3: null,
+		water_rate: "",
+		coastal_structure_type: "",
+		coastal_navigation_effects: "",
+	})
+	emit("update:modelValue", updatedData)
 }
 
 const removeProposalDetail = (index) => {
-  if (confirm('Remove this proposal detail?')) {
-    const updatedData = { ...props.modelValue }
-    updatedData.proposal_details.splice(index, 1)
-    emit('update:modelValue', updatedData)
-  }
+	if (confirm("Remove this proposal detail?")) {
+		const updatedData = { ...props.modelValue }
+		updatedData.proposal_details.splice(index, 1)
+		emit("update:modelValue", updatedData)
+	}
 }
 </script>

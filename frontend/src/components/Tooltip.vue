@@ -28,50 +28,50 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { computed, ref } from "vue"
 
 const props = defineProps({
-  text: {
-    type: String,
-    default: ''
-  },
-  position: {
-    type: String,
-    default: 'top',
-    validator: (value) => ['top', 'bottom', 'left', 'right'].includes(value)
-  }
+	text: {
+		type: String,
+		default: "",
+	},
+	position: {
+		type: String,
+		default: "top",
+		validator: (value) => ["top", "bottom", "left", "right"].includes(value),
+	},
 })
 
 const showTooltip = ref(false)
 
 const tooltipPositionClass = computed(() => {
-  switch (props.position) {
-    case 'top':
-      return 'bottom-full left-1/2 -translate-x-1/2 mb-2'
-    case 'bottom':
-      return 'top-full left-1/2 -translate-x-1/2 mt-2'
-    case 'left':
-      return 'right-full top-1/2 -translate-y-1/2 mr-2'
-    case 'right':
-      return 'left-full top-1/2 -translate-y-1/2 ml-2'
-    default:
-      return 'bottom-full left-1/2 -translate-x-1/2 mb-2'
-  }
+	switch (props.position) {
+		case "top":
+			return "bottom-full left-1/2 -translate-x-1/2 mb-2"
+		case "bottom":
+			return "top-full left-1/2 -translate-x-1/2 mt-2"
+		case "left":
+			return "right-full top-1/2 -translate-y-1/2 mr-2"
+		case "right":
+			return "left-full top-1/2 -translate-y-1/2 ml-2"
+		default:
+			return "bottom-full left-1/2 -translate-x-1/2 mb-2"
+	}
 })
 
 const arrowPositionClass = computed(() => {
-  switch (props.position) {
-    case 'top':
-      return 'tooltip-arrow-bottom'
-    case 'bottom':
-      return 'tooltip-arrow-top'
-    case 'left':
-      return 'tooltip-arrow-right'
-    case 'right':
-      return 'tooltip-arrow-left'
-    default:
-      return 'tooltip-arrow-bottom'
-  }
+	switch (props.position) {
+		case "top":
+			return "tooltip-arrow-bottom"
+		case "bottom":
+			return "tooltip-arrow-top"
+		case "left":
+			return "tooltip-arrow-right"
+		case "right":
+			return "tooltip-arrow-left"
+		default:
+			return "tooltip-arrow-bottom"
+	}
 })
 </script>
 

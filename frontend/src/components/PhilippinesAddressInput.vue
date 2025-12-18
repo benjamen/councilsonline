@@ -149,221 +149,230 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { computed, onMounted, ref, watch } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: [String, Object],
-    default: ''
-  },
-  required: {
-    type: Boolean,
-    default: false
-  }
+	modelValue: {
+		type: [String, Object],
+		default: "",
+	},
+	required: {
+		type: Boolean,
+		default: false,
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
 const localAddress = ref({
-  street: '',
-  barangay: '',
-  municipality: '',
-  province: '',
-  zipCode: ''
+	street: "",
+	barangay: "",
+	municipality: "",
+	province: "",
+	zipCode: "",
 })
 
 // Philippines provinces (major ones - can be expanded)
 const provinces = [
-  'Metro Manila',
-  'Rizal',
-  'Cavite',
-  'Laguna',
-  'Bulacan',
-  'Pampanga',
-  'Batangas',
-  'Quezon',
-  'Cebu',
-  'Davao del Sur',
-  'Benguet',
-  'Iloilo',
-  'Negros Occidental',
-  'Pangasinan',
-  'Albay'
+	"Metro Manila",
+	"Rizal",
+	"Cavite",
+	"Laguna",
+	"Bulacan",
+	"Pampanga",
+	"Batangas",
+	"Quezon",
+	"Cebu",
+	"Davao del Sur",
+	"Benguet",
+	"Iloilo",
+	"Negros Occidental",
+	"Pangasinan",
+	"Albay",
 ]
 
 // Municipalities by province (can be expanded with API)
 const municipalitiesData = {
-  'Metro Manila': [
-    'Manila City',
-    'Quezon City',
-    'Makati City',
-    'Pasig City',
-    'Taguig City',
-    'Mandaluyong City',
-    'Pasay City',
-    'Parañaque City',
-    'Las Piñas City',
-    'Muntinlupa City',
-    'Caloocan City',
-    'Malabon City',
-    'Navotas City',
-    'Valenzuela City',
-    'Marikina City',
-    'San Juan City',
-    'Pateros'
-  ],
-  'Rizal': [
-    'Taytay',
-    'Antipolo City',
-    'Cainta',
-    'Binangonan',
-    'San Mateo',
-    'Rodriguez (Montalban)',
-    'Angono',
-    'Cardona',
-    'Jalajala',
-    'Morong',
-    'Pililla',
-    'Tanay',
-    'Teresa',
-    'Baras'
-  ],
-  'Cavite': [
-    'Bacoor City',
-    'Cavite City',
-    'Dasmarinas City',
-    'Imus City',
-    'Tagaytay City',
-    'Trece Martires City',
-    'General Trias',
-    'Silang',
-    'Kawit',
-    'Noveleta',
-    'Rosario',
-    'Tanza',
-    'Naic'
-  ]
+	"Metro Manila": [
+		"Manila City",
+		"Quezon City",
+		"Makati City",
+		"Pasig City",
+		"Taguig City",
+		"Mandaluyong City",
+		"Pasay City",
+		"Parañaque City",
+		"Las Piñas City",
+		"Muntinlupa City",
+		"Caloocan City",
+		"Malabon City",
+		"Navotas City",
+		"Valenzuela City",
+		"Marikina City",
+		"San Juan City",
+		"Pateros",
+	],
+	Rizal: [
+		"Taytay",
+		"Antipolo City",
+		"Cainta",
+		"Binangonan",
+		"San Mateo",
+		"Rodriguez (Montalban)",
+		"Angono",
+		"Cardona",
+		"Jalajala",
+		"Morong",
+		"Pililla",
+		"Tanay",
+		"Teresa",
+		"Baras",
+	],
+	Cavite: [
+		"Bacoor City",
+		"Cavite City",
+		"Dasmarinas City",
+		"Imus City",
+		"Tagaytay City",
+		"Trece Martires City",
+		"General Trias",
+		"Silang",
+		"Kawit",
+		"Noveleta",
+		"Rosario",
+		"Tanza",
+		"Naic",
+	],
 }
 
 // Barangays by municipality (sample data - Taytay as example)
 const barangaysData = {
-  'Taytay': [
-    'Dolores',
-    'San Juan',
-    'Muzon',
-    'San Isidro',
-    'Sta. Ana',
-    'Poblacion',
-    'Bagumbayan',
-    'Bamban',
-    'Calumpang',
-    'Dalig',
-    'Dolores',
-    'San Juan',
-    'Muzon'
-  ],
-  'Manila City': [
-    'Ermita',
-    'Intramuros',
-    'Malate',
-    'Paco',
-    'Pandacan',
-    'Port Area',
-    'Quiapo',
-    'Sampaloc',
-    'San Andres',
-    'San Miguel',
-    'San Nicolas',
-    'Santa Ana',
-    'Santa Cruz',
-    'Santa Mesa',
-    'Tondo'
-  ],
-  'Quezon City': [
-    'Bagong Pag-asa',
-    'Bahay Toro',
-    'Batasan Hills',
-    'Commonwealth',
-    'Cubao',
-    'Fairview',
-    'Kamuning',
-    'Novaliches',
-    'Project 4',
-    'Tatalon',
-    'Teacher\'s Village'
-  ]
+	Taytay: [
+		"Dolores",
+		"San Juan",
+		"Muzon",
+		"San Isidro",
+		"Sta. Ana",
+		"Poblacion",
+		"Bagumbayan",
+		"Bamban",
+		"Calumpang",
+		"Dalig",
+		"Dolores",
+		"San Juan",
+		"Muzon",
+	],
+	"Manila City": [
+		"Ermita",
+		"Intramuros",
+		"Malate",
+		"Paco",
+		"Pandacan",
+		"Port Area",
+		"Quiapo",
+		"Sampaloc",
+		"San Andres",
+		"San Miguel",
+		"San Nicolas",
+		"Santa Ana",
+		"Santa Cruz",
+		"Santa Mesa",
+		"Tondo",
+	],
+	"Quezon City": [
+		"Bagong Pag-asa",
+		"Bahay Toro",
+		"Batasan Hills",
+		"Commonwealth",
+		"Cubao",
+		"Fairview",
+		"Kamuning",
+		"Novaliches",
+		"Project 4",
+		"Tatalon",
+		"Teacher's Village",
+	],
 }
 
 const municipalities = computed(() => {
-  if (!localAddress.value.province) return []
-  return municipalitiesData[localAddress.value.province] || []
+	if (!localAddress.value.province) return []
+	return municipalitiesData[localAddress.value.province] || []
 })
 
 const barangays = computed(() => {
-  if (!localAddress.value.municipality) return []
-  return barangaysData[localAddress.value.municipality] || ['Other - Please specify in Street field']
+	if (!localAddress.value.municipality) return []
+	return (
+		barangaysData[localAddress.value.municipality] || [
+			"Other - Please specify in Street field",
+		]
+	)
 })
 
 const fullAddress = computed(() => {
-  const parts = []
-  if (localAddress.value.street) parts.push(localAddress.value.street)
-  if (localAddress.value.barangay) parts.push(`Brgy. ${localAddress.value.barangay}`)
-  if (localAddress.value.municipality) parts.push(localAddress.value.municipality)
-  if (localAddress.value.province) parts.push(localAddress.value.province)
-  if (localAddress.value.zipCode) parts.push(localAddress.value.zipCode)
+	const parts = []
+	if (localAddress.value.street) parts.push(localAddress.value.street)
+	if (localAddress.value.barangay)
+		parts.push(`Brgy. ${localAddress.value.barangay}`)
+	if (localAddress.value.municipality)
+		parts.push(localAddress.value.municipality)
+	if (localAddress.value.province) parts.push(localAddress.value.province)
+	if (localAddress.value.zipCode) parts.push(localAddress.value.zipCode)
 
-  return parts.length > 0 ? parts.join(', ') : ''
+	return parts.length > 0 ? parts.join(", ") : ""
 })
 
 const onProvinceChange = () => {
-  // Reset dependent fields when province changes
-  localAddress.value.municipality = ''
-  localAddress.value.barangay = ''
-  updateAddress()
+	// Reset dependent fields when province changes
+	localAddress.value.municipality = ""
+	localAddress.value.barangay = ""
+	updateAddress()
 }
 
 const onMunicipalityChange = () => {
-  // Reset barangay when municipality changes
-  localAddress.value.barangay = ''
-  updateAddress()
+	// Reset barangay when municipality changes
+	localAddress.value.barangay = ""
+	updateAddress()
 }
 
 const updateAddress = () => {
-  // Emit both the full address string and individual fields
-  emit('update:modelValue', {
-    full_address: fullAddress.value,
-    address_line: localAddress.value.street,
-    barangay: localAddress.value.barangay,
-    municipality: localAddress.value.municipality,
-    province: localAddress.value.province,
-    zip_code: localAddress.value.zipCode
-  })
+	// Emit both the full address string and individual fields
+	emit("update:modelValue", {
+		full_address: fullAddress.value,
+		address_line: localAddress.value.street,
+		barangay: localAddress.value.barangay,
+		municipality: localAddress.value.municipality,
+		province: localAddress.value.province,
+		zip_code: localAddress.value.zipCode,
+	})
 }
 
 // Initialize from modelValue if provided
 onMounted(() => {
-  if (props.modelValue) {
-    if (typeof props.modelValue === 'string') {
-      // Try to parse string address
-      // This is a simple parser - can be enhanced
-      const parts = props.modelValue.split(',').map(p => p.trim())
-      if (parts.length >= 3) {
-        localAddress.value.street = parts[0] || ''
-        localAddress.value.barangay = parts[1]?.replace('Brgy. ', '') || ''
-        localAddress.value.municipality = parts[2] || ''
-        localAddress.value.province = parts[3] || ''
-        localAddress.value.zipCode = parts[4] || ''
-      }
-    } else if (typeof props.modelValue === 'object') {
-      localAddress.value = { ...localAddress.value, ...props.modelValue }
-    }
-  }
+	if (props.modelValue) {
+		if (typeof props.modelValue === "string") {
+			// Try to parse string address
+			// This is a simple parser - can be enhanced
+			const parts = props.modelValue.split(",").map((p) => p.trim())
+			if (parts.length >= 3) {
+				localAddress.value.street = parts[0] || ""
+				localAddress.value.barangay = parts[1]?.replace("Brgy. ", "") || ""
+				localAddress.value.municipality = parts[2] || ""
+				localAddress.value.province = parts[3] || ""
+				localAddress.value.zipCode = parts[4] || ""
+			}
+		} else if (typeof props.modelValue === "object") {
+			localAddress.value = { ...localAddress.value, ...props.modelValue }
+		}
+	}
 })
 
 // Watch for external changes
-watch(() => props.modelValue, (newVal) => {
-  if (newVal && typeof newVal === 'object') {
-    localAddress.value = { ...localAddress.value, ...newVal }
-  }
-})
+watch(
+	() => props.modelValue,
+	(newVal) => {
+		if (newVal && typeof newVal === "object") {
+			localAddress.value = { ...localAddress.value, ...newVal }
+		}
+	},
+)
 </script>

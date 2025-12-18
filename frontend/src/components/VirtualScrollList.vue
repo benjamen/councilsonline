@@ -1,26 +1,26 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from "vue"
 
 const props = defineProps({
 	items: {
 		type: Array,
-		required: true
+		required: true,
 	},
 	itemHeight: {
 		type: Number,
-		default: 60 // Default row height in pixels
+		default: 60, // Default row height in pixels
 	},
 	buffer: {
 		type: Number,
-		default: 5 // Number of items to render above/below visible area
+		default: 5, // Number of items to render above/below visible area
 	},
 	containerHeight: {
 		type: Number,
-		default: 600 // Container height in pixels
-	}
+		default: 600, // Container height in pixels
+	},
 })
 
-const emit = defineEmits(['item-click'])
+const emit = defineEmits(["item-click"])
 
 // Refs
 const scrollContainer = ref(null)
@@ -35,15 +35,19 @@ const visibleStart = computed(() => {
 })
 
 const visibleEnd = computed(() => {
-	const end = Math.ceil((scrollTop.value + props.containerHeight) / props.itemHeight) + props.buffer
+	const end =
+		Math.ceil((scrollTop.value + props.containerHeight) / props.itemHeight) +
+		props.buffer
 	return Math.min(props.items.length, end)
 })
 
 const visibleItems = computed(() => {
-	return props.items.slice(visibleStart.value, visibleEnd.value).map((item, index) => ({
-		...item,
-		virtualIndex: visibleStart.value + index
-	}))
+	return props.items
+		.slice(visibleStart.value, visibleEnd.value)
+		.map((item, index) => ({
+			...item,
+			virtualIndex: visibleStart.value + index,
+		}))
 })
 
 const offsetY = computed(() => visibleStart.value * props.itemHeight)
@@ -54,29 +58,34 @@ const handleScroll = (event) => {
 }
 
 const handleItemClick = (item) => {
-	emit('item-click', item)
+	emit("item-click", item)
 }
 
 // Lifecycle
 onMounted(() => {
 	if (scrollContainer.value) {
-		scrollContainer.value.addEventListener('scroll', handleScroll, { passive: true })
+		scrollContainer.value.addEventListener("scroll", handleScroll, {
+			passive: true,
+		})
 	}
 })
 
 onUnmounted(() => {
 	if (scrollContainer.value) {
-		scrollContainer.value.removeEventListener('scroll', handleScroll)
+		scrollContainer.value.removeEventListener("scroll", handleScroll)
 	}
 })
 
 // Reset scroll when items change significantly
-watch(() => props.items.length, () => {
-	if (scrollContainer.value) {
-		scrollContainer.value.scrollTop = 0
-		scrollTop.value = 0
-	}
-})
+watch(
+	() => props.items.length,
+	() => {
+		if (scrollContainer.value) {
+			scrollContainer.value.scrollTop = 0
+			scrollTop.value = 0
+		}
+	},
+)
 </script>
 
 <template>

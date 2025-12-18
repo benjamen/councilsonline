@@ -1,6 +1,6 @@
 {
  "actions": [],
- "creation": "2025-11-21 00:00:00.000000",
+ "creation": "2025-11-21 00:00:00",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -12,7 +12,6 @@
   "required",
   "estimated_hours",
   "section_break_7",
-  "checklist_template",
   "auto_create_tasks"
  ],
  "fields": [
@@ -51,12 +50,6 @@
    "label": "Estimated Hours"
   },
   {
-   "fieldname": "checklist_template",
-   "fieldtype": "Link",
-   "label": "Checklist Template",
-   "options": "WB Task Checklist Template"
-  },
-  {
    "default": "0",
    "fieldname": "auto_create_tasks",
    "fieldtype": "Check",
@@ -75,7 +68,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-11-21 00:00:00.000000",
+ "modified": "2025-12-16 16:17:16.156488",
  "modified_by": "Administrator",
  "module": "Lodgeick",
  "name": "Assessment Template Stage",

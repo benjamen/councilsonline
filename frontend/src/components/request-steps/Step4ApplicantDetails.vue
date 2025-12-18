@@ -172,77 +172,87 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref, watch } from 'vue'
+import { defineEmits, defineProps, ref, watch } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  },
-  userProfile: {
-    type: Object,
-    default: null
-  },
-  userCompanyAccount: {
-    type: Object,
-    default: null
-  }
+	modelValue: {
+		type: Object,
+		required: true,
+	},
+	userProfile: {
+		type: Object,
+		default: null,
+	},
+	userCompanyAccount: {
+		type: Object,
+		default: null,
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
 // Local data
 const localData = ref({
-  submitted_on_behalf_of: props.modelValue.submitted_on_behalf_of || 'Myself',
-  acting_on_behalf: props.modelValue.acting_on_behalf || false,
-  applicant_name: props.modelValue.requester_name || '',
-  applicant_email: props.modelValue.requester_email || '',
-  applicant_phone: props.modelValue.requester_phone || '',
-  applicant_type: props.modelValue.requester_type || '',
-  applicant_is_not_owner: props.modelValue.applicant_is_not_owner || false,
-  owner_name: props.modelValue.owner_name || '',
-  owner_email: props.modelValue.owner_email || '',
-  owner_phone: props.modelValue.owner_phone || '',
-  owner_address: props.modelValue.owner_address || ''
+	submitted_on_behalf_of: props.modelValue.submitted_on_behalf_of || "Myself",
+	acting_on_behalf: props.modelValue.acting_on_behalf || false,
+	applicant_name: props.modelValue.requester_name || "",
+	applicant_email: props.modelValue.requester_email || "",
+	applicant_phone: props.modelValue.requester_phone || "",
+	applicant_type: props.modelValue.requester_type || "",
+	applicant_is_not_owner: props.modelValue.applicant_is_not_owner || false,
+	owner_name: props.modelValue.owner_name || "",
+	owner_email: props.modelValue.owner_email || "",
+	owner_phone: props.modelValue.owner_phone || "",
+	owner_address: props.modelValue.owner_address || "",
 })
 
 // Watch for external changes
-watch(() => props.modelValue, (newVal) => {
-  localData.value.submitted_on_behalf_of = newVal.submitted_on_behalf_of || 'Myself'
-  localData.value.acting_on_behalf = newVal.acting_on_behalf || false
-  localData.value.requester_name = newVal.requester_name || ''
-  localData.value.requester_email = newVal.requester_email || ''
-  localData.value.requester_phone = newVal.requester_phone || ''
-  localData.value.requester_type = newVal.requester_type || ''
-  localData.value.applicant_is_not_owner = newVal.applicant_is_not_owner || false
-  localData.value.owner_name = newVal.owner_name || ''
-  localData.value.owner_email = newVal.owner_email || ''
-  localData.value.owner_phone = newVal.owner_phone || ''
-  localData.value.owner_address = newVal.owner_address || ''
-}, { deep: true })
+watch(
+	() => props.modelValue,
+	(newVal) => {
+		localData.value.submitted_on_behalf_of =
+			newVal.submitted_on_behalf_of || "Myself"
+		localData.value.acting_on_behalf = newVal.acting_on_behalf || false
+		localData.value.requester_name = newVal.requester_name || ""
+		localData.value.requester_email = newVal.requester_email || ""
+		localData.value.requester_phone = newVal.requester_phone || ""
+		localData.value.requester_type = newVal.requester_type || ""
+		localData.value.applicant_is_not_owner =
+			newVal.applicant_is_not_owner || false
+		localData.value.owner_name = newVal.owner_name || ""
+		localData.value.owner_email = newVal.owner_email || ""
+		localData.value.owner_phone = newVal.owner_phone || ""
+		localData.value.owner_address = newVal.owner_address || ""
+	},
+	{ deep: true },
+)
 
 // Watch local changes and emit
-watch(localData, (newVal) => {
-  emit('update:modelValue', {
-    ...props.modelValue,
-    submitted_on_behalf_of: newVal.submitted_on_behalf_of,
-    acting_on_behalf: newVal.acting_on_behalf,
-    applicant_name: newVal.requester_name,
-    applicant_email: newVal.requester_email,
-    applicant_phone: newVal.requester_phone,
-    applicant_type: newVal.requester_type,
-    applicant_is_not_owner: newVal.applicant_is_not_owner,
-    owner_name: newVal.owner_name,
-    owner_email: newVal.owner_email,
-    owner_phone: newVal.owner_phone,
-    owner_address: newVal.owner_address,
-    transfer_deposit_required: newVal.transfer_deposit_required,
-    transfer_deposit_consent_number: newVal.transfer_deposit_consent_number,
-    invoice_to: newVal.invoice_to,
-    invoice_name: newVal.invoice_name,
-    invoice_email: newVal.invoice_email,
-    invoice_address: newVal.invoice_address,
-    invoice_tax_id: newVal.invoice_tax_id
-  })
-}, { deep: true })
+watch(
+	localData,
+	(newVal) => {
+		emit("update:modelValue", {
+			...props.modelValue,
+			submitted_on_behalf_of: newVal.submitted_on_behalf_of,
+			acting_on_behalf: newVal.acting_on_behalf,
+			applicant_name: newVal.requester_name,
+			applicant_email: newVal.requester_email,
+			applicant_phone: newVal.requester_phone,
+			applicant_type: newVal.requester_type,
+			applicant_is_not_owner: newVal.applicant_is_not_owner,
+			owner_name: newVal.owner_name,
+			owner_email: newVal.owner_email,
+			owner_phone: newVal.owner_phone,
+			owner_address: newVal.owner_address,
+			transfer_deposit_required: newVal.transfer_deposit_required,
+			transfer_deposit_consent_number: newVal.transfer_deposit_consent_number,
+			invoice_to: newVal.invoice_to,
+			invoice_name: newVal.invoice_name,
+			invoice_email: newVal.invoice_email,
+			invoice_address: newVal.invoice_address,
+			invoice_tax_id: newVal.invoice_tax_id,
+		})
+	},
+	{ deep: true },
+)
 </script>

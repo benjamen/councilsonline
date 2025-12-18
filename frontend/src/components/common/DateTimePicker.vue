@@ -58,96 +58,100 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { computed, ref, watch } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: String,
-    default: ''
-  },
-  label: {
-    type: String,
-    default: 'Select Date & Time'
-  },
-  required: {
-    type: Boolean,
-    default: false
-  },
-  showPresets: {
-    type: Boolean,
-    default: true
-  },
-  minDate: {
-    type: String,
-    default: () => {
-      // Default to tomorrow
-      const tomorrow = new Date()
-      tomorrow.setDate(tomorrow.getDate() + 1)
-      return tomorrow.toISOString().split('T')[0]
-    }
-  }
+	modelValue: {
+		type: String,
+		default: "",
+	},
+	label: {
+		type: String,
+		default: "Select Date & Time",
+	},
+	required: {
+		type: Boolean,
+		default: false,
+	},
+	showPresets: {
+		type: Boolean,
+		default: true,
+	},
+	minDate: {
+		type: String,
+		default: () => {
+			// Default to tomorrow
+			const tomorrow = new Date()
+			tomorrow.setDate(tomorrow.getDate() + 1)
+			return tomorrow.toISOString().split("T")[0]
+		},
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
 const timePresets = [
-  { label: '9:00 AM', value: '09:00' },
-  { label: '10:00 AM', value: '10:00' },
-  { label: '11:00 AM', value: '11:00' },
-  { label: '1:00 PM', value: '13:00' },
-  { label: '2:00 PM', value: '14:00' },
-  { label: '3:00 PM', value: '15:00' },
-  { label: '4:00 PM', value: '16:00' }
+	{ label: "9:00 AM", value: "09:00" },
+	{ label: "10:00 AM", value: "10:00" },
+	{ label: "11:00 AM", value: "11:00" },
+	{ label: "1:00 PM", value: "13:00" },
+	{ label: "2:00 PM", value: "14:00" },
+	{ label: "3:00 PM", value: "15:00" },
+	{ label: "4:00 PM", value: "16:00" },
 ]
 
 // Split the ISO datetime into date and time
-const dateValue = ref('')
-const timeValue = ref('')
+const dateValue = ref("")
+const timeValue = ref("")
 
 // Initialize from modelValue
-watch(() => props.modelValue, (newValue) => {
-  if (newValue) {
-    const dt = new Date(newValue)
-    if (!isNaN(dt.getTime())) {
-      dateValue.value = dt.toISOString().split('T')[0]
-      timeValue.value = dt.toTimeString().slice(0, 5)
-    }
-  }
-}, { immediate: true })
+watch(
+	() => props.modelValue,
+	(newValue) => {
+		if (newValue) {
+			const dt = new Date(newValue)
+			if (!isNaN(dt.getTime())) {
+				dateValue.value = dt.toISOString().split("T")[0]
+				timeValue.value = dt.toTimeString().slice(0, 5)
+			}
+		}
+	},
+	{ immediate: true },
+)
 
 const updateDate = (event) => {
-  dateValue.value = event.target.value
-  emitDateTime()
+	dateValue.value = event.target.value
+	emitDateTime()
 }
 
 const updateTime = (event) => {
-  timeValue.value = event.target.value
-  emitDateTime()
+	timeValue.value = event.target.value
+	emitDateTime()
 }
 
 const setTime = (time) => {
-  timeValue.value = time
-  emitDateTime()
+	timeValue.value = time
+	emitDateTime()
 }
 
 const emitDateTime = () => {
-  if (dateValue.value && timeValue.value) {
-    const datetime = `${dateValue.value}T${timeValue.value}:00`
-    emit('update:modelValue', datetime)
-  }
+	if (dateValue.value && timeValue.value) {
+		const datetime = `${dateValue.value}T${timeValue.value}:00`
+		emit("update:modelValue", datetime)
+	}
 }
 
 const formattedDateTime = computed(() => {
-  if (!dateValue.value || !timeValue.value) return ''
+	if (!dateValue.value || !timeValue.value) return ""
 
-  const dt = new Date(`${dateValue.value}T${timeValue.value}`)
-  return dt.toLocaleString('en-NZ', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
+	const dt = new Date(`${dateValue.value}T${timeValue.value}`)
+	return dt.toLocaleString("en-NZ", {
+		weekday: "long",
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+		hour: "2-digit",
+		minute: "2-digit",
+	})
 })
 </script>

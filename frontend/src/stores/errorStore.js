@@ -1,15 +1,15 @@
-import { defineStore } from 'pinia'
+import { defineStore } from "pinia"
 
-export const useErrorStore = defineStore('error', {
+export const useErrorStore = defineStore("error", {
 	state: () => ({
 		errors: [], // Array of error objects
-		globalError: null // Critical error
+		globalError: null, // Critical error
 	}),
 
 	getters: {
 		hasErrors: (state) => state.errors.length > 0,
 		latestError: (state) => state.errors[state.errors.length - 1],
-		errorCount: (state) => state.errors.length
+		errorCount: (state) => state.errors.length,
 	},
 
 	actions: {
@@ -20,16 +20,17 @@ export const useErrorStore = defineStore('error', {
 		addError(error) {
 			const errorObj = {
 				id: Date.now() + Math.random(),
-				message: typeof error === 'string' ? error : error.message || error.toString(),
+				message:
+					typeof error === "string" ? error : error.message || error.toString(),
 				timestamp: new Date(),
-				type: error.type || 'error',
-				context: error.context || null
+				type: error.type || "error",
+				context: error.context || null,
 			}
 
 			this.errors.push(errorObj)
 
 			// Auto-clear error after 10 seconds unless it's critical
-			if (errorObj.type !== 'critical') {
+			if (errorObj.type !== "critical") {
 				setTimeout(() => {
 					this.clearError(errorObj.id)
 				}, 10000)
@@ -41,9 +42,10 @@ export const useErrorStore = defineStore('error', {
 		 * @param {Object|String} error - Error object or message
 		 */
 		setGlobalError(error) {
-			this.globalError = typeof error === 'string'
-				? { message: error, timestamp: new Date() }
-				: { ...error, timestamp: new Date() }
+			this.globalError =
+				typeof error === "string"
+					? { message: error, timestamp: new Date() }
+					: { ...error, timestamp: new Date() }
 		},
 
 		/**
@@ -51,7 +53,7 @@ export const useErrorStore = defineStore('error', {
 		 * @param {Number} errorId - Error ID
 		 */
 		clearError(errorId) {
-			this.errors = this.errors.filter(e => e.id !== errorId)
+			this.errors = this.errors.filter((e) => e.id !== errorId)
 		},
 
 		/**
@@ -67,6 +69,6 @@ export const useErrorStore = defineStore('error', {
 		 */
 		clearGlobalError() {
 			this.globalError = null
-		}
-	}
+		},
+	},
 })

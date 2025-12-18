@@ -32,25 +32,30 @@ export default defineConfig({
 		},
 	},
 	optimizeDeps: {
-		include: ["feather-icons", "showdown", "highlight.js/lib/core", "interactjs"],
+		include: [
+			"feather-icons",
+			"showdown",
+			"highlight.js/lib/core",
+			"interactjs",
+		],
 	},
 	server: {
-		host: '0.0.0.0',
+		host: "0.0.0.0",
 		allowedHosts: true,
 		port: 8080,
 		proxy: {
-			'^/(app|api|assets|files)': {
-				target: 'http://127.0.0.1:8090',
+			"^/(app|api|assets|files)": {
+				target: "http://127.0.0.1:8090",
 				ws: true,
 				changeOrigin: true,
 				secure: false,
 				configure: (proxy, options) => {
-					proxy.on('proxyReq', (proxyReq, req, res) => {
+					proxy.on("proxyReq", (proxyReq, req, res) => {
 						// Set the Host header to lodgeick.localhost for Frappe site routing
-						proxyReq.setHeader('Host', 'lodgeick.localhost');
+						proxyReq.setHeader("Host", "lodgeick.localhost")
 						// Forward cookies properly
-						proxyReq.setHeader('X-Frappe-Site-Name', 'lodgeick.localhost');
-					});
+						proxyReq.setHeader("X-Frappe-Site-Name", "lodgeick.localhost")
+					})
 				},
 			},
 		},

@@ -8,7 +8,7 @@ const routes = [
 		path: "/",
 		name: "Landing",
 		component: () => import("@/pages/Landing.vue"),
-		meta: { public: true }
+		meta: { public: true },
 	},
 	{
 		path: "/dashboard",
@@ -19,10 +19,12 @@ const routes = [
 
 			// Check if user has a locked/preferred council
 			if (councilStore.lockedCouncil || councilStore.selectedCouncil) {
-				const councilCode = councilStore.lockedCouncil || councilStore.selectedCouncil
+				const councilCode =
+					councilStore.lockedCouncil || councilStore.selectedCouncil
 
 				// Check council settings
-				const shouldRedirect = await councilStore.shouldRedirectToCouncilDashboard(councilCode)
+				const shouldRedirect =
+					await councilStore.shouldRedirectToCouncilDashboard(councilCode)
 
 				if (shouldRedirect) {
 					next({ name: "CouncilDashboard", params: { councilCode } })
@@ -31,7 +33,7 @@ const routes = [
 			}
 
 			next()
-		}
+		},
 	},
 	{
 		path: "/home",
@@ -42,7 +44,7 @@ const routes = [
 		path: "/request/new",
 		name: "NewRequest",
 		component: () => import("@/pages/NewRequest.vue"),
-		meta: { public: true }
+		meta: { public: true },
 	},
 	{
 		path: "/request/:id",
@@ -68,19 +70,19 @@ const routes = [
 		path: "/admin/request-type-builder",
 		name: "RequestTypeBuilder",
 		component: () => import("@/pages/RequestTypeBuilder.vue"),
-		meta: { requiresAdmin: true }
+		meta: { requiresAdmin: true },
 	},
 	{
 		path: "/admin/assessment-template-builder",
 		name: "AssessmentTemplateBuilder",
 		component: () => import("@/pages/AssessmentTemplateBuilder.vue"),
-		meta: { requiresAdmin: true }
+		meta: { requiresAdmin: true },
 	},
 	{
 		path: "/admin/assessment-template-builder/:id",
 		name: "AssessmentTemplateBuilderEdit",
 		component: () => import("@/pages/AssessmentTemplateBuilder.vue"),
-		meta: { requiresAdmin: true }
+		meta: { requiresAdmin: true },
 	},
 	{
 		path: "/company",
@@ -91,19 +93,19 @@ const routes = [
 		name: "Login",
 		path: "/account/login",
 		component: () => import("@/pages/Login.vue"),
-		meta: { public: true }
+		meta: { public: true },
 	},
 	{
 		name: "Register",
 		path: "/account/register",
 		component: () => import("@/pages/Register.vue"),
-		meta: { public: true }
+		meta: { public: true },
 	},
 	{
 		name: "CompanyRegistration",
 		path: "/account/register-company",
 		component: () => import("@/pages/CompanyRegistration.vue"),
-		meta: { public: true }
+		meta: { public: true },
 	},
 	// Council-specific landing page
 	{
@@ -113,14 +115,16 @@ const routes = [
 		meta: { public: true },
 		beforeEnter: async (to, from, next) => {
 			const councilStore = useCouncilStore()
-			const success = await councilStore.setLockedCouncil(to.params.councilCode.toUpperCase())
+			const success = await councilStore.setLockedCouncil(
+				to.params.councilCode.toUpperCase(),
+			)
 			if (success) {
 				next()
 			} else {
 				// Invalid council code - redirect to home
 				next({ name: "Landing" })
 			}
-		}
+		},
 	},
 	// Deep linking - council + request type
 	{
@@ -136,10 +140,10 @@ const routes = [
 				query: {
 					council: to.params.councilCode.toUpperCase(),
 					type: to.params.requestType,
-					locked: "true"
-				}
+					locked: "true",
+				},
 			})
-		}
+		},
 	},
 	// Council-specific login
 	{
@@ -151,7 +155,7 @@ const routes = [
 			const councilStore = useCouncilStore()
 			await councilStore.setLockedCouncil(to.params.councilCode.toUpperCase())
 			next()
-		}
+		},
 	},
 	// Council-specific registration
 	{
@@ -163,7 +167,7 @@ const routes = [
 			const councilStore = useCouncilStore()
 			await councilStore.setLockedCouncil(to.params.councilCode.toUpperCase())
 			next()
-		}
+		},
 	},
 	// Council-specific forgot password
 	{
@@ -175,7 +179,7 @@ const routes = [
 			const councilStore = useCouncilStore()
 			await councilStore.setLockedCouncil(to.params.councilCode.toUpperCase())
 			next()
-		}
+		},
 	},
 	// Council-specific dashboard
 	{
@@ -186,7 +190,7 @@ const routes = [
 			const councilStore = useCouncilStore()
 			await councilStore.setLockedCouncil(to.params.councilCode.toUpperCase())
 			next()
-		}
+		},
 	},
 	// Council-specific account page
 	{
@@ -197,7 +201,7 @@ const routes = [
 			const councilStore = useCouncilStore()
 			await councilStore.setLockedCouncil(to.params.councilCode.toUpperCase())
 			next()
-		}
+		},
 	},
 ]
 

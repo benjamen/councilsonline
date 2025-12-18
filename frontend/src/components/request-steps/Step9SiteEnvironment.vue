@@ -188,20 +188,20 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, computed } from 'vue'
+import { computed, defineEmits, defineProps } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  }
+	modelValue: {
+		type: Object,
+		required: true,
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
 // Create a computed property for local data that syncs with parent
 const localData = computed({
-  get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value)
+	get: () => props.modelValue,
+	set: (value) => emit("update:modelValue", value),
 })
 </script>

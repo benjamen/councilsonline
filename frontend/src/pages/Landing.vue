@@ -294,19 +294,19 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
-import { Button } from 'frappe-ui'
-import FeatureCard from '../components/FeatureCard.vue'
-import ProcessStep from '../components/ProcessStep.vue'
+import { Button } from "frappe-ui"
+import { useRouter } from "vue-router"
+import FeatureCard from "../components/FeatureCard.vue"
+import ProcessStep from "../components/ProcessStep.vue"
 
 const router = useRouter()
 
 const goToLogin = () => {
-  router.push({ name: 'Login' })
+	router.push({ name: "Login" })
 }
 
 const goToRegister = () => {
-  router.push({ name: 'Register' })
+	router.push({ name: "Register" })
 }
 </script>
 

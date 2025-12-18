@@ -43,17 +43,17 @@
 
 <script setup>
 defineProps({
-  title: {
-    type: String,
-    required: true
-  },
-  subtitle: {
-    type: String,
-    default: ''
-  },
-  required: {
-    type: Boolean,
-    default: false
-  }
+	title: {
+		type: String,
+		required: true,
+	},
+	subtitle: {
+		type: String,
+		default: "",
+	},
+	required: {
+		type: Boolean,
+		default: false,
+	},
 })
 </script>

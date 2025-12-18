@@ -13,57 +13,63 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { FeatherIcon } from 'frappe-ui'
+import { FeatherIcon } from "frappe-ui"
+import { computed } from "vue"
 
 const props = defineProps({
-  title: {
-    type: String,
-    required: true
-  },
-  value: {
-    type: [String, Number],
-    required: true
-  },
-  icon: {
-    type: String,
-    required: true
-  },
-  color: {
-    type: String,
-    default: 'blue'
-  }
+	title: {
+		type: String,
+		required: true,
+	},
+	value: {
+		type: [String, Number],
+		required: true,
+	},
+	icon: {
+		type: String,
+		required: true,
+	},
+	color: {
+		type: String,
+		default: "blue",
+	},
 })
 
 const colorConfig = {
-  blue: {
-    value: 'text-blue-600',
-    iconBg: 'bg-blue-100',
-    icon: 'text-blue-600'
-  },
-  green: {
-    value: 'text-green-600',
-    iconBg: 'bg-green-100',
-    icon: 'text-green-600'
-  },
-  yellow: {
-    value: 'text-yellow-600',
-    iconBg: 'bg-yellow-100',
-    icon: 'text-yellow-600'
-  },
-  orange: {
-    value: 'text-orange-600',
-    iconBg: 'bg-orange-100',
-    icon: 'text-orange-600'
-  },
-  red: {
-    value: 'text-red-600',
-    iconBg: 'bg-red-100',
-    icon: 'text-red-600'
-  }
+	blue: {
+		value: "text-blue-600",
+		iconBg: "bg-blue-100",
+		icon: "text-blue-600",
+	},
+	green: {
+		value: "text-green-600",
+		iconBg: "bg-green-100",
+		icon: "text-green-600",
+	},
+	yellow: {
+		value: "text-yellow-600",
+		iconBg: "bg-yellow-100",
+		icon: "text-yellow-600",
+	},
+	orange: {
+		value: "text-orange-600",
+		iconBg: "bg-orange-100",
+		icon: "text-orange-600",
+	},
+	red: {
+		value: "text-red-600",
+		iconBg: "bg-red-100",
+		icon: "text-red-600",
+	},
 }
 
-const valueColor = computed(() => colorConfig[props.color]?.value || colorConfig.blue.value)
-const iconBgColor = computed(() => colorConfig[props.color]?.iconBg || colorConfig.blue.iconBg)
-const iconColor = computed(() => colorConfig[props.color]?.icon || colorConfig.blue.icon)
+const valueColor = computed(
+	() => colorConfig[props.color]?.value || colorConfig.blue.value,
+)
+const iconBgColor = computed(
+	() => colorConfig[props.color]?.iconBg || colorConfig.blue.iconBg,
+)
+const iconColor = computed(
+	() => colorConfig[props.color]?.icon || colorConfig.blue.icon,
+)
 </script>

@@ -165,46 +165,50 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { onMounted, ref, watch } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Array,
-    default: () => []
-  },
-  required: {
-    type: Boolean,
-    default: false
-  }
+	modelValue: {
+		type: Array,
+		default: () => [],
+	},
+	required: {
+		type: Boolean,
+		default: false,
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
 const selectedConsents = ref([])
 
 onMounted(() => {
-  if (props.modelValue && Array.isArray(props.modelValue)) {
-    selectedConsents.value = [...props.modelValue]
-  }
+	if (props.modelValue && Array.isArray(props.modelValue)) {
+		selectedConsents.value = [...props.modelValue]
+	}
 })
 
-watch(() => props.modelValue, (newVal) => {
-  if (newVal && Array.isArray(newVal)) {
-    selectedConsents.value = [...newVal]
-  }
-}, { deep: true })
+watch(
+	() => props.modelValue,
+	(newVal) => {
+		if (newVal && Array.isArray(newVal)) {
+			selectedConsents.value = [...newVal]
+		}
+	},
+	{ deep: true },
+)
 
 function isSelected(consentType) {
-  return selectedConsents.value.includes(consentType)
+	return selectedConsents.value.includes(consentType)
 }
 
 function toggleConsent(consentType) {
-  const index = selectedConsents.value.indexOf(consentType)
-  if (index > -1) {
-    selectedConsents.value.splice(index, 1)
-  } else {
-    selectedConsents.value.push(consentType)
-  }
-  emit('update:modelValue', selectedConsents.value)
+	const index = selectedConsents.value.indexOf(consentType)
+	if (index > -1) {
+		selectedConsents.value.splice(index, 1)
+	} else {
+		selectedConsents.value.push(consentType)
+	}
+	emit("update:modelValue", selectedConsents.value)
 }
 </script>

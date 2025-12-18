@@ -110,9 +110,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue"
+import { Button, Input, call } from "frappe-ui"
+import { computed, onMounted, ref } from "vue"
 import { useRoute } from "vue-router"
-import { Input, Button, call } from "frappe-ui"
 import { useCouncilStore } from "../stores/councilStore"
 
 const route = useRoute()
@@ -120,51 +120,58 @@ const councilStore = useCouncilStore()
 
 const councilCode = computed(() => route.params.councilCode?.toUpperCase())
 const councilSettings = ref(null)
-const email = ref('')
+const email = ref("")
 const isLoading = ref(false)
 const emailSent = ref(false)
-const errorMessage = ref('')
+const errorMessage = ref("")
 
 // Load council settings on mount
 onMounted(async () => {
-  try {
-    councilSettings.value = await councilStore.getCouncilSettings(councilCode.value)
-  } catch (error) {
-    console.error('Failed to load council settings:', error)
-  }
+	try {
+		councilSettings.value = await councilStore.getCouncilSettings(
+			councilCode.value,
+		)
+	} catch (error) {
+		console.error("Failed to load council settings:", error)
+	}
 })
 
 // Computed styles based on council branding
-const primaryColor = computed(() => councilSettings.value?.primary_color || '#2563eb')
-const secondaryColor = computed(() => councilSettings.value?.secondary_color || '#64748b')
+const primaryColor = computed(
+	() => councilSettings.value?.primary_color || "#2563eb",
+)
+const secondaryColor = computed(
+	() => councilSettings.value?.secondary_color || "#64748b",
+)
 
 const backgroundStyle = computed(() => {
-  const color = primaryColor.value
-  return {
-    background: `linear-gradient(to bottom right, ${color}15, ${secondaryColor.value}15)`
-  }
+	const color = primaryColor.value
+	return {
+		background: `linear-gradient(to bottom right, ${color}15, ${secondaryColor.value}15)`,
+	}
 })
 
 async function submit() {
-  errorMessage.value = ''
-  isLoading.value = true
+	errorMessage.value = ""
+	isLoading.value = true
 
-  try {
-    await call('frappe.core.doctype.user.user.reset_password', {
-      user: email.value
-    })
-    emailSent.value = true
-  } catch (error) {
-    console.error('Password reset error:', error)
-    errorMessage.value = error.message || 'Failed to send reset email. Please try again.'
-  } finally {
-    isLoading.value = false
-  }
+	try {
+		await call("frappe.core.doctype.user.user.reset_password", {
+			user: email.value,
+		})
+		emailSent.value = true
+	} catch (error) {
+		console.error("Password reset error:", error)
+		errorMessage.value =
+			error.message || "Failed to send reset email. Please try again."
+	} finally {
+		isLoading.value = false
+	}
 }
 
 function resetForm() {
-  emailSent.value = false
-  email.value = ''
-  errorMessage.value = ''
+	emailSent.value = false
+	email.value = ""
+	errorMessage.value = ""
 }
 </script>

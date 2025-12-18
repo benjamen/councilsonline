@@ -2,7 +2,7 @@
  "actions": [],
  "allow_rename": 1,
  "autoname": "format:ASSESS-{request}",
- "creation": "2025-01-21 00:00:00.000000",
+ "creation": "2025-01-21 00:00:00",
  "doctype": "DocType",
  "document_type": "Document",
  "engine": "InnoDB",
@@ -217,11 +217,11 @@
  "index_web_pages_for_search": 1,
  "links": [
   {
-   "link_doctype": "WB Task",
+   "link_doctype": "Project Task",
    "link_fieldname": "assessment_project"
   }
  ],
- "modified": "2025-01-21 00:00:00.000000",
+ "modified": "2025-12-16 16:03:25.058647",
  "modified_by": "Administrator",
  "module": "Lodgeick",
  "name": "Assessment Project",

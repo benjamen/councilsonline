@@ -1,4 +1,4 @@
-import { createResource } from 'frappe-ui'
+import { createResource } from "frappe-ui"
 
 /**
  * Base API client with standardized error handling
@@ -8,7 +8,7 @@ export class BaseAPIClient {
 	constructor() {
 		this.defaultOptions = {
 			onError: this.handleError.bind(this),
-			onSuccess: this.handleSuccess.bind(this)
+			onSuccess: this.handleSuccess.bind(this),
 		}
 	}
 
@@ -20,7 +20,7 @@ export class BaseAPIClient {
 	createResource(config) {
 		return createResource({
 			...this.defaultOptions,
-			...config
+			...config,
 		})
 	}
 
@@ -30,23 +30,23 @@ export class BaseAPIClient {
 	 * @returns {Object} Error response
 	 */
 	handleError(error) {
-		console.error('[API Error]', error)
+		console.error("[API Error]", error)
 
 		// Extract error message
 		const message = error?.exc_type
 			? error.exc_type
-			: error?.message || 'An unexpected error occurred'
+			: error?.message || "An unexpected error occurred"
 
 		// Store error in global error state (async to avoid blocking)
 		// Using dynamic import to avoid issues in browser environments
-		import('../../stores/errorStore')
+		import("../../stores/errorStore")
 			.then(({ useErrorStore }) => {
 				const errorStore = useErrorStore()
-				errorStore.addError({ message, type: 'api_error', context: error })
+				errorStore.addError({ message, type: "api_error", context: error })
 			})
 			.catch((e) => {
 				// Fail silently if store not available
-				console.error('Could not add error to store:', e)
+				console.error("Could not add error to store:", e)
 			})
 
 		return { error: message }
@@ -69,20 +69,23 @@ export class BaseAPIClient {
 	 */
 	async call(method, args = {}) {
 		try {
+			console.log(`[BaseAPIClient] Calling ${method} with args:`, args)
+			console.log(`[BaseAPIClient] Args JSON:`, JSON.stringify(args, null, 2))
+
 			const headers = {
-				'Content-Type': 'application/json'
-			};
+				"Content-Type": "application/json",
+			}
 
 			// Add CSRF token if available
 			if (window.csrf_token) {
-				headers['X-Frappe-CSRF-Token'] = window.csrf_token;
+				headers["X-Frappe-CSRF-Token"] = window.csrf_token
 			}
 
-			const response = await fetch('/api/method/' + method, {
-				method: 'POST',
+			const response = await fetch("/api/method/" + method, {
+				method: "POST",
 				headers: headers,
-				credentials: 'include',
-				body: JSON.stringify(args)
+				credentials: "include",
+				body: JSON.stringify(args),
 			})
 
 			if (!response.ok) {
@@ -111,27 +114,27 @@ export class BaseAPIClient {
 	async uploadFile(file, options = {}) {
 		try {
 			const formData = new FormData()
-			formData.append('file', file)
+			formData.append("file", file)
 
-			if (options.doctype) formData.append('doctype', options.doctype)
-			if (options.docname) formData.append('docname', options.docname)
-			if (options.fieldname) formData.append('fieldname', options.fieldname)
+			if (options.doctype) formData.append("doctype", options.doctype)
+			if (options.docname) formData.append("docname", options.docname)
+			if (options.fieldname) formData.append("fieldname", options.fieldname)
 			if (options.is_private !== undefined) {
-				formData.append('is_private', options.is_private ? '1' : '0')
+				formData.append("is_private", options.is_private ? "1" : "0")
 			}
 
-			const headers = {};
+			const headers = {}
 
 			// Add CSRF token if available
 			if (window.csrf_token) {
-				headers['X-Frappe-CSRF-Token'] = window.csrf_token;
+				headers["X-Frappe-CSRF-Token"] = window.csrf_token
 			}
 
-			const response = await fetch('/api/method/upload_file', {
-				method: 'POST',
+			const response = await fetch("/api/method/upload_file", {
+				method: "POST",
 				headers: headers,
-				credentials: 'include',
-				body: formData
+				credentials: "include",
+				body: formData,
 			})
 
 			if (!response.ok) {

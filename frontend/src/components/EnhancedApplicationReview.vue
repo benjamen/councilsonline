@@ -291,22 +291,22 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
-import { call } from 'frappe-ui'
+import { call } from "frappe-ui"
+import { onMounted, ref, watch } from "vue"
 
 const props = defineProps({
-  requestName: {
-    type: String,
-    required: true
-  },
-  applicationDoctype: {
-    type: String,
-    default: null
-  },
-  applicationName: {
-    type: String,
-    default: null
-  }
+	requestName: {
+		type: String,
+		required: true,
+	},
+	applicationDoctype: {
+		type: String,
+		default: null,
+	},
+	applicationName: {
+		type: String,
+		default: null,
+	},
 })
 
 const loading = ref(false)
@@ -314,61 +314,69 @@ const rcApplication = ref(null)
 const spiscApplication = ref(null)
 
 onMounted(() => {
-  fetchApplicationData()
+	fetchApplicationData()
 })
 
-watch(() => [props.applicationDoctype, props.applicationName], () => {
-  fetchApplicationData()
-})
+watch(
+	() => [props.applicationDoctype, props.applicationName],
+	() => {
+		fetchApplicationData()
+	},
+)
 
 async function fetchApplicationData() {
-  if (!props.applicationDoctype || !props.applicationName) {
-    return
-  }
+	if (!props.applicationDoctype || !props.applicationName) {
+		return
+	}
 
-  loading.value = true
-  try {
-    const data = await call('frappe.client.get', {
-      doctype: props.applicationDoctype,
-      name: props.applicationName
-    })
+	loading.value = true
+	try {
+		const data = await call("frappe.client.get", {
+			doctype: props.applicationDoctype,
+			name: props.applicationName,
+		})
 
-    if (props.applicationDoctype === 'Resource Consent Application') {
-      rcApplication.value = data
-    } else if (props.applicationDoctype === 'SPISC Application') {
-      spiscApplication.value = data
-    }
-  } catch (error) {
-    console.error('[EnhancedApplicationReview] Error fetching application:', error)
-  } finally {
-    loading.value = false
-  }
+		if (props.applicationDoctype === "Resource Consent Application") {
+			rcApplication.value = data
+		} else if (props.applicationDoctype === "SPISC Application") {
+			spiscApplication.value = data
+		}
+	} catch (error) {
+		console.error(
+			"[EnhancedApplicationReview] Error fetching application:",
+			error,
+		)
+	} finally {
+		loading.value = false
+	}
 }
 
 function activityStatusClass(status) {
-  const classes = {
-    'Permitted': 'bg-green-100 text-green-800',
-    'Controlled': 'bg-blue-100 text-blue-800',
-    'Restricted Discretionary': 'bg-yellow-100 text-yellow-800',
-    'Discretionary': 'bg-orange-100 text-orange-800',
-    'Non-Complying': 'bg-red-100 text-red-800'
-  }
-  return classes[status] || 'bg-gray-100 text-gray-800'
+	const classes = {
+		Permitted: "bg-green-100 text-green-800",
+		Controlled: "bg-blue-100 text-blue-800",
+		"Restricted Discretionary": "bg-yellow-100 text-yellow-800",
+		Discretionary: "bg-orange-100 text-orange-800",
+		"Non-Complying": "bg-red-100 text-red-800",
+	}
+	return classes[status] || "bg-gray-100 text-gray-800"
 }
 
 function getApprovalCount() {
-  if (!rcApplication.value || !rcApplication.value.affected_parties) return 0
-  return rcApplication.value.affected_parties.filter(p => p.has_written_approval).length
+	if (!rcApplication.value || !rcApplication.value.affected_parties) return 0
+	return rcApplication.value.affected_parties.filter(
+		(p) => p.has_written_approval,
+	).length
 }
 
 function getWordCount(text) {
-  if (!text) return 0
-  return text.split(/\s+/).filter(word => word.length > 0).length
+	if (!text) return 0
+	return text.split(/\s+/).filter((word) => word.length > 0).length
 }
 
 function getExcerpt(text, maxChars) {
-  if (!text) return ''
-  if (text.length <= maxChars) return text
-  return text.substring(0, maxChars) + '...'
+	if (!text) return ""
+	if (text.length <= maxChars) return text
+	return text.substring(0, maxChars) + "..."
 }
 </script>

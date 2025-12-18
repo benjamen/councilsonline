@@ -285,116 +285,137 @@ Example: 'All construction activities shall be limited to the hours of 7:00am to
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref, watch, computed, onMounted } from 'vue'
-import { call } from 'frappe-ui'
+import { call } from "frappe-ui"
+import { computed, defineEmits, defineProps, onMounted, ref, watch } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  }
+	modelValue: {
+		type: Object,
+		required: true,
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
 // Template state
 const showTemplates = ref(false)
 const loadingTemplates = ref(false)
 const availableTemplates = ref([])
-const selectedCategory = ref('All')
+const selectedCategory = ref("All")
 
 // Create local copy of data
 const localData = ref({
-  proposed_conditions: props.modelValue.proposed_conditions || []
+	proposed_conditions: props.modelValue.proposed_conditions || [],
 })
 
 // Watch for external changes
-watch(() => props.modelValue.proposed_conditions, (newVal) => {
-  if (newVal !== localData.value.proposed_conditions) {
-    localData.value.proposed_conditions = newVal || []
-  }
-}, { deep: true })
+watch(
+	() => props.modelValue.proposed_conditions,
+	(newVal) => {
+		if (newVal !== localData.value.proposed_conditions) {
+			localData.value.proposed_conditions = newVal || []
+		}
+	},
+	{ deep: true },
+)
 
 // Watch local changes and emit
-watch(localData, (newVal) => {
-  emit('update:modelValue', {
-    ...props.modelValue,
-    proposed_conditions: newVal.proposed_conditions
-  })
-}, { deep: true })
+watch(
+	localData,
+	(newVal) => {
+		emit("update:modelValue", {
+			...props.modelValue,
+			proposed_conditions: newVal.proposed_conditions,
+		})
+	},
+	{ deep: true },
+)
 
 // Filtered templates based on category and consent types
 const filteredTemplates = computed(() => {
-  let templates = availableTemplates.value
+	let templates = availableTemplates.value
 
-  // Filter by category
-  if (selectedCategory.value !== 'All') {
-    templates = templates.filter(t => t.condition_category === selectedCategory.value)
-  }
+	// Filter by category
+	if (selectedCategory.value !== "All") {
+		templates = templates.filter(
+			(t) => t.condition_category === selectedCategory.value,
+		)
+	}
 
-  // Filter by consent types (if selected)
-  const consentTypes = props.modelValue.consent_types?.map(ct => ct.consent_type) || []
-  if (consentTypes.length > 0) {
-    templates = templates.filter(t => {
-      // Include if template applies to 'All' or matches one of the selected consent types
-      return t.applies_to_consent_types === 'All' ||
-             consentTypes.includes(t.applies_to_consent_types)
-    })
-  }
+	// Filter by consent types (if selected)
+	const consentTypes =
+		props.modelValue.consent_types?.map((ct) => ct.consent_type) || []
+	if (consentTypes.length > 0) {
+		templates = templates.filter((t) => {
+			// Include if template applies to 'All' or matches one of the selected consent types
+			return (
+				t.applies_to_consent_types === "All" ||
+				consentTypes.includes(t.applies_to_consent_types)
+			)
+		})
+	}
 
-  return templates
+	return templates
 })
 
 // Load templates when component mounts or when templates section is shown
 watch(showTemplates, async (isShown) => {
-  if (isShown && availableTemplates.value.length === 0) {
-    await loadTemplates()
-  }
+	if (isShown && availableTemplates.value.length === 0) {
+		await loadTemplates()
+	}
 })
 
 const loadTemplates = async () => {
-  loadingTemplates.value = true
-  try {
-    const result = await call('frappe.client.get_list', {
-      doctype: 'Consent Condition Template',
-      fields: ['name', 'template_name', 'condition_code', 'condition_category',
-               'condition_text', 'timing', 'applies_to_consent_types', 'is_standard'],
-      filters: {
-        is_active: 1
-      },
-      limit_page_length: 100,
-      order_by: 'condition_category asc, template_name asc'
-    })
-    availableTemplates.value = result || []
-  } catch (error) {
-    console.error('[Step15] Error loading templates:', error)
-    availableTemplates.value = []
-  } finally {
-    loadingTemplates.value = false
-  }
+	loadingTemplates.value = true
+	try {
+		const result = await call("frappe.client.get_list", {
+			doctype: "Consent Condition Template",
+			fields: [
+				"name",
+				"template_name",
+				"condition_code",
+				"condition_category",
+				"condition_text",
+				"timing",
+				"applies_to_consent_types",
+				"is_standard",
+			],
+			filters: {
+				is_active: 1,
+			},
+			limit_page_length: 100,
+			order_by: "condition_category asc, template_name asc",
+		})
+		availableTemplates.value = result || []
+	} catch (error) {
+		console.error("[Step15] Error loading templates:", error)
+		availableTemplates.value = []
+	} finally {
+		loadingTemplates.value = false
+	}
 }
 
 const addConditionFromTemplate = (template) => {
-  localData.value.proposed_conditions.push({
-    category: template.condition_category,
-    timing: template.timing || '',
-    condition_text: template.condition_text,
-    rationale: template.is_standard ? 'Standard condition template' : '',
-    template_name: template.template_name,
-    condition_code: template.condition_code || ''
-  })
+	localData.value.proposed_conditions.push({
+		category: template.condition_category,
+		timing: template.timing || "",
+		condition_text: template.condition_text,
+		rationale: template.is_standard ? "Standard condition template" : "",
+		template_name: template.template_name,
+		condition_code: template.condition_code || "",
+	})
 }
 
 const addCondition = () => {
-  localData.value.proposed_conditions.push({
-    category: '',
-    timing: '',
-    condition_text: '',
-    rationale: ''
-  })
+	localData.value.proposed_conditions.push({
+		category: "",
+		timing: "",
+		condition_text: "",
+		rationale: "",
+	})
 }
 
 const removeCondition = (index) => {
-  localData.value.proposed_conditions.splice(index, 1)
+	localData.value.proposed_conditions.splice(index, 1)
 }
 </script>

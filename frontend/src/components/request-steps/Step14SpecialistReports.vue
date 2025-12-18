@@ -164,33 +164,34 @@
 </template>
 
 <script setup>
-import { defineProps, computed } from 'vue'
+import { computed, defineProps } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  }
+	modelValue: {
+		type: Object,
+		required: true,
+	},
 })
 
 // Filter attachments that are specialist reports
 const specialistReports = computed(() => {
-  if (!props.modelValue.attachments) return []
+	if (!props.modelValue.attachments) return []
 
-  const reportCategories = [
-    'Specialist Report',
-    'Technical Report',
-    'Assessment Report',
-    'Engineering Report',
-    'Environmental Report'
-  ]
+	const reportCategories = [
+		"Specialist Report",
+		"Technical Report",
+		"Assessment Report",
+		"Engineering Report",
+		"Environmental Report",
+	]
 
-  return props.modelValue.attachments.filter(att =>
-    reportCategories.some(category =>
-      att.document_category?.includes(category) ||
-      att.document_type?.includes('Report') ||
-      att.document_type?.includes('Assessment')
-    )
-  )
+	return props.modelValue.attachments.filter((att) =>
+		reportCategories.some(
+			(category) =>
+				att.document_category?.includes(category) ||
+				att.document_type?.includes("Report") ||
+				att.document_type?.includes("Assessment"),
+		),
+	)
 })
 </script>

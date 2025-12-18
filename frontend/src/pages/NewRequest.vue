@@ -159,33 +159,43 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch, defineAsyncComponent } from 'vue'
-import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
-import { Button } from 'frappe-ui'
+import { Button } from "frappe-ui"
+import { computed, defineAsyncComponent, onMounted, ref, watch } from "vue"
+import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router"
 
+import { useStepValidation } from "../composables/useStepValidation"
+import { useUserProfile } from "../composables/useUserProfile"
+import { useCouncilStore } from "../stores/councilStore"
 // Store and composables
-import { useRequestStore } from '../stores/requestStore'
-import { useCouncilStore } from '../stores/councilStore'
-import { useStepValidation } from '../composables/useStepValidation'
-import { useUserProfile } from '../composables/useUserProfile'
+import { useRequestStore } from "../stores/requestStore"
 
 // Components
-import RequestHeader from '../components/request/RequestHeader.vue'
-import RequestProgress from '../components/request/RequestProgress.vue'
-import StepNavigation from '../components/request/StepNavigation.vue'
+import RequestHeader from "../components/request/RequestHeader.vue"
+import RequestProgress from "../components/request/RequestProgress.vue"
+import StepNavigation from "../components/request/StepNavigation.vue"
 // Lazy-loaded modals (load on demand to reduce bundle size)
-const SaveDraftModal = defineAsyncComponent(() => import('../components/modals/SaveDraftModal.vue'))
-const ValidationErrorModal = defineAsyncComponent(() => import('../components/modals/ValidationErrorModal.vue'))
-const BookMeetingModal = defineAsyncComponent(() => import('../components/modals/BookMeetingModal.vue'))
-const SubmissionSuccessModal = defineAsyncComponent(() => import('../components/modals/SubmissionSuccessModal.vue'))
+const SaveDraftModal = defineAsyncComponent(
+	() => import("../components/modals/SaveDraftModal.vue"),
+)
+const ValidationErrorModal = defineAsyncComponent(
+	() => import("../components/modals/ValidationErrorModal.vue"),
+)
+const BookMeetingModal = defineAsyncComponent(
+	() => import("../components/modals/BookMeetingModal.vue"),
+)
+const SubmissionSuccessModal = defineAsyncComponent(
+	() => import("../components/modals/SubmissionSuccessModal.vue"),
+)
 
 // Step components
-import Step1CouncilSelection from '../components/request-steps/Step1CouncilSelection.vue'
-import Step2RequestType from '../components/request-steps/Step2RequestType.vue'
-import Step3ProcessInfo from '../components/request-steps/Step3ProcessInfo.vue'
+import Step1CouncilSelection from "../components/request-steps/Step1CouncilSelection.vue"
+import Step2RequestType from "../components/request-steps/Step2RequestType.vue"
+import Step3ProcessInfo from "../components/request-steps/Step3ProcessInfo.vue"
 // Lazy-load DynamicStepRenderer (large component with complex logic)
-const DynamicStepRenderer = defineAsyncComponent(() => import('../components/DynamicStepRenderer.vue'))
-import ReviewStep from '../components/request-steps/ReviewStep.vue'
+const DynamicStepRenderer = defineAsyncComponent(
+	() => import("../components/DynamicStepRenderer.vue"),
+)
+import ReviewStep from "../components/request-steps/ReviewStep.vue"
 
 const route = useRoute()
 const router = useRouter()
@@ -208,29 +218,31 @@ const selectedRequestTypeDetails = ref(null)
 
 // Computed
 const totalSteps = computed(() => {
-    if (store.requestTypeConfig?.steps) {
-        // Council (0) + Type (1) + Process Info (2) + Dynamic Steps + Review (Last)
-        return store.requestTypeConfig.steps.length + 4
-    }
-    return 4 // Default: Council, Type, Process Info, Review
+	if (store.requestTypeConfig?.steps) {
+		// Council (0) + Type (1) + Process Info (2) + Dynamic Steps + Review (Last)
+		return store.requestTypeConfig.steps.length + 4
+	}
+	return 4 // Default: Council, Type, Process Info, Review
 })
 
 const stepTitles = computed(() => {
-    const titles = ['Council', 'Type', 'Process Info']
-    if (store.requestTypeConfig?.steps) {
-        titles.push(...store.requestTypeConfig.steps.map(s => s.step_title))
-    }
-    titles.push('Review') // Always add Review as the last step
-    return titles
+	const titles = ["Council", "Type", "Process Info"]
+	if (store.requestTypeConfig?.steps) {
+		titles.push(...store.requestTypeConfig.steps.map((s) => s.step_title))
+	}
+	titles.push("Review") // Always add Review as the last step
+	return titles
 })
 
 const usesConfigurableSteps = computed(() => {
-    return store.requestTypeConfig?.steps && store.requestTypeConfig.steps.length > 0
+	return (
+		store.requestTypeConfig?.steps && store.requestTypeConfig.steps.length > 0
+	)
 })
 
 const canNavigateNext = computed(() => {
-    // Always allow navigation for now (validation happens on attempt)
-    return true
+	// Always allow navigation for now (validation happens on attempt)
+	return true
 })
 
 /**
@@ -241,369 +253,413 @@ const canNavigateNext = computed(() => {
  * So allow saving from step 4 onwards (step index >= 3)
  */
 const canSaveDraft = computed(() => {
-    return store.currentStep >= 3
+	return store.currentStep >= 3
 })
 
 // Get configuration for current step (for dynamic validation)
 const currentStepConfig = computed(() => {
-    if (!store.requestTypeConfig?.steps) return null
+	if (!store.requestTypeConfig?.steps) return null
 
-    // Steps 0-2 are fixed (Council, Type, Process Info)
-    // Dynamic steps start at index 3
-    const dynamicStepIndex = store.currentStep - 3
+	// Steps 0-2 are fixed (Council, Type, Process Info)
+	// Dynamic steps start at index 3
+	const dynamicStepIndex = store.currentStep - 3
 
-    if (dynamicStepIndex >= 0 && dynamicStepIndex < store.requestTypeConfig.steps.length) {
-        return store.requestTypeConfig.steps[dynamicStepIndex]
-    }
+	if (
+		dynamicStepIndex >= 0 &&
+		dynamicStepIndex < store.requestTypeConfig.steps.length
+	) {
+		return store.requestTypeConfig.steps[dynamicStepIndex]
+	}
 
-    return null
+	return null
 })
 
 // Show meeting banner after Process Info (step 3) if council meetings are available
 const shouldShowMeetingBanner = computed(() => {
-    return store.currentStep > 2 && // After Process Info step
-           store.currentStep < totalSteps.value - 1 && // Before Review step
-           store.requestTypeConfig?.council_meeting_available === 1
+	return (
+		store.currentStep > 2 && // After Process Info step
+		store.currentStep < totalSteps.value - 1 && // Before Review step
+		store.requestTypeConfig?.council_meeting_available === 1
+	)
 })
 
 // Methods
 function handleBookMeeting() {
-    showMeetingModal.value = true
+	showMeetingModal.value = true
 }
 
 function handleMeetingBooked(meetingData) {
-    console.log('Meeting booked:', meetingData)
-    // Optionally show a success message or refresh data
+	console.log("Meeting booked:", meetingData)
+	// Optionally show a success message or refresh data
 }
 
 function getCurrentStepTitle() {
-    const index = store.currentStep
-    if (index >= 0 && index < stepTitles.value.length) {
-        return stepTitles.value[index]
-    }
-    return ''
+	const index = store.currentStep
+	if (index >= 0 && index < stepTitles.value.length) {
+		return stepTitles.value[index]
+	}
+	return ""
 }
 
 function getCurrentStepConfig() {
-    const index = store.currentStep
-    const dynamicStepsStart = 3;
+	const index = store.currentStep
+	const dynamicStepsStart = 3
 
-    // Check if the current step is within the dynamic steps range (3 up to totalSteps - 2)
-    // totalSteps - 1 is the Review step index.
-    if (index < dynamicStepsStart || index >= totalSteps.value - 1) {
-        return null
-    }
+	// Check if the current step is within the dynamic steps range (3 up to totalSteps - 2)
+	// totalSteps - 1 is the Review step index.
+	if (index < dynamicStepsStart || index >= totalSteps.value - 1) {
+		return null
+	}
 
-    if (store.requestTypeConfig?.steps) {
-        const stepIndex = index - dynamicStepsStart
+	if (store.requestTypeConfig?.steps) {
+		const stepIndex = index - dynamicStepsStart
 
-        if (stepIndex >= 0 && stepIndex < store.requestTypeConfig.steps.length) {
-            return store.requestTypeConfig.steps[stepIndex]
-        }
-    }
+		if (stepIndex >= 0 && stepIndex < store.requestTypeConfig.steps.length) {
+			return store.requestTypeConfig.steps[stepIndex]
+		}
+	}
 
-    return null
+	return null
 }
 
 function getCouncilName() {
-    const councilCode = store.formData.council
-    if (!councilCode) return ''
+	const councilCode = store.formData.council
+	if (!councilCode) return ""
 
-    const council = councilStore.councils.find(c => c.council_code === councilCode)
-    return council?.council_name || councilCode
+	const council = councilStore.councils.find(
+		(c) => c.council_code === councilCode,
+	)
+	return council?.council_name || councilCode
 }
 
 async function onCouncilChange(councilCode) {
-    // Load request types for selected council
-    requestTypes.value.loading = true
-    await councilStore.loadRequestTypesForCouncil(councilCode)
-    requestTypes.value = {
-        loading: false,
-        data: councilStore.requestTypes || []
-    }
+	// Load request types for selected council
+	requestTypes.value.loading = true
+	await councilStore.loadRequestTypesForCouncil(councilCode)
+	requestTypes.value = {
+		loading: false,
+		data: councilStore.requestTypes || [],
+	}
 }
 
 async function selectRequestType(requestTypeCode) {
-    // Store request type in formData (required for draft creation)
-    store.updateField('request_type', requestTypeCode)
+	// Store request type in formData (required for draft creation)
+	store.updateField("request_type", requestTypeCode)
 
-    // Load request type configuration
-    await store.initialize(requestTypeCode)
-    selectedRequestTypeDetails.value = store.requestTypeConfig
+	// Load request type configuration
+	await store.initialize(requestTypeCode)
+	selectedRequestTypeDetails.value = store.requestTypeConfig
 
-    // Validate config loaded
-    if (!store.requestTypeConfig) {
-        console.error('[NewRequest] Failed to load request type config')
-        return
-    }
+	// Validate config loaded
+	if (!store.requestTypeConfig) {
+		console.error("[NewRequest] Failed to load request type config")
+		return
+	}
 }
 
 async function handleNext() {
-    // Validation for Step 0 (Council Selection)
-    if (store.currentStep === 0 && !store.formData.council) {
-        alert('Please select a council before continuing.')
-        return
-    }
+	// Validation for Step 0 (Council Selection)
+	if (store.currentStep === 0 && !store.formData.council) {
+		alert("Please select a council before continuing.")
+		return
+	}
 
-    // Validation for Step 1 (Request Type Selection)
-    if (store.currentStep === 1 && !store.formData.request_type) {
-        alert('Please select a request type before continuing.')
-        return
-    }
+	// Validation for Step 1 (Request Type Selection)
+	if (store.currentStep === 1 && !store.formData.request_type) {
+		alert("Please select a request type before continuing.")
+		return
+	}
 
-    // Validate current step before allowing navigation (for dynamic steps)
-    if (store.currentStep >= 2 && usesConfigurableSteps.value && currentStepConfig.value) {
-        const isValid = await validateStep(
-            currentStepConfig.value,
-            store.formData
-        )
+	// Validate current step before allowing navigation (for dynamic steps)
+	if (
+		store.currentStep >= 2 &&
+		usesConfigurableSteps.value &&
+		currentStepConfig.value
+	) {
+		const isValid = await validateStep(currentStepConfig.value, store.formData)
 
-        if (!isValid) {
-            console.error('[NewRequest] Validation failed:', validationErrors.value)
-            showValidationModal.value = true
-            return // Block navigation
-        }
-    }
+		if (!isValid) {
+			console.error("[NewRequest] Validation failed:", validationErrors.value)
+			showValidationModal.value = true
+			return // Block navigation
+		}
+	}
 
-    // Auto-save after Process Info step (step 2) to create draft
-    // This ensures the request has an ID for features like "Book Meeting" and "Send Message"
-    if (store.currentStep === 2 && !store.currentRequestId) {
-        console.log('[NewRequest] Auto-saving draft after Process Info step...')
-        console.log('[NewRequest] requestTypeConfig:', store.requestTypeConfig)
-        console.log('[NewRequest] usesConfigurableSteps:', usesConfigurableSteps.value)
-        console.log('[NewRequest] config steps:', store.requestTypeConfig?.steps)
+	// Auto-save after Process Info step (step 2) to create draft
+	// This ensures the request has an ID for features like "Book Meeting" and "Send Message"
+	if (store.currentStep === 2 && !store.currentRequestId) {
+		console.log("[NewRequest] Auto-saving draft after Process Info step...")
+		console.log("[NewRequest] requestTypeConfig:", store.requestTypeConfig)
+		console.log(
+			"[NewRequest] usesConfigurableSteps:",
+			usesConfigurableSteps.value,
+		)
+		console.log("[NewRequest] config steps:", store.requestTypeConfig?.steps)
 
-        await store.saveDraft()
-        console.log('[NewRequest] Draft saved with ID:', store.currentRequestId)
+		await store.saveDraft()
+		console.log("[NewRequest] Draft saved with ID:", store.currentRequestId)
 
-        // Only redirect if there are NO dynamic steps configured
-        // If there are dynamic steps, user needs to fill them out first
-        if (!usesConfigurableSteps.value) {
-            // No dynamic steps - redirect to detail page
-            if (store.currentRequestId) {
-                console.log('[NewRequest] No dynamic steps configured, redirecting to detail page...')
-                router.push(`/request/${store.currentRequestId}`)
-                return // Don't call nextStep, the redirect will handle navigation
-            }
-        } else {
-            console.log('[NewRequest] Dynamic steps configured, continuing to next step...')
-        }
-    }
+		// Only redirect if there are NO dynamic steps configured
+		// If there are dynamic steps, user needs to fill them out first
+		if (!usesConfigurableSteps.value) {
+			// No dynamic steps - redirect to detail page
+			if (store.currentRequestId) {
+				console.log(
+					"[NewRequest] No dynamic steps configured, redirecting to detail page...",
+				)
+				router.push(`/request/${store.currentRequestId}`)
+				return // Don't call nextStep, the redirect will handle navigation
+			}
+		} else {
+			console.log(
+				"[NewRequest] Dynamic steps configured, continuing to next step...",
+			)
+		}
+	}
 
-    // Auto-save existing drafts before navigation
-    if (store.currentRequestId) {
-        await store.saveProgress()
-    }
+	// Auto-save existing drafts before navigation
+	if (store.currentRequestId) {
+		await store.saveProgress()
+	}
 
-    store.nextStep()
+	store.nextStep()
 }
 
 function handlePrevious() {
-    store.previousStep()
+	store.previousStep()
 }
 
 async function handleSaveDraft() {
-    try {
-        await store.saveDraft()
-        // Redirect to request detail page to show Send Message and Book Meeting buttons
-        if (store.currentRequestId) {
-            router.push(`/request/${store.currentRequestId}`)
-        } else {
-            showSaveDraftModal.value = true
-        }
-    } catch (error) {
-        console.error('Failed to save draft:', error)
-    }
+	try {
+		await store.saveDraft()
+		// Redirect to request detail page to show Send Message and Book Meeting buttons
+		if (store.currentRequestId) {
+			router.push(`/request/${store.currentRequestId}`)
+		} else {
+			showSaveDraftModal.value = true
+		}
+	} catch (error) {
+		console.error("Failed to save draft:", error)
+	}
 }
 
 async function handleSaveAndClose() {
-    try {
-        await store.saveDraft()
-        store.reset()  // Clear state after successful save
-        // Redirect to dashboard
-        router.push({ name: 'Dashboard' })
-    } catch (error) {
-        console.error('Failed to save draft:', error)
-        // Don't reset on error - preserve state for retry
-    }
+	try {
+		await store.saveDraft()
+		store.reset() // Clear state after successful save
+		// Redirect to dashboard
+		router.push({ name: "Dashboard" })
+	} catch (error) {
+		console.error("Failed to save draft:", error)
+		// Don't reset on error - preserve state for retry
+	}
 }
 
 async function handleSubmit() {
-    // Validation logic (omitted for brevity)
+	// Validation logic (omitted for brevity)
 
-    try {
-        const result = await store.submitRequest()
+	try {
+		const result = await store.submitRequest()
 
-        // Store submission result for modal
-        submissionResult.value = result
+		// Store submission result for modal
+		submissionResult.value = result
 
-        // Show success modal with SLA info
-        showSubmissionSuccessModal.value = true
-    } catch (error) {
-        console.error('Failed to submit request:', error)
-    }
+		// Show success modal with SLA info
+		showSubmissionSuccessModal.value = true
+	} catch (error) {
+		console.error("Failed to submit request:", error)
+	}
 }
 
 function goBack() {
-    store.reset()  // Clear all state before navigation
-    router.push('/dashboard')
+	store.reset() // Clear all state before navigation
+	router.push("/dashboard")
 }
 
 /**
  * Handle view request from success modal
  */
 function handleViewRequestFromModal(requestId) {
-    showSubmissionSuccessModal.value = false
-    router.push(`/request/${requestId}`)
+	showSubmissionSuccessModal.value = false
+	router.push(`/request/${requestId}`)
 }
 
 /**
  * Handle go to dashboard from success modal
  */
 function handleGoToDashboardFromModal() {
-    showSubmissionSuccessModal.value = false
-    // Redirect to council-specific dashboard if available
-    const councilCode = store.formData.council
-    if (councilCode) {
-        router.push(`/council/${councilCode}/dashboard`)
-    } else {
-        router.push('/dashboard')
-    }
+	showSubmissionSuccessModal.value = false
+	// Redirect to council-specific dashboard if available
+	const councilCode = store.formData.council
+	if (councilCode) {
+		router.push(`/council/${councilCode}/dashboard`)
+	} else {
+		router.push("/dashboard")
+	}
 }
 
 // Watch block for step changes
-watch(() => store.currentStep, () => {
-    // Step changed - trigger reactivity
-}, { immediate: true })
+watch(
+	() => store.currentStep,
+	() => {
+		// Step changed - trigger reactivity
+	},
+	{ immediate: true },
+)
 
 // Watch birth_date for age calculation (SPISC applications)
-watch(() => store.formData.birth_date, (newDate) => {
-    if (newDate && store.formData.request_type?.includes('SPISC')) {
-        // Calculate age
-        const today = new Date()
-        const born = new Date(newDate)
-        let age = today.getFullYear() - born.getFullYear()
-        const m = today.getMonth() - born.getMonth()
-        if (m < 0 || (m === 0 && today.getDate() < born.getDate())) {
-            age--
-        }
+watch(
+	() => store.formData.birth_date,
+	(newDate) => {
+		if (newDate && store.formData.request_type?.includes("SPISC")) {
+			// Calculate age
+			const today = new Date()
+			const born = new Date(newDate)
+			let age = today.getFullYear() - born.getFullYear()
+			const m = today.getMonth() - born.getMonth()
+			if (m < 0 || (m === 0 && today.getDate() < born.getDate())) {
+				age--
+			}
 
-        // Update age in form data
-        store.updateField('age', age)
+			// Update age in form data
+			store.updateField("age", age)
 
-        // Validate minimum age for SPISC (60 years)
-        if (age < 60) {
-            validationErrors.value['birth_date'] = 'Applicant must be 60 years or older for SPISC'
-        } else {
-            // Clear birth_date validation errors if age is valid
-            delete validationErrors.value['birth_date']
-        }
-    }
-})
+			// Validate minimum age for SPISC (60 years)
+			if (age < 60) {
+				validationErrors.value["birth_date"] =
+					"Applicant must be 60 years or older for SPISC"
+			} else {
+				// Clear birth_date validation errors if age is valid
+				delete validationErrors.value["birth_date"]
+			}
+		}
+	},
+)
 
 // Initialize
 onMounted(async () => {
-    const requestTypeCode = route.query.type
-    const draftId = route.query.draft
-    const councilCode = route.query.council
-    const isLocked = route.query.locked === 'true'
+	const requestTypeCode = route.query.type
+	const draftId = route.query.draft
+	const councilCode = route.query.council
+	const isLocked = route.query.locked === "true"
 
-    console.log('[NewRequest] Initialization - locked:', isLocked, 'council:', councilCode, 'type:', requestTypeCode)
+	console.log(
+		"[NewRequest] Initialization - locked:",
+		isLocked,
+		"council:",
+		councilCode,
+		"type:",
+		requestTypeCode,
+	)
 
-    // If starting fresh request (no draft ID), ensure clean state
-    if (!draftId && !route.query.draft) {
-        store.reset()  // Clear any lingering state
-    }
+	// If starting fresh request (no draft ID), ensure clean state
+	if (!draftId && !route.query.draft) {
+		store.reset() // Clear any lingering state
+	}
 
-    // Auto-fill user profile data for new requests (not drafts)
-    if (!draftId) {
-        const { getApplicationAutoFill, applyAutoFill } = useUserProfile()
-        try {
-            await getApplicationAutoFill()
-            applyAutoFill(store.formData, {
-                overrideExisting: false // Don't overwrite user input
-            })
-        } catch (error) {
-            console.warn('[NewRequest] Failed to load user profile for auto-fill:', error)
-        }
-    }
+	// Auto-fill user profile data for new requests (not drafts)
+	if (!draftId) {
+		const { getApplicationAutoFill, applyAutoFill } = useUserProfile()
+		try {
+			await getApplicationAutoFill()
+			applyAutoFill(store.formData, {
+				overrideExisting: false, // Don't overwrite user input
+			})
+		} catch (error) {
+			console.warn(
+				"[NewRequest] Failed to load user profile for auto-fill:",
+				error,
+			)
+		}
+	}
 
-    // Handle draft loading (this takes precedence)
-    if (draftId && requestTypeCode) {
-        await store.initialize(requestTypeCode, draftId)
-        selectedRequestTypeDetails.value = store.requestTypeConfig
-        // Draft loading sets the step automatically, so return early
-        return
-    }
+	// Handle draft loading (this takes precedence)
+	if (draftId && requestTypeCode) {
+		await store.initialize(requestTypeCode, draftId)
+		selectedRequestTypeDetails.value = store.requestTypeConfig
+		// Draft loading sets the step automatically, so return early
+		return
+	}
 
-    // Handle locked request flow from council website (council + type both locked)
-    if (isLocked && councilCode && requestTypeCode && !draftId) {
-        console.log('[NewRequest] Locked flow detected - skipping to step 2')
+	// Handle locked request flow from council website (council + type both locked)
+	if (isLocked && councilCode && requestTypeCode && !draftId) {
+		console.log("[NewRequest] Locked flow detected - skipping to step 2")
 
-        // Set council (locked)
-        store.updateField('council', councilCode)
+		// Set council (locked)
+		store.updateField("council", councilCode)
 
-        // Pre-load request types for this council
-        await onCouncilChange(councilCode)
+		// Pre-load request types for this council
+		await onCouncilChange(councilCode)
 
-        // Initialize request type config
-        await store.initialize(requestTypeCode)
-        selectedRequestTypeDetails.value = store.requestTypeConfig
-        store.updateField('request_type', requestTypeCode)
+		// Initialize request type config
+		await store.initialize(requestTypeCode)
+		selectedRequestTypeDetails.value = store.requestTypeConfig
+		store.updateField("request_type", requestTypeCode)
 
-        // Skip directly to step 2 (Process Info)
-        store.currentStep = 2
-        console.log('[NewRequest] Locked flow complete - currentStep:', store.currentStep)
-        return
-    }
+		// Skip directly to step 2 (Process Info)
+		store.currentStep = 2
+		console.log(
+			"[NewRequest] Locked flow complete - currentStep:",
+			store.currentStep,
+		)
+		return
+	}
 
-    // Handle council pre-selection from URL (not locked, just pre-selected)
-    if (councilCode && !draftId && !isLocked) {
-        store.updateField('council', councilCode)
+	// Handle council pre-selection from URL (not locked, just pre-selected)
+	if (councilCode && !draftId && !isLocked) {
+		store.updateField("council", councilCode)
 
-        // Pre-load request types for this council
-        await onCouncilChange(councilCode)
+		// Pre-load request types for this council
+		await onCouncilChange(councilCode)
 
-        // If request type is also provided, advance to step 2
-        if (requestTypeCode) {
-            await store.initialize(requestTypeCode)
-            selectedRequestTypeDetails.value = store.requestTypeConfig
-            store.updateField('request_type', requestTypeCode)
-            store.currentStep = 2
-        } else {
-            // Just council provided, advance to step 1 (Type selection)
-            store.currentStep = 1
-        }
-    } else if (requestTypeCode && !draftId && !councilCode) {
-        // Just request type provided (unusual case, but handle it)
-        await store.initialize(requestTypeCode)
-        selectedRequestTypeDetails.value = store.requestTypeConfig
-        store.updateField('request_type', requestTypeCode)
-    }
+		// If request type is also provided, advance to step 2
+		if (requestTypeCode) {
+			await store.initialize(requestTypeCode)
+			selectedRequestTypeDetails.value = store.requestTypeConfig
+			store.updateField("request_type", requestTypeCode)
+			store.currentStep = 2
+		} else {
+			// Just council provided, advance to step 1 (Type selection)
+			store.currentStep = 1
+		}
+	} else if (requestTypeCode && !draftId && !councilCode) {
+		// Just request type provided (unusual case, but handle it)
+		await store.initialize(requestTypeCode)
+		selectedRequestTypeDetails.value = store.requestTypeConfig
+		store.updateField("request_type", requestTypeCode)
+	}
 })
 
 // Navigation guard - warn about unsaved changes
 onBeforeRouteLeave((to, from, next) => {
-    // Allow navigation if submitting or no draft exists
-    if (store.isSubmitting || !store.currentRequestId) {
-        store.reset()  // Clear state when leaving without draft
-        next()
-        return
-    }
+	// Allow navigation if submitting or no draft exists
+	if (store.isSubmitting || !store.currentRequestId) {
+		store.reset() // Clear state when leaving without draft
+		next()
+		return
+	}
 
-    // Check if there are unsaved changes
-    const hasChanges = store.formData && Object.keys(store.formData).some(key =>
-        store.formData[key] !== undefined && store.formData[key] !== null && store.formData[key] !== ''
-    )
+	// Check if there are unsaved changes
+	const hasChanges =
+		store.formData &&
+		Object.keys(store.formData).some(
+			(key) =>
+				store.formData[key] !== undefined &&
+				store.formData[key] !== null &&
+				store.formData[key] !== "",
+		)
 
-    if (hasChanges && !confirm('You have unsaved changes. Do you want to leave without saving?')) {
-        next(false) // Cancel navigation
-    } else {
-        // User confirmed or no unsaved changes
-        if (!to.path.includes('/request/')) {
-            store.reset()  // Clear state when navigating away from requests
-        }
-        next() // Allow navigation
-    }
+	if (
+		hasChanges &&
+		!confirm("You have unsaved changes. Do you want to leave without saving?")
+	) {
+		next(false) // Cancel navigation
+	} else {
+		// User confirmed or no unsaved changes
+		if (!to.path.includes("/request/")) {
+			store.reset() // Clear state when navigating away from requests
+		}
+		next() // Allow navigation
+	}
 })
 </script>

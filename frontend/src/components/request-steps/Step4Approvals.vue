@@ -497,190 +497,194 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref, watch, computed, reactive } from 'vue'
+import { computed, defineEmits, defineProps, reactive, ref, watch } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  }
+	modelValue: {
+		type: Object,
+		required: true,
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
 // Create local data reference
 const localData = computed({
-  get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value)
+	get: () => props.modelValue,
+	set: (value) => emit("update:modelValue", value),
 })
 
 // PBA Modal Management
 const showPBAModal = ref(false)
 const editingPBAIndex = ref(null)
 const pbaForm = reactive({
-  organisation_name: '',
-  contact_name: '',
-  email: '',
-  phone: '',
-  address: '',
-  rd_number: '',
-  suburb: '',
-  city: '',
-  postcode: ''
+	organisation_name: "",
+	contact_name: "",
+	email: "",
+	phone: "",
+	address: "",
+	rd_number: "",
+	suburb: "",
+	city: "",
+	postcode: "",
 })
 
 const resetPBAForm = () => {
-  Object.assign(pbaForm, {
-    organisation_name: '',
-    contact_name: '',
-    email: '',
-    phone: '',
-    address: '',
-    rd_number: '',
-    suburb: '',
-    city: '',
-    postcode: ''
-  })
+	Object.assign(pbaForm, {
+		organisation_name: "",
+		contact_name: "",
+		email: "",
+		phone: "",
+		address: "",
+		rd_number: "",
+		suburb: "",
+		city: "",
+		postcode: "",
+	})
 }
 
 const editPBA = (index) => {
-  editingPBAIndex.value = index
-  Object.assign(pbaForm, localData.value.pba_contacts[index])
-  showPBAModal.value = true
+	editingPBAIndex.value = index
+	Object.assign(pbaForm, localData.value.pba_contacts[index])
+	showPBAModal.value = true
 }
 
 const removePBA = (index) => {
-  if (confirm('Remove this PBA contact?')) {
-    const updatedData = { ...props.modelValue }
-    updatedData.pba_contacts.splice(index, 1)
-    emit('update:modelValue', updatedData)
-  }
+	if (confirm("Remove this PBA contact?")) {
+		const updatedData = { ...props.modelValue }
+		updatedData.pba_contacts.splice(index, 1)
+		emit("update:modelValue", updatedData)
+	}
 }
 
 const savePBA = () => {
-  if (!pbaForm.contact_name) return
+	if (!pbaForm.contact_name) return
 
-  const updatedData = { ...props.modelValue }
-  if (!updatedData.pba_contacts) updatedData.pba_contacts = []
+	const updatedData = { ...props.modelValue }
+	if (!updatedData.pba_contacts) updatedData.pba_contacts = []
 
-  const contactData = { ...pbaForm }
+	const contactData = { ...pbaForm }
 
-  if (editingPBAIndex.value !== null) {
-    updatedData.pba_contacts[editingPBAIndex.value] = contactData
-  } else {
-    updatedData.pba_contacts.push(contactData)
-  }
+	if (editingPBAIndex.value !== null) {
+		updatedData.pba_contacts[editingPBAIndex.value] = contactData
+	} else {
+		updatedData.pba_contacts.push(contactData)
+	}
 
-  emit('update:modelValue', updatedData)
-  closePBAModal()
+	emit("update:modelValue", updatedData)
+	closePBAModal()
 }
 
 const closePBAModal = () => {
-  showPBAModal.value = false
-  editingPBAIndex.value = null
-  resetPBAForm()
+	showPBAModal.value = false
+	editingPBAIndex.value = null
+	resetPBAForm()
 }
 
 // PBA Document upload
 const handlePBADocumentUpload = (event) => {
-  const files = Array.from(event.target.files)
-  if (files.length > 0) {
-    const updatedData = { ...props.modelValue }
-    if (!updatedData.pba_documents) updatedData.pba_documents = []
+	const files = Array.from(event.target.files)
+	if (files.length > 0) {
+		const updatedData = { ...props.modelValue }
+		if (!updatedData.pba_documents) updatedData.pba_documents = []
 
-    files.forEach(file => {
-      // Validate file size (max 10MB)
-      const maxSize = 10 * 1024 * 1024
-      if (file.size > maxSize) {
-        alert(`File ${file.name} exceeds 10MB. Please upload a smaller file.`)
-        return
-      }
-      updatedData.pba_documents.push(file.name)
-    })
+		files.forEach((file) => {
+			// Validate file size (max 10MB)
+			const maxSize = 10 * 1024 * 1024
+			if (file.size > maxSize) {
+				alert(`File ${file.name} exceeds 10MB. Please upload a smaller file.`)
+				return
+			}
+			updatedData.pba_documents.push(file.name)
+		})
 
-    emit('update:modelValue', updatedData)
-  }
+		emit("update:modelValue", updatedData)
+	}
 }
 
 // Affected Parties Modal state (existing Step13 functionality)
 const showModal = ref(false)
 const editingIndex = ref(null)
 const currentParty = ref({
-  party_name: '',
-  relationship: '',
-  contact_info: '',
-  address: '',
-  effects: '',
-  written_approval: false
+	party_name: "",
+	relationship: "",
+	contact_info: "",
+	address: "",
+	effects: "",
+	written_approval: false,
 })
 
 // Computed property for parties with written approvals
 const writtenApprovals = computed(() => {
-  return localData.value.affected_parties?.filter(party => party.written_approval === true) || []
+	return (
+		localData.value.affected_parties?.filter(
+			(party) => party.written_approval === true,
+		) || []
+	)
 })
 
 // Open modal for adding new party
 const openAddModal = () => {
-  editingIndex.value = null
-  currentParty.value = {
-    party_name: '',
-    relationship: '',
-    contact_info: '',
-    address: '',
-    effects: '',
-    written_approval: false
-  }
-  showModal.value = true
+	editingIndex.value = null
+	currentParty.value = {
+		party_name: "",
+		relationship: "",
+		contact_info: "",
+		address: "",
+		effects: "",
+		written_approval: false,
+	}
+	showModal.value = true
 }
 
 // Open modal for editing existing party
 const openEditModal = (index) => {
-  editingIndex.value = index
-  currentParty.value = { ...localData.value.affected_parties[index] }
-  showModal.value = true
+	editingIndex.value = index
+	currentParty.value = { ...localData.value.affected_parties[index] }
+	showModal.value = true
 }
 
 // Close modal
 const closeModal = () => {
-  showModal.value = false
-  editingIndex.value = null
-  currentParty.value = {
-    party_name: '',
-    relationship: '',
-    contact_info: '',
-    address: '',
-    effects: '',
-    written_approval: false
-  }
+	showModal.value = false
+	editingIndex.value = null
+	currentParty.value = {
+		party_name: "",
+		relationship: "",
+		contact_info: "",
+		address: "",
+		effects: "",
+		written_approval: false,
+	}
 }
 
 // Save party (add or update)
 const saveParty = () => {
-  if (!currentParty.value.party_name || !currentParty.value.relationship) {
-    return
-  }
+	if (!currentParty.value.party_name || !currentParty.value.relationship) {
+		return
+	}
 
-  const updatedData = { ...props.modelValue }
-  if (!updatedData.affected_parties) updatedData.affected_parties = []
+	const updatedData = { ...props.modelValue }
+	if (!updatedData.affected_parties) updatedData.affected_parties = []
 
-  if (editingIndex.value !== null) {
-    // Update existing party
-    updatedData.affected_parties[editingIndex.value] = { ...currentParty.value }
-  } else {
-    // Add new party
-    updatedData.affected_parties.push({ ...currentParty.value })
-  }
+	if (editingIndex.value !== null) {
+		// Update existing party
+		updatedData.affected_parties[editingIndex.value] = { ...currentParty.value }
+	} else {
+		// Add new party
+		updatedData.affected_parties.push({ ...currentParty.value })
+	}
 
-  emit('update:modelValue', updatedData)
-  closeModal()
+	emit("update:modelValue", updatedData)
+	closeModal()
 }
 
 // Remove party
 const removeParty = (index) => {
-  if (confirm('Are you sure you want to remove this affected party?')) {
-    const updatedData = { ...props.modelValue }
-    updatedData.affected_parties.splice(index, 1)
-    emit('update:modelValue', updatedData)
-  }
+	if (confirm("Are you sure you want to remove this affected party?")) {
+		const updatedData = { ...props.modelValue }
+		updatedData.affected_parties.splice(index, 1)
+		emit("update:modelValue", updatedData)
+	}
 }
 </script>

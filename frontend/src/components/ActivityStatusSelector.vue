@@ -156,34 +156,37 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { onMounted, ref, watch } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: String,
-    default: ''
-  },
-  required: {
-    type: Boolean,
-    default: false
-  }
+	modelValue: {
+		type: String,
+		default: "",
+	},
+	required: {
+		type: Boolean,
+		default: false,
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
-const localValue = ref('')
+const localValue = ref("")
 
 onMounted(() => {
-  if (props.modelValue) {
-    localValue.value = props.modelValue
-  }
+	if (props.modelValue) {
+		localValue.value = props.modelValue
+	}
 })
 
-watch(() => props.modelValue, (newVal) => {
-  localValue.value = newVal || ''
-})
+watch(
+	() => props.modelValue,
+	(newVal) => {
+		localValue.value = newVal || ""
+	},
+)
 
 function emitUpdate() {
-  emit('update:modelValue', localValue.value)
+	emit("update:modelValue", localValue.value)
 }
 </script>

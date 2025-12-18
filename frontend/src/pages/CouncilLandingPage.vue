@@ -147,10 +147,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
-import { call } from 'frappe-ui'
-import { session } from '../data/session'
+import { call } from "frappe-ui"
+import { computed, onMounted, ref } from "vue"
+import { useRoute } from "vue-router"
+import { session } from "../data/session"
 
 const route = useRoute()
 
@@ -164,8 +164,8 @@ const heroBackgroundStyle = computed(() => {
 	if (landingPage.value.hero_image) {
 		return {
 			backgroundImage: `url('${landingPage.value.hero_image}')`,
-			backgroundSize: 'cover',
-			backgroundPosition: 'center'
+			backgroundSize: "cover",
+			backgroundPosition: "center",
 		}
 	}
 	return {}
@@ -174,16 +174,16 @@ const heroBackgroundStyle = computed(() => {
 const ctaButtonStyle = computed(() => {
 	if (council.value.primary_color) {
 		return {
-			backgroundColor: 'white',
-			color: council.value.primary_color
+			backgroundColor: "white",
+			color: council.value.primary_color,
 		}
 	}
 	return {}
 })
 
 const heroTitle = computed(() => {
-	const title = landingPage.value.hero_title || ''
-	return title.replace('{council_name}', council.value.council_name || '')
+	const title = landingPage.value.hero_title || ""
+	return title.replace("{council_name}", council.value.council_name || "")
 })
 
 const loadCouncilData = async () => {
@@ -191,39 +191,45 @@ const loadCouncilData = async () => {
 		const councilCode = route.params.councilCode.toUpperCase()
 
 		// Get council data
-		const councilResponse = await call('lodgeick.api.get_council_by_code', {
-			council_code: councilCode
+		const councilResponse = await call("lodgeick.api.get_council_by_code", {
+			council_code: councilCode,
 		})
 
 		if (!councilResponse) {
-			throw new Error('Council not found')
+			throw new Error("Council not found")
 		}
 
 		council.value = councilResponse
 
 		// Get landing page data
-		const landingPageResponse = await call('lodgeick.api.get_council_landing_page', {
-			council_code: councilCode
-		})
+		const landingPageResponse = await call(
+			"lodgeick.api.get_council_landing_page",
+			{
+				council_code: councilCode,
+			},
+		)
 
 		landingPage.value = landingPageResponse || {
 			hero_title: `Welcome to ${council.value.council_name}`,
-			hero_subtitle: 'Submit planning applications online',
-			primary_cta_text: 'Start New Request',
-			show_request_types: true
+			hero_subtitle: "Submit planning applications online",
+			primary_cta_text: "Start New Request",
+			show_request_types: true,
 		}
 
 		// Get request types if enabled
 		if (landingPage.value.show_request_types) {
-			const rtResponse = await call('lodgeick.api.get_request_types_for_council', {
-				council_code: councilCode
-			})
+			const rtResponse = await call(
+				"lodgeick.api.get_request_types_for_council",
+				{
+					council_code: councilCode,
+				},
+			)
 			requestTypes.value = rtResponse || []
 		}
 
 		loading.value = false
 	} catch (err) {
-		error.value = err.message || 'Failed to load council landing page'
+		error.value = err.message || "Failed to load council landing page"
 		loading.value = false
 	}
 }

@@ -7,6 +7,21 @@
  "engine": "InnoDB",
  "field_order": [
   "request",
+  "section_summary",
+  "request_number",
+  "status",
+  "workflow_state",
+  "column_break_summary",
+  "submitted_date",
+  "target_completion_date",
+  "section_applicant",
+  "applicant_name",
+  "applicant_age_display",
+  "column_break_applicant",
+  "applicant_email",
+  "applicant_phone",
+  "section_address_display",
+  "full_address_display",
   "section_personal",
   "birth_date",
   "age",
@@ -72,6 +87,110 @@
    "options": "Request",
    "reqd": 1,
    "unique": 1
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "section_summary",
+   "fieldtype": "Section Break",
+   "label": "Application Summary"
+  },
+  {
+   "fetch_from": "request.request_number",
+   "fieldname": "request_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Application Number",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "request.status",
+   "fieldname": "status",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "request.workflow_state",
+   "fieldname": "workflow_state",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Workflow State",
+   "options": "Workflow State",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_summary",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "request.submitted_date",
+   "fieldname": "submitted_date",
+   "fieldtype": "Date",
+   "label": "Date Submitted",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "request.target_completion_date",
+   "fieldname": "target_completion_date",
+   "fieldtype": "Date",
+   "label": "Target Completion",
+   "read_only": 1
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "section_applicant",
+   "fieldtype": "Section Break",
+   "label": "Applicant Information"
+  },
+  {
+   "bold": 1,
+   "fetch_from": "request.requester_name",
+   "fieldname": "applicant_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Full Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "age",
+   "fieldname": "applicant_age_display",
+   "fieldtype": "Data",
+   "label": "Age",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_applicant",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "request.requester_email",
+   "fieldname": "applicant_email",
+   "fieldtype": "Data",
+   "label": "Email",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "request.requester_phone",
+   "fieldname": "applicant_phone",
+   "fieldtype": "Data",
+   "label": "Mobile Number",
+   "read_only": 1
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "section_address_display",
+   "fieldtype": "Section Break",
+   "label": "Residential Address"
+  },
+  {
+   "description": "Street, Barangay, Municipality, Province",
+   "fieldname": "full_address_display",
+   "fieldtype": "Small Text",
+   "label": "Complete Address",
+   "read_only": 1
   },
   {
    "fieldname": "section_personal",

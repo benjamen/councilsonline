@@ -210,24 +210,24 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { createResource, Button, Dropdown } from 'frappe-ui'
-import RequestHeader from '../components/request/RequestHeader.vue'
-import StatusBadge from '../components/StatusBadge.vue'
-import { useStatutoryClock } from '../composables/useStatutoryClock'
+import { Button, Dropdown, createResource } from "frappe-ui"
+import { computed, ref } from "vue"
+import { useRoute, useRouter } from "vue-router"
+import StatusBadge from "../components/StatusBadge.vue"
+import RequestHeader from "../components/request/RequestHeader.vue"
+import { useStatutoryClock } from "../composables/useStatutoryClock"
 
 const router = useRouter()
 const route = useRoute()
 
 // Fetch request details
 const request = createResource({
-  url: 'frappe.client.get',
-  params: {
-    doctype: 'Request',
-    name: route.params.id
-  },
-  auto: true,
+	url: "frappe.client.get",
+	params: {
+		doctype: "Request",
+		name: route.params.id,
+	},
+	auto: true,
 })
 
 // Get statutory clock data from appropriate source (RC Application or Request)
@@ -235,64 +235,91 @@ const { clockData, progressPercent, isOverdue } = useStatutoryClock(request)
 
 // Mock data (replace with real data)
 const mockTasks = ref([
-  { id: 1, title: 'Review application documents', assignee: 'John Smith', hours: 2, cost: 300, completed: true },
-  { id: 2, title: 'Site inspection', assignee: 'Jane Doe', hours: 4, cost: 600, completed: false },
-  { id: 3, title: 'Prepare decision report', assignee: 'John Smith', hours: 3, cost: 450, completed: false },
+	{
+		id: 1,
+		title: "Review application documents",
+		assignee: "John Smith",
+		hours: 2,
+		cost: 300,
+		completed: true,
+	},
+	{
+		id: 2,
+		title: "Site inspection",
+		assignee: "Jane Doe",
+		hours: 4,
+		cost: 600,
+		completed: false,
+	},
+	{
+		id: 3,
+		title: "Prepare decision report",
+		assignee: "John Smith",
+		hours: 3,
+		cost: 450,
+		completed: false,
+	},
 ])
 
 const mockTimeline = ref([
-  { title: 'Application Submitted', date: '10 Oct 2025', color: 'bg-blue-500' },
-  { title: 'Assigned to John Smith', date: '11 Oct 2025', color: 'bg-green-500' },
-  { title: 'Under Review', date: '12 Oct 2025', color: 'bg-yellow-500' },
+	{ title: "Application Submitted", date: "10 Oct 2025", color: "bg-blue-500" },
+	{
+		title: "Assigned to John Smith",
+		date: "11 Oct 2025",
+		color: "bg-green-500",
+	},
+	{ title: "Under Review", date: "12 Oct 2025", color: "bg-yellow-500" },
 ])
 
 // Computed
-const totalHours = computed(() => mockTasks.value.reduce((sum, t) => sum + t.hours, 0))
+const totalHours = computed(() =>
+	mockTasks.value.reduce((sum, t) => sum + t.hours, 0),
+)
 const totalStaffCost = computed(() => totalHours.value * 150)
 const totalCost = computed(() => {
-  const appFee = parseFloat(request.data?.application_fee || 0)
-  const addCharges = parseFloat(request.data?.additional_charges || 0)
-  return appFee + addCharges + totalStaffCost.value
+	const appFee = Number.parseFloat(request.data?.application_fee || 0)
+	const addCharges = Number.parseFloat(request.data?.additional_charges || 0)
+	return appFee + addCharges + totalStaffCost.value
 })
 
 // Methods
 const goBack = () => {
-  router.push({ name: 'InternalRequestManagement' })
+	router.push({ name: "InternalRequestManagement" })
 }
 
 const formatDate = (date) => {
-  if (!date) return 'N/A'
-  return new Date(date).toLocaleDateString('en-NZ', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric'
-  })
+	if (!date) return "N/A"
+	return new Date(date).toLocaleDateString("en-NZ", {
+		day: "numeric",
+		month: "short",
+		year: "numeric",
+	})
 }
 
 const addTask = () => {
-  console.log('Add task')
+	console.log("Add task")
 }
 
 const addCharge = () => {
-  console.log('Add charge')
+	console.log("Add charge")
 }
 
 const issueRFI = () => {
-  console.log('Issue RFI')
+	console.log("Issue RFI")
 }
 
 const approve = () => {
-  console.log('Approve request')
+	console.log("Approve request")
 }
 
 const decline = () => {
-  console.log('Decline request')
+	console.log("Decline request")
 }
 
 // Action menu
 const actionMenuOptions = [
-  { label: 'Send Message', onClick: () => console.log('Message') },
-  { label: 'Generate Report', onClick: () => console.log('Report') },
-  { label: 'View History', onClick: () => console.log('History') },
+	{ label: "Send Message", onClick: () => console.log("Message") },
+	{ label: "Generate Report", onClick: () => console.log("Report") },
+	{ label: "View History", onClick: () => console.log("History") },
 ]
 </script>

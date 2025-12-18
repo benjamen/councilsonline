@@ -334,248 +334,259 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, computed, reactive, ref } from 'vue'
+import { computed, defineEmits, defineProps, reactive, ref } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  }
+	modelValue: {
+		type: Object,
+		required: true,
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
 const localData = computed({
-  get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value)
+	get: () => props.modelValue,
+	set: (value) => emit("update:modelValue", value),
 })
 
 // NES Types with FRD descriptions (FRD Section 5.1)
 const nesTypes = [
-  {
-    value: 'Contaminated Soil (HAIL)',
-    label: 'NES for Assessing and Managing Contaminants in Soil (HAIL)',
-    description: 'Applies if site has had hazardous activities or industries'
-  },
-  {
-    value: 'Air Quality',
-    label: 'NES for Air Quality',
-    description: 'Regulates emissions and ambient air quality standards'
-  },
-  {
-    value: 'Drinking Water',
-    label: 'NES for Sources of Human Drinking Water',
-    description: 'Protects drinking water sources from contamination'
-  },
-  {
-    value: 'Freshwater',
-    label: 'NES for Freshwater Management',
-    description: 'Regulates activities affecting lakes, rivers, wetlands, and aquifers'
-  },
-  {
-    value: 'Plantation Forestry',
-    label: 'NES for Plantation Forestry',
-    description: 'Applies to commercial forestry operations'
-  },
-  {
-    value: 'Electricity Transmission',
-    label: 'NES for Electricity Transmission Activities',
-    description: 'Regulates high-voltage transmission lines and infrastructure'
-  },
-  {
-    value: 'Telecommunications',
-    label: 'NES for Telecommunication Facilities',
-    description: 'Applies to cell towers and telecommunication infrastructure'
-  },
-  {
-    value: 'Other',
-    label: 'Other NES',
-    description: 'Any other relevant National Environmental Standard'
-  }
+	{
+		value: "Contaminated Soil (HAIL)",
+		label: "NES for Assessing and Managing Contaminants in Soil (HAIL)",
+		description: "Applies if site has had hazardous activities or industries",
+	},
+	{
+		value: "Air Quality",
+		label: "NES for Air Quality",
+		description: "Regulates emissions and ambient air quality standards",
+	},
+	{
+		value: "Drinking Water",
+		label: "NES for Sources of Human Drinking Water",
+		description: "Protects drinking water sources from contamination",
+	},
+	{
+		value: "Freshwater",
+		label: "NES for Freshwater Management",
+		description:
+			"Regulates activities affecting lakes, rivers, wetlands, and aquifers",
+	},
+	{
+		value: "Plantation Forestry",
+		label: "NES for Plantation Forestry",
+		description: "Applies to commercial forestry operations",
+	},
+	{
+		value: "Electricity Transmission",
+		label: "NES for Electricity Transmission Activities",
+		description: "Regulates high-voltage transmission lines and infrastructure",
+	},
+	{
+		value: "Telecommunications",
+		label: "NES for Telecommunication Facilities",
+		description: "Applies to cell towers and telecommunication infrastructure",
+	},
+	{
+		value: "Other",
+		label: "Other NES",
+		description: "Any other relevant National Environmental Standard",
+	},
 ]
 
 // HAIL Categories (NES Soil Contaminants)
 const hailCategories = [
-  'Agriculture - Persistent Pesticide Use',
-  'Agriculture - Fertiliser Manufacturing/Storage',
-  'Chemicals - Manufacturing/Formulation',
-  'Fuel Storage - Petrol Station',
-  'Fuel Storage - Bulk Fuel Storage',
-  'Gas Works',
-  'Landfill/Waste Disposal',
-  'Metal Treatment - Electroplating/Galvanizing',
-  'Mining/Quarrying',
-  'Railway Yards',
-  'Sheep Dip',
-  'Timber Treatment',
-  'Other Industrial Activity'
+	"Agriculture - Persistent Pesticide Use",
+	"Agriculture - Fertiliser Manufacturing/Storage",
+	"Chemicals - Manufacturing/Formulation",
+	"Fuel Storage - Petrol Station",
+	"Fuel Storage - Bulk Fuel Storage",
+	"Gas Works",
+	"Landfill/Waste Disposal",
+	"Metal Treatment - Electroplating/Galvanizing",
+	"Mining/Quarrying",
+	"Railway Yards",
+	"Sheep Dip",
+	"Timber Treatment",
+	"Other Industrial Activity",
 ]
 
 // Initialize NES data structure if not exists
 if (!localData.value.nes_items) {
-  const updatedData = { ...props.modelValue }
-  updatedData.nes_items = []
-  emit('update:modelValue', updatedData)
+	const updatedData = { ...props.modelValue }
+	updatedData.nes_items = []
+	emit("update:modelValue", updatedData)
 }
 
 // Reactive NES data storage
 const nesData = reactive({})
 
 const getNESData = (nesType) => {
-  if (!nesData[nesType]) {
-    // Check if data exists in modelValue
-    const existing = localData.value.nes_items?.find(item => item.nes_type === nesType)
-    if (existing) {
-      nesData[nesType] = { ...existing }
-    } else {
-      nesData[nesType] = {
-        nes_type: nesType,
-        applies: false,
-        description: '',
-        compliance_notes: ''
-      }
-    }
-  }
-  return nesData[nesType]
+	if (!nesData[nesType]) {
+		// Check if data exists in modelValue
+		const existing = localData.value.nes_items?.find(
+			(item) => item.nes_type === nesType,
+		)
+		if (existing) {
+			nesData[nesType] = { ...existing }
+		} else {
+			nesData[nesType] = {
+				nes_type: nesType,
+				applies: false,
+				description: "",
+				compliance_notes: "",
+			}
+		}
+	}
+	return nesData[nesType]
 }
 
 const toggleNES = (nesType) => {
-  const data = getNESData(nesType)
-  data.applies = !data.applies
+	const data = getNESData(nesType)
+	data.applies = !data.applies
 
-  // Sync to modelValue
-  const updatedData = { ...props.modelValue }
-  if (!updatedData.nes_items) updatedData.nes_items = []
+	// Sync to modelValue
+	const updatedData = { ...props.modelValue }
+	if (!updatedData.nes_items) updatedData.nes_items = []
 
-  const existingIndex = updatedData.nes_items.findIndex(item => item.nes_type === nesType)
+	const existingIndex = updatedData.nes_items.findIndex(
+		(item) => item.nes_type === nesType,
+	)
 
-  if (data.applies) {
-    if (existingIndex >= 0) {
-      updatedData.nes_items[existingIndex] = { ...data }
-    } else {
-      updatedData.nes_items.push({ ...data })
-    }
-  } else {
-    if (existingIndex >= 0) {
-      updatedData.nes_items.splice(existingIndex, 1)
-    }
-  }
+	if (data.applies) {
+		if (existingIndex >= 0) {
+			updatedData.nes_items[existingIndex] = { ...data }
+		} else {
+			updatedData.nes_items.push({ ...data })
+		}
+	} else {
+		if (existingIndex >= 0) {
+			updatedData.nes_items.splice(existingIndex, 1)
+		}
+	}
 
-  // Clear no_nes_confirmed if user selects any NES
-  if (data.applies) {
-    updatedData.no_nes_confirmed = false
-  }
+	// Clear no_nes_confirmed if user selects any NES
+	if (data.applies) {
+		updatedData.no_nes_confirmed = false
+	}
 
-  emit('update:modelValue', updatedData)
+	emit("update:modelValue", updatedData)
 }
 
 // Check if Contaminated Soil (HAIL) is selected
 const isContaminatedSoilSelected = computed(() => {
-  return localData.value.nes_items?.some(item =>
-    item.nes_type === 'Contaminated Soil (HAIL)' && item.applies
-  ) || false
+	return (
+		localData.value.nes_items?.some(
+			(item) => item.nes_type === "Contaminated Soil (HAIL)" && item.applies,
+		) || false
+	)
 })
 
 // Check if any NES is selected
 const hasAnyNESSelected = computed(() => {
-  return localData.value.nes_items?.some(item => item.applies) || false
+	return localData.value.nes_items?.some((item) => item.applies) || false
 })
 
 // HAIL Modal Management
 const showHAILModal = ref(false)
 const editingHAILIndex = ref(null)
 const hailForm = reactive({
-  activity_category: '',
-  activity_description: '',
-  time_period: '',
-  contaminants: '',
-  status: ''
+	activity_category: "",
+	activity_description: "",
+	time_period: "",
+	contaminants: "",
+	status: "",
 })
 
 const resetHAILForm = () => {
-  hailForm.activity_category = ''
-  hailForm.activity_description = ''
-  hailForm.time_period = ''
-  hailForm.contaminants = ''
-  hailForm.status = ''
+	hailForm.activity_category = ""
+	hailForm.activity_description = ""
+	hailForm.time_period = ""
+	hailForm.contaminants = ""
+	hailForm.status = ""
 }
 
 const editHAIL = (index) => {
-  editingHAILIndex.value = index
-  const activity = localData.value.hail_activities[index]
-  Object.assign(hailForm, activity)
-  showHAILModal.value = true
+	editingHAILIndex.value = index
+	const activity = localData.value.hail_activities[index]
+	Object.assign(hailForm, activity)
+	showHAILModal.value = true
 }
 
 const removeHAIL = (index) => {
-  if (confirm('Remove this HAIL activity?')) {
-    const updatedData = { ...props.modelValue }
-    updatedData.hail_activities.splice(index, 1)
-    emit('update:modelValue', updatedData)
-  }
+	if (confirm("Remove this HAIL activity?")) {
+		const updatedData = { ...props.modelValue }
+		updatedData.hail_activities.splice(index, 1)
+		emit("update:modelValue", updatedData)
+	}
 }
 
 const isHAILFormValid = computed(() => {
-  return !!(hailForm.activity_category && hailForm.activity_description?.trim())
+	return !!(hailForm.activity_category && hailForm.activity_description?.trim())
 })
 
 const saveHAIL = () => {
-  if (!isHAILFormValid.value) return
+	if (!isHAILFormValid.value) return
 
-  const updatedData = { ...props.modelValue }
-  if (!updatedData.hail_activities) {
-    updatedData.hail_activities = []
-  }
+	const updatedData = { ...props.modelValue }
+	if (!updatedData.hail_activities) {
+		updatedData.hail_activities = []
+	}
 
-  const activityData = {
-    activity_category: hailForm.activity_category,
-    activity_description: hailForm.activity_description,
-    time_period: hailForm.time_period,
-    contaminants: hailForm.contaminants,
-    status: hailForm.status
-  }
+	const activityData = {
+		activity_category: hailForm.activity_category,
+		activity_description: hailForm.activity_description,
+		time_period: hailForm.time_period,
+		contaminants: hailForm.contaminants,
+		status: hailForm.status,
+	}
 
-  if (editingHAILIndex.value !== null) {
-    updatedData.hail_activities[editingHAILIndex.value] = activityData
-  } else {
-    updatedData.hail_activities.push(activityData)
-  }
+	if (editingHAILIndex.value !== null) {
+		updatedData.hail_activities[editingHAILIndex.value] = activityData
+	} else {
+		updatedData.hail_activities.push(activityData)
+	}
 
-  emit('update:modelValue', updatedData)
-  closeHAILModal()
+	emit("update:modelValue", updatedData)
+	closeHAILModal()
 }
 
 const closeHAILModal = () => {
-  showHAILModal.value = false
-  editingHAILIndex.value = null
-  resetHAILForm()
+	showHAILModal.value = false
+	editingHAILIndex.value = null
+	resetHAILForm()
 }
 
 // Soil investigation file upload
 const handleSoilReportUpload = (event) => {
-  const file = event.target.files[0]
-  if (file) {
-    // Validate file size (max 10MB)
-    const maxSize = 10 * 1024 * 1024
-    if (file.size > maxSize) {
-      alert('File size exceeds 10MB. Please upload a smaller file.')
-      event.target.value = ''
-      return
-    }
+	const file = event.target.files[0]
+	if (file) {
+		// Validate file size (max 10MB)
+		const maxSize = 10 * 1024 * 1024
+		if (file.size > maxSize) {
+			alert("File size exceeds 10MB. Please upload a smaller file.")
+			event.target.value = ""
+			return
+		}
 
-    // Validate file type
-    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
-    if (!allowedTypes.includes(file.type)) {
-      alert('Invalid file type. Please upload a PDF or Word document.')
-      event.target.value = ''
-      return
-    }
+		// Validate file type
+		const allowedTypes = [
+			"application/pdf",
+			"application/msword",
+			"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+		]
+		if (!allowedTypes.includes(file.type)) {
+			alert("Invalid file type. Please upload a PDF or Word document.")
+			event.target.value = ""
+			return
+		}
 
-    // File upload will be handled by the parent component
-    emit('update:modelValue', {
-      ...props.modelValue,
-      soil_investigation_document: file.name
-    })
-  }
+		// File upload will be handled by the parent component
+		emit("update:modelValue", {
+			...props.modelValue,
+			soil_investigation_document: file.name,
+		})
+	}
 }
 </script>

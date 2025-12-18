@@ -145,119 +145,126 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import FormSection from './FormSection.vue'
-import CameraUpload from './CameraUpload.vue'
+import { computed, ref } from "vue"
+import CameraUpload from "./CameraUpload.vue"
+import FormSection from "./FormSection.vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  },
-  documentTypes: {
-    type: Array,
-    default: () => [
-      {
-        key: 'valid_id',
-        label: 'Valid ID',
-        description: 'Government-issued identification document',
-        examples: ['Philippine ID', 'Driver\'s License', 'Passport', 'Voter\'s ID', 'SSS/GSIS ID'],
-        required: true,
-        multiple: false,
-        accept: 'image/*,.pdf'
-      },
-      {
-        key: 'barangay_certificate',
-        label: 'Barangay Certificate of Indigency',
-        description: 'Certificate from your barangay confirming indigency status',
-        examples: ['Certificate of Indigency', 'Barangay Certification'],
-        required: false,
-        multiple: false,
-        accept: 'image/*,.pdf'
-      },
-      {
-        key: 'proof_of_residence',
-        label: 'Proof of Residence',
-        description: 'Document showing your current address',
-        examples: ['Utility Bill', 'Barangay Clearance', 'Lease Contract'],
-        required: false,
-        multiple: true,
-        accept: 'image/*,.pdf'
-      }
-    ]
-  }
+	modelValue: {
+		type: Object,
+		required: true,
+	},
+	documentTypes: {
+		type: Array,
+		default: () => [
+			{
+				key: "valid_id",
+				label: "Valid ID",
+				description: "Government-issued identification document",
+				examples: [
+					"Philippine ID",
+					"Driver's License",
+					"Passport",
+					"Voter's ID",
+					"SSS/GSIS ID",
+				],
+				required: true,
+				multiple: false,
+				accept: "image/*,.pdf",
+			},
+			{
+				key: "barangay_certificate",
+				label: "Barangay Certificate of Indigency",
+				description:
+					"Certificate from your barangay confirming indigency status",
+				examples: ["Certificate of Indigency", "Barangay Certification"],
+				required: false,
+				multiple: false,
+				accept: "image/*,.pdf",
+			},
+			{
+				key: "proof_of_residence",
+				label: "Proof of Residence",
+				description: "Document showing your current address",
+				examples: ["Utility Bill", "Barangay Clearance", "Lease Contract"],
+				required: false,
+				multiple: true,
+				accept: "image/*,.pdf",
+			},
+		],
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
 // Get documents for a specific type
 const getDocuments = (docType) => {
-  return props.modelValue[docType] || []
+	return props.modelValue[docType] || []
 }
 
 // Update documents for a specific type
 const updateDocuments = (docType, files) => {
-  const updated = { ...props.modelValue, [docType]: files }
-  emit('update:modelValue', updated)
+	const updated = { ...props.modelValue, [docType]: files }
+	emit("update:modelValue", updated)
 }
 
 // Handle upload
 const handleUpload = (docType, fileData, callback) => {
-  console.log(`Upload ${docType}:`, fileData)
-  // Parent component should handle actual upload
-  setTimeout(() => {
-    callback()
-  }, 500)
+	console.log(`Upload ${docType}:`, fileData)
+	// Parent component should handle actual upload
+	setTimeout(() => {
+		callback()
+	}, 500)
 }
 
 // Computed: Total documents uploaded
 const totalDocuments = computed(() => {
-  return Object.values(props.modelValue).reduce((total, docs) => {
-    return total + (Array.isArray(docs) ? docs.length : 0)
-  }, 0)
+	return Object.values(props.modelValue).reduce((total, docs) => {
+		return total + (Array.isArray(docs) ? docs.length : 0)
+	}, 0)
 })
 
 // Computed: Required documents complete
 const requiredTotal = computed(() => {
-  return props.documentTypes.filter(dt => dt.required).length
+	return props.documentTypes.filter((dt) => dt.required).length
 })
 
 const requiredComplete = computed(() => {
-  return props.documentTypes.filter(dt => {
-    if (!dt.required) return false
-    const docs = getDocuments(dt.key)
-    return docs && docs.length > 0
-  }).length
+	return props.documentTypes.filter((dt) => {
+		if (!dt.required) return false
+		const docs = getDocuments(dt.key)
+		return docs && docs.length > 0
+	}).length
 })
 
 const allRequiredUploaded = computed(() => {
-  return requiredComplete.value === requiredTotal.value
+	return requiredComplete.value === requiredTotal.value
 })
 
 // Computed: Missing required documents
 const missingRequired = computed(() => {
-  return props.documentTypes.filter(dt => {
-    if (!dt.required) return false
-    const docs = getDocuments(dt.key)
-    return !docs || docs.length === 0
-  })
+	return props.documentTypes.filter((dt) => {
+		if (!dt.required) return false
+		const docs = getDocuments(dt.key)
+		return !docs || docs.length === 0
+	})
 })
 
 // Computed: Total size
 const totalSize = computed(() => {
-  let totalBytes = 0
-  Object.values(props.modelValue).forEach(docs => {
-    if (Array.isArray(docs)) {
-      docs.forEach(doc => {
-        totalBytes += doc.size || 0
-      })
-    }
-  })
+	let totalBytes = 0
+	Object.values(props.modelValue).forEach((docs) => {
+		if (Array.isArray(docs)) {
+			docs.forEach((doc) => {
+				totalBytes += doc.size || 0
+			})
+		}
+	})
 
-  const k = 1024
-  const sizes = ['Bytes', 'KB', 'MB', 'GB']
-  if (totalBytes === 0) return '0 Bytes'
-  const i = Math.floor(Math.log(totalBytes) / Math.log(k))
-  return Math.round((totalBytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i]
+	const k = 1024
+	const sizes = ["Bytes", "KB", "MB", "GB"]
+	if (totalBytes === 0) return "0 Bytes"
+	const i = Math.floor(Math.log(totalBytes) / Math.log(k))
+	return Math.round((totalBytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i]
 })
 </script>

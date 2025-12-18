@@ -1,4 +1,4 @@
-import { apiClient } from './base'
+import { apiClient } from "./base"
 
 /**
  * Request Service
@@ -12,9 +12,9 @@ export class RequestService {
 	 * @returns {Promise<Object>} Response with request_id
 	 */
 	async createDraft(data, currentStep) {
-		return apiClient.call('lodgeick.api.create_draft_request', {
+		return apiClient.call("lodgeick.api.create_draft_request", {
 			data,
-			current_step: currentStep
+			current_step: currentStep,
 		})
 	}
 
@@ -25,12 +25,12 @@ export class RequestService {
 	 */
 	getRequest(requestId) {
 		return apiClient.createResource({
-			url: 'frappe.client.get',
+			url: "frappe.client.get",
 			params: {
-				doctype: 'Request',
-				name: requestId
+				doctype: "Request",
+				name: requestId,
 			},
-			auto: true
+			auto: true,
 		})
 	}
 
@@ -41,10 +41,12 @@ export class RequestService {
 	 */
 	getRequestTypeConfig(requestTypeCode) {
 		return apiClient.createResource({
-			url: 'lodgeick.api.get_request_type_config',
+			url: "lodgeick.api.get_request_type_config",
 			params: { request_type_code: requestTypeCode },
 			auto: true,
-			cache: ['request-type-config', requestTypeCode]
+			// TEMP: Removed caching to ensure latest config is always loaded
+			// TODO: Re-enable cache with proper invalidation strategy
+			// cache: ["request-type-config", requestTypeCode],
 		})
 	}
 
@@ -55,10 +57,10 @@ export class RequestService {
 	 * @returns {Promise<void>}
 	 */
 	async updateRequest(requestId, fields) {
-		return apiClient.call('frappe.client.set_value', {
-			doctype: 'Request',
+		return apiClient.call("frappe.client.set_value", {
+			doctype: "Request",
 			name: requestId,
-			fieldname: fields
+			fieldname: fields,
 		})
 	}
 
@@ -68,8 +70,8 @@ export class RequestService {
 	 * @returns {Promise<void>}
 	 */
 	async submitRequest(requestId) {
-		return apiClient.call('lodgeick.api.submit_request', {
-			request_id: requestId
+		return apiClient.call("lodgeick.api.submit_request", {
+			request_id: requestId,
 		})
 	}
 
@@ -79,9 +81,9 @@ export class RequestService {
 	 */
 	getUserRequests() {
 		return apiClient.createResource({
-			url: 'lodgeick.api.get_user_requests',
+			url: "lodgeick.api.get_user_requests",
 			auto: true,
-			cache: ['user-requests']
+			cache: ["user-requests"],
 		})
 	}
 
@@ -92,14 +94,21 @@ export class RequestService {
 	 */
 	getRequestsByStatus(status) {
 		return apiClient.createResource({
-			url: 'frappe.client.get_list',
+			url: "frappe.client.get_list",
 			params: {
-				doctype: 'Request',
+				doctype: "Request",
 				filters: { status },
-				fields: ['name', 'request_type', 'requester_name', 'status', 'created_at', 'brief_description'],
-				order_by: 'modified desc'
+				fields: [
+					"name",
+					"request_type",
+					"requester_name",
+					"status",
+					"created_at",
+					"brief_description",
+				],
+				order_by: "modified desc",
 			},
-			auto: true
+			auto: true,
 		})
 	}
 
@@ -109,9 +118,9 @@ export class RequestService {
 	 * @returns {Promise<void>}
 	 */
 	async deleteDraft(requestId) {
-		return apiClient.call('frappe.client.delete', {
-			doctype: 'Request',
-			name: requestId
+		return apiClient.call("frappe.client.delete", {
+			doctype: "Request",
+			name: requestId,
 		})
 	}
 
@@ -121,8 +130,8 @@ export class RequestService {
 	 * @returns {Promise<Object>} Request with application data
 	 */
 	async getRequestWithApplication(requestId) {
-		return apiClient.call('lodgeick.api.get_request_with_application', {
-			request_id: requestId
+		return apiClient.call("lodgeick.api.get_request_with_application", {
+			request_id: requestId,
 		})
 	}
 
@@ -134,10 +143,10 @@ export class RequestService {
 	 * @returns {Promise<Object>} Validation result { valid: boolean, errors: [] }
 	 */
 	async validateStep(requestId, stepNumber, stepData) {
-		return apiClient.call('lodgeick.api.validate_request_step', {
+		return apiClient.call("lodgeick.api.validate_request_step", {
 			request_id: requestId,
 			step_number: stepNumber,
-			step_data: stepData
+			step_data: stepData,
 		})
 	}
 }

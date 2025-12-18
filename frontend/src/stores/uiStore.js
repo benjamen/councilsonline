@@ -1,6 +1,6 @@
-import { defineStore } from 'pinia'
+import { defineStore } from "pinia"
 
-export const useUIStore = defineStore('ui', {
+export const useUIStore = defineStore("ui", {
 	state: () => ({
 		// Modal states
 		modals: {},
@@ -15,7 +15,7 @@ export const useUIStore = defineStore('ui', {
 		sidebarOpen: true,
 
 		// Mobile menu state
-		mobileMenuOpen: false
+		mobileMenuOpen: false,
 	}),
 
 	getters: {
@@ -27,7 +27,7 @@ export const useUIStore = defineStore('ui', {
 			return state.loadingStates[key] === true
 		},
 
-		hasActiveToasts: (state) => state.toasts.length > 0
+		hasActiveToasts: (state) => state.toasts.length > 0,
 	},
 
 	actions: {
@@ -72,10 +72,10 @@ export const useUIStore = defineStore('ui', {
 			const toastObj = {
 				id: Date.now() + Math.random(),
 				message: toast.message,
-				type: toast.type || 'info', // info, success, warning, error
+				type: toast.type || "info", // info, success, warning, error
 				duration: toast.duration || 3000,
 				action: toast.action || null,
-				timestamp: new Date()
+				timestamp: new Date(),
 			}
 
 			this.toasts.push(toastObj)
@@ -93,7 +93,7 @@ export const useUIStore = defineStore('ui', {
 		 * @param {Number} toastId - Toast ID
 		 */
 		removeToast(toastId) {
-			this.toasts = this.toasts.filter(t => t.id !== toastId)
+			this.toasts = this.toasts.filter((t) => t.id !== toastId)
 		},
 
 		/**
@@ -131,6 +131,6 @@ export const useUIStore = defineStore('ui', {
 		 */
 		setMobileMenu(isOpen) {
 			this.mobileMenuOpen = isOpen
-		}
-	}
+		},
+	},
 })

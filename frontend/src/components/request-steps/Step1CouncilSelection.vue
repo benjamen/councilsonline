@@ -16,28 +16,28 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue'
-import CouncilSelector from '../CouncilSelector.vue'
+import { defineEmits, defineProps } from "vue"
+import CouncilSelector from "../CouncilSelector.vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  }
+	modelValue: {
+		type: Object,
+		required: true,
+	},
 })
 
-const emit = defineEmits(['update:modelValue', 'council-change'])
+const emit = defineEmits(["update:modelValue", "council-change"])
 
 const updateCouncil = (council) => {
-  console.log('[Step1CouncilSelection] updateCouncil called with:', council)
-  console.log('[Step1CouncilSelection] Current modelValue:', props.modelValue)
+	console.log("[Step1CouncilSelection] updateCouncil called with:", council)
+	console.log("[Step1CouncilSelection] Current modelValue:", props.modelValue)
 
-  emit('update:modelValue', {
-    ...props.modelValue,
-    council: council
-  })
-  emit('council-change', council)
+	emit("update:modelValue", {
+		...props.modelValue,
+		council: council,
+	})
+	emit("council-change", council)
 
-  console.log('[Step1CouncilSelection] Emitted events')
+	console.log("[Step1CouncilSelection] Emitted events")
 }
 </script>

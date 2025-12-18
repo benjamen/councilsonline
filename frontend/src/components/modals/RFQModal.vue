@@ -201,163 +201,174 @@
 </template>
 
 <script setup>
-import { ref, watch, computed, onMounted } from 'vue'
-import { getAvailableAgents } from '../../api/rfq'
+import { computed, onMounted, ref, watch } from "vue"
+import { getAvailableAgents } from "../../api/rfq"
 
 const props = defineProps({
-  isOpen: {
-    type: Boolean,
-    default: false
-  },
-  rfq: {
-    type: Object,
-    default: () => ({})
-  },
-  requestId: {
-    type: String,
-    default: ''
-  }
+	isOpen: {
+		type: Boolean,
+		default: false,
+	},
+	rfq: {
+		type: Object,
+		default: () => ({}),
+	},
+	requestId: {
+		type: String,
+		default: "",
+	},
 })
 
-const emit = defineEmits(['close', 'save', 'send-to-agent', 'engage-agent'])
+const emit = defineEmits(["close", "save", "send-to-agent", "engage-agent"])
 
 // Local copy of RFQ data for editing
 const rfqData = ref({ ...props.rfq })
-const selectedAgent = ref(props.rfq.agent || '')
+const selectedAgent = ref(props.rfq.agent || "")
 const saving = ref(false)
 const availableAgents = ref([])
 const loadingAgents = ref(false)
 
 // Load available agents on component mount
 onMounted(async () => {
-  await loadAvailableAgents()
+	await loadAvailableAgents()
 })
 
 const loadAvailableAgents = async () => {
-  try {
-    loadingAgents.value = true
-    const resource = getAvailableAgents()
+	try {
+		loadingAgents.value = true
+		const resource = getAvailableAgents()
 
-    // Wait for the resource to load
-    await new Promise((resolve) => {
-      const checkLoaded = setInterval(() => {
-        if (resource.data) {
-          clearInterval(checkLoaded)
-          resolve()
-        }
-      }, 100)
+		// Wait for the resource to load
+		await new Promise((resolve) => {
+			const checkLoaded = setInterval(() => {
+				if (resource.data) {
+					clearInterval(checkLoaded)
+					resolve()
+				}
+			}, 100)
 
-      // Timeout after 5 seconds
-      setTimeout(() => {
-        clearInterval(checkLoaded)
-        resolve()
-      }, 5000)
-    })
+			// Timeout after 5 seconds
+			setTimeout(() => {
+				clearInterval(checkLoaded)
+				resolve()
+			}, 5000)
+		})
 
-    if (resource.data && Array.isArray(resource.data)) {
-      availableAgents.value = resource.data
-    } else {
-      // Fallback to hardcoded agents if API fails
-      availableAgents.value = [
-        { value: 'agent-1', label: 'Smith Planning Consultants Ltd' },
-        { value: 'agent-2', label: 'Jones Resource Consent Services' },
-        { value: 'agent-3', label: 'Wellington Planning Professionals' }
-      ]
-    }
-  } catch (error) {
-    console.error('Failed to load available agents:', error)
-    // Use fallback agents
-    availableAgents.value = [
-      { value: 'agent-1', label: 'Smith Planning Consultants Ltd' },
-      { value: 'agent-2', label: 'Jones Resource Consent Services' },
-      { value: 'agent-3', label: 'Wellington Planning Professionals' }
-    ]
-  } finally {
-    loadingAgents.value = false
-  }
+		if (resource.data && Array.isArray(resource.data)) {
+			availableAgents.value = resource.data
+		} else {
+			// Fallback to hardcoded agents if API fails
+			availableAgents.value = [
+				{ value: "agent-1", label: "Smith Planning Consultants Ltd" },
+				{ value: "agent-2", label: "Jones Resource Consent Services" },
+				{ value: "agent-3", label: "Wellington Planning Professionals" },
+			]
+		}
+	} catch (error) {
+		console.error("Failed to load available agents:", error)
+		// Use fallback agents
+		availableAgents.value = [
+			{ value: "agent-1", label: "Smith Planning Consultants Ltd" },
+			{ value: "agent-2", label: "Jones Resource Consent Services" },
+			{ value: "agent-3", label: "Wellington Planning Professionals" },
+		]
+	} finally {
+		loadingAgents.value = false
+	}
 }
 
 // Watch for prop changes
-watch(() => props.rfq, (newRfq) => {
-  rfqData.value = { ...newRfq }
-  selectedAgent.value = newRfq.agent || ''
-}, { deep: true })
+watch(
+	() => props.rfq,
+	(newRfq) => {
+		rfqData.value = { ...newRfq }
+		selectedAgent.value = newRfq.agent || ""
+	},
+	{ deep: true },
+)
 
-watch(() => props.isOpen, (isOpen) => {
-  if (isOpen) {
-    rfqData.value = { ...props.rfq }
-    selectedAgent.value = props.rfq.agent || ''
-    // Reload agents when modal opens
-    if (availableAgents.value.length === 0) {
-      loadAvailableAgents()
-    }
-  }
-})
+watch(
+	() => props.isOpen,
+	(isOpen) => {
+		if (isOpen) {
+			rfqData.value = { ...props.rfq }
+			selectedAgent.value = props.rfq.agent || ""
+			// Reload agents when modal opens
+			if (availableAgents.value.length === 0) {
+				loadAvailableAgents()
+			}
+		}
+	},
+)
 
 const closeModal = () => {
-  if (!saving.value) {
-    emit('close')
-  }
+	if (!saving.value) {
+		emit("close")
+	}
 }
 
 const saveRFQ = async () => {
-  saving.value = true
-  try {
-    await emit('save', rfqData.value)
-    // closeModal() // Don't close automatically, let parent handle it
-  } finally {
-    saving.value = false
-  }
+	saving.value = true
+	try {
+		await emit("save", rfqData.value)
+		// closeModal() // Don't close automatically, let parent handle it
+	} finally {
+		saving.value = false
+	}
 }
 
 const sendToAgent = async () => {
-  if (!selectedAgent.value) {
-    alert('Please select an agent first')
-    return
-  }
+	if (!selectedAgent.value) {
+		alert("Please select an agent first")
+		return
+	}
 
-  saving.value = true
-  try {
-    await emit('send-to-agent', {
-      rfq: rfqData.value,
-      agent: selectedAgent.value
-    })
-    rfqData.value.status = 'Sent to Agent'
-    rfqData.value.agent = selectedAgent.value
-  } finally {
-    saving.value = false
-  }
+	saving.value = true
+	try {
+		await emit("send-to-agent", {
+			rfq: rfqData.value,
+			agent: selectedAgent.value,
+		})
+		rfqData.value.status = "Sent to Agent"
+		rfqData.value.agent = selectedAgent.value
+	} finally {
+		saving.value = false
+	}
 }
 
 const engageAgent = async () => {
-  if (!confirm('Are you sure you want to engage this agent? This will lock your application and you will not be able to make further changes.')) {
-    return
-  }
+	if (
+		!confirm(
+			"Are you sure you want to engage this agent? This will lock your application and you will not be able to make further changes.",
+		)
+	) {
+		return
+	}
 
-  saving.value = true
-  try {
-    await emit('engage-agent', rfqData.value)
-    rfqData.value.status = 'Agent Engaged'
-    rfqData.value.agent_engaged = true
-  } finally {
-    saving.value = false
-  }
+	saving.value = true
+	try {
+		await emit("engage-agent", rfqData.value)
+		rfqData.value.status = "Agent Engaged"
+		rfqData.value.agent_engaged = true
+	} finally {
+		saving.value = false
+	}
 }
 
 const formatDate = (dateString) => {
-  if (!dateString) return ''
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-NZ', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  })
+	if (!dateString) return ""
+	const date = new Date(dateString)
+	return date.toLocaleDateString("en-NZ", {
+		year: "numeric",
+		month: "short",
+		day: "numeric",
+	})
 }
 
 const sanitizeHtml = (html) => {
-  if (!html) return ''
-  // Basic HTML sanitization - in production, use a library like DOMPurify
-  return html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+	if (!html) return ""
+	// Basic HTML sanitization - in production, use a library like DOMPurify
+	return html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
 }
 </script>
 

@@ -140,25 +140,28 @@
 </template>
 
 <script setup>
+import { Button, Input } from "frappe-ui"
 import { watch } from "vue"
 import { useRouter } from "vue-router"
-import { Input, Button } from "frappe-ui"
 import { session } from "../data/session"
 
 const router = useRouter()
 
 function submit(e) {
-  const formData = new FormData(e.target)
-  session.login.submit({
-    email: formData.get("email"),
-    password: formData.get("password"),
-  })
+	const formData = new FormData(e.target)
+	session.login.submit({
+		email: formData.get("email"),
+		password: formData.get("password"),
+	})
 }
 
 // Watch for successful login and redirect
-watch(() => session.isLoggedIn, (isLoggedIn) => {
-  if (isLoggedIn) {
-    router.push({ name: "Dashboard" })
-  }
-})
+watch(
+	() => session.isLoggedIn,
+	(isLoggedIn) => {
+		if (isLoggedIn) {
+			router.push({ name: "Dashboard" })
+		}
+	},
+)
 </script>

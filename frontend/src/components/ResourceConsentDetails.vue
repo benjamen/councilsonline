@@ -162,53 +162,53 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { createResource } from 'frappe-ui'
+import { createResource } from "frappe-ui"
+import { computed } from "vue"
 
 const props = defineProps({
-  requestId: {
-    type: String,
-    required: true
-  }
+	requestId: {
+		type: String,
+		required: true,
+	},
 })
 
 // Fetch RC Application data with child tables
 // Note: We use the request ID as the name since RC Application uses "By fieldname" naming with "request" field
 const rcApplication = createResource({
-  url: 'frappe.client.get',
-  params: {
-    doctype: 'Resource Consent Application',
-    name: props.requestId
-  },
-  auto: true
+	url: "frappe.client.get",
+	params: {
+		doctype: "Resource Consent Application",
+		name: props.requestId,
+	},
+	auto: true,
 })
 
 const hasDetailedEffects = computed(() => {
-  if (!rcApplication.data) return false
-  return !!(
-    rcApplication.data.effects_on_people ||
-    rcApplication.data.physical_effects ||
-    rcApplication.data.ecosystem_effects ||
-    rcApplication.data.cultural_effects
-  )
+	if (!rcApplication.data) return false
+	return !!(
+		rcApplication.data.effects_on_people ||
+		rcApplication.data.physical_effects ||
+		rcApplication.data.ecosystem_effects ||
+		rcApplication.data.cultural_effects
+	)
 })
 
 const getActivityStatusClass = (status) => {
-  const statusClasses = {
-    'Controlled': 'bg-blue-100 text-blue-800',
-    'Restricted Discretionary': 'bg-yellow-100 text-yellow-800',
-    'Discretionary': 'bg-orange-100 text-orange-800',
-    'Non-Complying': 'bg-red-100 text-red-800'
-  }
-  return statusClasses[status] || 'bg-gray-100 text-gray-800'
+	const statusClasses = {
+		Controlled: "bg-blue-100 text-blue-800",
+		"Restricted Discretionary": "bg-yellow-100 text-yellow-800",
+		Discretionary: "bg-orange-100 text-orange-800",
+		"Non-Complying": "bg-red-100 text-red-800",
+	}
+	return statusClasses[status] || "bg-gray-100 text-gray-800"
 }
 
 const formatDate = (date) => {
-  if (!date) return 'N/A'
-  return new Date(date).toLocaleDateString('en-NZ', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric'
-  })
+	if (!date) return "N/A"
+	return new Date(date).toLocaleDateString("en-NZ", {
+		day: "numeric",
+		month: "short",
+		year: "numeric",
+	})
 }
 </script>

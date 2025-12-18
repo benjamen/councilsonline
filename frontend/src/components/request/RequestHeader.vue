@@ -1,39 +1,39 @@
 <script setup>
-import { useRouter } from 'vue-router'
+import { useRouter } from "vue-router"
 
 const props = defineProps({
 	// Title and description
 	title: {
 		type: String,
-		required: true
+		required: true,
 	},
 	subtitle: {
 		type: String,
-		default: null
+		default: null,
 	},
 
 	// Navigation
 	showBackButton: {
 		type: Boolean,
-		default: true
+		default: true,
 	},
 	backRoute: {
 		type: String,
-		default: null // If null, uses router.back()
+		default: null, // If null, uses router.back()
 	},
 
 	// Loading state
 	loading: {
 		type: Boolean,
-		default: false
-	}
+		default: false,
+	},
 })
 
-const emit = defineEmits(['back'])
+const emit = defineEmits(["back"])
 const router = useRouter()
 
 const handleBack = () => {
-	emit('back')
+	emit("back")
 	if (props.backRoute) {
 		router.push(props.backRoute)
 	} else {

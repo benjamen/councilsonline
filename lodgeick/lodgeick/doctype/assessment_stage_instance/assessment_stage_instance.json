@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "creation": "2025-01-21 00:00:00.000000",
+ "creation": "2025-01-21 00:00:00",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -12,7 +12,6 @@
   "required",
   "stage_status",
   "section_break_tasks",
-  "checklist_template",
   "primary_task",
   "column_break_task",
   "estimated_hours",
@@ -75,17 +74,11 @@
    "label": "Task Details"
   },
   {
-   "fieldname": "checklist_template",
-   "fieldtype": "Link",
-   "label": "Checklist Template",
-   "options": "WB Task Checklist Template"
-  },
-  {
    "description": "Primary WB Task for this stage",
    "fieldname": "primary_task",
    "fieldtype": "Link",
    "label": "Primary Task",
-   "options": "WB Task"
+   "options": "Project Task"
   },
   {
    "fieldname": "column_break_task",
@@ -156,7 +149,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-01-21 00:00:00.000000",
+ "modified": "2025-12-16 16:17:49.545637",
  "modified_by": "Administrator",
  "module": "Lodgeick",
  "name": "Assessment Stage Instance",

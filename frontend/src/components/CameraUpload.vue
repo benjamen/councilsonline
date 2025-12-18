@@ -195,44 +195,44 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { computed, ref } from "vue"
 
 const props = defineProps({
-  label: {
-    type: String,
-    required: true
-  },
-  helpText: {
-    type: String,
-    default: ''
-  },
-  modelValue: {
-    type: Array,
-    default: () => []
-  },
-  accept: {
-    type: String,
-    default: 'image/*,.pdf'
-  },
-  multiple: {
-    type: Boolean,
-    default: false
-  },
-  required: {
-    type: Boolean,
-    default: false
-  },
-  allowCamera: {
-    type: Boolean,
-    default: true
-  },
-  maxSize: {
-    type: Number,
-    default: 20 * 1024 * 1024 // 20MB
-  }
+	label: {
+		type: String,
+		required: true,
+	},
+	helpText: {
+		type: String,
+		default: "",
+	},
+	modelValue: {
+		type: Array,
+		default: () => [],
+	},
+	accept: {
+		type: String,
+		default: "image/*,.pdf",
+	},
+	multiple: {
+		type: Boolean,
+		default: false,
+	},
+	required: {
+		type: Boolean,
+		default: false,
+	},
+	allowCamera: {
+		type: Boolean,
+		default: true,
+	},
+	maxSize: {
+		type: Number,
+		default: 20 * 1024 * 1024, // 20MB
+	},
 })
 
-const emit = defineEmits(['update:modelValue', 'upload'])
+const emit = defineEmits(["update:modelValue", "upload"])
 
 const fileInput = ref(null)
 const videoElement = ref(null)
@@ -243,183 +243,195 @@ const uploading = ref(false)
 const uploadProgress = ref(0)
 
 const files = computed({
-  get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value)
+	get: () => props.modelValue,
+	set: (value) => emit("update:modelValue", value),
 })
 
 // Trigger file input
 const triggerFileInput = () => {
-  fileInput.value?.click()
+	fileInput.value?.click()
 }
 
 // Handle file selection
 const handleFileSelect = async (event) => {
-  const selectedFiles = Array.from(event.target.files)
-  await processFiles(selectedFiles)
-  event.target.value = '' // Reset input
+	const selectedFiles = Array.from(event.target.files)
+	await processFiles(selectedFiles)
+	event.target.value = "" // Reset input
 }
 
 // Process files
 const processFiles = async (selectedFiles) => {
-  const validFiles = []
+	const validFiles = []
 
-  for (const file of selectedFiles) {
-    // Validate file size
-    if (file.size > props.maxSize) {
-      alert(`File ${file.name} exceeds maximum size of ${formatFileSize(props.maxSize)}`)
-      continue
-    }
+	for (const file of selectedFiles) {
+		// Validate file size
+		if (file.size > props.maxSize) {
+			alert(
+				`File ${file.name} exceeds maximum size of ${formatFileSize(props.maxSize)}`,
+			)
+			continue
+		}
 
-    // Create preview for images
-    let preview = null
-    if (file.type.startsWith('image/')) {
-      preview = await createImagePreview(file)
-    }
+		// Create preview for images
+		let preview = null
+		if (file.type.startsWith("image/")) {
+			preview = await createImagePreview(file)
+		}
 
-    validFiles.push({
-      file: file,
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      preview: preview,
-      uploadDate: new Date().toISOString()
-    })
-  }
+		validFiles.push({
+			file: file,
+			name: file.name,
+			size: file.size,
+			type: file.type,
+			preview: preview,
+			uploadDate: new Date().toISOString(),
+		})
+	}
 
-  if (validFiles.length > 0) {
-    const newFiles = props.multiple ? [...files.value, ...validFiles] : validFiles
-    emit('update:modelValue', newFiles)
+	if (validFiles.length > 0) {
+		const newFiles = props.multiple
+			? [...files.value, ...validFiles]
+			: validFiles
+		emit("update:modelValue", newFiles)
 
-    // Auto-upload files
-    await uploadFiles(validFiles)
-  }
+		// Auto-upload files
+		await uploadFiles(validFiles)
+	}
 }
 
 // Create image preview
 const createImagePreview = (file) => {
-  return new Promise((resolve) => {
-    const reader = new FileReader()
-    reader.onload = (e) => resolve(e.target.result)
-    reader.onerror = () => resolve(null)
-    reader.readAsDataURL(file)
-  })
+	return new Promise((resolve) => {
+		const reader = new FileReader()
+		reader.onload = (e) => resolve(e.target.result)
+		reader.onerror = () => resolve(null)
+		reader.readAsDataURL(file)
+	})
 }
 
 // Upload files
 const uploadFiles = async (filesToUpload) => {
-  uploading.value = true
-  uploadProgress.value = 0
+	uploading.value = true
+	uploadProgress.value = 0
 
-  try {
-    for (let i = 0; i < filesToUpload.length; i++) {
-      const fileData = filesToUpload[i]
+	try {
+		for (let i = 0; i < filesToUpload.length; i++) {
+			const fileData = filesToUpload[i]
 
-      // Simulate upload progress
-      const progressInterval = setInterval(() => {
-        uploadProgress.value = Math.min(uploadProgress.value + 10, 90)
-      }, 100)
+			// Simulate upload progress
+			const progressInterval = setInterval(() => {
+				uploadProgress.value = Math.min(uploadProgress.value + 10, 90)
+			}, 100)
 
-      // Emit upload event (parent component should handle actual upload)
-      await new Promise((resolve) => {
-        emit('upload', fileData, resolve)
-      })
+			// Emit upload event (parent component should handle actual upload)
+			await new Promise((resolve) => {
+				emit("upload", fileData, resolve)
+			})
 
-      clearInterval(progressInterval)
-      uploadProgress.value = ((i + 1) / filesToUpload.length) * 100
-    }
-  } catch (error) {
-    console.error('Upload error:', error)
-    alert('Failed to upload files. Please try again.')
-  } finally {
-    uploading.value = false
-    uploadProgress.value = 0
-  }
+			clearInterval(progressInterval)
+			uploadProgress.value = ((i + 1) / filesToUpload.length) * 100
+		}
+	} catch (error) {
+		console.error("Upload error:", error)
+		alert("Failed to upload files. Please try again.")
+	} finally {
+		uploading.value = false
+		uploadProgress.value = 0
+	}
 }
 
 // Remove file
 const removeFile = (index) => {
-  const newFiles = [...files.value]
-  newFiles.splice(index, 1)
-  emit('update:modelValue', newFiles)
+	const newFiles = [...files.value]
+	newFiles.splice(index, 1)
+	emit("update:modelValue", newFiles)
 }
 
 // Open camera
 const openCamera = async () => {
-  try {
-    showCamera.value = true
-    await startCamera()
-  } catch (error) {
-    console.error('Camera error:', error)
-    alert('Unable to access camera. Please check permissions or upload a file instead.')
-    showCamera.value = false
-  }
+	try {
+		showCamera.value = true
+		await startCamera()
+	} catch (error) {
+		console.error("Camera error:", error)
+		alert(
+			"Unable to access camera. Please check permissions or upload a file instead.",
+		)
+		showCamera.value = false
+	}
 }
 
 // Start camera
 const startCamera = async () => {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } },
-      audio: false
-    })
+	try {
+		const stream = await navigator.mediaDevices.getUserMedia({
+			video: {
+				facingMode: "environment",
+				width: { ideal: 1920 },
+				height: { ideal: 1080 },
+			},
+			audio: false,
+		})
 
-    mediaStream.value = stream
+		mediaStream.value = stream
 
-    if (videoElement.value) {
-      videoElement.value.srcObject = stream
-    }
-  } catch (error) {
-    throw error
-  }
+		if (videoElement.value) {
+			videoElement.value.srcObject = stream
+		}
+	} catch (error) {
+		throw error
+	}
 }
 
 // Capture photo
 const capturePhoto = () => {
-  const video = videoElement.value
-  const canvas = document.createElement('canvas')
-  canvas.width = video.videoWidth
-  canvas.height = video.videoHeight
+	const video = videoElement.value
+	const canvas = document.createElement("canvas")
+	canvas.width = video.videoWidth
+	canvas.height = video.videoHeight
 
-  const context = canvas.getContext('2d')
-  context.drawImage(video, 0, 0, canvas.width, canvas.height)
+	const context = canvas.getContext("2d")
+	context.drawImage(video, 0, 0, canvas.width, canvas.height)
 
-  capturedImage.value = canvas.toDataURL('image/jpeg', 0.9)
+	capturedImage.value = canvas.toDataURL("image/jpeg", 0.9)
 }
 
 // Retake photo
 const retakePhoto = () => {
-  capturedImage.value = null
+	capturedImage.value = null
 }
 
 // Use photo
 const usePhoto = async () => {
-  if (!capturedImage.value) return
+	if (!capturedImage.value) return
 
-  // Convert base64 to File
-  const blob = await (await fetch(capturedImage.value)).blob()
-  const file = new File([blob], `photo-${Date.now()}.jpg`, { type: 'image/jpeg' })
+	// Convert base64 to File
+	const blob = await (await fetch(capturedImage.value)).blob()
+	const file = new File([blob], `photo-${Date.now()}.jpg`, {
+		type: "image/jpeg",
+	})
 
-  await processFiles([file])
-  closeCamera()
+	await processFiles([file])
+	closeCamera()
 }
 
 // Close camera
 const closeCamera = () => {
-  if (mediaStream.value) {
-    mediaStream.value.getTracks().forEach(track => track.stop())
-    mediaStream.value = null
-  }
-  capturedImage.value = null
-  showCamera.value = false
+	if (mediaStream.value) {
+		mediaStream.value.getTracks().forEach((track) => track.stop())
+		mediaStream.value = null
+	}
+	capturedImage.value = null
+	showCamera.value = false
 }
 
 // Format file size
 const formatFileSize = (bytes) => {
-  if (bytes === 0) return '0 Bytes'
-  const k = 1024
-  const sizes = ['Bytes', 'KB', 'MB', 'GB']
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
-  return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i]
+	if (bytes === 0) return "0 Bytes"
+	const k = 1024
+	const sizes = ["Bytes", "KB", "MB", "GB"]
+	const i = Math.floor(Math.log(bytes) / Math.log(k))
+	return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i]
 }
 </script>
 

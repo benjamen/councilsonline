@@ -1,9 +1,9 @@
 import router from "@/router"
-import { createResource, call } from "frappe-ui"
+import { call, createResource } from "frappe-ui"
 import { computed, reactive } from "vue"
 
-import { userResource } from "./user"
 import { useCouncilStore } from "@/stores/councilStore"
+import { userResource } from "./user"
 
 export function sessionUser() {
 	const cookies = new URLSearchParams(document.cookie.split("; ").join("&"))
@@ -32,21 +32,23 @@ export const session = reactive({
 			const councilStore = useCouncilStore()
 
 			// Track login event for analytics
-			const source = councilStore.lockedCouncil ? "council-specific" : "system-wide"
+			const source = councilStore.lockedCouncil
+				? "council-specific"
+				: "system-wide"
 			try {
-				await call('lodgeick.api.track_login_event', {
+				await call("lodgeick.api.track_login_event", {
 					source: source,
-					council_code: councilStore.lockedCouncil || null
+					council_code: councilStore.lockedCouncil || null,
 				})
 			} catch (error) {
-				console.error('Failed to track login event:', error)
+				console.error("Failed to track login event:", error)
 				// Don't block login if tracking fails
 			}
 
 			if (councilStore.lockedCouncil) {
 				router.replace({
 					name: "CouncilDashboard",
-					params: { councilCode: councilStore.lockedCouncil }
+					params: { councilCode: councilStore.lockedCouncil },
 				})
 			} else {
 				router.replace({ name: "Dashboard" })

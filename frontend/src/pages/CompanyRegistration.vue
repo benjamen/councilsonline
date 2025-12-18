@@ -585,54 +585,59 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue"
+import { Button, Input } from "frappe-ui"
+import { computed, ref } from "vue"
 import { useRouter } from "vue-router"
-import { Input, Button } from "frappe-ui"
-import CouncilSelector from "../components/CouncilSelector.vue"
 import AddressLookup from "../components/AddressLookup.vue"
-import { validateNZPhoneNumber, validateEmail, validatePassword, validateNZBN } from "../utils/validation"
+import CouncilSelector from "../components/CouncilSelector.vue"
+import {
+	validateEmail,
+	validateNZBN,
+	validateNZPhoneNumber,
+	validatePassword,
+} from "../utils/validation"
 
 const router = useRouter()
 
 const steps = [
-  { label: 'Your Details' },
-  { label: 'Business Info' },
-  { label: 'Settings' }
+	{ label: "Your Details" },
+	{ label: "Business Info" },
+	{ label: "Settings" },
 ]
 
 const currentStep = ref(0)
 const isLoading = ref(false)
-const errorMessage = ref('')
+const errorMessage = ref("")
 const selectedBusinessAddress = ref(null)
 
 const formData = ref({
-  agent_type: 'Sole Trader', // Sole Trader or Company
-  first_name: '',
-  last_name: '',
-  email: '',
-  phone: '',
-  password: '',
-  confirm_password: '',
-  company_name: '',
-  company_number: '',
-  nzbn: '',
-  trading_name: '',
-  default_council: null,
-  terms: false
+	agent_type: "Sole Trader", // Sole Trader or Company
+	first_name: "",
+	last_name: "",
+	email: "",
+	phone: "",
+	password: "",
+	confirm_password: "",
+	company_name: "",
+	company_number: "",
+	nzbn: "",
+	trading_name: "",
+	default_council: null,
+	terms: false,
 })
 
 // Validation errors
-const phoneError = ref('')
-const emailError = ref('')
-const passwordError = ref('')
-const confirmPasswordError = ref('')
-const nzbnError = ref('')
-const passwordStrength = ref('')
+const phoneError = ref("")
+const emailError = ref("")
+const passwordError = ref("")
+const confirmPasswordError = ref("")
+const nzbnError = ref("")
+const passwordStrength = ref("")
 
 const passwordStrengthClass = computed(() => {
-  if (passwordStrength.value === 'strong') return 'text-green-600'
-  if (passwordStrength.value === 'medium') return 'text-yellow-600'
-  return 'text-red-600'
+	if (passwordStrength.value === "strong") return "text-green-600"
+	if (passwordStrength.value === "medium") return "text-yellow-600"
+	return "text-red-600"
 })
 
 // Properties management
@@ -640,264 +645,282 @@ const properties = ref([])
 const showAddPropertyModal = ref(false)
 const selectedPropertyAddress = ref(null)
 const currentProperty = ref({
-  property_name: '',
-  street: '',
-  suburb: '',
-  city: '',
-  postcode: '',
-  is_default: false
+	property_name: "",
+	street: "",
+	suburb: "",
+	city: "",
+	postcode: "",
+	is_default: false,
 })
 
 const openAddPropertyModal = () => {
-  currentProperty.value = {
-    property_name: '',
-    street: '',
-    suburb: '',
-    city: '',
-    postcode: '',
-    is_default: properties.value.length === 0 // First property is default
-  }
-  selectedPropertyAddress.value = null
-  showAddPropertyModal.value = true
+	currentProperty.value = {
+		property_name: "",
+		street: "",
+		suburb: "",
+		city: "",
+		postcode: "",
+		is_default: properties.value.length === 0, // First property is default
+	}
+	selectedPropertyAddress.value = null
+	showAddPropertyModal.value = true
 }
 
 const closeAddPropertyModal = () => {
-  showAddPropertyModal.value = false
-  currentProperty.value = {
-    property_name: '',
-    street: '',
-    suburb: '',
-    city: '',
-    postcode: '',
-    is_default: false
-  }
-  selectedPropertyAddress.value = null
+	showAddPropertyModal.value = false
+	currentProperty.value = {
+		property_name: "",
+		street: "",
+		suburb: "",
+		city: "",
+		postcode: "",
+		is_default: false,
+	}
+	selectedPropertyAddress.value = null
 }
 
 const addProperty = () => {
-  if (!currentProperty.value.property_name) {
-    alert('Please enter a property name')
-    return
-  }
+	if (!currentProperty.value.property_name) {
+		alert("Please enter a property name")
+		return
+	}
 
-  if (!selectedPropertyAddress.value) {
-    alert('Please select a property address')
-    return
-  }
+	if (!selectedPropertyAddress.value) {
+		alert("Please select a property address")
+		return
+	}
 
-  // If this property is set as default, remove default from others
-  if (currentProperty.value.is_default) {
-    properties.value.forEach(p => p.is_default = false)
-  }
+	// If this property is set as default, remove default from others
+	if (currentProperty.value.is_default) {
+		properties.value.forEach((p) => (p.is_default = false))
+	}
 
-  properties.value.push({
-    property_name: currentProperty.value.property_name,
-    street: selectedPropertyAddress.value.street_address || selectedPropertyAddress.value.full_address,
-    suburb: selectedPropertyAddress.value.suburb || '',
-    city: selectedPropertyAddress.value.city || '',
-    postcode: selectedPropertyAddress.value.postcode || '',
-    is_default: currentProperty.value.is_default
-  })
+	properties.value.push({
+		property_name: currentProperty.value.property_name,
+		street:
+			selectedPropertyAddress.value.street_address ||
+			selectedPropertyAddress.value.full_address,
+		suburb: selectedPropertyAddress.value.suburb || "",
+		city: selectedPropertyAddress.value.city || "",
+		postcode: selectedPropertyAddress.value.postcode || "",
+		is_default: currentProperty.value.is_default,
+	})
 
-  closeAddPropertyModal()
+	closeAddPropertyModal()
 }
 
 const removeProperty = (index) => {
-  if (confirm('Are you sure you want to remove this property?')) {
-    const wasDefault = properties.value[index].is_default
-    properties.value.splice(index, 1)
+	if (confirm("Are you sure you want to remove this property?")) {
+		const wasDefault = properties.value[index].is_default
+		properties.value.splice(index, 1)
 
-    // If we removed the default and have other properties, set the first one as default
-    if (wasDefault && properties.value.length > 0) {
-      properties.value[0].is_default = true
-    }
-  }
+		// If we removed the default and have other properties, set the first one as default
+		if (wasDefault && properties.value.length > 0) {
+			properties.value[0].is_default = true
+		}
+	}
 }
 
 const setDefaultProperty = (index) => {
-  properties.value.forEach((p, i) => {
-    p.is_default = i === index
-  })
+	properties.value.forEach((p, i) => {
+		p.is_default = i === index
+	})
 }
 
 const handlePropertyAddressSelected = (address) => {
-  selectedPropertyAddress.value = address
+	selectedPropertyAddress.value = address
 }
 
 // Validation functions
 const validatePhoneField = () => {
-  const validation = validateNZPhoneNumber(formData.value.phone)
-  if (!validation.isValid) {
-    phoneError.value = validation.message
-  } else {
-    phoneError.value = ''
-    formData.value.phone = validation.formatted
-  }
-  return validation.isValid
+	const validation = validateNZPhoneNumber(formData.value.phone)
+	if (!validation.isValid) {
+		phoneError.value = validation.message
+	} else {
+		phoneError.value = ""
+		formData.value.phone = validation.formatted
+	}
+	return validation.isValid
 }
 
 const validateEmailField = () => {
-  const validation = validateEmail(formData.value.email)
-  if (!validation.isValid) {
-    emailError.value = validation.message
-  } else {
-    emailError.value = ''
-  }
-  return validation.isValid
+	const validation = validateEmail(formData.value.email)
+	if (!validation.isValid) {
+		emailError.value = validation.message
+	} else {
+		emailError.value = ""
+	}
+	return validation.isValid
 }
 
 const validatePasswordField = () => {
-  const validation = validatePassword(formData.value.password)
-  if (!validation.isValid) {
-    passwordError.value = validation.message
-    passwordStrength.value = ''
-  } else {
-    passwordError.value = ''
-    passwordStrength.value = validation.strength
-  }
-  return validation.isValid
+	const validation = validatePassword(formData.value.password)
+	if (!validation.isValid) {
+		passwordError.value = validation.message
+		passwordStrength.value = ""
+	} else {
+		passwordError.value = ""
+		passwordStrength.value = validation.strength
+	}
+	return validation.isValid
 }
 
 const validatePasswordMatch = () => {
-  if (formData.value.password !== formData.value.confirm_password) {
-    confirmPasswordError.value = 'Passwords do not match'
-    return false
-  }
-  confirmPasswordError.value = ''
-  return true
+	if (formData.value.password !== formData.value.confirm_password) {
+		confirmPasswordError.value = "Passwords do not match"
+		return false
+	}
+	confirmPasswordError.value = ""
+	return true
 }
 
 const validateNZBNField = () => {
-  const validation = validateNZBN(formData.value.nzbn)
-  if (!validation.isValid) {
-    nzbnError.value = validation.message
-  } else {
-    nzbnError.value = ''
-  }
-  return validation.isValid
+	const validation = validateNZBN(formData.value.nzbn)
+	if (!validation.isValid) {
+		nzbnError.value = validation.message
+	} else {
+		nzbnError.value = ""
+	}
+	return validation.isValid
 }
 
 const handleBusinessAddressSelected = (address) => {
-  selectedBusinessAddress.value = address
+	selectedBusinessAddress.value = address
 }
 
 function nextStep() {
-  // Validate current step before proceeding
-  if (currentStep.value === 0) {
-    // Validate personal details
-    const isPhoneValid = validatePhoneField()
-    const isEmailValid = validateEmailField()
-    const isPasswordValid = validatePasswordField()
-    const isPasswordMatch = validatePasswordMatch()
+	// Validate current step before proceeding
+	if (currentStep.value === 0) {
+		// Validate personal details
+		const isPhoneValid = validatePhoneField()
+		const isEmailValid = validateEmailField()
+		const isPasswordValid = validatePasswordField()
+		const isPasswordMatch = validatePasswordMatch()
 
-    if (!formData.value.first_name || !formData.value.last_name) {
-      errorMessage.value = 'Please fill in all required fields'
-      return
-    }
+		if (!formData.value.first_name || !formData.value.last_name) {
+			errorMessage.value = "Please fill in all required fields"
+			return
+		}
 
-    if (!isPhoneValid || !isEmailValid || !isPasswordValid || !isPasswordMatch) {
-      errorMessage.value = 'Please correct the errors above'
-      return
-    }
-  } else if (currentStep.value === 1) {
-    // Validate business details
-    if (formData.value.agent_type === 'Company' && !formData.value.company_name) {
-      errorMessage.value = 'Company name is required'
-      return
-    }
-    if (formData.value.nzbn && !validateNZBNField()) {
-      return
-    }
-  }
+		if (
+			!isPhoneValid ||
+			!isEmailValid ||
+			!isPasswordValid ||
+			!isPasswordMatch
+		) {
+			errorMessage.value = "Please correct the errors above"
+			return
+		}
+	} else if (currentStep.value === 1) {
+		// Validate business details
+		if (
+			formData.value.agent_type === "Company" &&
+			!formData.value.company_name
+		) {
+			errorMessage.value = "Company name is required"
+			return
+		}
+		if (formData.value.nzbn && !validateNZBNField()) {
+			return
+		}
+	}
 
-  errorMessage.value = ''
-  currentStep.value++
+	errorMessage.value = ""
+	currentStep.value++
 }
 
 function previousStep() {
-  errorMessage.value = ''
-  currentStep.value--
+	errorMessage.value = ""
+	currentStep.value--
 }
 
 function handleSubmit() {
-  // Final validation
-  if (!formData.value.terms) {
-    errorMessage.value = 'You must agree to the Terms of Service and Privacy Policy'
-    return
-  }
+	// Final validation
+	if (!formData.value.terms) {
+		errorMessage.value =
+			"You must agree to the Terms of Service and Privacy Policy"
+		return
+	}
 
-  errorMessage.value = ''
-  isLoading.value = true
+	errorMessage.value = ""
+	isLoading.value = true
 
-  // Prepare agent data for API
-  const userData = {
-    email: formData.value.email,
-    first_name: formData.value.first_name,
-    last_name: formData.value.last_name,
-    phone: formData.value.phone,
-    password: formData.value.password,
-    user_role: 'agent', // This is an AGENT registration
-    agent_type: formData.value.agent_type, // Sole Trader or Company
-    properties: properties.value // Send all properties
-  }
+	// Prepare agent data for API
+	const userData = {
+		email: formData.value.email,
+		first_name: formData.value.first_name,
+		last_name: formData.value.last_name,
+		phone: formData.value.phone,
+		password: formData.value.password,
+		user_role: "agent", // This is an AGENT registration
+		agent_type: formData.value.agent_type, // Sole Trader or Company
+		properties: properties.value, // Send all properties
+	}
 
-  // Add business data
-  if (formData.value.agent_type === 'Company') {
-    userData.company_name = formData.value.company_name
-    userData.company_number = formData.value.company_number
-    userData.nzbn = formData.value.nzbn
-  } else {
-    userData.trading_name = formData.value.trading_name
-  }
+	// Add business data
+	if (formData.value.agent_type === "Company") {
+		userData.company_name = formData.value.company_name
+		userData.company_number = formData.value.company_number
+		userData.nzbn = formData.value.nzbn
+	} else {
+		userData.trading_name = formData.value.trading_name
+	}
 
-  // Add business address if selected
-  if (selectedBusinessAddress.value) {
-    userData.business_address = selectedBusinessAddress.value.full_address
-    userData.business_street = selectedBusinessAddress.value.street_address
-    userData.business_suburb = selectedBusinessAddress.value.suburb
-    userData.business_city = selectedBusinessAddress.value.city
-    userData.business_postcode = selectedBusinessAddress.value.postcode
-  }
+	// Add business address if selected
+	if (selectedBusinessAddress.value) {
+		userData.business_address = selectedBusinessAddress.value.full_address
+		userData.business_street = selectedBusinessAddress.value.street_address
+		userData.business_suburb = selectedBusinessAddress.value.suburb
+		userData.business_city = selectedBusinessAddress.value.city
+		userData.business_postcode = selectedBusinessAddress.value.postcode
+	}
 
-  // Add default council if selected
-  if (formData.value.default_council) {
-    userData.council_code = formData.value.default_council
-  }
+	// Add default council if selected
+	if (formData.value.default_council) {
+		userData.council_code = formData.value.default_council
+	}
 
-  // Call registration API
-  fetch('/api/method/lodgeick.api.register_agent', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Frappe-CSRF-Token': window.csrf_token
-    },
-    body: JSON.stringify(userData)
-  })
-  .then(response => response.json())
-  .then(data => {
-    isLoading.value = false
+	// Call registration API
+	fetch("/api/method/lodgeick.api.register_agent", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			"X-Frappe-CSRF-Token": window.csrf_token,
+		},
+		body: JSON.stringify(userData),
+	})
+		.then((response) => response.json())
+		.then((data) => {
+			isLoading.value = false
 
-    if (data.message && data.message.success) {
-      // Success - redirect to login
-      router.push({
-        name: 'Login',
-        query: { registered: 'true', type: 'agent' }
-      })
-    } else if (data.exc || data._server_messages) {
-      const serverMessages = data._server_messages ? JSON.parse(data._server_messages) : []
-      const errorMsg = serverMessages.length > 0
-        ? JSON.parse(serverMessages[0]).message
-        : 'Registration failed. Please try again.'
-      errorMessage.value = errorMsg
-      console.error('Agent registration error:', data.exc || data._server_messages)
-    } else {
-      errorMessage.value = 'Registration failed. Please try again.'
-    }
-  })
-  .catch(error => {
-    isLoading.value = false
-    errorMessage.value = 'Network error. Please check your connection and try again.'
-    console.error('Agent registration error:', error)
-  })
+			if (data.message && data.message.success) {
+				// Success - redirect to login
+				router.push({
+					name: "Login",
+					query: { registered: "true", type: "agent" },
+				})
+			} else if (data.exc || data._server_messages) {
+				const serverMessages = data._server_messages
+					? JSON.parse(data._server_messages)
+					: []
+				const errorMsg =
+					serverMessages.length > 0
+						? JSON.parse(serverMessages[0]).message
+						: "Registration failed. Please try again."
+				errorMessage.value = errorMsg
+				console.error(
+					"Agent registration error:",
+					data.exc || data._server_messages,
+				)
+			} else {
+				errorMessage.value = "Registration failed. Please try again."
+			}
+		})
+		.catch((error) => {
+			isLoading.value = false
+			errorMessage.value =
+				"Network error. Please check your connection and try again."
+			console.error("Agent registration error:", error)
+		})
 }
 </script>

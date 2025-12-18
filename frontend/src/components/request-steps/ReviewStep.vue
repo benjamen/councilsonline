@@ -403,230 +403,231 @@
 </template>
 
 <script setup>
-import { defineProps, computed } from 'vue'
+import { computed, defineProps } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  },
-  councilName: {
-    type: String,
-    default: 'Council'
-  },
-  requestTypeName: {
-    type: String,
-    default: 'Application'
-  },
-  applicationFee: {
-    type: String,
-    default: 'TBD'
-  },
-  isResourceConsent: {
-    type: Boolean,
-    default: false
-  },
-  stepConfigs: {
-    type: Array,
-    default: () => []
-  },
-  usesConfigurableSteps: {
-    type: Boolean,
-    default: false
-  },
-  requestTypeDetails: {
-    type: Object,
-    default: null
-  }
+	modelValue: {
+		type: Object,
+		required: true,
+	},
+	councilName: {
+		type: String,
+		default: "Council",
+	},
+	requestTypeName: {
+		type: String,
+		default: "Application",
+	},
+	applicationFee: {
+		type: String,
+		default: "TBD",
+	},
+	isResourceConsent: {
+		type: Boolean,
+		default: false,
+	},
+	stepConfigs: {
+		type: Array,
+		default: () => [],
+	},
+	usesConfigurableSteps: {
+		type: Boolean,
+		default: false,
+	},
+	requestTypeDetails: {
+		type: Object,
+		default: null,
+	},
 })
 
 // Filter steps that should show on review
 const reviewSections = computed(() => {
-  if (!props.usesConfigurableSteps || !props.stepConfigs) {
-    return []
-  }
+	if (!props.usesConfigurableSteps || !props.stepConfigs) {
+		return []
+	}
 
-  return props.stepConfigs.filter(step => step.show_on_review)
+	return props.stepConfigs.filter((step) => step.show_on_review)
 })
 
 // Check if property details should be displayed
 const hasPropertyDetails = computed(() => {
-  // Always show for resource consent
-  if (props.isResourceConsent) {
-    return true
-  }
+	// Always show for resource consent
+	if (props.isResourceConsent) {
+		return true
+	}
 
-  // Check if property data actually exists in the request
-  return !!(props.modelValue.property || props.modelValue.property_address)
+	// Check if property data actually exists in the request
+	return !!(props.modelValue.property || props.modelValue.property_address)
 })
 
 // Check if a step has any content to show on review
 const hasReviewContent = (step) => {
-  if (!step.sections) return false
+	if (!step.sections) return false
 
-  for (const section of step.sections) {
-    if (!section.show_on_review) continue
+	for (const section of step.sections) {
+		if (!section.show_on_review) continue
 
-    for (const field of section.fields) {
-      if (field.show_on_review && props.modelValue[field.field_name]) {
-        return true
-      }
-    }
-  }
+		for (const field of section.fields) {
+			if (field.show_on_review && props.modelValue[field.field_name]) {
+				return true
+			}
+		}
+	}
 
-  return false
+	return false
 }
 
 // Format field value for display
 const formatFieldValue = (field, value) => {
-  if (value === undefined || value === null || value === '') {
-    return 'Not provided'
-  }
+	if (value === undefined || value === null || value === "") {
+		return "Not provided"
+	}
 
-  // Check field type
-  if (field.field_type === 'Check') {
-    return value ? 'Yes' : 'No'
-  }
+	// Check field type
+	if (field.field_type === "Check") {
+		return value ? "Yes" : "No"
+	}
 
-  if (field.field_type === 'Date' && value) {
-    // Format date nicely
-    try {
-      return new Date(value).toLocaleDateString('en-NZ', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      })
-    } catch (e) {
-      return value
-    }
-  }
+	if (field.field_type === "Date" && value) {
+		// Format date nicely
+		try {
+			return new Date(value).toLocaleDateString("en-NZ", {
+				year: "numeric",
+				month: "long",
+				day: "numeric",
+			})
+		} catch (e) {
+			return value
+		}
+	}
 
-  if (field.field_type === 'Currency' && value) {
-    return `₱${Number(value).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-  }
+	if (field.field_type === "Currency" && value) {
+		return `₱${Number(value).toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+	}
 
-  if (field.field_type === 'Select') {
-    return value
-  }
+	if (field.field_type === "Select") {
+		return value
+	}
 
-  if (field.field_type === 'Attach' || field.field_type === 'Attach Image') {
-    return value ? '✓ File attached' : 'Not provided'
-  }
+	if (field.field_type === "Attach" || field.field_type === "Attach Image") {
+		return value ? "✓ File attached" : "Not provided"
+	}
 
-  return value
+	return value
 }
 
 // RC-specific computed properties
 const hasAnyConsentType = computed(() => {
-  return !!(
-    props.modelValue.consent_type_land_use ||
-    props.modelValue.consent_type_subdivision ||
-    props.modelValue.consent_type_discharge ||
-    props.modelValue.consent_type_water ||
-    props.modelValue.consent_type_coastal
-  )
+	return !!(
+		props.modelValue.consent_type_land_use ||
+		props.modelValue.consent_type_subdivision ||
+		props.modelValue.consent_type_discharge ||
+		props.modelValue.consent_type_water ||
+		props.modelValue.consent_type_coastal
+	)
 })
 
 const activityStatusClass = computed(() => {
-  const status = props.modelValue.activity_status_type
-  if (status === 'Permitted') return 'bg-green-100 text-green-800'
-  if (status === 'Controlled') return 'bg-blue-100 text-blue-800'
-  if (status === 'Restricted Discretionary') return 'bg-yellow-100 text-yellow-800'
-  if (status === 'Discretionary') return 'bg-orange-100 text-orange-800'
-  if (status === 'Non-Complying') return 'bg-red-100 text-red-800'
-  if (status === 'Prohibited') return 'bg-gray-800 text-white'
-  return 'bg-gray-100 text-gray-800'
+	const status = props.modelValue.activity_status_type
+	if (status === "Permitted") return "bg-green-100 text-green-800"
+	if (status === "Controlled") return "bg-blue-100 text-blue-800"
+	if (status === "Restricted Discretionary")
+		return "bg-yellow-100 text-yellow-800"
+	if (status === "Discretionary") return "bg-orange-100 text-orange-800"
+	if (status === "Non-Complying") return "bg-red-100 text-red-800"
+	if (status === "Prohibited") return "bg-gray-800 text-white"
+	return "bg-gray-100 text-gray-800"
 })
 
 const hasNaturalHazards = computed(() => {
-  return !!(
-    props.modelValue.hazard_flooding ||
-    props.modelValue.hazard_earthquake ||
-    props.modelValue.hazard_landslip ||
-    props.modelValue.hazard_coastal
-  )
+	return !!(
+		props.modelValue.hazard_flooding ||
+		props.modelValue.hazard_earthquake ||
+		props.modelValue.hazard_landslip ||
+		props.modelValue.hazard_coastal
+	)
 })
 
 const hasConsultation = computed(() => {
-  return !!(
-    props.modelValue.consultation_undertaken ||
-    props.modelValue.consultation_summary ||
-    props.modelValue.affected_parties_details ||
-    props.modelValue.written_approvals_obtained
-  )
+	return !!(
+		props.modelValue.consultation_undertaken ||
+		props.modelValue.consultation_summary ||
+		props.modelValue.affected_parties_details ||
+		props.modelValue.written_approvals_obtained
+	)
 })
 
 const hasAEEContent = computed(() => {
-  return !!(
-    props.modelValue.activity_description ||
-    props.modelValue.aee_full_assessment ||
-    props.modelValue.positive_effects_description ||
-    props.modelValue.effects_visual_amenity ||
-    props.modelValue.effects_traffic_parking ||
-    props.modelValue.effects_noise ||
-    props.modelValue.mitigation_measures ||
-    // Legacy fields
-    props.modelValue.aee_activity_description ||
-    props.modelValue.aee_existing_environment ||
-    props.modelValue.assessment_of_effects ||
-    props.modelValue.aee_document
-  )
+	return !!(
+		props.modelValue.activity_description ||
+		props.modelValue.aee_full_assessment ||
+		props.modelValue.positive_effects_description ||
+		props.modelValue.effects_visual_amenity ||
+		props.modelValue.effects_traffic_parking ||
+		props.modelValue.effects_noise ||
+		props.modelValue.mitigation_measures ||
+		// Legacy fields
+		props.modelValue.aee_activity_description ||
+		props.modelValue.aee_existing_environment ||
+		props.modelValue.assessment_of_effects ||
+		props.modelValue.aee_document
+	)
 })
 
 // Helper functions
 const stripHtml = (html) => {
-  if (!html) return ''
-  const tmp = document.createElement('div')
-  tmp.innerHTML = html
-  return tmp.textContent || tmp.innerText || ''
+	if (!html) return ""
+	const tmp = document.createElement("div")
+	tmp.innerHTML = html
+	return tmp.textContent || tmp.innerText || ""
 }
 
 const truncate = (text, maxLength) => {
-  if (!text) return ''
-  const clean = stripHtml(text)
-  if (clean.length <= maxLength) return clean
-  return clean.substring(0, maxLength) + '...'
+	if (!text) return ""
+	const clean = stripHtml(text)
+	if (clean.length <= maxLength) return clean
+	return clean.substring(0, maxLength) + "..."
 }
 
 const formatSignatureDate = (dateStr) => {
-  if (!dateStr) return ''
-  try {
-    return new Date(dateStr).toLocaleDateString('en-NZ', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    })
-  } catch (e) {
-    return dateStr
-  }
+	if (!dateStr) return ""
+	try {
+		return new Date(dateStr).toLocaleDateString("en-NZ", {
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+		})
+	} catch (e) {
+		return dateStr
+	}
 }
 
 const isComplete = computed(() => {
-  // Basic required fields
-  const hasBasicInfo = !!(
-    props.modelValue.council &&
-    props.modelValue.request_type &&
-    props.modelValue.requester_name &&
-    props.modelValue.requester_email &&
-    props.modelValue.property_address &&
-    props.modelValue.delivery_preference
-  )
+	// Basic required fields
+	const hasBasicInfo = !!(
+		props.modelValue.council &&
+		props.modelValue.request_type &&
+		props.modelValue.requester_name &&
+		props.modelValue.requester_email &&
+		props.modelValue.property_address &&
+		props.modelValue.delivery_preference
+	)
 
-  // If RC, check additional requirements
-  if (props.isResourceConsent) {
-    const hasRCRequirements = !!(
-      hasAnyConsentType.value &&
-      props.modelValue.activity_status_type &&
-      props.modelValue.activity_description &&
-      props.modelValue.aee_full_assessment &&
-      props.modelValue.declaration_accuracy &&
-      props.modelValue.declaration_authority &&
-      props.modelValue.declaration_acknowledgment
-    )
-    return hasBasicInfo && hasRCRequirements
-  }
+	// If RC, check additional requirements
+	if (props.isResourceConsent) {
+		const hasRCRequirements = !!(
+			hasAnyConsentType.value &&
+			props.modelValue.activity_status_type &&
+			props.modelValue.activity_description &&
+			props.modelValue.aee_full_assessment &&
+			props.modelValue.declaration_accuracy &&
+			props.modelValue.declaration_authority &&
+			props.modelValue.declaration_acknowledgment
+		)
+		return hasBasicInfo && hasRCRequirements
+	}
 
-  return hasBasicInfo
+	return hasBasicInfo
 })
 </script>
 

@@ -7,27 +7,33 @@ import frappe
 from functools import wraps
 
 
-def rate_limit(calls=10, period=60):
+def rate_limit(calls=10, period=60, guest_only=False):
 	"""Rate limit decorator for API methods
 
 	Args:
 		calls: Number of calls allowed within the period
 		period: Time period in seconds
+		guest_only: If True, only apply rate limiting to guest users (default: False)
 
 	Example:
 		@frappe.whitelist(allow_guest=True)
-		@rate_limit(calls=5, period=60)  # 5 calls per minute
+		@rate_limit(calls=5, period=60, guest_only=True)  # 5 calls per minute for guests only
 		def create_draft_request(data):
 			pass
 	"""
 	def decorator(func):
 		@wraps(func)
 		def wrapper(*args, **kwargs):
+			# Skip rate limiting for authenticated users if guest_only=True
+			if guest_only and frappe.session.user != "Guest":
+				return func(*args, **kwargs)
+
 			# Get client IP address
 			ip_address = frappe.local.request_ip or "unknown"
 
-			# Create cache key based on function name and IP
-			cache_key = f"rate_limit:{func.__name__}:{ip_address}"
+			# Create cache key based on function name and IP (and user if authenticated)
+			user_suffix = f":{frappe.session.user}" if frappe.session.user != "Guest" else ""
+			cache_key = f"rate_limit:{func.__name__}:{ip_address}{user_suffix}"
 
 			# Get Redis cache
 			cache = frappe.cache()

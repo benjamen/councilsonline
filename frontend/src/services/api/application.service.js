@@ -1,4 +1,4 @@
-import { apiClient } from './base'
+import { apiClient } from "./base"
 
 /**
  * Application Service
@@ -13,10 +13,10 @@ export class ApplicationService {
 	 * @returns {Promise<Object>} Created application
 	 */
 	async createApplication(requestId, applicationType, applicationData) {
-		return apiClient.call('lodgeick.api.create_application', {
+		return apiClient.call("lodgeick.api.create_application", {
 			request_id: requestId,
 			application_type: applicationType,
-			application_data: applicationData
+			application_data: applicationData,
 		})
 	}
 
@@ -28,12 +28,12 @@ export class ApplicationService {
 	 */
 	getApplication(applicationType, applicationId) {
 		return apiClient.createResource({
-			url: 'frappe.client.get',
+			url: "frappe.client.get",
 			params: {
 				doctype: applicationType,
-				name: applicationId
+				name: applicationId,
 			},
-			auto: true
+			auto: true,
 		})
 	}
 
@@ -45,10 +45,10 @@ export class ApplicationService {
 	 * @returns {Promise<void>}
 	 */
 	async updateApplication(applicationType, applicationId, fields) {
-		return apiClient.call('frappe.client.set_value', {
+		return apiClient.call("frappe.client.set_value", {
 			doctype: applicationType,
 			name: applicationId,
-			fieldname: fields
+			fieldname: fields,
 		})
 	}
 
@@ -58,8 +58,8 @@ export class ApplicationService {
 	 * @returns {Promise<Object>} Application data
 	 */
 	async getApplicationByRequest(requestId) {
-		return apiClient.call('lodgeick.api.get_application_by_request', {
-			request_id: requestId
+		return apiClient.call("lodgeick.api.get_application_by_request", {
+			request_id: requestId,
 		})
 	}
 
@@ -69,7 +69,7 @@ export class ApplicationService {
 	 * @returns {Object} Frappe resource
 	 */
 	getSPISCApplication(applicationId) {
-		return this.getApplication('SPISC Application', applicationId)
+		return this.getApplication("SPISC Application", applicationId)
 	}
 
 	/**
@@ -78,7 +78,7 @@ export class ApplicationService {
 	 * @returns {Object} Frappe resource
 	 */
 	getResourceConsentApplication(applicationId) {
-		return this.getApplication('Resource Consent Application', applicationId)
+		return this.getApplication("Resource Consent Application", applicationId)
 	}
 
 	/**
@@ -87,7 +87,7 @@ export class ApplicationService {
 	 * @returns {Object} Frappe resource
 	 */
 	getBuildingConsentApplication(applicationId) {
-		return this.getApplication('Building Consent Application', applicationId)
+		return this.getApplication("Building Consent Application", applicationId)
 	}
 
 	/**
@@ -97,9 +97,9 @@ export class ApplicationService {
 	 * @returns {Promise<void>}
 	 */
 	async submitApplication(applicationType, applicationId) {
-		return apiClient.call('lodgeick.api.submit_application', {
+		return apiClient.call("lodgeick.api.submit_application", {
 			application_type: applicationType,
-			application_id: applicationId
+			application_id: applicationId,
 		})
 	}
 
@@ -110,9 +110,9 @@ export class ApplicationService {
 	 * @returns {Promise<Array>} Status history
 	 */
 	async getApplicationStatusHistory(applicationType, applicationId) {
-		return apiClient.call('lodgeick.api.get_application_status_history', {
+		return apiClient.call("lodgeick.api.get_application_status_history", {
 			application_type: applicationType,
-			application_id: applicationId
+			application_id: applicationId,
 		})
 	}
 
@@ -124,10 +124,10 @@ export class ApplicationService {
 	 * @returns {Promise<void>}
 	 */
 	async assignToOfficer(applicationType, applicationId, officerEmail) {
-		return apiClient.call('lodgeick.api.assign_application', {
+		return apiClient.call("lodgeick.api.assign_application", {
 			application_type: applicationType,
 			application_id: applicationId,
-			officer_email: officerEmail
+			officer_email: officerEmail,
 		})
 	}
 
@@ -139,12 +139,12 @@ export class ApplicationService {
 	 * @returns {Promise<void>}
 	 */
 	async addComment(applicationType, applicationId, comment) {
-		return apiClient.call('frappe.desk.form.utils.add_comment', {
+		return apiClient.call("frappe.desk.form.utils.add_comment", {
 			reference_doctype: applicationType,
 			reference_name: applicationId,
 			content: comment,
 			comment_email: frappe.session.user,
-			comment_by: frappe.session.user_fullname
+			comment_by: frappe.session.user_fullname,
 		})
 	}
 
@@ -155,9 +155,9 @@ export class ApplicationService {
 	 * @returns {Promise<Array>} Comments
 	 */
 	async getComments(applicationType, applicationId) {
-		return apiClient.call('frappe.desk.form.load.get_comments', {
+		return apiClient.call("frappe.desk.form.load.get_comments", {
 			doctype: applicationType,
-			name: applicationId
+			name: applicationId,
 		})
 	}
 }

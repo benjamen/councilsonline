@@ -300,9 +300,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue"
+import { Button, Input } from "frappe-ui"
+import { computed, onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
-import { Input, Button } from "frappe-ui"
 
 const router = useRouter()
 
@@ -317,7 +317,7 @@ const editForm = ref({})
 const updating = ref(false)
 
 const showInviteModal = ref(false)
-const inviteForm = ref({ email: '', role: 'Submitter', designation: '' })
+const inviteForm = ref({ email: "", role: "Submitter", designation: "" })
 const inviting = ref(false)
 const inviteError = ref(null)
 
@@ -328,217 +328,236 @@ const removing = ref(false)
 const adminUsers = ref([])
 const linkedUsers = ref([])
 
-const isAdmin = computed(() => userRole.value === 'Admin')
+const isAdmin = computed(() => userRole.value === "Admin")
 
 onMounted(async () => {
-  await loadCompanyAccount()
-  await loadUsers()
+	await loadCompanyAccount()
+	await loadUsers()
 })
 
 async function loadCompanyAccount() {
-  loading.value = true
-  error.value = null
+	loading.value = true
+	error.value = null
 
-  try {
-    const response = await fetch('/api/method/lodgeick.api.get_user_company_account', {
-      method: 'GET',
-      headers: {
-        'X-Frappe-CSRF-Token': window.csrf_token
-      }
-    })
-    const data = await response.json()
+	try {
+		const response = await fetch(
+			"/api/method/lodgeick.api.get_user_company_account",
+			{
+				method: "GET",
+				headers: {
+					"X-Frappe-CSRF-Token": window.csrf_token,
+				},
+			},
+		)
+		const data = await response.json()
 
-    if (data.message) {
-      companyAccount.value = data.message
-      userRole.value = data.message.user_role
-      currentUser.value = data.message.current_user
+		if (data.message) {
+			companyAccount.value = data.message
+			userRole.value = data.message.user_role
+			currentUser.value = data.message.current_user
 
-      // Initialize edit form
-      editForm.value = { ...data.message }
-    } else {
-      error.value = 'No company account found for this user'
-    }
-  } catch (err) {
-    error.value = 'Failed to load company account'
-    console.error('Error loading company account:', err)
-  } finally {
-    loading.value = false
-  }
+			// Initialize edit form
+			editForm.value = { ...data.message }
+		} else {
+			error.value = "No company account found for this user"
+		}
+	} catch (err) {
+		error.value = "Failed to load company account"
+		console.error("Error loading company account:", err)
+	} finally {
+		loading.value = false
+	}
 }
 
 async function loadUsers() {
-  try {
-    const response = await fetch('/api/method/lodgeick.api.get_company_users', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Frappe-CSRF-Token': window.csrf_token
-      },
-      body: JSON.stringify({ company_name: companyAccount.value.name })
-    })
-    const data = await response.json()
+	try {
+		const response = await fetch("/api/method/lodgeick.api.get_company_users", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"X-Frappe-CSRF-Token": window.csrf_token,
+			},
+			body: JSON.stringify({ company_name: companyAccount.value.name }),
+		})
+		const data = await response.json()
 
-    if (data.message) {
-      adminUsers.value = data.message.admin_users || []
-      linkedUsers.value = data.message.linked_users || []
-    }
-  } catch (err) {
-    console.error('Error loading users:', err)
-  }
+		if (data.message) {
+			adminUsers.value = data.message.admin_users || []
+			linkedUsers.value = data.message.linked_users || []
+		}
+	} catch (err) {
+		console.error("Error loading users:", err)
+	}
 }
 
 function cancelEdit() {
-  editMode.value = false
-  editForm.value = { ...companyAccount.value }
+	editMode.value = false
+	editForm.value = { ...companyAccount.value }
 }
 
 async function updateCompanyProfile() {
-  updating.value = true
+	updating.value = true
 
-  try {
-    const response = await fetch('/api/method/lodgeick.api.update_company_account', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Frappe-CSRF-Token': window.csrf_token
-      },
-      body: JSON.stringify({
-        company_name: companyAccount.value.name,
-        updates: editForm.value
-      })
-    })
-    const data = await response.json()
+	try {
+		const response = await fetch(
+			"/api/method/lodgeick.api.update_company_account",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"X-Frappe-CSRF-Token": window.csrf_token,
+				},
+				body: JSON.stringify({
+					company_name: companyAccount.value.name,
+					updates: editForm.value,
+				}),
+			},
+		)
+		const data = await response.json()
 
-    if (data.message && data.message.success) {
-      companyAccount.value = { ...companyAccount.value, ...editForm.value }
-      editMode.value = false
-    } else {
-      alert('Failed to update company profile')
-    }
-  } catch (err) {
-    console.error('Error updating company:', err)
-    alert('Failed to update company profile')
-  } finally {
-    updating.value = false
-  }
+		if (data.message && data.message.success) {
+			companyAccount.value = { ...companyAccount.value, ...editForm.value }
+			editMode.value = false
+		} else {
+			alert("Failed to update company profile")
+		}
+	} catch (err) {
+		console.error("Error updating company:", err)
+		alert("Failed to update company profile")
+	} finally {
+		updating.value = false
+	}
 }
 
 function closeInviteModal() {
-  showInviteModal.value = false
-  inviteForm.value = { email: '', role: 'Submitter', designation: '' }
-  inviteError.value = null
+	showInviteModal.value = false
+	inviteForm.value = { email: "", role: "Submitter", designation: "" }
+	inviteError.value = null
 }
 
 async function sendInvitation() {
-  inviting.value = true
-  inviteError.value = null
+	inviting.value = true
+	inviteError.value = null
 
-  try {
-    const response = await fetch('/api/method/lodgeick.api.send_company_invitation', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Frappe-CSRF-Token': window.csrf_token
-      },
-      body: JSON.stringify({
-        company_name: companyAccount.value.name,
-        email: inviteForm.value.email,
-        role: inviteForm.value.role,
-        designation: inviteForm.value.designation
-      })
-    })
-    const data = await response.json()
+	try {
+		const response = await fetch(
+			"/api/method/lodgeick.api.send_company_invitation",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"X-Frappe-CSRF-Token": window.csrf_token,
+				},
+				body: JSON.stringify({
+					company_name: companyAccount.value.name,
+					email: inviteForm.value.email,
+					role: inviteForm.value.role,
+					designation: inviteForm.value.designation,
+				}),
+			},
+		)
+		const data = await response.json()
 
-    if (data.message && data.message.success) {
-      closeInviteModal()
-      await loadUsers()
-    } else {
-      inviteError.value = data.message?.message || 'Failed to send invitation'
-    }
-  } catch (err) {
-    console.error('Error sending invitation:', err)
-    inviteError.value = 'Failed to send invitation'
-  } finally {
-    inviting.value = false
-  }
+		if (data.message && data.message.success) {
+			closeInviteModal()
+			await loadUsers()
+		} else {
+			inviteError.value = data.message?.message || "Failed to send invitation"
+		}
+	} catch (err) {
+		console.error("Error sending invitation:", err)
+		inviteError.value = "Failed to send invitation"
+	} finally {
+		inviting.value = false
+	}
 }
 
 function confirmRemoveUser(email, role) {
-  userToRemove.value = { email, role }
-  showRemoveModal.value = true
+	userToRemove.value = { email, role }
+	showRemoveModal.value = true
 }
 
 async function removeUser() {
-  removing.value = true
+	removing.value = true
 
-  try {
-    const response = await fetch('/api/method/lodgeick.api.remove_user_from_company', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Frappe-CSRF-Token': window.csrf_token
-      },
-      body: JSON.stringify({
-        company_name: companyAccount.value.name,
-        user_email: userToRemove.value.email
-      })
-    })
-    const data = await response.json()
+	try {
+		const response = await fetch(
+			"/api/method/lodgeick.api.remove_user_from_company",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"X-Frappe-CSRF-Token": window.csrf_token,
+				},
+				body: JSON.stringify({
+					company_name: companyAccount.value.name,
+					user_email: userToRemove.value.email,
+				}),
+			},
+		)
+		const data = await response.json()
 
-    if (data.message && data.message.success) {
-      showRemoveModal.value = false
-      userToRemove.value = null
-      await loadUsers()
-    } else {
-      alert(data.message?.message || 'Failed to remove user')
-    }
-  } catch (err) {
-    console.error('Error removing user:', err)
-    alert('Failed to remove user')
-  } finally {
-    removing.value = false
-  }
+		if (data.message && data.message.success) {
+			showRemoveModal.value = false
+			userToRemove.value = null
+			await loadUsers()
+		} else {
+			alert(data.message?.message || "Failed to remove user")
+		}
+	} catch (err) {
+		console.error("Error removing user:", err)
+		alert("Failed to remove user")
+	} finally {
+		removing.value = false
+	}
 }
 
 async function updateUserRole(email, newRole) {
-  try {
-    const response = await fetch('/api/method/lodgeick.api.update_user_company_role', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Frappe-CSRF-Token': window.csrf_token
-      },
-      body: JSON.stringify({
-        company_name: companyAccount.value.name,
-        user_email: email,
-        new_role: newRole
-      })
-    })
-    const data = await response.json()
+	try {
+		const response = await fetch(
+			"/api/method/lodgeick.api.update_user_company_role",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"X-Frappe-CSRF-Token": window.csrf_token,
+				},
+				body: JSON.stringify({
+					company_name: companyAccount.value.name,
+					user_email: email,
+					new_role: newRole,
+				}),
+			},
+		)
+		const data = await response.json()
 
-    if (data.message && data.message.success) {
-      await loadUsers()
-    } else {
-      alert('Failed to update user role')
-    }
-  } catch (err) {
-    console.error('Error updating user role:', err)
-    alert('Failed to update user role')
-  }
+		if (data.message && data.message.success) {
+			await loadUsers()
+		} else {
+			alert("Failed to update user role")
+		}
+	} catch (err) {
+		console.error("Error updating user role:", err)
+		alert("Failed to update user role")
+	}
 }
 
 function getInitials(email) {
-  if (!email) return '?'
-  const parts = email.split('@')[0].split('.')
-  if (parts.length >= 2) {
-    return (parts[0][0] + parts[1][0]).toUpperCase()
-  }
-  return email.substring(0, 2).toUpperCase()
+	if (!email) return "?"
+	const parts = email.split("@")[0].split(".")
+	if (parts.length >= 2) {
+		return (parts[0][0] + parts[1][0]).toUpperCase()
+	}
+	return email.substring(0, 2).toUpperCase()
 }
 
 function formatDate(dateStr) {
-  if (!dateStr) return 'N/A'
-  const date = new Date(dateStr)
-  return date.toLocaleDateString('en-NZ', { year: 'numeric', month: 'short', day: 'numeric' })
+	if (!dateStr) return "N/A"
+	const date = new Date(dateStr)
+	return date.toLocaleDateString("en-NZ", {
+		year: "numeric",
+		month: "short",
+		day: "numeric",
+	})
 }
 </script>

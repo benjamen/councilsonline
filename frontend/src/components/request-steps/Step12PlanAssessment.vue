@@ -162,48 +162,56 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref, watch } from 'vue'
+import { defineEmits, defineProps, ref, watch } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  }
+	modelValue: {
+		type: Object,
+		required: true,
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
 // Create local copy of data
 const localData = ref({
-  plan_rules: props.modelValue.plan_rules || []
+	plan_rules: props.modelValue.plan_rules || [],
 })
 
 // Watch for external changes
-watch(() => props.modelValue.plan_rules, (newVal) => {
-  if (newVal !== localData.value.plan_rules) {
-    localData.value.plan_rules = newVal || []
-  }
-}, { deep: true })
+watch(
+	() => props.modelValue.plan_rules,
+	(newVal) => {
+		if (newVal !== localData.value.plan_rules) {
+			localData.value.plan_rules = newVal || []
+		}
+	},
+	{ deep: true },
+)
 
 // Watch local changes and emit
-watch(localData, (newVal) => {
-  emit('update:modelValue', {
-    ...props.modelValue,
-    plan_rules: newVal.plan_rules
-  })
-}, { deep: true })
+watch(
+	localData,
+	(newVal) => {
+		emit("update:modelValue", {
+			...props.modelValue,
+			plan_rules: newVal.plan_rules,
+		})
+	},
+	{ deep: true },
+)
 
 const addPlanRule = () => {
-  localData.value.plan_rules.push({
-    plan_type: '',
-    rule_reference: '',
-    description: '',
-    compliant: null,
-    notes: ''
-  })
+	localData.value.plan_rules.push({
+		plan_type: "",
+		rule_reference: "",
+		description: "",
+		compliant: null,
+		notes: "",
+	})
 }
 
 const removePlanRule = (index) => {
-  localData.value.plan_rules.splice(index, 1)
+	localData.value.plan_rules.splice(index, 1)
 }
 </script>

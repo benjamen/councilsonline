@@ -9,20 +9,20 @@
 </template>
 
 <script setup>
-import { FeatherIcon } from 'frappe-ui'
+import { FeatherIcon } from "frappe-ui"
 
 defineProps({
-  icon: {
-    type: String,
-    required: true
-  },
-  title: {
-    type: String,
-    required: true
-  },
-  description: {
-    type: String,
-    required: true
-  }
+	icon: {
+		type: String,
+		required: true,
+	},
+	title: {
+		type: String,
+		required: true,
+	},
+	description: {
+		type: String,
+		required: true,
+	},
 })
 </script>

@@ -162,11 +162,11 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { createResource, Button, call } from 'frappe-ui'
-import StatCard from './StatCard.vue'
-import TaskDialog from './TaskDialog.vue'
+import { Button, call, createResource } from "frappe-ui"
+import { computed, ref } from "vue"
+import { useRouter } from "vue-router"
+import StatCard from "./StatCard.vue"
+import TaskDialog from "./TaskDialog.vue"
 
 const router = useRouter()
 const showTaskDialog = ref(false)
@@ -174,84 +174,85 @@ const selectedTask = ref(null)
 
 // Fetch tasks for current user
 const tasks = createResource({
-  url: 'lodgeick.lodgeick.doctype.task.task.get_my_tasks',
-  auto: true,
+	url: "lodgeick.lodgeick.doctype.task.task.get_my_tasks",
+	auto: true,
 })
 
 // Computed stats
 const stats = computed(() => {
-  const data = tasks.data || []
-  const today = new Date().toDateString()
+	const data = tasks.data || []
+	const today = new Date().toDateString()
 
-  return {
-    myTasks: data.length,
-    inProgress: data.filter(t => t.status === 'Open').length,
-    completedToday: data.filter(t =>
-      t.status === 'Completed' &&
-      t.date_of_completion &&
-      new Date(t.date_of_completion).toDateString() === today
-    ).length,
-    overdue: data.filter(t => t.status === 'Overdue').length,
-  }
+	return {
+		myTasks: data.length,
+		inProgress: data.filter((t) => t.status === "Open").length,
+		completedToday: data.filter(
+			(t) =>
+				t.status === "Completed" &&
+				t.date_of_completion &&
+				new Date(t.date_of_completion).toDateString() === today,
+		).length,
+		overdue: data.filter((t) => t.status === "Overdue").length,
+	}
 })
 
 // Methods
 const getPriorityClass = (priority) => {
-  const classes = {
-    'Low': 'bg-gray-100 text-gray-800',
-    'Medium': 'bg-blue-100 text-blue-800',
-    'High': 'bg-orange-100 text-orange-800',
-    'Urgent': 'bg-red-100 text-red-800',
-  }
-  return classes[priority] || classes['Medium']
+	const classes = {
+		Low: "bg-gray-100 text-gray-800",
+		Medium: "bg-blue-100 text-blue-800",
+		High: "bg-orange-100 text-orange-800",
+		Urgent: "bg-red-100 text-red-800",
+	}
+	return classes[priority] || classes["Medium"]
 }
 
 const isOverdue = (dueDate) => {
-  if (!dueDate) return false
-  return new Date(dueDate) < new Date()
+	if (!dueDate) return false
+	return new Date(dueDate) < new Date()
 }
 
 const formatDate = (date) => {
-  if (!date) return ''
-  return new Date(date).toLocaleDateString('en-NZ', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric'
-  })
+	if (!date) return ""
+	return new Date(date).toLocaleDateString("en-NZ", {
+		day: "numeric",
+		month: "short",
+		year: "numeric",
+	})
 }
 
 const toggleTaskStatus = async (task) => {
-  const newStatus = task.status === 'Completed' ? 'Open' : 'Completed'
+	const newStatus = task.status === "Completed" ? "Open" : "Completed"
 
-  try {
-    await call('frappe.client.set_value', {
-      doctype: 'Project Task',
-      name: task.name,
-      fieldname: 'status',
-      value: newStatus
-    })
+	try {
+		await call("frappe.client.set_value", {
+			doctype: "Project Task",
+			name: task.name,
+			fieldname: "status",
+			value: newStatus,
+		})
 
-    tasks.reload()
-  } catch (error) {
-    console.error('Error toggling task status:', error)
-  }
+		tasks.reload()
+	} catch (error) {
+		console.error("Error toggling task status:", error)
+	}
 }
 
 const viewRequest = (requestId) => {
-  router.push({ name: 'InternalRequestDetail', params: { id: requestId } })
+	router.push({ name: "InternalRequestDetail", params: { id: requestId } })
 }
 
 const openNewTaskDialog = () => {
-  selectedTask.value = null
-  showTaskDialog.value = true
+	selectedTask.value = null
+	showTaskDialog.value = true
 }
 
 const openEditTaskDialog = (task) => {
-  selectedTask.value = task
-  showTaskDialog.value = true
+	selectedTask.value = task
+	showTaskDialog.value = true
 }
 
 const handleTaskSaved = () => {
-  tasks.reload()
+	tasks.reload()
 }
 </script>

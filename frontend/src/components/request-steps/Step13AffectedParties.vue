@@ -306,111 +306,124 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref, watch, computed } from 'vue'
+import { computed, defineEmits, defineProps, ref, watch } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  }
+	modelValue: {
+		type: Object,
+		required: true,
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
 // Create local copy of data
 const localData = ref({
-  affected_parties: props.modelValue.affected_parties || [],
-  aee_consultation_summary: props.modelValue.aee_consultation_summary || ''
+	affected_parties: props.modelValue.affected_parties || [],
+	aee_consultation_summary: props.modelValue.aee_consultation_summary || "",
 })
 
 // Modal state
 const showModal = ref(false)
 const editingIndex = ref(null)
 const currentParty = ref({
-  party_name: '',
-  relationship: '',
-  contact_info: '',
-  address: '',
-  effects: '',
-  written_approval: false
+	party_name: "",
+	relationship: "",
+	contact_info: "",
+	address: "",
+	effects: "",
+	written_approval: false,
 })
 
 // Computed property for parties with written approvals
 const writtenApprovals = computed(() => {
-  return localData.value.affected_parties.filter(party => party.written_approval === true)
+	return localData.value.affected_parties.filter(
+		(party) => party.written_approval === true,
+	)
 })
 
 // Open modal for adding new party
 const openAddModal = () => {
-  editingIndex.value = null
-  currentParty.value = {
-    party_name: '',
-    relationship: '',
-    contact_info: '',
-    address: '',
-    effects: '',
-    written_approval: false
-  }
-  showModal.value = true
+	editingIndex.value = null
+	currentParty.value = {
+		party_name: "",
+		relationship: "",
+		contact_info: "",
+		address: "",
+		effects: "",
+		written_approval: false,
+	}
+	showModal.value = true
 }
 
 // Open modal for editing existing party
 const openEditModal = (index) => {
-  editingIndex.value = index
-  currentParty.value = { ...localData.value.affected_parties[index] }
-  showModal.value = true
+	editingIndex.value = index
+	currentParty.value = { ...localData.value.affected_parties[index] }
+	showModal.value = true
 }
 
 // Close modal
 const closeModal = () => {
-  showModal.value = false
-  editingIndex.value = null
-  currentParty.value = {
-    party_name: '',
-    relationship: '',
-    contact_info: '',
-    address: '',
-    effects: '',
-    written_approval: false
-  }
+	showModal.value = false
+	editingIndex.value = null
+	currentParty.value = {
+		party_name: "",
+		relationship: "",
+		contact_info: "",
+		address: "",
+		effects: "",
+		written_approval: false,
+	}
 }
 
 // Save party (add or update)
 const saveParty = () => {
-  if (!currentParty.value.party_name || !currentParty.value.relationship) {
-    return
-  }
+	if (!currentParty.value.party_name || !currentParty.value.relationship) {
+		return
+	}
 
-  if (editingIndex.value !== null) {
-    // Update existing party
-    localData.value.affected_parties[editingIndex.value] = { ...currentParty.value }
-  } else {
-    // Add new party
-    localData.value.affected_parties.push({ ...currentParty.value })
-  }
+	if (editingIndex.value !== null) {
+		// Update existing party
+		localData.value.affected_parties[editingIndex.value] = {
+			...currentParty.value,
+		}
+	} else {
+		// Add new party
+		localData.value.affected_parties.push({ ...currentParty.value })
+	}
 
-  closeModal()
+	closeModal()
 }
 
 // Remove party
 const removeParty = (index) => {
-  if (confirm('Are you sure you want to remove this affected party?')) {
-    localData.value.affected_parties.splice(index, 1)
-  }
+	if (confirm("Are you sure you want to remove this affected party?")) {
+		localData.value.affected_parties.splice(index, 1)
+	}
 }
 
 // Watch for external changes
-watch(() => props.modelValue, (newVal) => {
-  localData.value.affected_parties = newVal.affected_parties || []
-  localData.value.aee_consultation_summary = newVal.aee_consultation_summary || ''
-}, { deep: true })
+watch(
+	() => props.modelValue,
+	(newVal) => {
+		localData.value.affected_parties = newVal.affected_parties || []
+		localData.value.aee_consultation_summary =
+			newVal.aee_consultation_summary || ""
+	},
+	{ deep: true },
+)
 
 // Watch local changes and emit
-watch(localData, (newVal) => {
-  emit('update:modelValue', {
-    ...props.modelValue,
-    affected_parties: newVal.affected_parties,
-    aee_consultation_summary: newVal.aee_consultation_summary
-  })
-}, { deep: true })
+watch(
+	localData,
+	(newVal) => {
+		emit("update:modelValue", {
+			...props.modelValue,
+			affected_parties: newVal.affected_parties,
+			aee_consultation_summary: newVal.aee_consultation_summary,
+		})
+	},
+	{ deep: true },
+)
 </script>

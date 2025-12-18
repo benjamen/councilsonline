@@ -656,15 +656,19 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, defineAsyncComponent } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { createResource, Button } from 'frappe-ui'
-import RequestHeader from '../components/request/RequestHeader.vue'
-import StatusBadge from '../components/StatusBadge.vue'
+import { Button, createResource } from "frappe-ui"
+import { computed, defineAsyncComponent, ref, watch } from "vue"
+import { useRoute, useRouter } from "vue-router"
+import StatusBadge from "../components/StatusBadge.vue"
+import RequestHeader from "../components/request/RequestHeader.vue"
 // Lazy-loaded modals (load on demand to reduce bundle size)
-const SendMessageModal = defineAsyncComponent(() => import('../components/modals/SendMessageModal.vue'))
-const BookMeetingModal = defineAsyncComponent(() => import('../components/modals/BookMeetingModal.vue'))
-import { useStatutoryClock } from '../composables/useStatutoryClock'
+const SendMessageModal = defineAsyncComponent(
+	() => import("../components/modals/SendMessageModal.vue"),
+)
+const BookMeetingModal = defineAsyncComponent(
+	() => import("../components/modals/BookMeetingModal.vue"),
+)
+import { useStatutoryClock } from "../composables/useStatutoryClock"
 
 const route = useRoute()
 const router = useRouter()
@@ -680,432 +684,498 @@ const showBookMeetingModal = ref(false)
 
 // Get request details
 const request = createResource({
-  url: 'frappe.client.get',
-  params: {
-    doctype: 'Request',
-    name: route.params.id
-  },
-  auto: true,
+	url: "frappe.client.get",
+	params: {
+		doctype: "Request",
+		name: route.params.id,
+	},
+	auto: true,
 })
 
 // Get meetings for this request
 const meetings = createResource({
-  url: 'lodgeick.api.get_request_meetings',
-  params: {
-    request_id: route.params.id
-  },
-  auto: true,
+	url: "lodgeick.api.get_request_meetings",
+	params: {
+		request_id: route.params.id,
+	},
+	auto: true,
 })
 
 // Get request type configuration
 const requestTypeConfig = createResource({
-  url: 'lodgeick.api.get_request_type_config',
-  auto: false,
+	url: "lodgeick.api.get_request_type_config",
+	auto: false,
 })
 
 // Get council details for contact information
 const councilDetails = createResource({
-  url: 'frappe.client.get',
-  auto: false,
+	url: "frappe.client.get",
+	auto: false,
 })
 
 // Watch for request data and load config
-watch(() => request.data?.request_type, (requestType) => {
-  if (requestType) {
-    // Pass params directly to fetch() instead of in createResource
-    requestTypeConfig.fetch({ request_type_code: requestType })
-  }
-}, { immediate: true })
+watch(
+	() => request.data?.request_type,
+	(requestType) => {
+		if (requestType) {
+			// Pass params directly to fetch() instead of in createResource
+			requestTypeConfig.fetch({ request_type_code: requestType })
+		}
+	},
+	{ immediate: true },
+)
 
 // Watch for council code and load council details
-watch(() => request.data?.council, (councilCode) => {
-  if (councilCode) {
-    councilDetails.fetch({
-      doctype: 'Council',
-      name: councilCode,
-      fields: ['name', 'council_name', 'contact_email', 'contact_phone']
-    })
-  }
-}, { immediate: true })
+watch(
+	() => request.data?.council,
+	(councilCode) => {
+		if (councilCode) {
+			councilDetails.fetch({
+				doctype: "Council",
+				name: councilCode,
+				fields: ["name", "council_name", "contact_email", "contact_phone"],
+			})
+		}
+	},
+	{ immediate: true },
+)
 
 // Get statutory clock data from appropriate source (RC Application or Request)
 const { clockData, progressPercent } = useStatutoryClock(request)
 
 // Parse form data from draft_full_data as fallback
 const parsedFormData = computed(() => {
-  if (!request.data) return {}
+	if (!request.data) return {}
 
-  try {
-    let formData = null
-    if (request.data.draft_full_data) {
-      formData = typeof request.data.draft_full_data === 'string'
-        ? JSON.parse(request.data.draft_full_data)
-        : request.data.draft_full_data
-    }
+	try {
+		let formData = null
+		if (request.data.draft_full_data) {
+			formData =
+				typeof request.data.draft_full_data === "string"
+					? JSON.parse(request.data.draft_full_data)
+					: request.data.draft_full_data
+		}
 
-    if (!formData) return {}
+		if (!formData) return {}
 
-    // Filter out standard fields
-    const standardFields = [
-      'name', 'owner', 'creation', 'modified', 'modified_by', 'docstatus', 'idx',
-      'council', 'request_type', 'request_number', 'status', 'requester',
-      'requester_name', 'requester_email', 'requester_phone', 'requester_signature',
-      'applicant_address', 'applicant_company', 'property', 'property_address',
-      'legal_description', 'brief_description', 'detailed_description',
-      'delivery_preference', 'invoice_to', 'invoice_recipient_name',
-      'invoice_recipient_email', 'purchase_order_number', 'total_fees',
-      'total_paid', 'payment_status', 'request_category', 'draft_current_step',
-      'draft_total_steps', 'draft_full_data', 'form_data', 'signature_date'
-    ]
+		// Filter out standard fields
+		const standardFields = [
+			"name",
+			"owner",
+			"creation",
+			"modified",
+			"modified_by",
+			"docstatus",
+			"idx",
+			"council",
+			"request_type",
+			"request_number",
+			"status",
+			"requester",
+			"requester_name",
+			"requester_email",
+			"requester_phone",
+			"requester_signature",
+			"applicant_address",
+			"applicant_company",
+			"property",
+			"property_address",
+			"legal_description",
+			"brief_description",
+			"detailed_description",
+			"delivery_preference",
+			"invoice_to",
+			"invoice_recipient_name",
+			"invoice_recipient_email",
+			"purchase_order_number",
+			"total_fees",
+			"total_paid",
+			"payment_status",
+			"request_category",
+			"draft_current_step",
+			"draft_total_steps",
+			"draft_full_data",
+			"form_data",
+			"signature_date",
+		]
 
-    const filtered = {}
-    Object.keys(formData).forEach(key => {
-      if (!standardFields.includes(key) && formData[key] !== null && formData[key] !== '') {
-        filtered[key] = formData[key]
-      }
-    })
+		const filtered = {}
+		Object.keys(formData).forEach((key) => {
+			if (
+				!standardFields.includes(key) &&
+				formData[key] !== null &&
+				formData[key] !== ""
+			) {
+				filtered[key] = formData[key]
+			}
+		})
 
-    return filtered
-  } catch (error) {
-    console.error('Error parsing form data:', error)
-    return {}
-  }
+		return filtered
+	} catch (error) {
+		console.error("Error parsing form data:", error)
+		return {}
+	}
 })
 
 // Get review sections from request type configuration (same logic as ReviewStep)
 const reviewSections = computed(() => {
-  if (!requestTypeConfig.data?.steps) return []
+	if (!requestTypeConfig.data?.steps) return []
 
-  // Filter steps that should show on review
-  return requestTypeConfig.data.steps.filter(step => step.show_on_review)
+	// Filter steps that should show on review
+	return requestTypeConfig.data.steps.filter((step) => step.show_on_review)
 })
 
 // Check if property details should be displayed (same logic as ReviewStep)
 const hasPropertyDetails = computed(() => {
-  // Show if request has property address
-  if (request.data?.property_address) {
-    return true
-  }
+	// Show if request has property address
+	if (request.data?.property_address) {
+		return true
+	}
 
-  // Check if request type config indicates property is needed
-  if (requestTypeConfig.data?.property_required) {
-    return true
-  }
+	// Check if request type config indicates property is needed
+	if (requestTypeConfig.data?.property_required) {
+		return true
+	}
 
-  return false
+	return false
 })
 
 // Check if a step has any content to show on review
 const hasReviewContent = (step) => {
-  if (!step.sections) return false
+	if (!step.sections) return false
 
-  for (const section of step.sections) {
-    if (!section.show_on_review) continue
+	for (const section of step.sections) {
+		if (!section.show_on_review) continue
 
-    for (const field of section.fields) {
-      if (field.show_on_review && request.data[field.field_name]) {
-        return true
-      }
-    }
-  }
+		for (const field of section.fields) {
+			if (field.show_on_review && request.data[field.field_name]) {
+				return true
+			}
+		}
+	}
 
-  return false
+	return false
 }
 
 // Format field value for display (same as ReviewStep)
 const formatFieldValue = (field, value) => {
-  if (value === undefined || value === null || value === '') {
-    return 'Not provided'
-  }
+	if (value === undefined || value === null || value === "") {
+		return "Not provided"
+	}
 
-  // Check field type
-  if (field.field_type === 'Check') {
-    return value ? 'Yes' : 'No'
-  }
+	// Check field type
+	if (field.field_type === "Check") {
+		return value ? "Yes" : "No"
+	}
 
-  if (field.field_type === 'Date' && value) {
-    // Format date nicely
-    try {
-      return new Date(value).toLocaleDateString('en-NZ', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      })
-    } catch (e) {
-      return value
-    }
-  }
+	if (field.field_type === "Date" && value) {
+		// Format date nicely
+		try {
+			return new Date(value).toLocaleDateString("en-NZ", {
+				year: "numeric",
+				month: "long",
+				day: "numeric",
+			})
+		} catch (e) {
+			return value
+		}
+	}
 
-  if (field.field_type === 'Currency' && value) {
-    return `$${parseFloat(value).toFixed(2)}`
-  }
+	if (field.field_type === "Currency" && value) {
+		return `$${Number.parseFloat(value).toFixed(2)}`
+	}
 
-  if (Array.isArray(value)) {
-    return value.join(', ')
-  }
+	if (Array.isArray(value)) {
+		return value.join(", ")
+	}
 
-  return value
+	return value
 }
 
 // Helper function to format field labels (convert snake_case to Title Case)
 const formatFieldLabel = (fieldName) => {
-  return fieldName
-    .split('_')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ')
+	return fieldName
+		.split("_")
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(" ")
 }
 
 // Helper function to format simple values (for fallback display)
 const formatSimpleValue = (value) => {
-  if (value === null || value === undefined || value === '') {
-    return 'Not provided'
-  }
+	if (value === null || value === undefined || value === "") {
+		return "Not provided"
+	}
 
-  if (typeof value === 'boolean') {
-    return value ? 'Yes' : 'No'
-  }
+	if (typeof value === "boolean") {
+		return value ? "Yes" : "No"
+	}
 
-  if (Array.isArray(value)) {
-    return value.join(', ')
-  }
+	if (Array.isArray(value)) {
+		return value.join(", ")
+	}
 
-  if (typeof value === 'object') {
-    return JSON.stringify(value)
-  }
+	if (typeof value === "object") {
+		return JSON.stringify(value)
+	}
 
-  // Handle dates
-  if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}/.test(value)) {
-    try {
-      return new Date(value).toLocaleDateString('en-NZ', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      })
-    } catch (e) {
-      return value
-    }
-  }
+	// Handle dates
+	if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}/.test(value)) {
+		try {
+			return new Date(value).toLocaleDateString("en-NZ", {
+				year: "numeric",
+				month: "long",
+				day: "numeric",
+			})
+		} catch (e) {
+			return value
+		}
+	}
 
-  return value
+	return value
 }
 
 const goBack = () => {
-  router.push({ name: 'Dashboard' })
+	router.push({ name: "Dashboard" })
 }
 
 // Format meeting date with time
 const formatMeetingDate = (dateStr) => {
-  if (!dateStr) return 'Not scheduled'
-  try {
-    return new Date(dateStr).toLocaleString('en-NZ', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-  } catch (e) {
-    return dateStr
-  }
+	if (!dateStr) return "Not scheduled"
+	try {
+		return new Date(dateStr).toLocaleString("en-NZ", {
+			weekday: "long",
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+			hour: "2-digit",
+			minute: "2-digit",
+		})
+	} catch (e) {
+		return dateStr
+	}
 }
 
 const formatDate = (dateStr) => {
-  if (!dateStr) return 'N/A'
-  const date = new Date(dateStr)
-  return date.toLocaleDateString('en-NZ', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
+	if (!dateStr) return "N/A"
+	const date = new Date(dateStr)
+	return date.toLocaleDateString("en-NZ", {
+		year: "numeric",
+		month: "short",
+		day: "numeric",
+		hour: "2-digit",
+		minute: "2-digit",
+	})
 }
 
 // Quick Actions
 const handleUploadDocument = () => {
-  fileInput.value.click()
+	fileInput.value.click()
 }
 
 const handleFileUpload = async (event) => {
-  const files = Array.from(event.target.files)
-  if (files.length === 0) return
+	const files = Array.from(event.target.files)
+	if (files.length === 0) return
 
-  uploading.value = true
-  try {
-    for (const file of files) {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('doctype', 'Request')
-      formData.append('docname', request.data.name)
-      formData.append('is_private', 0)
+	uploading.value = true
+	try {
+		for (const file of files) {
+			const formData = new FormData()
+			formData.append("file", file)
+			formData.append("doctype", "Request")
+			formData.append("docname", request.data.name)
+			formData.append("is_private", 0)
 
-      await fetch('/api/method/upload_file', {
-        method: 'POST',
-        headers: {
-          'X-Frappe-CSRF-Token': window.csrf_token
-        },
-        body: formData
-      })
-    }
+			await fetch("/api/method/upload_file", {
+				method: "POST",
+				headers: {
+					"X-Frappe-CSRF-Token": window.csrf_token,
+				},
+				body: formData,
+			})
+		}
 
-    alert(`${files.length} document(s) uploaded successfully!`)
-    request.reload()
-    event.target.value = '' // Reset file input
-  } catch (error) {
-    console.error('Error uploading file:', error)
-    alert('Failed to upload document. Please try again.')
-  } finally {
-    uploading.value = false
-  }
+		alert(`${files.length} document(s) uploaded successfully!`)
+		request.reload()
+		event.target.value = "" // Reset file input
+	} catch (error) {
+		console.error("Error uploading file:", error)
+		alert("Failed to upload document. Please try again.")
+	} finally {
+		uploading.value = false
+	}
 }
 
 const handleSendMessage = () => {
-  showSendMessageModal.value = true
+	showSendMessageModal.value = true
 }
 
 const handleMessageSent = () => {
-  // Toast notification would be better than alert to avoid blocking modal close
-  // alert('Message sent successfully! The council will respond within 2-3 business days.')
-  request.reload()
+	// Toast notification would be better than alert to avoid blocking modal close
+	// alert('Message sent successfully! The council will respond within 2-3 business days.')
+	request.reload()
 }
 
 const handlePrintApplication = () => {
-  window.print()
+	window.print()
 }
 
 const handleEditDraft = () => {
-  if (!request.data) {
-    alert('Error: Request data not loaded')
-    return
-  }
+	if (!request.data) {
+		alert("Error: Request data not loaded")
+		return
+	}
 
-  if (!request.data.request_type) {
-    alert('Error: Request type missing')
-    return
-  }
+	if (!request.data.request_type) {
+		alert("Error: Request type missing")
+		return
+	}
 
-  const url = `/request/new?type=${encodeURIComponent(request.data.request_type)}&draft=${encodeURIComponent(request.data.name)}`
-  router.push(url)
+	const url = `/request/new?type=${encodeURIComponent(request.data.request_type)}&draft=${encodeURIComponent(request.data.name)}`
+	router.push(url)
 }
 
 const handleDeleteDraft = async () => {
-  if (!confirm('Are you sure you want to delete this draft application? This action cannot be undone.')) {
-    return
-  }
+	if (
+		!confirm(
+			"Are you sure you want to delete this draft application? This action cannot be undone.",
+		)
+	) {
+		return
+	}
 
-  deleting.value = true
-  try {
-    await fetch('/api/method/frappe.client.delete', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Frappe-CSRF-Token': window.csrf_token
-      },
-      body: JSON.stringify({
-        doctype: 'Request',
-        name: request.data.name
-      })
-    })
+	deleting.value = true
+	try {
+		await fetch("/api/method/frappe.client.delete", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"X-Frappe-CSRF-Token": window.csrf_token,
+			},
+			body: JSON.stringify({
+				doctype: "Request",
+				name: request.data.name,
+			}),
+		})
 
-    alert('Draft deleted successfully')
-    router.push({ name: 'Dashboard' })
-  } catch (error) {
-    console.error('Error deleting draft:', error)
-    alert('Failed to delete draft. Please try again.')
-  } finally {
-    deleting.value = false
-  }
+		alert("Draft deleted successfully")
+		router.push({ name: "Dashboard" })
+	} catch (error) {
+		console.error("Error deleting draft:", error)
+		alert("Failed to delete draft. Please try again.")
+	} finally {
+		deleting.value = false
+	}
 }
 
 const handleSubmitApplication = async () => {
-  if (!confirm('Are you sure you want to submit this application? Once submitted, it cannot be edited.')) {
-    return
-  }
+	if (
+		!confirm(
+			"Are you sure you want to submit this application? Once submitted, it cannot be edited.",
+		)
+	) {
+		return
+	}
 
-  submitting.value = true
-  try {
-    const response = await fetch('/api/method/lodgeick.lodgeick.doctype.request.request.submit_application', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Frappe-CSRF-Token': window.csrf_token
-      },
-      body: JSON.stringify({
-        request_id: request.data.name
-      })
-    })
+	submitting.value = true
+	try {
+		const response = await fetch(
+			"/api/method/lodgeick.lodgeick.doctype.request.request.submit_application",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"X-Frappe-CSRF-Token": window.csrf_token,
+				},
+				body: JSON.stringify({
+					request_id: request.data.name,
+				}),
+			},
+		)
 
-    const result = await response.json()
+		const result = await response.json()
 
-    if (result.message && result.message.success) {
-      alert(`Application submitted successfully! Request Number: ${result.message.request_number}`)
-      request.reload()
-    } else {
-      throw new Error('Failed to submit application')
-    }
-  } catch (error) {
-    console.error('Error submitting application:', error)
-    alert('Failed to submit application. Please try again.')
-  } finally {
-    submitting.value = false
-  }
+		if (result.message && result.message.success) {
+			alert(
+				`Application submitted successfully! Request Number: ${result.message.request_number}`,
+			)
+			request.reload()
+		} else {
+			throw new Error("Failed to submit application")
+		}
+	} catch (error) {
+		console.error("Error submitting application:", error)
+		alert("Failed to submit application. Please try again.")
+	} finally {
+		submitting.value = false
+	}
 }
 
 const handleMakePayment = () => {
-  // TODO: Implement payment integration
-  alert('Payment feature - Coming soon!\n\nYou will receive an invoice via email.')
+	// TODO: Implement payment integration
+	alert(
+		"Payment feature - Coming soon!\n\nYou will receive an invoice via email.",
+	)
 }
 
 const handleBookMeeting = () => {
-  showBookMeetingModal.value = true
+	showBookMeetingModal.value = true
 }
 
 const handleMeetingBooked = async (meetingData) => {
-  alert(`Meeting request submitted successfully!\n\nMeeting ID: ${meetingData.meeting_id}\nStatus: ${meetingData.status}\n\nA council planner will contact you within 2 business days.`)
-  // Reload meetings list
-  await meetings.reload()
+	alert(
+		`Meeting request submitted successfully!\n\nMeeting ID: ${meetingData.meeting_id}\nStatus: ${meetingData.status}\n\nA council planner will contact you within 2 business days.`,
+	)
+	// Reload meetings list
+	await meetings.reload()
 }
 
 const handleEditMeeting = (meeting) => {
-  // Re-open the booking modal with existing meeting data
-  // The modal should be enhanced to accept a meeting prop for editing
-  showBookMeetingModal.value = true
-  // TODO: Pass meeting data to modal for pre-filling
-  alert('Edit meeting functionality - opening booking modal.\n\nNote: You can submit a new request with updated time slots. The previous request will be updated.')
+	// Re-open the booking modal with existing meeting data
+	// The modal should be enhanced to accept a meeting prop for editing
+	showBookMeetingModal.value = true
+	// TODO: Pass meeting data to modal for pre-filling
+	alert(
+		"Edit meeting functionality - opening booking modal.\n\nNote: You can submit a new request with updated time slots. The previous request will be updated.",
+	)
 }
 
 const handleCancelMeeting = async (meeting) => {
-  if (!confirm(`Are you sure you want to cancel this meeting request?\n\nMeeting Type: ${meeting.meeting_type}\nStatus: ${meeting.status}\n\nThis action cannot be undone.`)) {
-    return
-  }
+	if (
+		!confirm(
+			`Are you sure you want to cancel this meeting request?\n\nMeeting Type: ${meeting.meeting_type}\nStatus: ${meeting.status}\n\nThis action cannot be undone.`,
+		)
+	) {
+		return
+	}
 
-  cancellingMeeting.value = true
-  try {
-    const response = await fetch('/api/method/lodgeick.api.cancel_meeting', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Frappe-CSRF-Token': window.csrf_token
-      },
-      body: JSON.stringify({
-        meeting_id: meeting.name
-      })
-    })
+	cancellingMeeting.value = true
+	try {
+		const response = await fetch("/api/method/lodgeick.api.cancel_meeting", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"X-Frappe-CSRF-Token": window.csrf_token,
+			},
+			body: JSON.stringify({
+				meeting_id: meeting.name,
+			}),
+		})
 
-    const result = await response.json()
+		const result = await response.json()
 
-    if (result.message && result.message.success) {
-      alert('Meeting cancelled successfully.')
-      await meetings.reload()
-    } else {
-      throw new Error(result.message?.error || 'Failed to cancel meeting')
-    }
-  } catch (error) {
-    console.error('Error cancelling meeting:', error)
-    alert(`Failed to cancel meeting: ${error.message}\n\nPlease try again or contact support.`)
-  } finally {
-    cancellingMeeting.value = false
-  }
+		if (result.message && result.message.success) {
+			alert("Meeting cancelled successfully.")
+			await meetings.reload()
+		} else {
+			throw new Error(result.message?.error || "Failed to cancel meeting")
+		}
+	} catch (error) {
+		console.error("Error cancelling meeting:", error)
+		alert(
+			`Failed to cancel meeting: ${error.message}\n\nPlease try again or contact support.`,
+		)
+	} finally {
+		cancellingMeeting.value = false
+	}
 }
 </script>

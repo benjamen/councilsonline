@@ -420,119 +420,121 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref, computed } from 'vue'
+import { computed, defineEmits, defineProps, ref } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  }
+	modelValue: {
+		type: Object,
+		required: true,
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
 const localData = computed({
-  get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value)
+	get: () => props.modelValue,
+	set: (value) => emit("update:modelValue", value),
 })
 
 // Modal state
 const showModal = ref(false)
 const editingIndex = ref(null)
 const currentOrg = ref({
-  organisation_name: '',
-  is_iwi: false,
-  contact_name: '',
-  email: '',
-  phone: '',
-  address: '',
-  rd_number: '',
-  suburb: '',
-  city: '',
-  postcode: '',
-  had_concerns: false,
-  concern_details: '',
-  resolution_details: ''
+	organisation_name: "",
+	is_iwi: false,
+	contact_name: "",
+	email: "",
+	phone: "",
+	address: "",
+	rd_number: "",
+	suburb: "",
+	city: "",
+	postcode: "",
+	had_concerns: false,
+	concern_details: "",
+	resolution_details: "",
 })
 
 // Open modal for adding new organization
 const openAddModal = () => {
-  editingIndex.value = null
-  currentOrg.value = {
-    organisation_name: '',
-    is_iwi: false,
-    contact_name: '',
-    email: '',
-    phone: '',
-    address: '',
-    rd_number: '',
-    suburb: '',
-    city: '',
-    postcode: '',
-    had_concerns: false,
-    concern_details: '',
-    resolution_details: ''
-  }
-  showModal.value = true
+	editingIndex.value = null
+	currentOrg.value = {
+		organisation_name: "",
+		is_iwi: false,
+		contact_name: "",
+		email: "",
+		phone: "",
+		address: "",
+		rd_number: "",
+		suburb: "",
+		city: "",
+		postcode: "",
+		had_concerns: false,
+		concern_details: "",
+		resolution_details: "",
+	}
+	showModal.value = true
 }
 
 // Open modal for editing existing organization
 const openEditModal = (index) => {
-  editingIndex.value = index
-  currentOrg.value = { ...localData.value.consulted_organizations[index] }
-  showModal.value = true
+	editingIndex.value = index
+	currentOrg.value = { ...localData.value.consulted_organizations[index] }
+	showModal.value = true
 }
 
 // Close modal
 const closeModal = () => {
-  showModal.value = false
-  editingIndex.value = null
-  currentOrg.value = {
-    organisation_name: '',
-    is_iwi: false,
-    contact_name: '',
-    email: '',
-    phone: '',
-    address: '',
-    rd_number: '',
-    suburb: '',
-    city: '',
-    postcode: '',
-    had_concerns: false,
-    concern_details: '',
-    resolution_details: ''
-  }
+	showModal.value = false
+	editingIndex.value = null
+	currentOrg.value = {
+		organisation_name: "",
+		is_iwi: false,
+		contact_name: "",
+		email: "",
+		phone: "",
+		address: "",
+		rd_number: "",
+		suburb: "",
+		city: "",
+		postcode: "",
+		had_concerns: false,
+		concern_details: "",
+		resolution_details: "",
+	}
 }
 
 // Save organization (add or update)
 const saveOrganization = () => {
-  if (!currentOrg.value.organisation_name) {
-    return
-  }
+	if (!currentOrg.value.organisation_name) {
+		return
+	}
 
-  const updatedData = { ...props.modelValue }
-  if (!updatedData.consulted_organizations) {
-    updatedData.consulted_organizations = []
-  }
+	const updatedData = { ...props.modelValue }
+	if (!updatedData.consulted_organizations) {
+		updatedData.consulted_organizations = []
+	}
 
-  if (editingIndex.value !== null) {
-    // Update existing organization
-    updatedData.consulted_organizations[editingIndex.value] = { ...currentOrg.value }
-  } else {
-    // Add new organization
-    updatedData.consulted_organizations.push({ ...currentOrg.value })
-  }
+	if (editingIndex.value !== null) {
+		// Update existing organization
+		updatedData.consulted_organizations[editingIndex.value] = {
+			...currentOrg.value,
+		}
+	} else {
+		// Add new organization
+		updatedData.consulted_organizations.push({ ...currentOrg.value })
+	}
 
-  emit('update:modelValue', updatedData)
-  closeModal()
+	emit("update:modelValue", updatedData)
+	closeModal()
 }
 
 // Remove organization
 const removeOrganization = (index) => {
-  if (confirm('Are you sure you want to remove this organization?')) {
-    const updatedData = { ...props.modelValue }
-    updatedData.consulted_organizations.splice(index, 1)
-    emit('update:modelValue', updatedData)
-  }
+	if (confirm("Are you sure you want to remove this organization?")) {
+		const updatedData = { ...props.modelValue }
+		updatedData.consulted_organizations.splice(index, 1)
+		emit("update:modelValue", updatedData)
+	}
 }
 </script>

@@ -1,28 +1,28 @@
 <script setup>
-import { ref, computed } from 'vue'
-import { Dialog, Input, Button } from 'frappe-ui'
+import { Button, Dialog, Input } from "frappe-ui"
+import { computed, ref } from "vue"
 
 const props = defineProps({
 	show: {
 		type: Boolean,
-		required: true
+		required: true,
 	},
 	requestId: {
 		type: String,
-		required: true
-	}
+		required: true,
+	},
 })
 
-const emit = defineEmits(['update:show', 'sent'])
+const emit = defineEmits(["update:show", "sent"])
 
 const isOpen = computed({
 	get: () => props.show,
-	set: (value) => emit('update:show', value)
+	set: (value) => emit("update:show", value),
 })
 
-const subject = ref('')
-const message = ref('')
-const communicationType = ref('Email')
+const subject = ref("")
+const message = ref("")
+const communicationType = ref("Email")
 const sending = ref(false)
 const error = ref(null)
 const success = ref(false)
@@ -33,12 +33,12 @@ const isValid = computed(() => {
 
 const handleClose = () => {
 	if (!sending.value) {
-		subject.value = ''
-		message.value = ''
-		communicationType.value = 'Email'
+		subject.value = ""
+		message.value = ""
+		communicationType.value = "Email"
 		error.value = null
 		success.value = false
-		emit('update:show', false)
+		emit("update:show", false)
 	}
 }
 
@@ -49,19 +49,22 @@ const handleSend = async () => {
 	error.value = null
 
 	try {
-		const response = await fetch('/api/method/lodgeick.api.send_request_message', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'X-Frappe-CSRF-Token': window.csrf_token
+		const response = await fetch(
+			"/api/method/lodgeick.api.send_request_message",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"X-Frappe-CSRF-Token": window.csrf_token,
+				},
+				body: JSON.stringify({
+					request_id: props.requestId,
+					subject: subject.value,
+					message: message.value,
+					communication_type: communicationType.value,
+				}),
 			},
-			body: JSON.stringify({
-				request_id: props.requestId,
-				subject: subject.value,
-				message: message.value,
-				communication_type: communicationType.value
-			})
-		})
+		)
 
 		const data = await response.json()
 
@@ -71,18 +74,19 @@ const handleSend = async () => {
 			error.value = null
 
 			// Emit sent event immediately
-			emit('sent')
+			emit("sent")
 
 			// Close modal after 2 seconds so user sees success message
 			setTimeout(() => {
 				handleClose()
 			}, 2000)
 		} else {
-			error.value = data.exc || data._server_messages || 'Failed to send message'
+			error.value =
+				data.exc || data._server_messages || "Failed to send message"
 		}
 	} catch (err) {
-		console.error('Send message error:', err)
-		error.value = 'Network error. Please try again.'
+		console.error("Send message error:", err)
+		error.value = "Network error. Please try again."
 	} finally {
 		sending.value = false
 	}

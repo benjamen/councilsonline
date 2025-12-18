@@ -236,167 +236,180 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue'
-import { Dialog, Input, Button, call } from 'frappe-ui'
+import { Button, Dialog, Input, call } from "frappe-ui"
+import { computed, ref, watch } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    default: false
-  },
-  task: {
-    type: Object,
-    default: null
-  }
+	modelValue: {
+		type: Boolean,
+		default: false,
+	},
+	task: {
+		type: Object,
+		default: null,
+	},
 })
 
-const emit = defineEmits(['update:modelValue', 'task-saved'])
+const emit = defineEmits(["update:modelValue", "task-saved"])
 
 const isOpen = computed({
-  get: () => props.modelValue,
-  set: (val) => emit('update:modelValue', val)
+	get: () => props.modelValue,
+	set: (val) => emit("update:modelValue", val),
 })
 
 const isEditMode = computed(() => !!props.task)
 const isSubmitting = ref(false)
-const errorMessage = ref('')
+const errorMessage = ref("")
 
 const defaultFormData = () => ({
-  title: '',
-  description: '',
-  priority: 'Medium',
-  status: 'Open',
-  due_date: '',
-  assigned_to: '',
-  assigned_by: '',
-  request: '',
-  activity_type: '',
-  assigned_role: '',
-  estimated_hours: null,
-  actual_hours: null
+	title: "",
+	description: "",
+	priority: "Medium",
+	status: "Open",
+	due_date: "",
+	assigned_to: "",
+	assigned_by: "",
+	request: "",
+	activity_type: "",
+	assigned_role: "",
+	estimated_hours: null,
+	actual_hours: null,
 })
 
 const formData = ref(defaultFormData())
-const userRole = ref('')
+const userRole = ref("")
 const hourlyRate = ref(0)
 const totalCost = computed(() => {
-  const hours = formData.value.actual_hours || 0
-  return hours * hourlyRate.value
+	const hours = formData.value.actual_hours || 0
+	return hours * hourlyRate.value
 })
 
 // Fetch user role and hourly rate when assigned_to changes
-watch(() => formData.value.assigned_to, async (newUser) => {
-  if (newUser) {
-    try {
-      // Get user's primary role
-      const userDoc = await call('frappe.client.get', {
-        doctype: 'User',
-        name: newUser
-      })
+watch(
+	() => formData.value.assigned_to,
+	async (newUser) => {
+		if (newUser) {
+			try {
+				// Get user's primary role
+				const userDoc = await call("frappe.client.get", {
+					doctype: "User",
+					name: newUser,
+				})
 
-      if (userDoc && userDoc.roles && userDoc.roles.length > 0) {
-        // Get first non-standard role
-        const role = userDoc.roles.find(r => !['Guest', 'All'].includes(r.role))
-        if (role) {
-          userRole.value = role.role
-          formData.value.assigned_role = role.role
+				if (userDoc && userDoc.roles && userDoc.roles.length > 0) {
+					// Get first non-standard role
+					const role = userDoc.roles.find(
+						(r) => !["Guest", "All"].includes(r.role),
+					)
+					if (role) {
+						userRole.value = role.role
+						formData.value.assigned_role = role.role
 
-          // Fetch hourly rate for this role
-          const rateData = await call('lodgeick.lodgeick.doctype.role_rate.role_rate.get_hourly_rate', {
-            role: role.role
-          })
+						// Fetch hourly rate for this role
+						const rateData = await call(
+							"lodgeick.lodgeick.doctype.role_rate.role_rate.get_hourly_rate",
+							{
+								role: role.role,
+							},
+						)
 
-          if (rateData && rateData.hourly_rate) {
-            hourlyRate.value = rateData.hourly_rate
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching user role and rate:', error)
-      userRole.value = ''
-      hourlyRate.value = 0
-    }
-  } else {
-    userRole.value = ''
-    hourlyRate.value = 0
-  }
-})
+						if (rateData && rateData.hourly_rate) {
+							hourlyRate.value = rateData.hourly_rate
+						}
+					}
+				}
+			} catch (error) {
+				console.error("Error fetching user role and rate:", error)
+				userRole.value = ""
+				hourlyRate.value = 0
+			}
+		} else {
+			userRole.value = ""
+			hourlyRate.value = 0
+		}
+	},
+)
 
 // Calculate cost when actual hours changes
 const calculateCost = () => {
-  // Cost is automatically calculated via computed property
+	// Cost is automatically calculated via computed property
 }
 
 // Watch for task prop changes to populate form
-watch(() => props.task, (newTask) => {
-  if (newTask) {
-    formData.value = {
-      title: newTask.title || '',
-      description: newTask.description || '',
-      priority: newTask.priority || 'Medium',
-      status: newTask.status || 'Open',
-      due_date: newTask.due_date || '',
-      assigned_to: newTask.assigned_to || '',
-      assigned_by: newTask.assigned_by || '',
-      request: newTask.request || '',
-      activity_type: newTask.activity_type || '',
-      assigned_role: newTask.assigned_role || '',
-      estimated_hours: newTask.estimated_hours || null,
-      actual_hours: newTask.actual_hours || null
-    }
+watch(
+	() => props.task,
+	(newTask) => {
+		if (newTask) {
+			formData.value = {
+				title: newTask.title || "",
+				description: newTask.description || "",
+				priority: newTask.priority || "Medium",
+				status: newTask.status || "Open",
+				due_date: newTask.due_date || "",
+				assigned_to: newTask.assigned_to || "",
+				assigned_by: newTask.assigned_by || "",
+				request: newTask.request || "",
+				activity_type: newTask.activity_type || "",
+				assigned_role: newTask.assigned_role || "",
+				estimated_hours: newTask.estimated_hours || null,
+				actual_hours: newTask.actual_hours || null,
+			}
 
-    // Set existing role and rate
-    if (newTask.assigned_role) {
-      userRole.value = newTask.assigned_role
-    }
-    if (newTask.hourly_rate) {
-      hourlyRate.value = newTask.hourly_rate
-    }
-  } else {
-    formData.value = defaultFormData()
-    userRole.value = ''
-    hourlyRate.value = 0
-  }
-}, { immediate: true })
+			// Set existing role and rate
+			if (newTask.assigned_role) {
+				userRole.value = newTask.assigned_role
+			}
+			if (newTask.hourly_rate) {
+				hourlyRate.value = newTask.hourly_rate
+			}
+		} else {
+			formData.value = defaultFormData()
+			userRole.value = ""
+			hourlyRate.value = 0
+		}
+	},
+	{ immediate: true },
+)
 
 const handleSubmit = async () => {
-  errorMessage.value = ''
-  isSubmitting.value = true
+	errorMessage.value = ""
+	isSubmitting.value = true
 
-  try {
-    if (isEditMode.value) {
-      // Update existing task
-      await call('frappe.client.set_value', {
-        doctype: 'Project Task',
-        name: props.task.name,
-        fieldname: formData.value
-      })
-    } else {
-      // Create new task
-      const taskData = {
-        doctype: 'Project Task',
-        ...formData.value,
-        assigned_by: formData.value.assigned_by || 'Administrator'
-      }
+	try {
+		if (isEditMode.value) {
+			// Update existing task
+			await call("frappe.client.set_value", {
+				doctype: "Project Task",
+				name: props.task.name,
+				fieldname: formData.value,
+			})
+		} else {
+			// Create new task
+			const taskData = {
+				doctype: "Project Task",
+				...formData.value,
+				assigned_by: formData.value.assigned_by || "Administrator",
+			}
 
-      await call('frappe.client.insert', {
-        doc: taskData
-      })
-    }
+			await call("frappe.client.insert", {
+				doc: taskData,
+			})
+		}
 
-    emit('task-saved')
-    closeDialog()
-  } catch (error) {
-    console.error('Error saving task:', error)
-    errorMessage.value = error.message || 'Failed to save task. Please try again.'
-  } finally {
-    isSubmitting.value = false
-  }
+		emit("task-saved")
+		closeDialog()
+	} catch (error) {
+		console.error("Error saving task:", error)
+		errorMessage.value =
+			error.message || "Failed to save task. Please try again."
+	} finally {
+		isSubmitting.value = false
+	}
 }
 
 const closeDialog = () => {
-  isOpen.value = false
-  formData.value = defaultFormData()
-  errorMessage.value = ''
+	isOpen.value = false
+	formData.value = defaultFormData()
+	errorMessage.value = ""
 }
 </script>

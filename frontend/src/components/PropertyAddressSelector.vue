@@ -93,32 +93,33 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
-import PhilippinesAddressInput from './PhilippinesAddressInput.vue'
-import { useUserProfile } from '../composables/useUserProfile'
+import { computed, onMounted, ref, watch } from "vue"
+import { useUserProfile } from "../composables/useUserProfile"
+import PhilippinesAddressInput from "./PhilippinesAddressInput.vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    default: () => ({})
-  },
-  label: {
-    type: String,
-    default: 'Residential Address'
-  },
-  required: {
-    type: Boolean,
-    default: false
-  }
+	modelValue: {
+		type: Object,
+		default: () => ({}),
+	},
+	label: {
+		type: String,
+		default: "Residential Address",
+	},
+	required: {
+		type: Boolean,
+		default: false,
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
-const { userProfile, loadUserProfile, getAllProperties, defaultProperty } = useUserProfile()
+const { userProfile, loadUserProfile, getAllProperties, defaultProperty } =
+	useUserProfile()
 
 // State
 const showPropertySelector = ref(false)
-const selectedPropertyId = ref('')
+const selectedPropertyId = ref("")
 const saveToProfile = ref(false)
 const localAddress = ref(props.modelValue || {})
 
@@ -126,94 +127,108 @@ const localAddress = ref(props.modelValue || {})
 const userProperties = computed(() => getAllProperties.value || [])
 
 const selectedProperty = computed(() => {
-  if (!selectedPropertyId.value || selectedPropertyId.value === '__new__') return null
-  return userProperties.value.find(p => p.name === selectedPropertyId.value)
+	if (!selectedPropertyId.value || selectedPropertyId.value === "__new__")
+		return null
+	return userProperties.value.find((p) => p.name === selectedPropertyId.value)
 })
 
 // Methods
 function formatPropertyOption(property) {
-  const parts = []
-  if (property.property_name) parts.push(property.property_name)
-  if (property.street) parts.push(property.street)
-  if (property.suburb) parts.push(property.suburb)
-  if (property.city) parts.push(property.city)
-  return parts.join(', ') || 'Unnamed Property'
+	const parts = []
+	if (property.property_name) parts.push(property.property_name)
+	if (property.street) parts.push(property.street)
+	if (property.suburb) parts.push(property.suburb)
+	if (property.city) parts.push(property.city)
+	return parts.join(", ") || "Unnamed Property"
 }
 
 function formatPropertyAddress(property) {
-  const parts = []
-  if (property.street) parts.push(property.street)
-  if (property.barangay) parts.push(`Brgy. ${property.barangay}`)
-  if (property.municipality) parts.push(property.municipality)
-  if (property.province) parts.push(property.province)
-  if (property.zip_code || property.postcode) parts.push(property.zip_code || property.postcode)
-  return parts.join(', ')
+	const parts = []
+	if (property.street) parts.push(property.street)
+	if (property.barangay) parts.push(`Brgy. ${property.barangay}`)
+	if (property.municipality) parts.push(property.municipality)
+	if (property.province) parts.push(property.province)
+	if (property.zip_code || property.postcode)
+		parts.push(property.zip_code || property.postcode)
+	return parts.join(", ")
 }
 
 function onPropertySelected() {
-  if (selectedPropertyId.value === '__new__') {
-    // Reset to manual entry mode
-    localAddress.value = {}
-    showPropertySelector.value = false
-    return
-  }
+	if (selectedPropertyId.value === "__new__") {
+		// Reset to manual entry mode
+		localAddress.value = {}
+		showPropertySelector.value = false
+		return
+	}
 
-  if (selectedProperty.value) {
-    // Map property to address format
-    localAddress.value = {
-      full_address: formatPropertyAddress(selectedProperty.value),
-      address_line: selectedProperty.value.street || '',
-      barangay: selectedProperty.value.barangay || '',
-      municipality: selectedProperty.value.municipality || selectedProperty.value.city || '',
-      province: selectedProperty.value.province || '',
-      zip_code: selectedProperty.value.zip_code || selectedProperty.value.postcode || ''
-    }
+	if (selectedProperty.value) {
+		// Map property to address format
+		localAddress.value = {
+			full_address: formatPropertyAddress(selectedProperty.value),
+			address_line: selectedProperty.value.street || "",
+			barangay: selectedProperty.value.barangay || "",
+			municipality:
+				selectedProperty.value.municipality ||
+				selectedProperty.value.city ||
+				"",
+			province: selectedProperty.value.province || "",
+			zip_code:
+				selectedProperty.value.zip_code ||
+				selectedProperty.value.postcode ||
+				"",
+		}
 
-    emit('update:modelValue', localAddress.value)
-  }
+		emit("update:modelValue", localAddress.value)
+	}
 }
 
 function onAddressChange(newAddress) {
-  localAddress.value = newAddress
-  emit('update:modelValue', newAddress)
+	localAddress.value = newAddress
+	emit("update:modelValue", newAddress)
 }
 
 function editProperty() {
-  // Switch to manual mode with current property data
-  showPropertySelector.value = false
-  // Keep the current localAddress values for editing
+	// Switch to manual mode with current property data
+	showPropertySelector.value = false
+	// Keep the current localAddress values for editing
 }
 
 function deleteProperty() {
-  if (confirm('Are you sure you want to remove this property from selection?')) {
-    selectedPropertyId.value = ''
-    localAddress.value = {}
-    emit('update:modelValue', {})
-  }
+	if (
+		confirm("Are you sure you want to remove this property from selection?")
+	) {
+		selectedPropertyId.value = ""
+		localAddress.value = {}
+		emit("update:modelValue", {})
+	}
 }
 
 // Initialize
 onMounted(async () => {
-  await loadUserProfile()
+	await loadUserProfile()
 
-  // Auto-select default property if no value provided
-  if (!props.modelValue || Object.keys(props.modelValue).length === 0) {
-    if (defaultProperty.value) {
-      selectedPropertyId.value = defaultProperty.value.name
-      onPropertySelected()
-    }
-  }
+	// Auto-select default property if no value provided
+	if (!props.modelValue || Object.keys(props.modelValue).length === 0) {
+		if (defaultProperty.value) {
+			selectedPropertyId.value = defaultProperty.value.name
+			onPropertySelected()
+		}
+	}
 
-  // Show property selector by default if user has properties
-  if (userProperties.value.length > 0) {
-    showPropertySelector.value = true
-  }
+	// Show property selector by default if user has properties
+	if (userProperties.value.length > 0) {
+		showPropertySelector.value = true
+	}
 })
 
 // Watch for external changes
-watch(() => props.modelValue, (newVal) => {
-  if (newVal && Object.keys(newVal).length > 0) {
-    localAddress.value = newVal
-  }
-}, { deep: true })
+watch(
+	() => props.modelValue,
+	(newVal) => {
+		if (newVal && Object.keys(newVal).length > 0) {
+			localAddress.value = newVal
+		}
+	},
+	{ deep: true },
+)
 </script>

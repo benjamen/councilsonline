@@ -85,42 +85,42 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue'
-import { session } from '@/data/session'
-import { useRouter } from 'vue-router'
+import { session } from "@/data/session"
+import { defineEmits, defineProps } from "vue"
+import { useRouter } from "vue-router"
 
 const router = useRouter()
 
 const props = defineProps({
-  requestTypeDetails: {
-    type: Object,
-    default: null
-  },
-  councilName: {
-    type: String,
-    default: ''
-  },
-  modelValue: {
-    type: Object,
-    default: () => ({})
-  }
+	requestTypeDetails: {
+		type: Object,
+		default: null,
+	},
+	councilName: {
+		type: String,
+		default: "",
+	},
+	modelValue: {
+		type: Object,
+		default: () => ({}),
+	},
 })
 
-const emit = defineEmits(['continue', 'update:modelValue'])
+const emit = defineEmits(["continue", "update:modelValue"])
 
 const handleContinue = () => {
-  // Check if user is logged in before allowing them to continue
-  if (!session.isLoggedIn) {
-    // Save current URL to redirect back after login
-    const currentPath = window.location.pathname + window.location.search
-    router.push({
-      name: 'Login',
-      query: { redirect: currentPath }
-    })
-    return
-  }
+	// Check if user is logged in before allowing them to continue
+	if (!session.isLoggedIn) {
+		// Save current URL to redirect back after login
+		const currentPath = window.location.pathname + window.location.search
+		router.push({
+			name: "Login",
+			query: { redirect: currentPath },
+		})
+		return
+	}
 
-  // User is logged in, proceed normally
-  emit('continue')
+	// User is logged in, proceed normally
+	emit("continue")
 }
 </script>

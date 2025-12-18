@@ -339,9 +339,9 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { call } from 'frappe-ui'
+import { call } from "frappe-ui"
+import { onMounted, reactive, ref } from "vue"
+import { useRouter } from "vue-router"
 
 const router = useRouter()
 
@@ -351,16 +351,16 @@ const saving = ref(false)
 const loadingLibrary = ref(false)
 const showLoadDialog = ref(false)
 const showImportDialog = ref(false)
-const importJSON = ref('')
+const importJSON = ref("")
 
 const template = reactive({
-  name: '',
-  template_name: '',
-  request_type: '',
-  is_active: 1,
-  default_budget_hours: null,
-  description: '',
-  stages: []
+	name: "",
+	template_name: "",
+	request_type: "",
+	is_active: 1,
+	default_budget_hours: null,
+	description: "",
+	stages: [],
 })
 
 const templateLibrary = ref([])
@@ -370,203 +370,203 @@ const expandedStages = ref({})
 
 // Load initial data
 onMounted(async () => {
-  await loadRequestTypes()
-  await loadStageTypes()
-  await loadTemplateLibrary()
+	await loadRequestTypes()
+	await loadStageTypes()
+	await loadTemplateLibrary()
 
-  // Expand all stages by default
-  expandAllStages()
+	// Expand all stages by default
+	expandAllStages()
 })
 
 async function loadRequestTypes() {
-  try {
-    const response = await call('frappe.client.get_list', {
-      doctype: 'Request Type',
-      fields: ['name', 'type_name'],
-      filters: { is_active: 1 },
-      order_by: 'type_name'
-    })
-    requestTypes.value = response
-  } catch (error) {
-    console.error('Failed to load request types:', error)
-  }
+	try {
+		const response = await call("frappe.client.get_list", {
+			doctype: "Request Type",
+			fields: ["name", "type_name"],
+			filters: { is_active: 1 },
+			order_by: "type_name",
+		})
+		requestTypes.value = response
+	} catch (error) {
+		console.error("Failed to load request types:", error)
+	}
 }
 
 async function loadStageTypes() {
-  try {
-    const response = await call('lodgeick.api.get_assessment_stage_types')
-    if (response.success) {
-      stageTypes.value = response.stage_types
-    }
-  } catch (error) {
-    console.error('Failed to load stage types:', error)
-  }
+	try {
+		const response = await call("lodgeick.api.get_assessment_stage_types")
+		if (response.success) {
+			stageTypes.value = response.stage_types
+		}
+	} catch (error) {
+		console.error("Failed to load stage types:", error)
+	}
 }
 
 async function loadTemplateLibrary() {
-  loadingLibrary.value = true
-  try {
-    const response = await call('lodgeick.api.get_assessment_templates')
-    if (response.success) {
-      templateLibrary.value = response.templates
-    }
-  } catch (error) {
-    console.error('Failed to load template library:', error)
-  } finally {
-    loadingLibrary.value = false
-  }
+	loadingLibrary.value = true
+	try {
+		const response = await call("lodgeick.api.get_assessment_templates")
+		if (response.success) {
+			templateLibrary.value = response.templates
+		}
+	} catch (error) {
+		console.error("Failed to load template library:", error)
+	} finally {
+		loadingLibrary.value = false
+	}
 }
 
 async function loadTemplate(templateName) {
-  loading.value = true
-  try {
-    const response = await call('lodgeick.api.load_assessment_template', {
-      template_name: templateName
-    })
+	loading.value = true
+	try {
+		const response = await call("lodgeick.api.load_assessment_template", {
+			template_name: templateName,
+		})
 
-    if (response.success) {
-      Object.assign(template, response.template)
-      expandAllStages()
-      showLoadDialog.value = false
-    }
-  } catch (error) {
-    console.error('Failed to load template:', error)
-    alert('Failed to load template: ' + error.message)
-  } finally {
-    loading.value = false
-  }
+		if (response.success) {
+			Object.assign(template, response.template)
+			expandAllStages()
+			showLoadDialog.value = false
+		}
+	} catch (error) {
+		console.error("Failed to load template:", error)
+		alert("Failed to load template: " + error.message)
+	} finally {
+		loading.value = false
+	}
 }
 
 async function loadFromLibrary(templateName) {
-  await loadTemplate(templateName)
+	await loadTemplate(templateName)
 }
 
 async function saveTemplate() {
-  // Validation
-  if (!template.template_name) {
-    alert('Please enter a template name')
-    return
-  }
+	// Validation
+	if (!template.template_name) {
+		alert("Please enter a template name")
+		return
+	}
 
-  if (template.stages.length === 0) {
-    alert('Please add at least one stage')
-    return
-  }
+	if (template.stages.length === 0) {
+		alert("Please add at least one stage")
+		return
+	}
 
-  // Validate at least one required stage
-  const hasRequiredStage = template.stages.some(s => s.required)
-  if (!hasRequiredStage) {
-    alert('At least one stage must be marked as required')
-    return
-  }
+	// Validate at least one required stage
+	const hasRequiredStage = template.stages.some((s) => s.required)
+	if (!hasRequiredStage) {
+		alert("At least one stage must be marked as required")
+		return
+	}
 
-  saving.value = true
-  try {
-    const response = await call('lodgeick.api.save_assessment_template', {
-      config: template
-    })
+	saving.value = true
+	try {
+		const response = await call("lodgeick.api.save_assessment_template", {
+			config: template,
+		})
 
-    if (response.success) {
-      alert('Template saved successfully!')
-      template.name = response.template_name
-      await loadTemplateLibrary()
-    } else {
-      alert('Failed to save template: ' + response.error)
-    }
-  } catch (error) {
-    console.error('Failed to save template:', error)
-    alert('Failed to save template: ' + error.message)
-  } finally {
-    saving.value = false
-  }
+		if (response.success) {
+			alert("Template saved successfully!")
+			template.name = response.template_name
+			await loadTemplateLibrary()
+		} else {
+			alert("Failed to save template: " + response.error)
+		}
+	} catch (error) {
+		console.error("Failed to save template:", error)
+		alert("Failed to save template: " + error.message)
+	} finally {
+		saving.value = false
+	}
 }
 
 function addStage() {
-  const newStageNumber = template.stages.length + 1
-  template.stages.push({
-    stage_number: newStageNumber,
-    stage_type: '',
-    estimated_hours: null,
-    required: 0,
-    description: ''
-  })
+	const newStageNumber = template.stages.length + 1
+	template.stages.push({
+		stage_number: newStageNumber,
+		stage_type: "",
+		estimated_hours: null,
+		required: 0,
+		description: "",
+	})
 
-  // Expand the new stage
-  expandedStages.value[template.stages.length - 1] = true
+	// Expand the new stage
+	expandedStages.value[template.stages.length - 1] = true
 }
 
 function deleteStage(index) {
-  if (confirm('Are you sure you want to delete this stage?')) {
-    template.stages.splice(index, 1)
-    renumberStages()
-  }
+	if (confirm("Are you sure you want to delete this stage?")) {
+		template.stages.splice(index, 1)
+		renumberStages()
+	}
 }
 
 function moveStageUp(index) {
-  if (index > 0) {
-    const temp = template.stages[index]
-    template.stages[index] = template.stages[index - 1]
-    template.stages[index - 1] = temp
-    renumberStages()
-  }
+	if (index > 0) {
+		const temp = template.stages[index]
+		template.stages[index] = template.stages[index - 1]
+		template.stages[index - 1] = temp
+		renumberStages()
+	}
 }
 
 function moveStageDown(index) {
-  if (index < template.stages.length - 1) {
-    const temp = template.stages[index]
-    template.stages[index] = template.stages[index + 1]
-    template.stages[index + 1] = temp
-    renumberStages()
-  }
+	if (index < template.stages.length - 1) {
+		const temp = template.stages[index]
+		template.stages[index] = template.stages[index + 1]
+		template.stages[index + 1] = temp
+		renumberStages()
+	}
 }
 
 function renumberStages() {
-  template.stages.forEach((stage, index) => {
-    stage.stage_number = index + 1
-  })
+	template.stages.forEach((stage, index) => {
+		stage.stage_number = index + 1
+	})
 }
 
 function toggleStage(index) {
-  expandedStages.value[index] = !expandedStages.value[index]
+	expandedStages.value[index] = !expandedStages.value[index]
 }
 
 function expandAllStages() {
-  template.stages.forEach((_, index) => {
-    expandedStages.value[index] = true
-  })
+	template.stages.forEach((_, index) => {
+		expandedStages.value[index] = true
+	})
 }
 
 function getStageTypeName(stageType) {
-  const st = stageTypes.value.find(s => s.name === stageType)
-  return st ? st.stage_type_name : ''
+	const st = stageTypes.value.find((s) => s.name === stageType)
+	return st ? st.stage_type_name : ""
 }
 
 function getStageTypeDescription(stageType) {
-  const st = stageTypes.value.find(s => s.name === stageType)
-  return st ? st.description?.replace(/<[^>]*>/g, '') : ''
+	const st = stageTypes.value.find((s) => s.name === stageType)
+	return st ? st.description?.replace(/<[^>]*>/g, "") : ""
 }
 
 function exportJSON() {
-  const json = JSON.stringify(template, null, 2)
-  const blob = new Blob([json], { type: 'application/json' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `${template.template_name || 'template'}.json`
-  a.click()
-  URL.revokeObjectURL(url)
+	const json = JSON.stringify(template, null, 2)
+	const blob = new Blob([json], { type: "application/json" })
+	const url = URL.createObjectURL(blob)
+	const a = document.createElement("a")
+	a.href = url
+	a.download = `${template.template_name || "template"}.json`
+	a.click()
+	URL.revokeObjectURL(url)
 }
 
 function importFromJSON() {
-  try {
-    const imported = JSON.parse(importJSON.value)
-    Object.assign(template, imported)
-    expandAllStages()
-    showImportDialog.value = false
-    importJSON.value = ''
-    alert('Template imported successfully!')
-  } catch (error) {
-    alert('Invalid JSON: ' + error.message)
-  }
+	try {
+		const imported = JSON.parse(importJSON.value)
+		Object.assign(template, imported)
+		expandAllStages()
+		showImportDialog.value = false
+		importJSON.value = ""
+		alert("Template imported successfully!")
+	} catch (error) {
+		alert("Invalid JSON: " + error.message)
+	}
 }
 </script>

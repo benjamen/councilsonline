@@ -31,8 +31,9 @@ function validateEmail(value) {
 function validatePhone(value) {
 	if (!value) return true
 	// Accepts: +64 21 123 4567, 021234567, (021) 123-4567, etc.
-	const phoneRegex = /^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$/
-	return phoneRegex.test(value.replace(/\s/g, ''))
+	const phoneRegex =
+		/^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$/
+	return phoneRegex.test(value.replace(/\s/g, ""))
 }
 
 /**
@@ -56,8 +57,8 @@ function validateUrl(value) {
  * @returns {boolean} - True if valid number
  */
 function validateNumber(value) {
-	if (value === '' || value === null || value === undefined) return true
-	return !isNaN(parseFloat(value)) && isFinite(value)
+	if (value === "" || value === null || value === undefined) return true
+	return !isNaN(Number.parseFloat(value)) && isFinite(value)
 }
 
 /**
@@ -71,14 +72,17 @@ function validateNumber(value) {
 function evaluateCustomValidation(expression, value, formData) {
 	// Remove 'eval:' prefix if present
 	let cleanExpression = expression.trim()
-	if (cleanExpression.startsWith('eval:')) {
+	if (cleanExpression.startsWith("eval:")) {
 		cleanExpression = cleanExpression.substring(5).trim()
 	}
 
 	try {
 		// Create a safe evaluation context with formData and value
 		// This prevents access to dangerous globals like window, document, etc.
-		const safeEval = new Function('formData', 'value', `
+		const safeEval = new Function(
+			"formData",
+			"value",
+			`
 			'use strict';
 			try {
 				return Boolean(${cleanExpression});
@@ -86,12 +90,17 @@ function evaluateCustomValidation(expression, value, formData) {
 				console.warn('[Field Validation] Evaluation error:', e.message);
 				return true; // Fail open on evaluation error
 			}
-		`)
+		`,
+		)
 
 		const result = safeEval(formData, value)
 		return result
 	} catch (error) {
-		console.error('[Field Validation] Failed to evaluate expression:', expression, error)
+		console.error(
+			"[Field Validation] Failed to evaluate expression:",
+			expression,
+			error,
+		)
 		// On error, default to passing validation (fail open)
 		return true
 	}
@@ -107,47 +116,47 @@ function evaluateCustomValidation(expression, value, formData) {
  */
 export function validateField(value, validation, formData = {}) {
 	if (!validation) {
-		return { valid: true, message: '' }
+		return { valid: true, message: "" }
 	}
 
 	const validationType = validation.toLowerCase()
 
 	// Built-in validation types
 	switch (validationType) {
-		case 'email':
+		case "email":
 			if (!validateEmail(value)) {
-				return { valid: false, message: 'Please enter a valid email address' }
+				return { valid: false, message: "Please enter a valid email address" }
 			}
 			break
 
-		case 'phone':
+		case "phone":
 			if (!validatePhone(value)) {
-				return { valid: false, message: 'Please enter a valid phone number' }
+				return { valid: false, message: "Please enter a valid phone number" }
 			}
 			break
 
-		case 'url':
+		case "url":
 			if (!validateUrl(value)) {
-				return { valid: false, message: 'Please enter a valid URL' }
+				return { valid: false, message: "Please enter a valid URL" }
 			}
 			break
 
-		case 'number':
+		case "number":
 			if (!validateNumber(value)) {
-				return { valid: false, message: 'Please enter a valid number' }
+				return { valid: false, message: "Please enter a valid number" }
 			}
 			break
 
 		default:
 			// Custom validation expression (starts with eval:)
-			if (validation.startsWith('eval:')) {
+			if (validation.startsWith("eval:")) {
 				if (!evaluateCustomValidation(validation, value, formData)) {
-					return { valid: false, message: 'Validation failed' }
+					return { valid: false, message: "Validation failed" }
 				}
 			}
 	}
 
-	return { valid: true, message: '' }
+	return { valid: true, message: "" }
 }
 
 /**
@@ -161,11 +170,14 @@ export function validateSection(fields, formData) {
 	const errors = {}
 	let valid = true
 
-	fields.forEach(field => {
+	fields.forEach((field) => {
 		const value = formData[field.field_name]
 
 		// Check required
-		if (field.is_required && (value === '' || value === null || value === undefined)) {
+		if (
+			field.is_required &&
+			(value === "" || value === null || value === undefined)
+		) {
 			errors[field.field_name] = `${field.field_label} is required`
 			valid = false
 			return
@@ -199,7 +211,7 @@ export function validateStep(stepConfig, formData) {
 	let allErrors = {}
 	let allValid = true
 
-	stepConfig.sections.forEach(section => {
+	stepConfig.sections.forEach((section) => {
 		if (section.fields && Array.isArray(section.fields)) {
 			const sectionResult = validateSection(section.fields, formData)
 			if (!sectionResult.valid) {

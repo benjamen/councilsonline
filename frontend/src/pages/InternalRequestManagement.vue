@@ -318,201 +318,214 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { createResource, Input, Dropdown, Dialog, Button } from 'frappe-ui'
-import { session } from '../data/session'
-import StatusBadge from '../components/StatusBadge.vue'
-import StatCard from '../components/StatCard.vue'
-import TaskManagement from '../components/TaskManagement.vue'
+import { Button, Dialog, Dropdown, Input, createResource } from "frappe-ui"
+import { computed, ref } from "vue"
+import { useRouter } from "vue-router"
+import StatCard from "../components/StatCard.vue"
+import StatusBadge from "../components/StatusBadge.vue"
+import TaskManagement from "../components/TaskManagement.vue"
+import { session } from "../data/session"
 
 const router = useRouter()
 
 // Current tab
-const currentTab = ref('requests')
+const currentTab = ref("requests")
 
 const tabs = [
-  { id: 'requests', label: 'All Requests' },
-  { id: 'tasks', label: 'My Tasks' },
-  { id: 'maps', label: 'GIS Maps' },
-  { id: 'districtplan', label: 'District Plan' },
-  { id: 'analytics', label: 'Analytics' },
+	{ id: "requests", label: "All Requests" },
+	{ id: "tasks", label: "My Tasks" },
+	{ id: "maps", label: "GIS Maps" },
+	{ id: "districtplan", label: "District Plan" },
+	{ id: "analytics", label: "Analytics" },
 ]
 
 // Filters
-const searchQuery = ref('')
-const filterStatus = ref('')
-const filterCouncil = ref('')
-const filterAssignee = ref('')
-const filterType = ref('')
+const searchQuery = ref("")
+const filterStatus = ref("")
+const filterCouncil = ref("")
+const filterAssignee = ref("")
+const filterType = ref("")
 
 // Assignment dialog
 const showAssignDialog = ref(false)
 const assigningRequest = ref(null)
-const assignedTo = ref('')
-const assignmentNotes = ref('')
+const assignedTo = ref("")
+const assignmentNotes = ref("")
 const isAssigning = ref(false)
 
 // Fetch all requests for council staff
 const requests = createResource({
-  url: 'lodgeick.lodgeick.doctype.request.request.get_all_requests_for_staff',
-  auto: true,
+	url: "lodgeick.lodgeick.doctype.request.request.get_all_requests_for_staff",
+	auto: true,
 })
 
 // Fetch staff users for assignment with roles
 const staffUsers = createResource({
-  url: 'lodgeick.api.get_staff_users',
-  auto: true,
+	url: "lodgeick.api.get_staff_users",
+	auto: true,
 })
 
 // Available councils from requests
 const availableCouncils = computed(() => {
-  const data = requests.data || []
-  const councils = [...new Set(data.map(r => r.council).filter(Boolean))]
-  return councils.sort()
+	const data = requests.data || []
+	const councils = [...new Set(data.map((r) => r.council).filter(Boolean))]
+	return councils.sort()
 })
 
 // Computed stats
 const stats = computed(() => {
-  const data = requests.data || []
-  return {
-    total: data.length,
-    unassigned: data.filter(r => !r.assigned_to).length,
-    inProgress: data.filter(r => r.status === 'Under Review').length,
-    rfi: data.filter(r => r.status === 'RFI Issued').length,
-    completed: data.filter(r => ['Approved', 'Declined', 'Withdrawn'].includes(r.status)).length,
-  }
+	const data = requests.data || []
+	return {
+		total: data.length,
+		unassigned: data.filter((r) => !r.assigned_to).length,
+		inProgress: data.filter((r) => r.status === "Under Review").length,
+		rfi: data.filter((r) => r.status === "RFI Issued").length,
+		completed: data.filter((r) =>
+			["Approved", "Declined", "Withdrawn"].includes(r.status),
+		).length,
+	}
 })
 
 // Filtered requests
 const filteredRequests = computed(() => {
-  let data = requests.data || []
+	let data = requests.data || []
 
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    data = data.filter(r =>
-      r.request_number?.toLowerCase().includes(query) ||
-      r.property_address?.toLowerCase().includes(query) ||
-      r.requester_name?.toLowerCase().includes(query)
-    )
-  }
+	if (searchQuery.value) {
+		const query = searchQuery.value.toLowerCase()
+		data = data.filter(
+			(r) =>
+				r.request_number?.toLowerCase().includes(query) ||
+				r.property_address?.toLowerCase().includes(query) ||
+				r.requester_name?.toLowerCase().includes(query),
+		)
+	}
 
-  if (filterStatus.value) {
-    data = data.filter(r => r.status === filterStatus.value)
-  }
+	if (filterStatus.value) {
+		data = data.filter((r) => r.status === filterStatus.value)
+	}
 
-  if (filterCouncil.value) {
-    data = data.filter(r => r.council === filterCouncil.value)
-  }
+	if (filterCouncil.value) {
+		data = data.filter((r) => r.council === filterCouncil.value)
+	}
 
-  if (filterAssignee.value === 'unassigned') {
-    data = data.filter(r => !r.assigned_to)
-  } else if (filterAssignee.value === 'me') {
-    data = data.filter(r => r.assigned_to === session.user)
-  }
+	if (filterAssignee.value === "unassigned") {
+		data = data.filter((r) => !r.assigned_to)
+	} else if (filterAssignee.value === "me") {
+		data = data.filter((r) => r.assigned_to === session.user)
+	}
 
-  if (filterType.value) {
-    data = data.filter(r => r.request_type === filterType.value)
-  }
+	if (filterType.value) {
+		data = data.filter((r) => r.request_type === filterType.value)
+	}
 
-  return data
+	return data
 })
 
 // User info
-const userName = computed(() => session.user || 'User')
+const userName = computed(() => session.user || "User")
 const userInitials = computed(() => {
-  const name = userName.value
-  return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)
+	const name = userName.value
+	return name
+		.split(" ")
+		.map((n) => n[0])
+		.join("")
+		.toUpperCase()
+		.substring(0, 2)
 })
 
 // Methods
 const getInitials = (name) => {
-  if (!name) return '?'
-  return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)
+	if (!name) return "?"
+	return name
+		.split(" ")
+		.map((n) => n[0])
+		.join("")
+		.toUpperCase()
+		.substring(0, 2)
 }
 
 const viewRequest = (requestId) => {
-  router.push({ name: 'InternalRequestDetail', params: { id: requestId } })
+	router.push({ name: "InternalRequestDetail", params: { id: requestId } })
 }
 
 const assignRequest = (request) => {
-  assigningRequest.value = request
-  assignedTo.value = request.assigned_to || ''
-  assignmentNotes.value = ''
-  showAssignDialog.value = true
+	assigningRequest.value = request
+	assignedTo.value = request.assigned_to || ""
+	assignmentNotes.value = ""
+	showAssignDialog.value = true
 }
 
 const confirmAssignment = async () => {
-  if (!assignedTo.value) {
-    alert('Please select a user to assign')
-    return
-  }
+	if (!assignedTo.value) {
+		alert("Please select a user to assign")
+		return
+	}
 
-  isAssigning.value = true
-  try {
-    const response = await fetch('/api/method/lodgeick.api.assign_request', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Frappe-CSRF-Token': window.csrf_token
-      },
-      body: JSON.stringify({
-        request_id: assigningRequest.value.name,
-        assigned_to: assignedTo.value,
-        notes: assignmentNotes.value
-      })
-    })
+	isAssigning.value = true
+	try {
+		const response = await fetch("/api/method/lodgeick.api.assign_request", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"X-Frappe-CSRF-Token": window.csrf_token,
+			},
+			body: JSON.stringify({
+				request_id: assigningRequest.value.name,
+				assigned_to: assignedTo.value,
+				notes: assignmentNotes.value,
+			}),
+		})
 
-    const result = await response.json()
+		const result = await response.json()
 
-    if (result.message && result.message.success) {
-      showAssignDialog.value = false
-      assigningRequest.value = null
-      assignedTo.value = ''
-      assignmentNotes.value = ''
-      // Reload requests
-      requests.reload()
-      alert('Request assigned successfully!')
-    } else {
-      throw new Error('Failed to assign request')
-    }
-  } catch (error) {
-    console.error('Error assigning request:', error)
-    alert('Failed to assign request. Please try again.')
-  } finally {
-    isAssigning.value = false
-  }
+		if (result.message && result.message.success) {
+			showAssignDialog.value = false
+			assigningRequest.value = null
+			assignedTo.value = ""
+			assignmentNotes.value = ""
+			// Reload requests
+			requests.reload()
+			alert("Request assigned successfully!")
+		} else {
+			throw new Error("Failed to assign request")
+		}
+	} catch (error) {
+		console.error("Error assigning request:", error)
+		alert("Failed to assign request. Please try again.")
+	} finally {
+		isAssigning.value = false
+	}
 }
 
 const cancelAssignment = () => {
-  showAssignDialog.value = false
-  assigningRequest.value = null
-  assignedTo.value = ''
-  assignmentNotes.value = ''
+	showAssignDialog.value = false
+	assigningRequest.value = null
+	assignedTo.value = ""
+	assignmentNotes.value = ""
 }
 
 // Navigation back to public view
 const goToPublicDashboard = () => {
-  router.push({ name: 'Dashboard' })
+	router.push({ name: "Dashboard" })
 }
 
 // User menu
 const userMenuOptions = [
-  {
-    label: 'Public Dashboard',
-    onClick: goToPublicDashboard,
-  },
-  {
-    label: 'My Profile',
-    onClick: () => console.log('Profile'),
-  },
-  {
-    label: 'Settings',
-    onClick: () => console.log('Settings'),
-  },
-  {
-    label: 'Logout',
-    onClick: () => session.logout.submit(),
-  },
+	{
+		label: "Public Dashboard",
+		onClick: goToPublicDashboard,
+	},
+	{
+		label: "My Profile",
+		onClick: () => console.log("Profile"),
+	},
+	{
+		label: "Settings",
+		onClick: () => console.log("Settings"),
+	},
+	{
+		label: "Logout",
+		onClick: () => session.logout.submit(),
+	},
 ]
 </script>

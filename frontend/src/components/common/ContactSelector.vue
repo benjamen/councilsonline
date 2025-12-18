@@ -185,91 +185,94 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { computed, ref, watch } from "vue"
 
 const props = defineProps({
-  isOpen: {
-    type: Boolean,
-    default: false
-  },
-  existingContacts: {
-    type: Array,
-    default: () => []
-  }
+	isOpen: {
+		type: Boolean,
+		default: false,
+	},
+	existingContacts: {
+		type: Array,
+		default: () => [],
+	},
 })
 
-const emit = defineEmits(['close', 'select'])
+const emit = defineEmits(["close", "select"])
 
-const activeTab = ref('existing')
-const searchQuery = ref('')
+const activeTab = ref("existing")
+const searchQuery = ref("")
 const saveToContacts = ref(true)
 
 const newContact = ref({
-  name: '',
-  email: '',
-  phone: '',
-  organization: '',
-  role: ''
+	name: "",
+	email: "",
+	phone: "",
+	organization: "",
+	role: "",
 })
 
 // Filter contacts based on search query
 const filteredContacts = computed(() => {
-  if (!searchQuery.value) {
-    return props.existingContacts
-  }
+	if (!searchQuery.value) {
+		return props.existingContacts
+	}
 
-  const query = searchQuery.value.toLowerCase()
-  return props.existingContacts.filter(contact => {
-    return (
-      contact.name?.toLowerCase().includes(query) ||
-      contact.email?.toLowerCase().includes(query) ||
-      contact.organization?.toLowerCase().includes(query)
-    )
-  })
+	const query = searchQuery.value.toLowerCase()
+	return props.existingContacts.filter((contact) => {
+		return (
+			contact.name?.toLowerCase().includes(query) ||
+			contact.email?.toLowerCase().includes(query) ||
+			contact.organization?.toLowerCase().includes(query)
+		)
+	})
 })
 
 // Watch for modal open/close to reset state
-watch(() => props.isOpen, (isOpen) => {
-  if (isOpen) {
-    activeTab.value = 'existing'
-    searchQuery.value = ''
-    resetNewContact()
-  }
-})
+watch(
+	() => props.isOpen,
+	(isOpen) => {
+		if (isOpen) {
+			activeTab.value = "existing"
+			searchQuery.value = ""
+			resetNewContact()
+		}
+	},
+)
 
 const closeModal = () => {
-  emit('close')
+	emit("close")
 }
 
 const selectContact = (contact) => {
-  emit('select', contact)
-  closeModal()
+	emit("select", contact)
+	closeModal()
 }
 
 const addNewContact = () => {
-  if (!newContact.value.name || !newContact.value.email) {
-    return
-  }
+	if (!newContact.value.name || !newContact.value.email) {
+		return
+	}
 
-  emit('select', {
-    ...newContact.value,
-    isNew: true,
-    saveToContacts: saveToContacts.value
-  })
+	emit("select", {
+		...newContact.value,
+		isNew: true,
+		saveToContacts: saveToContacts.value,
+	})
 
-  resetNewContact()
-  closeModal()
+	resetNewContact()
+	closeModal()
 }
 
 const resetNewContact = () => {
-  newContact.value = {
-    name: '',
-    email: '',
-    phone: '',
-    organization: '',
-    role: ''
-  }
-  saveToContacts.value = true
+	newContact.value = {
+		name: "",
+		email: "",
+		phone: "",
+		organization: "",
+		role: "",
+	}
+	saveToContacts.value = true
 }
 </script>
 

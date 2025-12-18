@@ -1,31 +1,31 @@
 <script setup>
-import { ref, computed, watch } from 'vue'
-import { Button } from 'frappe-ui'
+import { Button } from "frappe-ui"
+import { computed, ref, watch } from "vue"
 
 const props = defineProps({
 	// Total number of items (from API)
 	total: {
 		type: Number,
-		required: true
+		required: true,
 	},
 	// Items per page
 	pageSize: {
 		type: Number,
-		default: 20
+		default: 20,
 	},
 	// Current page (1-indexed)
 	currentPage: {
 		type: Number,
-		default: 1
+		default: 1,
 	},
 	// Loading state
 	loading: {
 		type: Boolean,
-		default: false
-	}
+		default: false,
+	},
 })
 
-const emit = defineEmits(['page-change', 'page-size-change'])
+const emit = defineEmits(["page-change", "page-size-change"])
 
 // Computed
 const totalPages = computed(() => Math.ceil(props.total / props.pageSize))
@@ -48,7 +48,7 @@ const pageNumbers = computed(() => {
 		pages.push(1) // Always show first page
 
 		if (start > 2) {
-			pages.push('...')
+			pages.push("...")
 		}
 
 		for (let i = start; i <= end; i++) {
@@ -56,7 +56,7 @@ const pageNumbers = computed(() => {
 		}
 
 		if (end < totalPages.value - 1) {
-			pages.push('...')
+			pages.push("...")
 		}
 
 		if (totalPages.value > 1) {
@@ -72,9 +72,9 @@ const canGoNext = computed(() => props.currentPage < totalPages.value)
 
 // Methods
 const goToPage = (page) => {
-	if (page === '...' || page === props.currentPage || props.loading) return
+	if (page === "..." || page === props.currentPage || props.loading) return
 	if (page < 1 || page > totalPages.value) return
-	emit('page-change', page)
+	emit("page-change", page)
 }
 
 const previousPage = () => {
@@ -90,13 +90,13 @@ const nextPage = () => {
 }
 
 const changePageSize = (event) => {
-	const newSize = parseInt(event.target.value)
-	emit('page-size-change', newSize)
+	const newSize = Number.parseInt(event.target.value)
+	emit("page-size-change", newSize)
 }
 
 // Info text
 const itemRangeText = computed(() => {
-	if (props.total === 0) return '0 items'
+	if (props.total === 0) return "0 items"
 
 	const start = (props.currentPage - 1) * props.pageSize + 1
 	const end = Math.min(props.currentPage * props.pageSize, props.total)

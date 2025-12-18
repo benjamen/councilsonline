@@ -126,53 +126,65 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref, watch } from 'vue'
+import { defineEmits, defineProps, ref, watch } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  }
+	modelValue: {
+		type: Object,
+		required: true,
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
 // Local data
 const localData = ref({
-  delivery_preference: props.modelValue.delivery_preference || '',
-  transfer_deposit_required: props.modelValue.transfer_deposit_required || false,
-  transfer_deposit_consent_number: props.modelValue.transfer_deposit_consent_number || '',
-  invoice_to: props.modelValue.invoice_to || '',
-  invoice_name: props.modelValue.invoice_name || '',
-  invoice_email: props.modelValue.invoice_email || '',
-  invoice_address: props.modelValue.invoice_address || '',
-  invoice_tax_id: props.modelValue.invoice_tax_id || ''
+	delivery_preference: props.modelValue.delivery_preference || "",
+	transfer_deposit_required:
+		props.modelValue.transfer_deposit_required || false,
+	transfer_deposit_consent_number:
+		props.modelValue.transfer_deposit_consent_number || "",
+	invoice_to: props.modelValue.invoice_to || "",
+	invoice_name: props.modelValue.invoice_name || "",
+	invoice_email: props.modelValue.invoice_email || "",
+	invoice_address: props.modelValue.invoice_address || "",
+	invoice_tax_id: props.modelValue.invoice_tax_id || "",
 })
 
 // Watch for external changes
-watch(() => props.modelValue, (newVal) => {
-  localData.value.delivery_preference = newVal.delivery_preference || ''
-  localData.value.transfer_deposit_required = newVal.transfer_deposit_required || false
-  localData.value.transfer_deposit_consent_number = newVal.transfer_deposit_consent_number || ''
-  localData.value.invoice_to = newVal.invoice_to || ''
-  localData.value.invoice_name = newVal.invoice_name || ''
-  localData.value.invoice_email = newVal.invoice_email || ''
-  localData.value.invoice_address = newVal.invoice_address || ''
-  localData.value.invoice_tax_id = newVal.invoice_tax_id || ''
-}, { deep: true })
+watch(
+	() => props.modelValue,
+	(newVal) => {
+		localData.value.delivery_preference = newVal.delivery_preference || ""
+		localData.value.transfer_deposit_required =
+			newVal.transfer_deposit_required || false
+		localData.value.transfer_deposit_consent_number =
+			newVal.transfer_deposit_consent_number || ""
+		localData.value.invoice_to = newVal.invoice_to || ""
+		localData.value.invoice_name = newVal.invoice_name || ""
+		localData.value.invoice_email = newVal.invoice_email || ""
+		localData.value.invoice_address = newVal.invoice_address || ""
+		localData.value.invoice_tax_id = newVal.invoice_tax_id || ""
+	},
+	{ deep: true },
+)
 
 // Watch local changes and emit
-watch(localData, (newVal) => {
-  emit('update:modelValue', {
-    ...props.modelValue,
-    delivery_preference: newVal.delivery_preference,
-    transfer_deposit_required: newVal.transfer_deposit_required,
-    transfer_deposit_consent_number: newVal.transfer_deposit_consent_number,
-    invoice_to: newVal.invoice_to,
-    invoice_name: newVal.invoice_name,
-    invoice_email: newVal.invoice_email,
-    invoice_address: newVal.invoice_address,
-    invoice_tax_id: newVal.invoice_tax_id
-  })
-}, { deep: true })
+watch(
+	localData,
+	(newVal) => {
+		emit("update:modelValue", {
+			...props.modelValue,
+			delivery_preference: newVal.delivery_preference,
+			transfer_deposit_required: newVal.transfer_deposit_required,
+			transfer_deposit_consent_number: newVal.transfer_deposit_consent_number,
+			invoice_to: newVal.invoice_to,
+			invoice_name: newVal.invoice_name,
+			invoice_email: newVal.invoice_email,
+			invoice_address: newVal.invoice_address,
+			invoice_tax_id: newVal.invoice_tax_id,
+		})
+	},
+	{ deep: true },
+)
 </script>

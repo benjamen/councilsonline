@@ -279,20 +279,20 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { call, Input, Button } from 'frappe-ui'
-import CouncilSelector from '../components/CouncilSelector.vue'
+import { Button, Input, call } from "frappe-ui"
+import { computed, onMounted, ref } from "vue"
+import { useRouter } from "vue-router"
+import CouncilSelector from "../components/CouncilSelector.vue"
 
 const router = useRouter()
 
 // Tab state
-const currentTab = ref('profile')
+const currentTab = ref("profile")
 const tabs = [
-  { key: 'profile', label: 'Profile', icon: 'user-icon' },
-  { key: 'council', label: 'Council', icon: 'building-icon' },
-  { key: 'organization', label: 'Organization', icon: 'office-icon' },
-  { key: 'security', label: 'Security', icon: 'lock-icon' }
+	{ key: "profile", label: "Profile", icon: "user-icon" },
+	{ key: "council", label: "Council", icon: "building-icon" },
+	{ key: "organization", label: "Organization", icon: "office-icon" },
+	{ key: "security", label: "Security", icon: "lock-icon" },
 ]
 
 // Profile state
@@ -300,210 +300,217 @@ const profile = ref({})
 const profileLoading = ref(true)
 const saving = ref(false)
 const changingPassword = ref(false)
-const passwordError = ref('')
-const passwordSuccess = ref('')
+const passwordError = ref("")
+const passwordSuccess = ref("")
 
 // Forms
 const profileForm = ref({
-  first_name: '',
-  last_name: '',
-  mobile_no: '',
-  phone: '',
-  bio: '',
-  location: '',
-  default_council: ''
+	first_name: "",
+	last_name: "",
+	mobile_no: "",
+	phone: "",
+	bio: "",
+	location: "",
+	default_council: "",
 })
 
 const orgForm = ref({
-  organization_name: '',
-  contact_email: '',
-  contact_phone: '',
-  address: '',
-  city: '',
-  postal_code: '',
-  website: '',
-  description: ''
+	organization_name: "",
+	contact_email: "",
+	contact_phone: "",
+	address: "",
+	city: "",
+	postal_code: "",
+	website: "",
+	description: "",
 })
 
 const passwordForm = ref({
-  old_password: '',
-  new_password: '',
-  confirm_password: ''
+	old_password: "",
+	new_password: "",
+	confirm_password: "",
 })
 
 // Computed
 const userInitials = computed(() => {
-  if (!profile.value.first_name) return '??'
-  const firstInitial = profile.value.first_name[0] || ''
-  const lastInitial = profile.value.last_name?.[0] || ''
-  return (firstInitial + lastInitial).toUpperCase()
+	if (!profile.value.first_name) return "??"
+	const firstInitial = profile.value.first_name[0] || ""
+	const lastInitial = profile.value.last_name?.[0] || ""
+	return (firstInitial + lastInitial).toUpperCase()
 })
 
 // Methods
 const loadProfile = async () => {
-  profileLoading.value = true
-  try {
-    const data = await call('lodgeick.api.get_user_profile')
-    profile.value = data
+	profileLoading.value = true
+	try {
+		const data = await call("lodgeick.api.get_user_profile")
+		profile.value = data
 
-    // Populate forms
-    profileForm.value = {
-      first_name: data.first_name || '',
-      last_name: data.last_name || '',
-      mobile_no: data.mobile_no || '',
-      phone: data.phone || '',
-      bio: data.bio || '',
-      location: data.location || '',
-      default_council: data.default_council || ''
-    }
+		// Populate forms
+		profileForm.value = {
+			first_name: data.first_name || "",
+			last_name: data.last_name || "",
+			mobile_no: data.mobile_no || "",
+			phone: data.phone || "",
+			bio: data.bio || "",
+			location: data.location || "",
+			default_council: data.default_council || "",
+		}
 
-    if (data.organization_data) {
-      orgForm.value = {
-        organization_name: data.organization_data.organization_name || '',
-        contact_email: data.organization_data.contact_email || '',
-        contact_phone: data.organization_data.contact_phone || '',
-        address: data.organization_data.address || '',
-        city: data.organization_data.city || '',
-        postal_code: data.organization_data.postal_code || '',
-        website: data.organization_data.website || '',
-        description: data.organization_data.description || ''
-      }
-    }
-  } catch (error) {
-    console.error('Error loading profile:', error)
-  } finally {
-    profileLoading.value = false
-  }
+		if (data.organization_data) {
+			orgForm.value = {
+				organization_name: data.organization_data.organization_name || "",
+				contact_email: data.organization_data.contact_email || "",
+				contact_phone: data.organization_data.contact_phone || "",
+				address: data.organization_data.address || "",
+				city: data.organization_data.city || "",
+				postal_code: data.organization_data.postal_code || "",
+				website: data.organization_data.website || "",
+				description: data.organization_data.description || "",
+			}
+		}
+	} catch (error) {
+		console.error("Error loading profile:", error)
+	} finally {
+		profileLoading.value = false
+	}
 }
 
 const updateProfile = async () => {
-  saving.value = true
-  try {
-    const result = await call('lodgeick.api.update_user_profile', profileForm.value)
-    profile.value = result.user
-    alert('Profile updated successfully')
-  } catch (error) {
-    console.error('Error updating profile:', error)
-    alert('Failed to update profile')
-  } finally {
-    saving.value = false
-  }
+	saving.value = true
+	try {
+		const result = await call(
+			"lodgeick.api.update_user_profile",
+			profileForm.value,
+		)
+		profile.value = result.user
+		alert("Profile updated successfully")
+	} catch (error) {
+		console.error("Error updating profile:", error)
+		alert("Failed to update profile")
+	} finally {
+		saving.value = false
+	}
 }
 
 const updateCouncil = async () => {
-  saving.value = true
-  try {
-    const result = await call('lodgeick.api.update_user_profile', {
-      default_council: profileForm.value.default_council
-    })
-    profile.value = result.user
-    alert('Council preference updated successfully')
-  } catch (error) {
-    console.error('Error updating council:', error)
-    alert('Failed to update council preference')
-  } finally {
-    saving.value = false
-  }
+	saving.value = true
+	try {
+		const result = await call("lodgeick.api.update_user_profile", {
+			default_council: profileForm.value.default_council,
+		})
+		profile.value = result.user
+		alert("Council preference updated successfully")
+	} catch (error) {
+		console.error("Error updating council:", error)
+		alert("Failed to update council preference")
+	} finally {
+		saving.value = false
+	}
 }
 
 const updateOrganization = async () => {
-  saving.value = true
-  try {
-    const result = await call('lodgeick.api.update_user_organization', orgForm.value)
-    profile.value.organization_data = result.organization
-    alert('Organization updated successfully')
-  } catch (error) {
-    console.error('Error updating organization:', error)
-    alert('Failed to update organization')
-  } finally {
-    saving.value = false
-  }
+	saving.value = true
+	try {
+		const result = await call(
+			"lodgeick.api.update_user_organization",
+			orgForm.value,
+		)
+		profile.value.organization_data = result.organization
+		alert("Organization updated successfully")
+	} catch (error) {
+		console.error("Error updating organization:", error)
+		alert("Failed to update organization")
+	} finally {
+		saving.value = false
+	}
 }
 
 const changePassword = async () => {
-  passwordError.value = ''
-  passwordSuccess.value = ''
+	passwordError.value = ""
+	passwordSuccess.value = ""
 
-  if (passwordForm.value.new_password !== passwordForm.value.confirm_password) {
-    passwordError.value = 'New passwords do not match'
-    return
-  }
+	if (passwordForm.value.new_password !== passwordForm.value.confirm_password) {
+		passwordError.value = "New passwords do not match"
+		return
+	}
 
-  if (passwordForm.value.new_password.length < 6) {
-    passwordError.value = 'Password must be at least 6 characters'
-    return
-  }
+	if (passwordForm.value.new_password.length < 6) {
+		passwordError.value = "Password must be at least 6 characters"
+		return
+	}
 
-  changingPassword.value = true
-  try {
-    await call('lodgeick.api.change_password', {
-      old_password: passwordForm.value.old_password,
-      new_password: passwordForm.value.new_password
-    })
-    passwordSuccess.value = 'Password changed successfully'
-    resetPasswordForm()
-  } catch (error) {
-    console.error('Error changing password:', error)
-    passwordError.value = error.message || 'Failed to change password'
-  } finally {
-    changingPassword.value = false
-  }
+	changingPassword.value = true
+	try {
+		await call("lodgeick.api.change_password", {
+			old_password: passwordForm.value.old_password,
+			new_password: passwordForm.value.new_password,
+		})
+		passwordSuccess.value = "Password changed successfully"
+		resetPasswordForm()
+	} catch (error) {
+		console.error("Error changing password:", error)
+		passwordError.value = error.message || "Failed to change password"
+	} finally {
+		changingPassword.value = false
+	}
 }
 
 const resetProfileForm = () => {
-  profileForm.value = {
-    first_name: profile.value.first_name || '',
-    last_name: profile.value.last_name || '',
-    mobile_no: profile.value.mobile_no || '',
-    phone: profile.value.phone || '',
-    bio: profile.value.bio || '',
-    location: profile.value.location || '',
-    default_council: profile.value.default_council || ''
-  }
+	profileForm.value = {
+		first_name: profile.value.first_name || "",
+		last_name: profile.value.last_name || "",
+		mobile_no: profile.value.mobile_no || "",
+		phone: profile.value.phone || "",
+		bio: profile.value.bio || "",
+		location: profile.value.location || "",
+		default_council: profile.value.default_council || "",
+	}
 }
 
 const resetCouncilForm = () => {
-  profileForm.value.default_council = profile.value.default_council || ''
+	profileForm.value.default_council = profile.value.default_council || ""
 }
 
 const resetOrgForm = () => {
-  if (profile.value.organization_data) {
-    orgForm.value = {
-      organization_name: profile.value.organization_data.organization_name || '',
-      contact_email: profile.value.organization_data.contact_email || '',
-      contact_phone: profile.value.organization_data.contact_phone || '',
-      address: profile.value.organization_data.address || '',
-      city: profile.value.organization_data.city || '',
-      postal_code: profile.value.organization_data.postal_code || '',
-      website: profile.value.organization_data.website || '',
-      description: profile.value.organization_data.description || ''
-    }
-  }
+	if (profile.value.organization_data) {
+		orgForm.value = {
+			organization_name:
+				profile.value.organization_data.organization_name || "",
+			contact_email: profile.value.organization_data.contact_email || "",
+			contact_phone: profile.value.organization_data.contact_phone || "",
+			address: profile.value.organization_data.address || "",
+			city: profile.value.organization_data.city || "",
+			postal_code: profile.value.organization_data.postal_code || "",
+			website: profile.value.organization_data.website || "",
+			description: profile.value.organization_data.description || "",
+		}
+	}
 }
 
 const resetPasswordForm = () => {
-  passwordForm.value = {
-    old_password: '',
-    new_password: '',
-    confirm_password: ''
-  }
+	passwordForm.value = {
+		old_password: "",
+		new_password: "",
+		confirm_password: "",
+	}
 }
 
 const formatDate = (dateStr) => {
-  if (!dateStr) return 'N/A'
-  const date = new Date(dateStr)
-  return date.toLocaleDateString('en-NZ', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
+	if (!dateStr) return "N/A"
+	const date = new Date(dateStr)
+	return date.toLocaleDateString("en-NZ", {
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+	})
 }
 
 const goBack = () => {
-  router.back()
+	router.back()
 }
 
 onMounted(() => {
-  loadProfile()
+	loadProfile()
 })
 </script>

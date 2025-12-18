@@ -1,35 +1,35 @@
 <script setup>
-import { computed } from 'vue'
-import { Dialog } from 'frappe-ui'
+import { Dialog } from "frappe-ui"
+import { computed } from "vue"
 
 const props = defineProps({
 	show: {
 		type: Boolean,
-		required: true
+		required: true,
 	},
 	errors: {
 		type: Object,
-		default: () => ({})
-	}
+		default: () => ({}),
+	},
 })
 
-const emit = defineEmits(['update:show', 'close'])
+const emit = defineEmits(["update:show", "close"])
 
 const isOpen = computed({
 	get: () => props.show,
-	set: (value) => emit('update:show', value)
+	set: (value) => emit("update:show", value),
 })
 
 const errorList = computed(() => {
 	return Object.entries(props.errors).map(([field, message]) => ({
 		field,
-		message
+		message,
 	}))
 })
 
 const handleClose = () => {
-	emit('update:show', false)
-	emit('close')
+	emit("update:show", false)
+	emit("close")
 }
 </script>
 

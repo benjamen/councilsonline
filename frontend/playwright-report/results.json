@@ -86,20 +86,20 @@
   },
   "suites": [
     {
-      "title": "spisc-dynamic-steps.spec.js",
-      "file": "spisc-dynamic-steps.spec.js",
+      "title": "e2e/spisc-backend-workflow.spec.js",
+      "file": "e2e/spisc-backend-workflow.spec.js",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "SPISC Dynamic Steps - Council Link Flow",
-          "file": "spisc-dynamic-steps.spec.js",
-          "line": 3,
+          "title": "SPISC Application Backend Workflow",
+          "file": "e2e/spisc-backend-workflow.spec.js",
+          "line": 44,
           "column": 6,
           "specs": [
             {
-              "title": "CRITICAL: should show all 5 SPISC dynamic steps from council link",
+              "title": "Complete SPISC backend workflow",
               "ok": false,
               "tags": [],
               "tests": [
@@ -114,88 +114,85 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 23255,
+                      "duration": 20045,
                       "error": {
-                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('h2')\nExpected substring: \u001b[32m\"\u001b[7mPersonal\u001b[27m Information\"\u001b[39m\nReceived string:    \u001b[31m\"\u001b[7mCouncil Process\u001b[27m Information\"\u001b[39m\nTimeout: 10000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('h2')\u001b[22m\n\u001b[2m    14 × locator resolved to <h2 class=\"text-2xl font-bold text-gray-900 mb-2\">Council Process Information</h2>\u001b[22m\n\u001b[2m       - unexpected value \"Council Process Information\"\u001b[22m\n",
-                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('h2')\nExpected substring: \u001b[32m\"\u001b[7mPersonal\u001b[27m Information\"\u001b[39m\nReceived string:    \u001b[31m\"\u001b[7mCouncil Process\u001b[27m Information\"\u001b[39m\nTimeout: 10000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('h2')\u001b[22m\n\u001b[2m    14 × locator resolved to <h2 class=\"text-2xl font-bold text-gray-900 mb-2\">Council Process Information</h2>\u001b[22m\n\u001b[2m       - unexpected value \"Council Process Information\"\u001b[22m\n\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/spisc-dynamic-steps.spec.js:45:38",
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.spisc-summary-dashboard')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('.spisc-summary-dashboard')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.spisc-summary-dashboard')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('.spisc-summary-dashboard')\u001b[22m\n\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-backend-workflow.spec.js:95:27",
                         "location": {
-                          "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/spisc-dynamic-steps.spec.js",
-                          "column": 38,
-                          "line": 45
+                          "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-backend-workflow.spec.js",
+                          "column": 27,
+                          "line": 95
                         },
-                        "snippet": "  43 |     // CRITICAL CHECK: Step 3 - Personal Information (FIRST DYNAMIC STEP)\n  44 |     console.log('Step 3: CRITICAL - Verifying Personal Information step...');\n> 45 |     await expect(page.locator('h2')).toContainText('Personal Information', { timeout: 10000 });\n     |                                      ^\n  46 |     console.log('✅ DYNAMIC STEP 1: Personal Information - PASSED');\n  47 |\n  48 |     // Verify some fields exist"
+                        "snippet": "  93 | \t\t// Check for summary dashboard\n  94 | \t\tconst dashboard = page.locator('.spisc-summary-dashboard');\n> 95 | \t\tawait expect(dashboard).toBeVisible({ timeout: 10000 });\n     | \t\t                        ^\n  96 | \t\tconsole.log('✅ Summary dashboard is visible');\n  97 |\n  98 | \t\t// Verify dashboard has gradient background"
                       },
                       "errors": [
                         {
                           "location": {
-                            "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/spisc-dynamic-steps.spec.js",
-                            "column": 38,
-                            "line": 45
+                            "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-backend-workflow.spec.js",
+                            "column": 27,
+                            "line": 95
                           },
-                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('h2')\nExpected substring: \u001b[32m\"\u001b[7mPersonal\u001b[27m Information\"\u001b[39m\nReceived string:    \u001b[31m\"\u001b[7mCouncil Process\u001b[27m Information\"\u001b[39m\nTimeout: 10000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('h2')\u001b[22m\n\u001b[2m    14 × locator resolved to <h2 class=\"text-2xl font-bold text-gray-900 mb-2\">Council Process Information</h2>\u001b[22m\n\u001b[2m       - unexpected value \"Council Process Information\"\u001b[22m\n\n\n  43 |     // CRITICAL CHECK: Step 3 - Personal Information (FIRST DYNAMIC STEP)\n  44 |     console.log('Step 3: CRITICAL - Verifying Personal Information step...');\n> 45 |     await expect(page.locator('h2')).toContainText('Personal Information', { timeout: 10000 });\n     |                                      ^\n  46 |     console.log('✅ DYNAMIC STEP 1: Personal Information - PASSED');\n  47 |\n  48 |     // Verify some fields exist\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/spisc-dynamic-steps.spec.js:45:38"
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.spisc-summary-dashboard')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('.spisc-summary-dashboard')\u001b[22m\n\n\n  93 | \t\t// Check for summary dashboard\n  94 | \t\tconst dashboard = page.locator('.spisc-summary-dashboard');\n> 95 | \t\tawait expect(dashboard).toBeVisible({ timeout: 10000 });\n     | \t\t                        ^\n  96 | \t\tconsole.log('✅ Summary dashboard is visible');\n  97 |\n  98 | \t\t// Verify dashboard has gradient background\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-backend-workflow.spec.js:95:27"
                         }
                       ],
                       "stdout": [
                         {
-                          "text": "=== CRITICAL TEST: All Dynamic Steps Must Appear ===\n"
+                          "text": "=== PHASE 1: Login to Frappe ===\n"
                         },
                         {
-                          "text": "Step 0: Navigating with council link...\n"
+                          "text": "Successfully logged in to Frappe\n"
                         },
                         {
-                          "text": "Step 1: Selecting SPISC request type...\n"
+                          "text": "✅ Logged in successfully\n"
                         },
                         {
-                          "text": "✓ SPISC selected\n"
+                          "text": "\n=== PHASE 2: Find existing SPISC Application ===\n"
                         },
                         {
-                          "text": "Step 2: Process Information...\n"
+                          "text": "✅ Opened SPISC Application: SPISC-2025-240\n"
                         },
                         {
-                          "text": "✓ On Process Info step\n"
-                        },
-                        {
-                          "text": "Step 3: CRITICAL - Verifying Personal Information step...\n"
+                          "text": "\n=== PHASE 3: Verify Summary Dashboard ===\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-12-11T20:55:55.145Z",
+                      "startTime": "2025-12-17T17:23:00.101Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/spisc-dynamic-steps-SPISC--cbcb1-mic-steps-from-council-link-chromium-desktop/test-failed-1.png"
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-spisc-backend-workflow-b784a-lete-SPISC-backend-workflow-chromium-desktop/test-failed-1.png"
                         },
                         {
                           "name": "video",
                           "contentType": "video/webm",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/spisc-dynamic-steps-SPISC--cbcb1-mic-steps-from-council-link-chromium-desktop/video.webm"
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-spisc-backend-workflow-b784a-lete-SPISC-backend-workflow-chromium-desktop/video.webm"
                         },
                         {
                           "name": "error-context",
                           "contentType": "text/markdown",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/spisc-dynamic-steps-SPISC--cbcb1-mic-steps-from-council-link-chromium-desktop/error-context.md"
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-spisc-backend-workflow-b784a-lete-SPISC-backend-workflow-chromium-desktop/error-context.md"
                         }
                       ],
                       "errorLocation": {
-                        "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/spisc-dynamic-steps.spec.js",
-                        "column": 38,
-                        "line": 45
+                        "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-backend-workflow.spec.js",
+                        "column": 27,
+                        "line": 95
                       }
                     }
                   ],
                   "status": "unexpected"
                 }
               ],
-              "id": "5e280219cd9f3b9d0cc1-3368743af190ae60a9be",
-              "file": "spisc-dynamic-steps.spec.js",
-              "line": 4,
-              "column": 3
+              "id": "0e5461a4331905f7ac8a-b77956e211ea0dfb1a91",
+              "file": "e2e/spisc-backend-workflow.spec.js",
+              "line": 53,
+              "column": 2
             },
             {
-              "title": "should allow navigation back through dynamic steps",
+              "title": "Verify SPISC Assessment Template exists",
               "ok": false,
               "tags": [],
               "tests": [
@@ -210,67 +207,153 @@
                       "workerIndex": 1,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 17344,
+                      "duration": 20972,
                       "error": {
-                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('h2')\nExpected substring: \u001b[32m\"\u001b[7mPersonal\u001b[27m Information\"\u001b[39m\nReceived string:    \u001b[31m\"\u001b[7mCouncil Process\u001b[27m Information\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('h2')\u001b[22m\n\u001b[2m    9 × locator resolved to <h2 class=\"text-2xl font-bold text-gray-900 mb-2\">Council Process Information</h2>\u001b[22m\n\u001b[2m      - unexpected value \"Council Process Information\"\u001b[22m\n",
-                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('h2')\nExpected substring: \u001b[32m\"\u001b[7mPersonal\u001b[27m Information\"\u001b[39m\nReceived string:    \u001b[31m\"\u001b[7mCouncil Process\u001b[27m Information\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('h2')\u001b[22m\n\u001b[2m    9 × locator resolved to <h2 class=\"text-2xl font-bold text-gray-900 mb-2\">Council Process Information</h2>\u001b[22m\n\u001b[2m      - unexpected value \"Council Process Information\"\u001b[22m\n\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/spisc-dynamic-steps.spec.js:126:38",
+                        "message": "TimeoutError: locator.inputValue: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[data-fieldname=\"template_name\"]')\u001b[22m\n",
+                        "stack": "TimeoutError: locator.inputValue: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[data-fieldname=\"template_name\"]')\u001b[22m\n\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-backend-workflow.spec.js:388:85",
                         "location": {
-                          "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/spisc-dynamic-steps.spec.js",
-                          "column": 38,
-                          "line": 126
+                          "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-backend-workflow.spec.js",
+                          "column": 85,
+                          "line": 388
                         },
-                        "snippet": "  124 |\n  125 |     // Should be on Personal Information\n> 126 |     await expect(page.locator('h2')).toContainText('Personal Information');\n      |                                      ^\n  127 |\n  128 |     // Click Previous\n  129 |     await page.click('button:has-text(\"Previous\")');"
+                        "snippet": "  386 |\n  387 | \t\t\t// Verify template details (use input selectors to be more specific)\n> 388 | \t\t\tconst templateName = await page.locator('input[data-fieldname=\"template_name\"]').inputValue();\n      | \t\t\t                                                                                 ^\n  389 | \t\t\tconst requestType = await page.locator('input[data-fieldname=\"request_type\"]').inputValue();\n  390 | \t\t\tconst budgetHours = await page.locator('input[data-fieldname=\"default_budget_hours\"]').inputValue();\n  391 |"
                       },
                       "errors": [
                         {
                           "location": {
-                            "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/spisc-dynamic-steps.spec.js",
-                            "column": 38,
-                            "line": 126
+                            "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-backend-workflow.spec.js",
+                            "column": 85,
+                            "line": 388
                           },
-                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('h2')\nExpected substring: \u001b[32m\"\u001b[7mPersonal\u001b[27m Information\"\u001b[39m\nReceived string:    \u001b[31m\"\u001b[7mCouncil Process\u001b[27m Information\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('h2')\u001b[22m\n\u001b[2m    9 × locator resolved to <h2 class=\"text-2xl font-bold text-gray-900 mb-2\">Council Process Information</h2>\u001b[22m\n\u001b[2m      - unexpected value \"Council Process Information\"\u001b[22m\n\n\n  124 |\n  125 |     // Should be on Personal Information\n> 126 |     await expect(page.locator('h2')).toContainText('Personal Information');\n      |                                      ^\n  127 |\n  128 |     // Click Previous\n  129 |     await page.click('button:has-text(\"Previous\")');\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/spisc-dynamic-steps.spec.js:126:38"
+                          "message": "TimeoutError: locator.inputValue: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[data-fieldname=\"template_name\"]')\u001b[22m\n\n\n  386 |\n  387 | \t\t\t// Verify template details (use input selectors to be more specific)\n> 388 | \t\t\tconst templateName = await page.locator('input[data-fieldname=\"template_name\"]').inputValue();\n      | \t\t\t                                                                                 ^\n  389 | \t\t\tconst requestType = await page.locator('input[data-fieldname=\"request_type\"]').inputValue();\n  390 | \t\t\tconst budgetHours = await page.locator('input[data-fieldname=\"default_budget_hours\"]').inputValue();\n  391 |\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-backend-workflow.spec.js:388:85"
                         }
                       ],
                       "stdout": [
                         {
-                          "text": "=== TEST: Backward Navigation ===\n"
+                          "text": "\n=== Verify SPISC Assessment Template ===\n"
+                        },
+                        {
+                          "text": "Successfully logged in to Frappe\n"
+                        },
+                        {
+                          "text": "✅ SPISC Assessment Template found\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-12-11T20:56:18.988Z",
+                      "startTime": "2025-12-17T17:23:20.784Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/spisc-dynamic-steps-SPISC--dfc9c--back-through-dynamic-steps-chromium-desktop/test-failed-1.png"
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-spisc-backend-workflow-b1d50--Assessment-Template-exists-chromium-desktop/test-failed-1.png"
                         },
                         {
                           "name": "video",
                           "contentType": "video/webm",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/spisc-dynamic-steps-SPISC--dfc9c--back-through-dynamic-steps-chromium-desktop/video.webm"
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-spisc-backend-workflow-b1d50--Assessment-Template-exists-chromium-desktop/video.webm"
                         },
                         {
                           "name": "error-context",
                           "contentType": "text/markdown",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/spisc-dynamic-steps-SPISC--dfc9c--back-through-dynamic-steps-chromium-desktop/error-context.md"
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-spisc-backend-workflow-b1d50--Assessment-Template-exists-chromium-desktop/error-context.md"
                         }
                       ],
                       "errorLocation": {
-                        "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/spisc-dynamic-steps.spec.js",
-                        "column": 38,
-                        "line": 126
+                        "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-backend-workflow.spec.js",
+                        "column": 85,
+                        "line": 388
                       }
                     }
                   ],
                   "status": "unexpected"
                 }
               ],
-              "id": "5e280219cd9f3b9d0cc1-da4756e88bb92cdc8772",
-              "file": "spisc-dynamic-steps.spec.js",
-              "line": 99,
-              "column": 3
+              "id": "0e5461a4331905f7ac8a-9300e68d6843a59764fe",
+              "file": "e2e/spisc-backend-workflow.spec.js",
+              "line": 358,
+              "column": 2
+            },
+            {
+              "title": "Verify SPISC Task Templates exist",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium-desktop",
+                  "projectName": "chromium-desktop",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8732,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "\n=== Verify SPISC Task Templates ===\n"
+                        },
+                        {
+                          "text": "Successfully logged in to Frappe\n"
+                        },
+                        {
+                          "text": "✅ Found 12 SPISC Task Templates\n"
+                        },
+                        {
+                          "text": "   ✓ SPISC-VET-001 found\n"
+                        },
+                        {
+                          "text": "   ✓ SPISC-VET-002 found\n"
+                        },
+                        {
+                          "text": "   ✓ SPISC-VET-003 found\n"
+                        },
+                        {
+                          "text": "   ✓ SPISC-TA-001 found\n"
+                        },
+                        {
+                          "text": "   ✓ SPISC-TA-002 found\n"
+                        },
+                        {
+                          "text": "   ✓ SPISC-TA-003 found\n"
+                        },
+                        {
+                          "text": "   ✓ SPISC-TA-004 found\n"
+                        },
+                        {
+                          "text": "   ✓ SPISC-DEC-001 found\n"
+                        },
+                        {
+                          "text": "   ✓ SPISC-DEC-002 found\n"
+                        },
+                        {
+                          "text": "   ✓ SPISC-DEC-003 found\n"
+                        },
+                        {
+                          "text": "   ✓ SPISC-IMP-001 found\n"
+                        },
+                        {
+                          "text": "   ✓ SPISC-IMP-002 found\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-17T17:23:42.365Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0e5461a4331905f7ac8a-58934ed55d7ad675cc4c",
+              "file": "e2e/spisc-backend-workflow.spec.js",
+              "line": 414,
+              "column": 2
             }
           ]
         }
@@ -279,9 +362,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-12-11T20:55:53.560Z",
-    "duration": 43294.746,
-    "expected": 0,
+    "startTime": "2025-12-17T17:22:58.682Z",
+    "duration": 52552.261,
+    "expected": 1,
     "skipped": 0,
     "unexpected": 2,
     "flaky": 0

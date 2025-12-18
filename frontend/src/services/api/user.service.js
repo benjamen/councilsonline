@@ -1,4 +1,4 @@
-import { apiClient } from './base'
+import { apiClient } from "./base"
 
 /**
  * User Service
@@ -11,9 +11,9 @@ export class UserService {
 	 */
 	getCurrentUser() {
 		return apiClient.createResource({
-			url: 'frappe.auth.get_logged_user',
+			url: "frappe.auth.get_logged_user",
 			auto: true,
-			cache: ['current-user']
+			cache: ["current-user"],
 		})
 	}
 
@@ -24,12 +24,12 @@ export class UserService {
 	 */
 	getUserProfile(email = null) {
 		return apiClient.createResource({
-			url: 'frappe.client.get',
+			url: "frappe.client.get",
 			params: {
-				doctype: 'User',
-				name: email || frappe.session.user
+				doctype: "User",
+				name: email || frappe.session.user,
 			},
-			auto: true
+			auto: true,
 		})
 	}
 
@@ -39,10 +39,10 @@ export class UserService {
 	 * @returns {Promise<void>}
 	 */
 	async updateProfile(fields) {
-		return apiClient.call('frappe.client.set_value', {
-			doctype: 'User',
+		return apiClient.call("frappe.client.set_value", {
+			doctype: "User",
 			name: frappe.session.user,
-			fieldname: fields
+			fieldname: fields,
 		})
 	}
 
@@ -53,9 +53,9 @@ export class UserService {
 	 * @returns {Promise<Object>} Login result
 	 */
 	async login(email, password) {
-		return apiClient.call('login', {
+		return apiClient.call("login", {
 			usr: email,
-			pwd: password
+			pwd: password,
 		})
 	}
 
@@ -64,7 +64,7 @@ export class UserService {
 	 * @returns {Promise<void>}
 	 */
 	async logout() {
-		return apiClient.call('logout')
+		return apiClient.call("logout")
 	}
 
 	/**
@@ -73,7 +73,7 @@ export class UserService {
 	 * @returns {Promise<Object>} Registration result
 	 */
 	async register(userData) {
-		return apiClient.call('lodgeick.api.register_user', userData)
+		return apiClient.call("lodgeick.api.register_user", userData)
 	}
 
 	/**
@@ -82,8 +82,8 @@ export class UserService {
 	 * @returns {Promise<void>}
 	 */
 	async requestPasswordReset(email) {
-		return apiClient.call('frappe.core.doctype.user.user.reset_password', {
-			user: email
+		return apiClient.call("frappe.core.doctype.user.user.reset_password", {
+			user: email,
 		})
 	}
 
@@ -94,9 +94,9 @@ export class UserService {
 	 * @returns {Promise<void>}
 	 */
 	async updatePassword(oldPassword, newPassword) {
-		return apiClient.call('frappe.core.doctype.user.user.update_password', {
+		return apiClient.call("frappe.core.doctype.user.user.update_password", {
 			old_password: oldPassword,
-			new_password: newPassword
+			new_password: newPassword,
 		})
 	}
 
@@ -105,7 +105,9 @@ export class UserService {
 	 * @returns {Promise<Object>} User permissions
 	 */
 	async getUserPermissions() {
-		return apiClient.call('frappe.core.page.permission_manager.permission_manager.get_permissions')
+		return apiClient.call(
+			"frappe.core.page.permission_manager.permission_manager.get_permissions",
+		)
 	}
 
 	/**
@@ -114,9 +116,12 @@ export class UserService {
 	 * @returns {Promise<boolean>} True if user has role
 	 */
 	async hasRole(role) {
-		const result = await apiClient.call('frappe.core.doctype.user.user.has_role', {
-			role
-		})
+		const result = await apiClient.call(
+			"frappe.core.doctype.user.user.has_role",
+			{
+				role,
+			},
+		)
 		return result
 	}
 
@@ -125,7 +130,7 @@ export class UserService {
 	 * @returns {Promise<Object>} User preferences
 	 */
 	async getUserPreferences() {
-		return apiClient.call('lodgeick.api.get_user_preferences')
+		return apiClient.call("lodgeick.api.get_user_preferences")
 	}
 
 	/**
@@ -134,8 +139,8 @@ export class UserService {
 	 * @returns {Promise<void>}
 	 */
 	async updateUserPreferences(preferences) {
-		return apiClient.call('lodgeick.api.update_user_preferences', {
-			preferences
+		return apiClient.call("lodgeick.api.update_user_preferences", {
+			preferences,
 		})
 	}
 
@@ -144,7 +149,7 @@ export class UserService {
 	 * @returns {Promise<Array>} User organizations
 	 */
 	async getUserOrganizations() {
-		return apiClient.call('lodgeick.api.get_user_organizations')
+		return apiClient.call("lodgeick.api.get_user_organizations")
 	}
 }
 

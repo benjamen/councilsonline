@@ -1,19 +1,19 @@
 <script setup>
-import { computed } from 'vue'
+import { computed } from "vue"
 
 const props = defineProps({
 	currentStep: {
 		type: Number,
-		required: true
+		required: true,
 	},
 	totalSteps: {
 		type: Number,
-		required: true
+		required: true,
 	},
 	stepTitles: {
 		type: Array,
-		default: () => []
-	}
+		default: () => [],
+	},
 })
 
 const progressPercentage = computed(() => {
@@ -22,9 +22,9 @@ const progressPercentage = computed(() => {
 })
 
 const getStepStatus = (stepIndex) => {
-	if (stepIndex < props.currentStep) return 'completed'
-	if (stepIndex === props.currentStep) return 'current'
-	return 'upcoming'
+	if (stepIndex < props.currentStep) return "completed"
+	if (stepIndex === props.currentStep) return "current"
+	return "upcoming"
 }
 </script>
 

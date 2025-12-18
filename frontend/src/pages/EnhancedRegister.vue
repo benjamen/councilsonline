@@ -361,104 +361,109 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, ref } from "vue"
+import { useRouter } from "vue-router"
 
 const router = useRouter()
 const currentStep = ref(1)
 
 const formData = ref({
-  // Step 1
-  email: '',
-  password: '',
-  password_confirm: '',
-  full_name: '',
-  phone: '',
-  terms_accepted: false,
+	// Step 1
+	email: "",
+	password: "",
+	password_confirm: "",
+	full_name: "",
+	phone: "",
+	terms_accepted: false,
 
-  // Step 2
-  user_role: '',
+	// Step 2
+	user_role: "",
 
-  // Step 3A
-  postal_address: {
-    street: '',
-    suburb: '',
-    city: '',
-    postcode: ''
-  },
-  communication_preferences: {
-    email: true,
-    phone: false,
-    post: false
-  },
-  invoice_preference: 'Email',
+	// Step 3A
+	postal_address: {
+		street: "",
+		suburb: "",
+		city: "",
+		postcode: "",
+	},
+	communication_preferences: {
+		email: true,
+		phone: false,
+		post: false,
+	},
+	invoice_preference: "Email",
 
-  // Step 3B (Agent)
-  business_details: {
-    company_name: '',
-    business_type: '',
-    company_number: '',
-    business_phone: '',
-    business_email: ''
-  },
+	// Step 3B (Agent)
+	business_details: {
+		company_name: "",
+		business_type: "",
+		company_number: "",
+		business_phone: "",
+		business_email: "",
+	},
 
-  // Step 4A
-  properties: [],
+	// Step 4A
+	properties: [],
 
-  // Step 5A/6
-  councils: [],
+	// Step 5A/6
+	councils: [],
 
-  // Step 5B (Agent)
-  clients: []
+	// Step 5B (Agent)
+	clients: [],
 })
 
 const totalSteps = computed(() => {
-  return formData.value.user_role === 'Agent' ? 7 : 6
+	return formData.value.user_role === "Agent" ? 7 : 6
 })
 
 const canProceedStep1 = computed(() => {
-  return formData.value.email &&
-    formData.value.password &&
-    formData.value.password === formData.value.password_confirm &&
-    formData.value.full_name &&
-    formData.value.phone &&
-    formData.value.terms_accepted
+	return (
+		formData.value.email &&
+		formData.value.password &&
+		formData.value.password === formData.value.password_confirm &&
+		formData.value.full_name &&
+		formData.value.phone &&
+		formData.value.terms_accepted
+	)
 })
 
 const hasAnyCommunicationPreference = computed(() => {
-  const prefs = formData.value.communication_preferences
-  return prefs.email || prefs.phone || prefs.post
+	const prefs = formData.value.communication_preferences
+	return prefs.email || prefs.phone || prefs.post
 })
 
 const nextStep = () => {
-  currentStep.value++
+	currentStep.value++
 }
 
 const previousStep = () => {
-  currentStep.value--
+	currentStep.value--
 }
 
 const completeRegistration = async () => {
-  try {
-    const response = await fetch('/api/method/lodgeick.api.complete_registration', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Frappe-CSRF-Token': window.csrf_token
-      },
-      body: JSON.stringify({ data: formData.value })
-    })
+	try {
+		const response = await fetch(
+			"/api/method/lodgeick.api.complete_registration",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"X-Frappe-CSRF-Token": window.csrf_token,
+				},
+				body: JSON.stringify({ data: formData.value }),
+			},
+		)
 
-    const result = await response.json()
+		const result = await response.json()
 
-    if (result.message && result.message.success) {
-      router.push('/dashboard')
-    } else {
-      alert('Registration failed. Please try again.')
-    }
-  } catch (error) {
-    console.error('Registration error:', error)
-    alert('Registration failed. Please try again.')
-  }
+		if (result.message && result.message.success) {
+			router.push("/dashboard")
+		} else {
+			alert("Registration failed. Please try again.")
+		}
+	} catch (error) {
+		console.error("Registration error:", error)
+		alert("Registration failed. Please try again.")
+	}
 }
 </script>

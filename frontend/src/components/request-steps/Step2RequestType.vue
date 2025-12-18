@@ -39,33 +39,36 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue'
+import { defineEmits, defineProps } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  },
-  requestTypes: {
-    type: Object,
-    required: true
-  }
+	modelValue: {
+		type: Object,
+		required: true,
+	},
+	requestTypes: {
+		type: Object,
+		required: true,
+	},
 })
 
-const emit = defineEmits(['update:modelValue', 'type-selected'])
+const emit = defineEmits(["update:modelValue", "type-selected"])
 
 const selectType = (type) => {
-  console.log('[Step2RequestType] selectType called with:', type.name)
-  console.log('[Step2RequestType] props.modelValue:', props.modelValue)
-  console.log('[Step2RequestType] props.modelValue.council:', props.modelValue.council)
+	console.log("[Step2RequestType] selectType called with:", type.name)
+	console.log("[Step2RequestType] props.modelValue:", props.modelValue)
+	console.log(
+		"[Step2RequestType] props.modelValue.council:",
+		props.modelValue.council,
+	)
 
-  const updatedValue = {
-    ...props.modelValue,
-    request_type: type.name
-  }
+	const updatedValue = {
+		...props.modelValue,
+		request_type: type.name,
+	}
 
-  console.log('[Step2RequestType] Emitting updatedValue:', updatedValue)
-  emit('update:modelValue', updatedValue)
-  emit('type-selected', type.name)
+	console.log("[Step2RequestType] Emitting updatedValue:", updatedValue)
+	emit("update:modelValue", updatedValue)
+	emit("type-selected", type.name)
 }
 </script>

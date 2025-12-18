@@ -7,7 +7,9 @@ let socketInitializationFailed = false
 export function initSocket() {
 	// Don't retry if initialization already failed
 	if (socketInitializationFailed) {
-		console.warn('[Socket.io] Skipping initialization - socketio server not available')
+		console.warn(
+			"[Socket.io] Skipping initialization - socketio server not available",
+		)
 		return null
 	}
 
@@ -26,8 +28,11 @@ export function initSocket() {
 		})
 
 		// Handle connection errors gracefully
-		socket.on('connect_error', (error) => {
-			console.warn('[Socket.io] Connection failed - real-time features disabled:', error.message)
+		socket.on("connect_error", (error) => {
+			console.warn(
+				"[Socket.io] Connection failed - real-time features disabled:",
+				error.message,
+			)
 			socketInitializationFailed = true
 			if (socket) {
 				socket.close()
@@ -35,14 +40,14 @@ export function initSocket() {
 			}
 		})
 
-		socket.on('connect', () => {
-			console.log('[Socket.io] Connected successfully')
+		socket.on("connect", () => {
+			console.log("[Socket.io] Connected successfully")
 			socketInitializationFailed = false
 		})
 
 		return socket
 	} catch (error) {
-		console.warn('[Socket.io] Initialization error:', error)
+		console.warn("[Socket.io] Initialization error:", error)
 		socketInitializationFailed = true
 		return null
 	}

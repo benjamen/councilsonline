@@ -102,89 +102,112 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
-import { TabGroup, TabList, Tab, TabPanels, TabPanel, Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
-import { ChevronUpIcon } from '@heroicons/vue/20/solid'
-import DynamicFieldRenderer from './DynamicFieldRenderer.vue'
+import {
+	Disclosure,
+	DisclosureButton,
+	DisclosurePanel,
+	Tab,
+	TabGroup,
+	TabList,
+	TabPanel,
+	TabPanels,
+} from "@headlessui/vue"
+import { ChevronUpIcon } from "@heroicons/vue/20/solid"
+import { computed, ref, watch } from "vue"
+import DynamicFieldRenderer from "./DynamicFieldRenderer.vue"
 // The import for the utility function is commented out to effectively disable the filter
 // import { isSectionVisible } from '../utils/conditionalLogic'
 
 const props = defineProps({
-    stepConfig: {
-        type: Object,
-        required: true
-    },
-    modelValue: {
-        type: Object,
-        required: true
-    },
-    stepDescription: {
-        type: String,
-        default: ''
-    }
+	stepConfig: {
+		type: Object,
+		required: true,
+	},
+	modelValue: {
+		type: Object,
+		required: true,
+	},
+	stepDescription: {
+		type: String,
+		default: "",
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
 const localData = computed({
-    get: () => props.modelValue,
-    set: (value) => emit('update:modelValue', value)
+	get: () => props.modelValue,
+	set: (value) => emit("update:modelValue", value),
 })
 
 const visibleSections = computed(() => {
 	if (!props.stepConfig.sections) return []
 
 	// Filter sections based on depends_on expressions
-	return props.stepConfig.sections.filter(section => {
+	return props.stepConfig.sections.filter((section) => {
 		if (!section.depends_on) return true
 		try {
 			return isSectionVisible(section, localData.value)
 		} catch (error) {
-			console.error(`Error evaluating section visibility for ${section.section_code}:`, error)
-			return true  // Fail open - show section on error
+			console.error(
+				`Error evaluating section visibility for ${section.section_code}:`,
+				error,
+			)
+			return true // Fail open - show section on error
 		}
 	})
 })
 
 // Get tabs for tab-based sections (placeholder)
 const getTabsForSection = (section) => {
-    // For now, return single tab
-    // In future, could parse section structure for multiple tabs
-    return [section.section_title]
+	// For now, return single tab
+	// In future, could parse section structure for multiple tabs
+	return [section.section_title]
 }
 
 // === DEBUG CHANGE 2: Add Debug Function ===
 const logCurrentData = () => {
-    // Stringify and parse to clone the object and ensure reactivity is not confusing the log
-    console.log('--- DYNAMIC STEP DATA LOG ---')
-    console.log('Full Form Data (localData):', JSON.parse(JSON.stringify(localData.value)))
-    console.log('-----------------------------')
-    alert('Data logged to console. Check browser console (F12) for the Full Form Data.')
+	// Stringify and parse to clone the object and ensure reactivity is not confusing the log
+	console.log("--- DYNAMIC STEP DATA LOG ---")
+	console.log(
+		"Full Form Data (localData):",
+		JSON.parse(JSON.stringify(localData.value)),
+	)
+	console.log("-----------------------------")
+	alert(
+		"Data logged to console. Check browser console (F12) for the Full Form Data.",
+	)
 }
 // ===========================================
 
 // Initialize default values
-watch(() => props.stepConfig, (config) => {
-    if (!config.sections) return
+watch(
+	() => props.stepConfig,
+	(config) => {
+		if (!config.sections) return
 
-    config.sections.forEach(section => {
-        section.fields.forEach(field => {
-            if (field.default_value && !localData.value[field.field_name]) {
-                // To safely update the computed 'localData' (which runs an emit to update the parent's store)
-                const newLocalData = { ...localData.value }; 
+		config.sections.forEach((section) => {
+			section.fields.forEach((field) => {
+				if (field.default_value && !localData.value[field.field_name]) {
+					// To safely update the computed 'localData' (which runs an emit to update the parent's store)
+					const newLocalData = { ...localData.value }
 
-                if (field.default_value === 'Today' && field.field_type === 'Date') {
-                    newLocalData[field.field_name] = new Date().toISOString().split('T')[0];
-                } else {
-                    newLocalData[field.field_name] = field.default_value;
-                }
-                
-                // Emit the new object to update the parent's modelValue/store.formData
-                emit('update:modelValue', newLocalData);
-            }
-        })
-    })
-}, { immediate: true, deep: true })
+					if (field.default_value === "Today" && field.field_type === "Date") {
+						newLocalData[field.field_name] = new Date()
+							.toISOString()
+							.split("T")[0]
+					} else {
+						newLocalData[field.field_name] = field.default_value
+					}
+
+					// Emit the new object to update the parent's modelValue/store.formData
+					emit("update:modelValue", newLocalData)
+				}
+			})
+		})
+	},
+	{ immediate: true, deep: true },
+)
 </script>
 
 <style scoped>

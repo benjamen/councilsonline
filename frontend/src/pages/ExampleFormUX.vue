@@ -199,95 +199,110 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import PersonalInfoForm from '../components/PersonalInfoForm.vue'
-import DocumentsUploadForm from '../components/DocumentsUploadForm.vue'
-import FormSection from '../components/FormSection.vue'
+import { computed, ref } from "vue"
+import DocumentsUploadForm from "../components/DocumentsUploadForm.vue"
+import FormSection from "../components/FormSection.vue"
+import PersonalInfoForm from "../components/PersonalInfoForm.vue"
 
-const steps = ['Personal Info', 'Documents', 'Review']
+const steps = ["Personal Info", "Documents", "Review"]
 const currentStep = ref(0)
 
 const barangayList = [
-  'San Juan', 'Dolores', 'San Isidro', 'Muzon', 'Sta. Ana',
-  'Bamban', 'Calantipay', 'Mauway', 'Resettlement'
+	"San Juan",
+	"Dolores",
+	"San Isidro",
+	"Muzon",
+	"Sta. Ana",
+	"Bamban",
+	"Calantipay",
+	"Mauway",
+	"Resettlement",
 ]
 
 const documentTypes = [
-  {
-    key: 'valid_id',
-    label: 'Valid ID',
-    description: 'Government-issued identification document',
-    examples: ['Philippine ID', 'Driver\'s License', 'Passport', 'Voter\'s ID', 'SSS/GSIS ID'],
-    required: true,
-    multiple: false,
-    accept: 'image/*,.pdf'
-  },
-  {
-    key: 'barangay_certificate',
-    label: 'Barangay Certificate of Indigency',
-    description: 'Certificate from your barangay confirming indigency status',
-    examples: ['Certificate of Indigency', 'Barangay Certification'],
-    required: false,
-    multiple: false,
-    accept: 'image/*,.pdf'
-  }
+	{
+		key: "valid_id",
+		label: "Valid ID",
+		description: "Government-issued identification document",
+		examples: [
+			"Philippine ID",
+			"Driver's License",
+			"Passport",
+			"Voter's ID",
+			"SSS/GSIS ID",
+		],
+		required: true,
+		multiple: false,
+		accept: "image/*,.pdf",
+	},
+	{
+		key: "barangay_certificate",
+		label: "Barangay Certificate of Indigency",
+		description: "Certificate from your barangay confirming indigency status",
+		examples: ["Certificate of Indigency", "Barangay Certification"],
+		required: false,
+		multiple: false,
+		accept: "image/*,.pdf",
+	},
 ]
 
 const formData = ref({
-  personalInfo: {
-    full_name: '',
-    sex: '',
-    civil_status: '',
-    date_of_birth: '',
-    email: '',
-    mobile_number: '',
-    street_address: '',
-    barangay: '',
-    municipality: 'Taytay',
-    province: 'Rizal',
-    zip_code: '',
-    photos: []
-  },
-  documents: {},
-  consent: false
+	personalInfo: {
+		full_name: "",
+		sex: "",
+		civil_status: "",
+		date_of_birth: "",
+		email: "",
+		mobile_number: "",
+		street_address: "",
+		barangay: "",
+		municipality: "Taytay",
+		province: "Rizal",
+		zip_code: "",
+		photos: [],
+	},
+	documents: {},
+	consent: false,
 })
 
 const progressPercentage = computed(() => {
-  return Math.round(((currentStep.value + 1) / steps.length) * 100)
+	return Math.round(((currentStep.value + 1) / steps.length) * 100)
 })
 
 const nextStep = () => {
-  if (currentStep.value < steps.length - 1) {
-    currentStep.value++
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
+	if (currentStep.value < steps.length - 1) {
+		currentStep.value++
+		window.scrollTo({ top: 0, behavior: "smooth" })
+	}
 }
 
 const previousStep = () => {
-  if (currentStep.value > 0) {
-    currentStep.value--
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
+	if (currentStep.value > 0) {
+		currentStep.value--
+		window.scrollTo({ top: 0, behavior: "smooth" })
+	}
 }
 
 const formatAddress = (info) => {
-  const parts = [
-    info.street_address,
-    info.barangay,
-    info.municipality,
-    info.province,
-    info.zip_code
-  ].filter(Boolean)
-  return parts.join(', ') || 'Not provided'
+	const parts = [
+		info.street_address,
+		info.barangay,
+		info.municipality,
+		info.province,
+		info.zip_code,
+	].filter(Boolean)
+	return parts.join(", ") || "Not provided"
 }
 
 const getDocumentLabel = (key) => {
-  const doc = documentTypes.find(d => d.key === key)
-  return doc ? doc.label : key
+	const doc = documentTypes.find((d) => d.key === key)
+	return doc ? doc.label : key
 }
 
 const handleSubmit = () => {
-  console.log('Form submitted:', formData.value)
-  alert('Application submitted successfully!\n\nCheck the console for form data.')
+	console.log("Form submitted:", formData.value)
+	alert(
+		"Application submitted successfully!\n\nCheck the console for form data.",
+	)
 }
 </script>

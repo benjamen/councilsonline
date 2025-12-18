@@ -119,190 +119,203 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
-import { call } from 'frappe-ui'
+import { call } from "frappe-ui"
+import { onMounted, ref, watch } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    default: null
-  },
-  label: {
-    type: String,
-    default: 'Address'
-  },
-  required: {
-    type: Boolean,
-    default: false
-  },
-  country: {
-    type: String,
-    default: '' // If provided, locks to that country; otherwise shows selector
-  },
-  showCountrySelector: {
-    type: Boolean,
-    default: true
-  }
+	modelValue: {
+		type: Object,
+		default: null,
+	},
+	label: {
+		type: String,
+		default: "Address",
+	},
+	required: {
+		type: Boolean,
+		default: false,
+	},
+	country: {
+		type: String,
+		default: "", // If provided, locks to that country; otherwise shows selector
+	},
+	showCountrySelector: {
+		type: Boolean,
+		default: true,
+	},
 })
 
-const emit = defineEmits(['update:modelValue', 'address-selected', 'country-changed'])
+const emit = defineEmits([
+	"update:modelValue",
+	"address-selected",
+	"country-changed",
+])
 
-const selectedCountry = ref(props.country || '')
-const searchQuery = ref('')
+const selectedCountry = ref(props.country || "")
+const searchQuery = ref("")
 const searchResults = ref([])
 const loading = ref(false)
 const showDropdown = ref(false)
 const selectedAddress = ref(props.modelValue)
-const validationError = ref('')
+const validationError = ref("")
 let searchTimeout = null
 
 onMounted(() => {
-  if (props.modelValue) {
-    selectedAddress.value = props.modelValue
-    searchQuery.value = props.modelValue.full_address || ''
-    selectedCountry.value = props.modelValue.country || props.country || ''
-  }
+	if (props.modelValue) {
+		selectedAddress.value = props.modelValue
+		searchQuery.value = props.modelValue.full_address || ""
+		selectedCountry.value = props.modelValue.country || props.country || ""
+	}
 })
 
-watch(() => props.modelValue, (newVal) => {
-  selectedAddress.value = newVal
-  if (newVal) {
-    searchQuery.value = newVal.full_address || ''
-    selectedCountry.value = newVal.country || selectedCountry.value
-  }
-})
+watch(
+	() => props.modelValue,
+	(newVal) => {
+		selectedAddress.value = newVal
+		if (newVal) {
+			searchQuery.value = newVal.full_address || ""
+			selectedCountry.value = newVal.country || selectedCountry.value
+		}
+	},
+)
 
-watch(() => props.country, (newVal) => {
-  if (newVal && newVal !== selectedCountry.value) {
-    selectedCountry.value = newVal
-  }
-})
+watch(
+	() => props.country,
+	(newVal) => {
+		if (newVal && newVal !== selectedCountry.value) {
+			selectedCountry.value = newVal
+		}
+	},
+)
 
 function getCountryName() {
-  const names = {
-    'NZ': 'New Zealand',
-    'AU': 'Australia',
-    'PH': 'Philippines'
-  }
-  return names[selectedCountry.value] || selectedCountry.value
+	const names = {
+		NZ: "New Zealand",
+		AU: "Australia",
+		PH: "Philippines",
+	}
+	return names[selectedCountry.value] || selectedCountry.value
 }
 
 function getPlaceholder() {
-  const placeholders = {
-    'NZ': 'Start typing address... e.g., 123 Main Street, Lower Hutt',
-    'AU': 'Start typing address... e.g., 45 Collins Street, Melbourne',
-    'PH': 'Start typing address... e.g., 123 Rizal Avenue, Manila'
-  }
-  return placeholders[selectedCountry.value] || 'Start typing address...'
+	const placeholders = {
+		NZ: "Start typing address... e.g., 123 Main Street, Lower Hutt",
+		AU: "Start typing address... e.g., 45 Collins Street, Melbourne",
+		PH: "Start typing address... e.g., 123 Rizal Avenue, Manila",
+	}
+	return placeholders[selectedCountry.value] || "Start typing address..."
 }
 
 function getDescription() {
-  const descriptions = {
-    'NZ': 'Type to search for addresses in New Zealand (powered by LINZ)',
-    'AU': 'Type to search for addresses in Australia',
-    'PH': 'Type to search for addresses in Philippines'
-  }
-  return descriptions[selectedCountry.value] || 'Type to search for addresses'
+	const descriptions = {
+		NZ: "Type to search for addresses in New Zealand (powered by LINZ)",
+		AU: "Type to search for addresses in Australia",
+		PH: "Type to search for addresses in Philippines",
+	}
+	return descriptions[selectedCountry.value] || "Type to search for addresses"
 }
 
 function handleCountryChange() {
-  clearAddress()
-  emit('country-changed', selectedCountry.value)
+	clearAddress()
+	emit("country-changed", selectedCountry.value)
 }
 
 async function handleSearch() {
-  if (searchTimeout) {
-    clearTimeout(searchTimeout)
-  }
+	if (searchTimeout) {
+		clearTimeout(searchTimeout)
+	}
 
-  const query = searchQuery.value.trim()
-  validationError.value = ''
+	const query = searchQuery.value.trim()
+	validationError.value = ""
 
-  if (selectedAddress.value && query !== selectedAddress.value.full_address) {
-    selectedAddress.value = null
-    emit('update:modelValue', null)
-  }
+	if (selectedAddress.value && query !== selectedAddress.value.full_address) {
+		selectedAddress.value = null
+		emit("update:modelValue", null)
+	}
 
-  if (query.length < 3) {
-    searchResults.value = []
-    return
-  }
+	if (query.length < 3) {
+		searchResults.value = []
+		return
+	}
 
-  searchTimeout = setTimeout(async () => {
-    loading.value = true
-    try {
-      const results = await searchAddresses(query, selectedCountry.value)
-      searchResults.value = results || []
-    } catch (error) {
-      console.error('[UniversalAddressLookup] Error:', error)
-      searchResults.value = []
-      validationError.value = 'Error searching addresses. Please try again.'
-    } finally {
-      loading.value = false
-    }
-  }, 300)
+	searchTimeout = setTimeout(async () => {
+		loading.value = true
+		try {
+			const results = await searchAddresses(query, selectedCountry.value)
+			searchResults.value = results || []
+		} catch (error) {
+			console.error("[UniversalAddressLookup] Error:", error)
+			searchResults.value = []
+			validationError.value = "Error searching addresses. Please try again."
+		} finally {
+			loading.value = false
+		}
+	}, 300)
 }
 
 async function searchAddresses(query, country) {
-  try {
-    // Call unified backend API that routes to appropriate service
-    const results = await call('lodgeick.api.search_addresses_universal', {
-      query: query,
-      country: country
-    })
+	try {
+		// Call unified backend API that routes to appropriate service
+		const results = await call("lodgeick.api.search_addresses_universal", {
+			query: query,
+			country: country,
+		})
 
-    return (results || []).map(result => ({
-      ...result,
-      country: country,
-      full_address: result.address || result.full_address,
-      street_address: result.street_address || result.street || extractStreet(result.address || result.full_address),
-      suburb: result.suburb || result.locality || result.barangay,
-      city: result.city || result.town || result.municipality,
-      state: result.state || result.province,
-      postcode: result.postcode || result.postal_code || result.zip_code,
-      address_id: result.address_id || result.id
-    }))
-  } catch (error) {
-    console.error('[UniversalAddressLookup] API error:', error)
-    return []
-  }
+		return (results || []).map((result) => ({
+			...result,
+			country: country,
+			full_address: result.address || result.full_address,
+			street_address:
+				result.street_address ||
+				result.street ||
+				extractStreet(result.address || result.full_address),
+			suburb: result.suburb || result.locality || result.barangay,
+			city: result.city || result.town || result.municipality,
+			state: result.state || result.province,
+			postcode: result.postcode || result.postal_code || result.zip_code,
+			address_id: result.address_id || result.id,
+		}))
+	} catch (error) {
+		console.error("[UniversalAddressLookup] API error:", error)
+		return []
+	}
 }
 
 function extractStreet(fullAddress) {
-  if (!fullAddress) return ''
-  return fullAddress.split(',')[0]?.trim() || fullAddress
+	if (!fullAddress) return ""
+	return fullAddress.split(",")[0]?.trim() || fullAddress
 }
 
 function selectAddress(address) {
-  selectedAddress.value = { ...address, country: selectedCountry.value }
-  searchQuery.value = address.full_address
-  searchResults.value = []
-  showDropdown.value = false
-  validationError.value = ''
+	selectedAddress.value = { ...address, country: selectedCountry.value }
+	searchQuery.value = address.full_address
+	searchResults.value = []
+	showDropdown.value = false
+	validationError.value = ""
 
-  emit('update:modelValue', selectedAddress.value)
-  emit('address-selected', selectedAddress.value)
+	emit("update:modelValue", selectedAddress.value)
+	emit("address-selected", selectedAddress.value)
 }
 
 function clearAddress() {
-  selectedAddress.value = null
-  searchQuery.value = ''
-  searchResults.value = []
-  validationError.value = ''
+	selectedAddress.value = null
+	searchQuery.value = ""
+	searchResults.value = []
+	validationError.value = ""
 
-  emit('update:modelValue', null)
-  emit('address-selected', null)
+	emit("update:modelValue", null)
+	emit("address-selected", null)
 }
 
 function handleBlur() {
-  setTimeout(() => {
-    showDropdown.value = false
-  }, 200)
+	setTimeout(() => {
+		showDropdown.value = false
+	}, 200)
 }
 
 defineExpose({
-  clearAddress,
-  selectedAddress,
-  selectedCountry
+	clearAddress,
+	selectedAddress,
+	selectedCountry,
 })
 </script>

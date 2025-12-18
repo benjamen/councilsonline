@@ -529,12 +529,16 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue"
-import { useRouter, useRoute } from "vue-router"
-import { Input, Button } from "frappe-ui"
+import { Button, Input } from "frappe-ui"
+import { computed, onMounted, ref } from "vue"
+import { useRoute, useRouter } from "vue-router"
 import AddressLookup from "../components/AddressLookup.vue"
 import { useCouncilStore } from "../stores/councilStore"
-import { validateNZPhoneNumber, validateEmail, validatePassword } from "../utils/validation"
+import {
+	validateEmail,
+	validateNZPhoneNumber,
+	validatePassword,
+} from "../utils/validation"
 
 const router = useRouter()
 const route = useRoute()
@@ -543,279 +547,300 @@ const councilStore = useCouncilStore()
 const councilCode = computed(() => route.params.councilCode?.toUpperCase())
 const councilSettings = ref(null)
 
-const requesterType = ref('Individual')
+const requesterType = ref("Individual")
 const selectedAddress = ref(null)
 const isLoading = ref(false)
-const errorMessage = ref('')
+const errorMessage = ref("")
 
 // Form data
 const formData = ref({
-  first_name: '',
-  last_name: '',
-  email: '',
-  phone: '',
-  password: '',
-  confirm_password: '',
-  organization_name: '',
-  company_number: '',
-  trust_name: '',
-  terms: false
+	first_name: "",
+	last_name: "",
+	email: "",
+	phone: "",
+	password: "",
+	confirm_password: "",
+	organization_name: "",
+	company_number: "",
+	trust_name: "",
+	terms: false,
 })
 
 // Validation errors
-const phoneError = ref('')
-const emailError = ref('')
-const passwordError = ref('')
-const confirmPasswordError = ref('')
-const passwordStrength = ref('')
+const phoneError = ref("")
+const emailError = ref("")
+const passwordError = ref("")
+const confirmPasswordError = ref("")
+const passwordStrength = ref("")
 
 const passwordStrengthClass = computed(() => {
-  if (passwordStrength.value === 'strong') return 'text-green-600'
-  if (passwordStrength.value === 'medium') return 'text-yellow-600'
-  return 'text-red-600'
+	if (passwordStrength.value === "strong") return "text-green-600"
+	if (passwordStrength.value === "medium") return "text-yellow-600"
+	return "text-red-600"
 })
 
 // Properties management
 const properties = ref([])
 const showAddPropertyModal = ref(false)
 const currentProperty = ref({
-  property_name: '',
-  street: '',
-  suburb: '',
-  city: '',
-  postcode: '',
-  is_default: false
+	property_name: "",
+	street: "",
+	suburb: "",
+	city: "",
+	postcode: "",
+	is_default: false,
 })
 
 // Computed styles based on council branding
-const primaryColor = computed(() => councilSettings.value?.primary_color || '#2563eb')
-const secondaryColor = computed(() => councilSettings.value?.secondary_color || '#64748b')
+const primaryColor = computed(
+	() => councilSettings.value?.primary_color || "#2563eb",
+)
+const secondaryColor = computed(
+	() => councilSettings.value?.secondary_color || "#64748b",
+)
 
 const backgroundStyle = computed(() => {
-  const color = primaryColor.value
-  return {
-    background: `linear-gradient(to bottom right, ${color}15, ${secondaryColor.value}15)`
-  }
+	const color = primaryColor.value
+	return {
+		background: `linear-gradient(to bottom right, ${color}15, ${secondaryColor.value}15)`,
+	}
 })
 
 // Load council settings on mount
 onMounted(async () => {
-  try {
-    councilSettings.value = await councilStore.getCouncilSettings(councilCode.value)
-  } catch (error) {
-    console.error('Failed to load council settings:', error)
-  }
+	try {
+		councilSettings.value = await councilStore.getCouncilSettings(
+			councilCode.value,
+		)
+	} catch (error) {
+		console.error("Failed to load council settings:", error)
+	}
 })
 
 // Property modal functions
 const openAddPropertyModal = () => {
-  currentProperty.value = {
-    property_name: '',
-    street: '',
-    suburb: '',
-    city: '',
-    postcode: '',
-    is_default: properties.value.length === 0
-  }
-  selectedAddress.value = null
-  showAddPropertyModal.value = true
+	currentProperty.value = {
+		property_name: "",
+		street: "",
+		suburb: "",
+		city: "",
+		postcode: "",
+		is_default: properties.value.length === 0,
+	}
+	selectedAddress.value = null
+	showAddPropertyModal.value = true
 }
 
 const closeAddPropertyModal = () => {
-  showAddPropertyModal.value = false
-  currentProperty.value = {
-    property_name: '',
-    street: '',
-    suburb: '',
-    city: '',
-    postcode: '',
-    is_default: false
-  }
-  selectedAddress.value = null
+	showAddPropertyModal.value = false
+	currentProperty.value = {
+		property_name: "",
+		street: "",
+		suburb: "",
+		city: "",
+		postcode: "",
+		is_default: false,
+	}
+	selectedAddress.value = null
 }
 
 const addProperty = () => {
-  if (!currentProperty.value.property_name) {
-    alert('Please enter a property name')
-    return
-  }
+	if (!currentProperty.value.property_name) {
+		alert("Please enter a property name")
+		return
+	}
 
-  if (!selectedAddress.value) {
-    alert('Please select a property address')
-    return
-  }
+	if (!selectedAddress.value) {
+		alert("Please select a property address")
+		return
+	}
 
-  if (currentProperty.value.is_default) {
-    properties.value.forEach(p => p.is_default = false)
-  }
+	if (currentProperty.value.is_default) {
+		properties.value.forEach((p) => (p.is_default = false))
+	}
 
-  properties.value.push({
-    property_name: currentProperty.value.property_name,
-    street: selectedAddress.value.street_address || selectedAddress.value.full_address,
-    suburb: selectedAddress.value.suburb || '',
-    city: selectedAddress.value.city || '',
-    postcode: selectedAddress.value.postcode || '',
-    is_default: currentProperty.value.is_default
-  })
+	properties.value.push({
+		property_name: currentProperty.value.property_name,
+		street:
+			selectedAddress.value.street_address ||
+			selectedAddress.value.full_address,
+		suburb: selectedAddress.value.suburb || "",
+		city: selectedAddress.value.city || "",
+		postcode: selectedAddress.value.postcode || "",
+		is_default: currentProperty.value.is_default,
+	})
 
-  closeAddPropertyModal()
+	closeAddPropertyModal()
 }
 
 const removeProperty = (index) => {
-  if (confirm('Are you sure you want to remove this property?')) {
-    const wasDefault = properties.value[index].is_default
-    properties.value.splice(index, 1)
+	if (confirm("Are you sure you want to remove this property?")) {
+		const wasDefault = properties.value[index].is_default
+		properties.value.splice(index, 1)
 
-    if (wasDefault && properties.value.length > 0) {
-      properties.value[0].is_default = true
-    }
-  }
+		if (wasDefault && properties.value.length > 0) {
+			properties.value[0].is_default = true
+		}
+	}
 }
 
 const setDefaultProperty = (index) => {
-  properties.value.forEach((p, i) => {
-    p.is_default = i === index
-  })
+	properties.value.forEach((p, i) => {
+		p.is_default = i === index
+	})
 }
 
 const handleAddressSelected = (address) => {
-  selectedAddress.value = address
+	selectedAddress.value = address
 }
 
 // Validation functions
 const validatePhoneField = () => {
-  const validation = validateNZPhoneNumber(formData.value.phone)
-  if (!validation.isValid) {
-    phoneError.value = validation.message
-  } else {
-    phoneError.value = ''
-    formData.value.phone = validation.formatted
-  }
-  return validation.isValid
+	const validation = validateNZPhoneNumber(formData.value.phone)
+	if (!validation.isValid) {
+		phoneError.value = validation.message
+	} else {
+		phoneError.value = ""
+		formData.value.phone = validation.formatted
+	}
+	return validation.isValid
 }
 
 const validateEmailField = () => {
-  const validation = validateEmail(formData.value.email)
-  if (!validation.isValid) {
-    emailError.value = validation.message
-  } else {
-    emailError.value = ''
-  }
-  return validation.isValid
+	const validation = validateEmail(formData.value.email)
+	if (!validation.isValid) {
+		emailError.value = validation.message
+	} else {
+		emailError.value = ""
+	}
+	return validation.isValid
 }
 
 const validatePasswordField = () => {
-  const validation = validatePassword(formData.value.password)
-  if (!validation.isValid) {
-    passwordError.value = validation.message
-    passwordStrength.value = ''
-  } else {
-    passwordError.value = ''
-    passwordStrength.value = validation.strength
-  }
-  return validation.isValid
+	const validation = validatePassword(formData.value.password)
+	if (!validation.isValid) {
+		passwordError.value = validation.message
+		passwordStrength.value = ""
+	} else {
+		passwordError.value = ""
+		passwordStrength.value = validation.strength
+	}
+	return validation.isValid
 }
 
 const validatePasswordMatch = () => {
-  if (formData.value.password !== formData.value.confirm_password) {
-    confirmPasswordError.value = 'Passwords do not match'
-    return false
-  }
-  confirmPasswordError.value = ''
-  return true
+	if (formData.value.password !== formData.value.confirm_password) {
+		confirmPasswordError.value = "Passwords do not match"
+		return false
+	}
+	confirmPasswordError.value = ""
+	return true
 }
 
 function submit() {
-  errorMessage.value = ''
-  phoneError.value = ''
-  emailError.value = ''
-  passwordError.value = ''
-  confirmPasswordError.value = ''
+	errorMessage.value = ""
+	phoneError.value = ""
+	emailError.value = ""
+	passwordError.value = ""
+	confirmPasswordError.value = ""
 
-  const isPhoneValid = validatePhoneField()
-  const isEmailValid = validateEmailField()
-  const isPasswordValid = validatePasswordField()
-  const isPasswordMatch = validatePasswordMatch()
+	const isPhoneValid = validatePhoneField()
+	const isEmailValid = validateEmailField()
+	const isPasswordValid = validatePasswordField()
+	const isPasswordMatch = validatePasswordMatch()
 
-  if (!isPhoneValid || !isEmailValid || !isPasswordValid || !isPasswordMatch) {
-    errorMessage.value = 'Please correct the errors above before submitting'
-    return
-  }
+	if (!isPhoneValid || !isEmailValid || !isPasswordValid || !isPasswordMatch) {
+		errorMessage.value = "Please correct the errors above before submitting"
+		return
+	}
 
-  if (requesterType.value === 'Individual' && properties.value.length === 0) {
-    errorMessage.value = 'At least one property is required for individual applicants'
-    return
-  }
+	if (requesterType.value === "Individual" && properties.value.length === 0) {
+		errorMessage.value =
+			"At least one property is required for individual applicants"
+		return
+	}
 
-  if ((requesterType.value === 'Company' || requesterType.value === 'Organisation') && !formData.value.organization_name) {
-    errorMessage.value = `${requesterType.value} name is required`
-    return
-  }
+	if (
+		(requesterType.value === "Company" ||
+			requesterType.value === "Organisation") &&
+		!formData.value.organization_name
+	) {
+		errorMessage.value = `${requesterType.value} name is required`
+		return
+	}
 
-  if (requesterType.value === 'Trust' && !formData.value.trust_name) {
-    errorMessage.value = 'Trust name is required'
-    return
-  }
+	if (requesterType.value === "Trust" && !formData.value.trust_name) {
+		errorMessage.value = "Trust name is required"
+		return
+	}
 
-  if (!formData.value.terms) {
-    errorMessage.value = 'You must agree to the Terms of Service and Privacy Policy'
-    return
-  }
+	if (!formData.value.terms) {
+		errorMessage.value =
+			"You must agree to the Terms of Service and Privacy Policy"
+		return
+	}
 
-  isLoading.value = true
+	isLoading.value = true
 
-  const userData = {
-    email: formData.value.email,
-    first_name: formData.value.first_name,
-    last_name: formData.value.last_name,
-    phone: formData.value.phone,
-    password: formData.value.password,
-    user_role: 'requester',
-    applicant_type: requesterType.value,
-    properties: properties.value,
-    council_code: councilCode.value // Lock to this council
-  }
+	const userData = {
+		email: formData.value.email,
+		first_name: formData.value.first_name,
+		last_name: formData.value.last_name,
+		phone: formData.value.phone,
+		password: formData.value.password,
+		user_role: "requester",
+		applicant_type: requesterType.value,
+		properties: properties.value,
+		council_code: councilCode.value, // Lock to this council
+	}
 
-  if (requesterType.value === 'Company' || requesterType.value === 'Organisation') {
-    userData.organization_name = formData.value.organization_name
-    userData.company_number = formData.value.company_number
-  } else if (requesterType.value === 'Trust') {
-    userData.trust_name = formData.value.trust_name
-  }
+	if (
+		requesterType.value === "Company" ||
+		requesterType.value === "Organisation"
+	) {
+		userData.organization_name = formData.value.organization_name
+		userData.company_number = formData.value.company_number
+	} else if (requesterType.value === "Trust") {
+		userData.trust_name = formData.value.trust_name
+	}
 
-  fetch('/api/method/lodgeick.api.register_user', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Frappe-CSRF-Token': window.csrf_token
-    },
-    body: JSON.stringify(userData)
-  })
-  .then(response => response.json())
-  .then(data => {
-    isLoading.value = false
+	fetch("/api/method/lodgeick.api.register_user", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			"X-Frappe-CSRF-Token": window.csrf_token,
+		},
+		body: JSON.stringify(userData),
+	})
+		.then((response) => response.json())
+		.then((data) => {
+			isLoading.value = false
 
-    if (data.message && data.message.success) {
-      router.push({
-        name: 'CouncilLogin',
-        params: { councilCode: councilCode.value },
-        query: { registered: 'true' }
-      })
-    } else if (data.exc || data._server_messages) {
-      const serverMessages = data._server_messages ? JSON.parse(data._server_messages) : []
-      const errorMsg = serverMessages.length > 0
-        ? JSON.parse(serverMessages[0]).message
-        : 'Registration failed. Please try again.'
-      errorMessage.value = errorMsg
-      console.error('Registration error:', data.exc || data._server_messages)
-    } else {
-      errorMessage.value = 'Registration failed. Please try again.'
-    }
-  })
-  .catch(error => {
-    isLoading.value = false
-    errorMessage.value = 'Network error. Please check your connection and try again.'
-    console.error('Registration error:', error)
-  })
+			if (data.message && data.message.success) {
+				router.push({
+					name: "CouncilLogin",
+					params: { councilCode: councilCode.value },
+					query: { registered: "true" },
+				})
+			} else if (data.exc || data._server_messages) {
+				const serverMessages = data._server_messages
+					? JSON.parse(data._server_messages)
+					: []
+				const errorMsg =
+					serverMessages.length > 0
+						? JSON.parse(serverMessages[0]).message
+						: "Registration failed. Please try again."
+				errorMessage.value = errorMsg
+				console.error("Registration error:", data.exc || data._server_messages)
+			} else {
+				errorMessage.value = "Registration failed. Please try again."
+			}
+		})
+		.catch((error) => {
+			isLoading.value = false
+			errorMessage.value =
+				"Network error. Please check your connection and try again."
+			console.error("Registration error:", error)
+		})
 }
 </script>

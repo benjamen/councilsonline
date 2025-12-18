@@ -72,42 +72,51 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref, watch } from 'vue'
+import { defineEmits, defineProps, ref, watch } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  }
+	modelValue: {
+		type: Object,
+		required: true,
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
 // Local data
 const localData = ref({
-  declaration_rma_compliance: props.modelValue.declaration_rma_compliance || false,
-  declaration_public_information: props.modelValue.declaration_public_information || false,
-  declaration_authorized: props.modelValue.declaration_authorized || false
+	declaration_rma_compliance:
+		props.modelValue.declaration_rma_compliance || false,
+	declaration_public_information:
+		props.modelValue.declaration_public_information || false,
+	declaration_authorized: props.modelValue.declaration_authorized || false,
 })
 
 // Watch for external changes
-watch(() => [
-  props.modelValue.declaration_rma_compliance,
-  props.modelValue.declaration_public_information,
-  props.modelValue.declaration_authorized
-], ([newRma, newPublic, newAuth]) => {
-  localData.value.declaration_rma_compliance = newRma || false
-  localData.value.declaration_public_information = newPublic || false
-  localData.value.declaration_authorized = newAuth || false
-})
+watch(
+	() => [
+		props.modelValue.declaration_rma_compliance,
+		props.modelValue.declaration_public_information,
+		props.modelValue.declaration_authorized,
+	],
+	([newRma, newPublic, newAuth]) => {
+		localData.value.declaration_rma_compliance = newRma || false
+		localData.value.declaration_public_information = newPublic || false
+		localData.value.declaration_authorized = newAuth || false
+	},
+)
 
 // Watch local changes and emit
-watch(localData, (newVal) => {
-  emit('update:modelValue', {
-    ...props.modelValue,
-    declaration_rma_compliance: newVal.declaration_rma_compliance,
-    declaration_public_information: newVal.declaration_public_information,
-    declaration_authorized: newVal.declaration_authorized
-  })
-}, { deep: true })
+watch(
+	localData,
+	(newVal) => {
+		emit("update:modelValue", {
+			...props.modelValue,
+			declaration_rma_compliance: newVal.declaration_rma_compliance,
+			declaration_public_information: newVal.declaration_public_information,
+			declaration_authorized: newVal.declaration_authorized,
+		})
+	},
+	{ deep: true },
+)
 </script>

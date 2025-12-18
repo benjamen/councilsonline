@@ -1,4 +1,4 @@
-import { apiClient } from './base'
+import { apiClient } from "./base"
 
 /**
  * Request Type Service
@@ -12,26 +12,26 @@ export class RequestTypeService {
 	 */
 	getAllRequestTypes(filters = {}) {
 		return apiClient.createResource({
-			url: 'frappe.client.get_list',
+			url: "frappe.client.get_list",
 			params: {
-				doctype: 'Request Type',
+				doctype: "Request Type",
 				filters: {
 					is_enabled: 1,
-					...filters
+					...filters,
 				},
 				fields: [
-					'name',
-					'request_type_name',
-					'request_type_code',
-					'category',
-					'description',
-					'icon',
-					'is_enabled'
+					"name",
+					"request_type_name",
+					"request_type_code",
+					"category",
+					"description",
+					"icon",
+					"is_enabled",
 				],
-				order_by: 'category asc, request_type_name asc'
+				order_by: "category asc, request_type_name asc",
 			},
 			auto: true,
-			cache: ['request-types']
+			cache: ["request-types"],
 		})
 	}
 
@@ -42,10 +42,10 @@ export class RequestTypeService {
 	 */
 	getRequestTypeByCode(requestTypeCode) {
 		return apiClient.createResource({
-			url: 'lodgeick.api.get_request_type_config',
+			url: "lodgeick.api.get_request_type_config",
 			params: { request_type_code: requestTypeCode },
 			auto: true,
-			cache: ['request-type', requestTypeCode]
+			cache: ["request-type", requestTypeCode],
 		})
 	}
 
@@ -56,12 +56,12 @@ export class RequestTypeService {
 	 */
 	getRequestType(requestTypeName) {
 		return apiClient.createResource({
-			url: 'frappe.client.get',
+			url: "frappe.client.get",
 			params: {
-				doctype: 'Request Type',
-				name: requestTypeName
+				doctype: "Request Type",
+				name: requestTypeName,
 			},
-			auto: true
+			auto: true,
 		})
 	}
 
@@ -80,8 +80,8 @@ export class RequestTypeService {
 	 * @returns {Promise<Object>} Saved configuration
 	 */
 	async saveRequestTypeConfig(config) {
-		return apiClient.call('lodgeick.api.save_request_type_config', {
-			config
+		return apiClient.call("lodgeick.api.save_request_type_config", {
+			config,
 		})
 	}
 
@@ -91,8 +91,8 @@ export class RequestTypeService {
 	 * @returns {Promise<Object>} Request type configuration
 	 */
 	async loadRequestTypeConfig(requestTypeName) {
-		return apiClient.call('lodgeick.api.load_request_type_config', {
-			request_type_name: requestTypeName
+		return apiClient.call("lodgeick.api.load_request_type_config", {
+			request_type_name: requestTypeName,
 		})
 	}
 
@@ -101,7 +101,7 @@ export class RequestTypeService {
 	 * @returns {Promise<Array>} Step templates
 	 */
 	async getStepTemplates() {
-		return apiClient.call('lodgeick.api.get_step_templates')
+		return apiClient.call("lodgeick.api.get_step_templates")
 	}
 
 	/**
@@ -110,8 +110,8 @@ export class RequestTypeService {
 	 * @returns {Promise<Object>} Template configuration
 	 */
 	async loadStepTemplate(templateName) {
-		return apiClient.call('lodgeick.api.load_step_template', {
-			template_name: templateName
+		return apiClient.call("lodgeick.api.load_step_template", {
+			template_name: templateName,
 		})
 	}
 
@@ -121,11 +121,11 @@ export class RequestTypeService {
 	 * @returns {Promise<Object>} Created request type
 	 */
 	async createRequestType(requestTypeData) {
-		return apiClient.call('frappe.client.insert', {
+		return apiClient.call("frappe.client.insert", {
 			doc: {
-				doctype: 'Request Type',
-				...requestTypeData
-			}
+				doctype: "Request Type",
+				...requestTypeData,
+			},
 		})
 	}
 
@@ -136,10 +136,10 @@ export class RequestTypeService {
 	 * @returns {Promise<void>}
 	 */
 	async updateRequestType(requestTypeName, fields) {
-		return apiClient.call('frappe.client.set_value', {
-			doctype: 'Request Type',
+		return apiClient.call("frappe.client.set_value", {
+			doctype: "Request Type",
 			name: requestTypeName,
-			fieldname: fields
+			fieldname: fields,
 		})
 	}
 
@@ -150,9 +150,9 @@ export class RequestTypeService {
 	 * @returns {Promise<Object>} Duplicated request type
 	 */
 	async duplicateRequestType(requestTypeName, newName) {
-		return apiClient.call('lodgeick.api.duplicate_request_type', {
+		return apiClient.call("lodgeick.api.duplicate_request_type", {
 			request_type_name: requestTypeName,
-			new_name: newName
+			new_name: newName,
 		})
 	}
 
@@ -170,7 +170,7 @@ export class RequestTypeService {
 	 * @returns {Promise<Array>} Unique categories
 	 */
 	async getCategories() {
-		return apiClient.call('lodgeick.api.get_request_type_categories')
+		return apiClient.call("lodgeick.api.get_request_type_categories")
 	}
 
 	/**
@@ -179,8 +179,8 @@ export class RequestTypeService {
 	 * @returns {Promise<Object>} Validation result { valid: boolean, errors: [] }
 	 */
 	async validateRequestTypeConfig(config) {
-		return apiClient.call('lodgeick.api.validate_request_type_config', {
-			config
+		return apiClient.call("lodgeick.api.validate_request_type_config", {
+			config,
 		})
 	}
 }

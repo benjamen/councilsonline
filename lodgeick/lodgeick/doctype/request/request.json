@@ -45,11 +45,6 @@
   "tab_break_asdq",
   "section_break_assessment",
   "assessment_project",
-  "assessment_status",
-  "current_stage",
-  "column_break_assessment",
-  "assessment_template",
-  "assessment_owner",
   "section_break_assignment",
   "assigned_to",
   "assigned_team",
@@ -329,45 +324,11 @@
   },
   {
    "allow_on_submit": 1,
-   "description": "Link to the internal assessment workflow. Automatically created when this request is acknowledged.",
+   "description": "Link to the internal assessment workflow. Automatically created when this request is acknowledged. Click 'View Assessment Project' in the action bar to see status, stages, and owner.",
    "fieldname": "assessment_project",
    "fieldtype": "Link",
    "label": "Assessment Project",
    "options": "Assessment Project",
-   "read_only": 1
-  },
-  {
-   "fetch_from": "assessment_project.overall_status",
-   "fieldname": "assessment_status",
-   "fieldtype": "Data",
-   "label": "Assessment Status",
-   "read_only": 1
-  },
-  {
-   "fetch_from": "assessment_project.current_stage",
-   "fieldname": "current_stage",
-   "fieldtype": "Data",
-   "label": "Current Stage",
-   "read_only": 1
-  },
-  {
-   "fieldname": "column_break_assessment",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fetch_from": "assessment_project.assessment_template",
-   "fieldname": "assessment_template",
-   "fieldtype": "Link",
-   "label": "Assessment Template",
-   "options": "Assessment Template",
-   "read_only": 1
-  },
-  {
-   "fetch_from": "assessment_project.project_owner",
-   "fieldname": "assessment_owner",
-   "fieldtype": "Link",
-   "label": "Assessment Owner",
-   "options": "User",
    "read_only": 1
   },
   {

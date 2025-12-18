@@ -377,75 +377,85 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref, computed } from 'vue'
+import { computed, defineEmits, defineProps, ref } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  }
+	modelValue: {
+		type: Object,
+		required: true,
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
 const localData = computed({
-  get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value)
+	get: () => props.modelValue,
+	set: (value) => emit("update:modelValue", value),
 })
 
 // Today's date for max date validation
-const today = new Date().toISOString().split('T')[0]
+const today = new Date().toISOString().split("T")[0]
 
 // Payment Modal Management
 const showPaymentModal = ref(false)
 const paymentForm = ref({
-  payment_type: '',
-  reference_number: '',
-  payment_date: today,
-  amount_excluding_gst: 0
+	payment_type: "",
+	reference_number: "",
+	payment_date: today,
+	amount_excluding_gst: 0,
 })
 
 const openPaymentModal = () => {
-  paymentForm.value = {
-    payment_type: '',
-    reference_number: '',
-    payment_date: today,
-    amount_excluding_gst: 0
-  }
-  showPaymentModal.value = true
+	paymentForm.value = {
+		payment_type: "",
+		reference_number: "",
+		payment_date: today,
+		amount_excluding_gst: 0,
+	}
+	showPaymentModal.value = true
 }
 
 const closePaymentModal = () => {
-  showPaymentModal.value = false
+	showPaymentModal.value = false
 }
 
 const savePayment = () => {
-  if (!paymentForm.value.payment_type || !paymentForm.value.amount_excluding_gst) return
+	if (
+		!paymentForm.value.payment_type ||
+		!paymentForm.value.amount_excluding_gst
+	)
+		return
 
-  const updatedData = { ...props.modelValue }
-  if (!updatedData.lodgement_payments) updatedData.lodgement_payments = []
+	const updatedData = { ...props.modelValue }
+	if (!updatedData.lodgement_payments) updatedData.lodgement_payments = []
 
-  updatedData.lodgement_payments.push({ ...paymentForm.value })
-  emit('update:modelValue', updatedData)
-  closePaymentModal()
+	updatedData.lodgement_payments.push({ ...paymentForm.value })
+	emit("update:modelValue", updatedData)
+	closePaymentModal()
 }
 
 const removePayment = (index) => {
-  if (confirm('Remove this payment record?')) {
-    const updatedData = { ...props.modelValue }
-    updatedData.lodgement_payments.splice(index, 1)
-    emit('update:modelValue', updatedData)
-  }
+	if (confirm("Remove this payment record?")) {
+		const updatedData = { ...props.modelValue }
+		updatedData.lodgement_payments.splice(index, 1)
+		emit("update:modelValue", updatedData)
+	}
 }
 
 const calculateTotalPayments = () => {
-  if (!localData.value.lodgement_payments) return 0
-  return localData.value.lodgement_payments.reduce((total, payment) => total + (payment.amount_excluding_gst || 0), 0).toFixed(2)
+	if (!localData.value.lodgement_payments) return 0
+	return localData.value.lodgement_payments
+		.reduce((total, payment) => total + (payment.amount_excluding_gst || 0), 0)
+		.toFixed(2)
 }
 
 const formatDate = (dateString) => {
-  if (!dateString) return ''
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-NZ', { year: 'numeric', month: 'short', day: 'numeric' })
+	if (!dateString) return ""
+	const date = new Date(dateString)
+	return date.toLocaleDateString("en-NZ", {
+		year: "numeric",
+		month: "short",
+		day: "numeric",
+	})
 }
 </script>

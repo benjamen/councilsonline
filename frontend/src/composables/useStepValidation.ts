@@ -3,8 +3,9 @@
  * Integrates with existing fieldValidation.js utility
  */
 
-import { ref, type Ref } from 'vue'
-import { validateField as utilValidateField } from '../utils/fieldValidation'
+import { type Ref, ref } from "vue"
+import { validateField as utilValidateField } from "../utils/fieldValidation"
+import { evaluateCondition } from "../utils/conditionalLogic"
 
 export interface StepValidationReturn {
 	/** Object containing field names and error messages */
@@ -18,7 +19,7 @@ export interface StepValidationReturn {
 		fieldName: string,
 		value: any,
 		fieldConfig: any,
-		formData?: any
+		formData?: any,
 	) => boolean
 
 	/** Validate entire step */
@@ -42,7 +43,7 @@ export function useStepValidation(): StepValidationReturn {
 		fieldName: string,
 		value: any,
 		fieldConfig: any,
-		formData: any = {}
+		formData: any = {},
 	): boolean {
 		// Use utility validation
 		const result = utilValidateField(value, fieldConfig.validation, formData)
@@ -53,7 +54,10 @@ export function useStepValidation(): StepValidationReturn {
 		}
 
 		// Check required
-		if (fieldConfig.is_required && (value === '' || value === null || value === undefined)) {
+		if (
+			fieldConfig.is_required &&
+			(value === "" || value === null || value === undefined)
+		) {
 			errors.value[fieldName] = `${fieldConfig.field_label} is required`
 			return false
 		}
@@ -68,7 +72,7 @@ export function useStepValidation(): StepValidationReturn {
 	 */
 	async function validateStep(
 		stepConfig: any,
-		formData: any
+		formData: any,
 	): Promise<boolean> {
 		isValidating.value = true
 		errors.value = {}
@@ -93,16 +97,33 @@ export function useStepValidation(): StepValidationReturn {
 				let value = formData[field.field_name]
 
 				// Philippine address component fields are nested in address_line object
-				const addressComponentFields = ['barangay', 'municipality', 'province', 'city', 'region', 'zip_code', 'postal_code']
+				const addressComponentFields = [
+					"barangay",
+					"municipality",
+					"province",
+					"city",
+					"region",
+					"zip_code",
+					"postal_code",
+				]
 				if (addressComponentFields.includes(field.field_name) && !value) {
 					// Check if there's an address_line object containing this field
-					const addressLineData = formData['address_line'] || formData['street'] || formData['residential_address'] || formData['property_address']
-					if (addressLineData && typeof addressLineData === 'object') {
+					const addressLineData =
+						formData["address_line"] ||
+						formData["street"] ||
+						formData["residential_address"] ||
+						formData["property_address"]
+					if (addressLineData && typeof addressLineData === "object") {
 						value = addressLineData[field.field_name]
 					}
 				}
 
-				const fieldValid = validateConfigField(field.field_name, value, field, formData)
+				const fieldValid = validateConfigField(
+					field.field_name,
+					value,
+					field,
+					formData,
+				)
 
 				if (!fieldValid) {
 					isValid = false
@@ -119,10 +140,9 @@ export function useStepValidation(): StepValidationReturn {
 	 */
 	function evaluateDependsOn(expression: string, formData: any): boolean {
 		try {
-			const { evaluateCondition } = require('../utils/conditionalLogic')
 			return evaluateCondition(expression, formData)
 		} catch (error) {
-			console.error('Error evaluating depends_on:', error)
+			console.error("Error evaluating depends_on:", error)
 			return true // Show field on error
 		}
 	}
@@ -147,7 +167,7 @@ export function useStepValidation(): StepValidationReturn {
 		validateConfigField,
 		validateStep,
 		clearErrors,
-		clearFieldError
+		clearFieldError,
 	}
 }
 

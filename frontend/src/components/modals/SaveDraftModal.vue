@@ -1,36 +1,36 @@
 <script setup>
-import { computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { Dialog } from 'frappe-ui'
+import { Dialog } from "frappe-ui"
+import { computed } from "vue"
+import { useRouter } from "vue-router"
 
 const router = useRouter()
 
 const props = defineProps({
 	show: {
 		type: Boolean,
-		required: true
+		required: true,
 	},
 	draftId: {
 		type: String,
-		default: null
-	}
+		default: null,
+	},
 })
 
-const emit = defineEmits(['update:show', 'close'])
+const emit = defineEmits(["update:show", "close"])
 
 const isOpen = computed({
 	get: () => props.show,
-	set: (value) => emit('update:show', value)
+	set: (value) => emit("update:show", value),
 })
 
 const handleClose = () => {
-	emit('update:show', false)
-	emit('close')
+	emit("update:show", false)
+	emit("close")
 }
 
 const handleViewDraft = () => {
 	if (props.draftId) {
-		emit('update:show', false)
+		emit("update:show", false)
 		router.push(`/request/${props.draftId}`)
 	}
 }

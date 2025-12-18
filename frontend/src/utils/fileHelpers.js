@@ -4,13 +4,13 @@
  * @returns {string} Formatted file size (e.g., "1.5 MB")
  */
 export function formatFileSize(bytes) {
-  if (bytes === 0) return '0 Bytes'
+	if (bytes === 0) return "0 Bytes"
 
-  const k = 1024
-  const sizes = ['Bytes', 'KB', 'MB', 'GB']
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
+	const k = 1024
+	const sizes = ["Bytes", "KB", "MB", "GB"]
+	const i = Math.floor(Math.log(bytes) / Math.log(k))
 
-  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i]
+	return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i]
 }
 
 /**
@@ -20,20 +20,21 @@ export function formatFileSize(bytes) {
  * @returns {boolean} True if file type is allowed
  */
 export function isValidFileType(file, allowedTypes) {
-  if (!file || !allowedTypes) return false
+	if (!file || !allowedTypes) return false
 
-  const fileName = file.name.toLowerCase()
-  const fileType = file.type.toLowerCase()
+	const fileName = file.name.toLowerCase()
+	const fileType = file.type.toLowerCase()
 
-  return allowedTypes.some(type => {
-    // Check MIME type
-    if (fileType.includes(type.toLowerCase())) return true
+	return allowedTypes.some((type) => {
+		// Check MIME type
+		if (fileType.includes(type.toLowerCase())) return true
 
-    // Check extension
-    if (type.startsWith('.') && fileName.endsWith(type.toLowerCase())) return true
+		// Check extension
+		if (type.startsWith(".") && fileName.endsWith(type.toLowerCase()))
+			return true
 
-    return false
-  })
+		return false
+	})
 }
 
 /**
@@ -43,9 +44,9 @@ export function isValidFileType(file, allowedTypes) {
  * @returns {boolean} True if file size is within limit
  */
 export function isValidFileSize(file, maxSizeInMB) {
-  if (!file) return false
-  const maxSizeInBytes = maxSizeInMB * 1024 * 1024
-  return file.size <= maxSizeInBytes
+	if (!file) return false
+	const maxSizeInBytes = maxSizeInMB * 1024 * 1024
+	return file.size <= maxSizeInBytes
 }
 
 /**
@@ -54,9 +55,9 @@ export function isValidFileSize(file, maxSizeInMB) {
  * @returns {string} File extension (e.g., "pdf")
  */
 export function getFileExtension(filename) {
-  if (!filename) return ''
-  const parts = filename.split('.')
-  return parts.length > 1 ? parts[parts.length - 1].toLowerCase() : ''
+	if (!filename) return ""
+	const parts = filename.split(".")
+	return parts.length > 1 ? parts[parts.length - 1].toLowerCase() : ""
 }
 
 /**
@@ -65,13 +66,13 @@ export function getFileExtension(filename) {
  * @param {string} category - File category (optional)
  * @returns {Object} File object with metadata
  */
-export function createFileObject(file, category = '') {
-  return {
-    name: file.name,
-    size: file.size,
-    type: file.type,
-    category: category,
-    file: file,
-    uploadedAt: new Date().toISOString()
-  }
+export function createFileObject(file, category = "") {
+	return {
+		name: file.name,
+		size: file.size,
+		type: file.type,
+		category: category,
+		file: file,
+		uploadedAt: new Date().toISOString(),
+	}
 }

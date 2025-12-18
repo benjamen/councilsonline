@@ -214,94 +214,107 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, computed, watch } from 'vue'
+import { computed, defineEmits, defineProps, watch } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  }
+	modelValue: {
+		type: Object,
+		required: true,
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
 const localData = computed({
-  get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value)
+	get: () => props.modelValue,
+	set: (value) => emit("update:modelValue", value),
 })
 
 // Consent type checks
 const hasConsentType = (type) => {
-  return props.modelValue.consent_types?.some(ct => ct.consent_type === type) || false
+	return (
+		props.modelValue.consent_types?.some((ct) => ct.consent_type === type) ||
+		false
+	)
 }
 
 const requiresHazardsAssessment = computed(() => {
-  return hasConsentType('Land Use') || hasConsentType('Subdivision')
+	return hasConsentType("Land Use") || hasConsentType("Subdivision")
 })
 
 // Watch no_natural_hazards_confirmed
-watch(() => localData.value.no_natural_hazards_confirmed, (newVal) => {
-  if (newVal && requiresHazardsAssessment.value) {
-    // Clear any hazards if user confirms none
-    const updatedData = { ...props.modelValue }
-    updatedData.natural_hazards = []
-    updatedData.no_natural_hazards_confirmed = true
-    emit('update:modelValue', updatedData)
-  }
-})
+watch(
+	() => localData.value.no_natural_hazards_confirmed,
+	(newVal) => {
+		if (newVal && requiresHazardsAssessment.value) {
+			// Clear any hazards if user confirms none
+			const updatedData = { ...props.modelValue }
+			updatedData.natural_hazards = []
+			updatedData.no_natural_hazards_confirmed = true
+			emit("update:modelValue", updatedData)
+		}
+	},
+)
 
 // Inundation advice upload
 const handleInundationAdviceUpload = (event) => {
-  const file = event.target.files[0]
-  if (file) {
-    // Validate file size (max 10MB)
-    const maxSize = 10 * 1024 * 1024 // 10MB in bytes
-    if (file.size > maxSize) {
-      alert('File size exceeds 10MB. Please upload a smaller file.')
-      event.target.value = ''
-      return
-    }
+	const file = event.target.files[0]
+	if (file) {
+		// Validate file size (max 10MB)
+		const maxSize = 10 * 1024 * 1024 // 10MB in bytes
+		if (file.size > maxSize) {
+			alert("File size exceeds 10MB. Please upload a smaller file.")
+			event.target.value = ""
+			return
+		}
 
-    // Validate file type
-    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png', 'image/jpg']
-    if (!allowedTypes.includes(file.type)) {
-      alert('Invalid file type. Please upload a PDF, Word document, or image.')
-      event.target.value = ''
-      return
-    }
+		// Validate file type
+		const allowedTypes = [
+			"application/pdf",
+			"application/msword",
+			"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+			"image/jpeg",
+			"image/png",
+			"image/jpg",
+		]
+		if (!allowedTypes.includes(file.type)) {
+			alert("Invalid file type. Please upload a PDF, Word document, or image.")
+			event.target.value = ""
+			return
+		}
 
-    // File upload will be handled by the parent component
-    emit('update:modelValue', {
-      ...props.modelValue,
-      inundation_advice_document: file.name
-    })
-  }
+		// File upload will be handled by the parent component
+		emit("update:modelValue", {
+			...props.modelValue,
+			inundation_advice_document: file.name,
+		})
+	}
 }
 
 // Hazard management
 const addHazard = () => {
-  const updatedData = { ...props.modelValue }
-  if (!updatedData.natural_hazards) {
-    updatedData.natural_hazards = []
-  }
-  updatedData.natural_hazards.push({
-    hazard_type: '',
-    risk_level: '',
-    assessment_notes: '',
-    mitigation_measures: ''
-  })
+	const updatedData = { ...props.modelValue }
+	if (!updatedData.natural_hazards) {
+		updatedData.natural_hazards = []
+	}
+	updatedData.natural_hazards.push({
+		hazard_type: "",
+		risk_level: "",
+		assessment_notes: "",
+		mitigation_measures: "",
+	})
 
-  // Uncheck "no hazards" confirmation when adding a hazard
-  updatedData.no_natural_hazards_confirmed = false
+	// Uncheck "no hazards" confirmation when adding a hazard
+	updatedData.no_natural_hazards_confirmed = false
 
-  emit('update:modelValue', updatedData)
+	emit("update:modelValue", updatedData)
 }
 
 const removeHazard = (index) => {
-  if (confirm('Remove this natural hazard?')) {
-    const updatedData = { ...props.modelValue }
-    updatedData.natural_hazards.splice(index, 1)
-    emit('update:modelValue', updatedData)
-  }
+	if (confirm("Remove this natural hazard?")) {
+		const updatedData = { ...props.modelValue }
+		updatedData.natural_hazards.splice(index, 1)
+		emit("update:modelValue", updatedData)
+	}
 }
 </script>

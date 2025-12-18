@@ -225,157 +225,167 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref, watch } from 'vue'
-import { call } from 'frappe-ui'
+import { call } from "frappe-ui"
+import { defineEmits, defineProps, ref, watch } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  },
-  properties: {
-    type: Object,
-    default: () => ({ data: [], loading: false })
-  }
+	modelValue: {
+		type: Object,
+		required: true,
+	},
+	properties: {
+		type: Object,
+		default: () => ({ data: [], loading: false }),
+	},
 })
 
-const emit = defineEmits(['update:modelValue', 'property-select'])
+const emit = defineEmits(["update:modelValue", "property-select"])
 
 // Local data
 const localData = ref({
-  properties: props.modelValue.properties || []
+	properties: props.modelValue.properties || [],
 })
 
 // Modal state
 const showPropertyModal = ref(false)
 const editingPropertyIndex = ref(null)
 const currentProperty = ref({
-  property_address: '',
-  legal_description: '',
-  ct_reference: '',
-  valuation_reference: '',
-  parcel_id: '',
-  zone: ''
+	property_address: "",
+	legal_description: "",
+	ct_reference: "",
+	valuation_reference: "",
+	parcel_id: "",
+	zone: "",
 })
 
 // Property search state
-const propertySearchQuery = ref('')
+const propertySearchQuery = ref("")
 const propertySearchResults = ref([])
 const propertySearchLoading = ref(false)
 const showPropertyDropdown = ref(false)
 let searchTimeout = null
 
 // Watch for external changes
-watch(() => props.modelValue, (newVal) => {
-  localData.value.properties = newVal.properties || []
-}, { deep: true })
+watch(
+	() => props.modelValue,
+	(newVal) => {
+		localData.value.properties = newVal.properties || []
+	},
+	{ deep: true },
+)
 
 // Watch local changes and emit
-watch(localData, (newVal) => {
-  emit('update:modelValue', {
-    ...props.modelValue,
-    properties: newVal.properties
-  })
-}, { deep: true })
+watch(
+	localData,
+	(newVal) => {
+		emit("update:modelValue", {
+			...props.modelValue,
+			properties: newVal.properties,
+		})
+	},
+	{ deep: true },
+)
 
 // Property search
 const handlePropertySearch = async () => {
-  if (searchTimeout) {
-    clearTimeout(searchTimeout)
-  }
+	if (searchTimeout) {
+		clearTimeout(searchTimeout)
+	}
 
-  const query = propertySearchQuery.value.trim()
-  if (query.length < 3) {
-    propertySearchResults.value = []
-    return
-  }
+	const query = propertySearchQuery.value.trim()
+	if (query.length < 3) {
+		propertySearchResults.value = []
+		return
+	}
 
-  searchTimeout = setTimeout(async () => {
-    propertySearchLoading.value = true
-    try {
-      const results = await call('lodgeick.api.search_property_addresses', {
-        query: query
-      })
-      propertySearchResults.value = results || []
-    } catch (error) {
-      console.error('[Step5PropertyDetails] Error searching properties:', error)
-      propertySearchResults.value = []
-    } finally {
-      propertySearchLoading.value = false
-    }
-  }, 300)
+	searchTimeout = setTimeout(async () => {
+		propertySearchLoading.value = true
+		try {
+			const results = await call("lodgeick.api.search_property_addresses", {
+				query: query,
+			})
+			propertySearchResults.value = results || []
+		} catch (error) {
+			console.error("[Step5PropertyDetails] Error searching properties:", error)
+			propertySearchResults.value = []
+		} finally {
+			propertySearchLoading.value = false
+		}
+	}, 300)
 }
 
 // Select property from search results
 const selectPropertyFromSearch = (result) => {
-  currentProperty.value = {
-    property_address: result.address,
-    legal_description: result.property?.legal_description || '',
-    ct_reference: result.property?.title_no || '',
-    valuation_reference: result.property?.valuation_reference || '',
-    parcel_id: result.property?.parcel_id || '',
-    zone: result.property?.zone || ''
-  }
+	currentProperty.value = {
+		property_address: result.address,
+		legal_description: result.property?.legal_description || "",
+		ct_reference: result.property?.title_no || "",
+		valuation_reference: result.property?.valuation_reference || "",
+		parcel_id: result.property?.parcel_id || "",
+		zone: result.property?.zone || "",
+	}
 
-  showPropertyDropdown.value = false
-  propertySearchQuery.value = ''
-  propertySearchResults.value = []
+	showPropertyDropdown.value = false
+	propertySearchQuery.value = ""
+	propertySearchResults.value = []
 }
 
 // Clear current property
 const clearCurrentProperty = () => {
-  currentProperty.value = {
-    property_address: '',
-    legal_description: '',
-    ct_reference: '',
-    valuation_reference: '',
-    parcel_id: '',
-    zone: ''
-  }
-  propertySearchQuery.value = ''
+	currentProperty.value = {
+		property_address: "",
+		legal_description: "",
+		ct_reference: "",
+		valuation_reference: "",
+		parcel_id: "",
+		zone: "",
+	}
+	propertySearchQuery.value = ""
 }
 
 // Open property modal
 const openPropertyModal = (index = null) => {
-  editingPropertyIndex.value = index
-  if (index !== null) {
-    currentProperty.value = { ...localData.value.properties[index] }
-  } else {
-    clearCurrentProperty()
-  }
-  showPropertyModal.value = true
+	editingPropertyIndex.value = index
+	if (index !== null) {
+		currentProperty.value = { ...localData.value.properties[index] }
+	} else {
+		clearCurrentProperty()
+	}
+	showPropertyModal.value = true
 }
 
 // Close property modal
 const closePropertyModal = () => {
-  showPropertyModal.value = false
-  editingPropertyIndex.value = null
-  clearCurrentProperty()
+	showPropertyModal.value = false
+	editingPropertyIndex.value = null
+	clearCurrentProperty()
 }
 
 // Save property
 const saveProperty = () => {
-  if (!currentProperty.value.property_address) {
-    return
-  }
+	if (!currentProperty.value.property_address) {
+		return
+	}
 
-  if (!localData.value.properties) {
-    localData.value.properties = []
-  }
+	if (!localData.value.properties) {
+		localData.value.properties = []
+	}
 
-  if (editingPropertyIndex.value !== null) {
-    localData.value.properties[editingPropertyIndex.value] = { ...currentProperty.value }
-  } else {
-    localData.value.properties.push({ ...currentProperty.value })
-  }
+	if (editingPropertyIndex.value !== null) {
+		localData.value.properties[editingPropertyIndex.value] = {
+			...currentProperty.value,
+		}
+	} else {
+		localData.value.properties.push({ ...currentProperty.value })
+	}
 
-  closePropertyModal()
+	closePropertyModal()
 }
 
 // Remove property
 const removeProperty = (index) => {
-  if (confirm('Remove this property from the application?')) {
-    localData.value.properties.splice(index, 1)
-  }
+	if (confirm("Remove this property from the application?")) {
+		localData.value.properties.splice(index, 1)
+	}
 }
 </script>

@@ -400,17 +400,17 @@
   </div>
 </template>
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
-import { call } from 'frappe-ui'
+import { call } from "frappe-ui"
+import { computed, onMounted, reactive, ref } from "vue"
 
 // Request Type Data Model
 const requestType = reactive({
-  name: '',
-  category: '',
-  description: '',
-  collects_payment: false,
-  make_payment: false,
-  steps: []
+	name: "",
+	category: "",
+	description: "",
+	collects_payment: false,
+	make_payment: false,
+	steps: [],
 })
 
 // Available Templates
@@ -421,339 +421,347 @@ const showJsonPreview = ref(false)
 
 // JSON Preview computed
 const jsonPreview = computed(() => {
-  return JSON.stringify(requestType, null, 2)
+	return JSON.stringify(requestType, null, 2)
 })
 
 // --- Utility Functions ---
 
 // Function to renumber steps after move/delete
 function renumberSteps() {
-  requestType.steps.forEach((step, i) => {
-    step.step_number = i + 1
-  })
+	requestType.steps.forEach((step, i) => {
+		step.step_number = i + 1
+	})
 }
 
 // Function to generate a stable unique ID for v-for keys
 function generateUniqueId() {
-  return Date.now().toString(36) + Math.random().toString(36).substr(2, 5)
+	return Date.now().toString(36) + Math.random().toString(36).substr(2, 5)
 }
 
 // --- Step Management ---
 
 function addStep() {
-  requestType.steps.push({
-    id: generateUniqueId(), // Added stable ID
-    step_number: requestType.steps.length + 1,
-    step_code: `step_${requestType.steps.length + 1}`,
-    step_title: `Step ${requestType.steps.length + 1}`,
-    step_component: 'DynamicStepRenderer',
-    is_required: true,
-    show_on_review: true,
-    expanded: true, // Ensure it's expanded by default
-    sections: []
-  })
+	requestType.steps.push({
+		id: generateUniqueId(), // Added stable ID
+		step_number: requestType.steps.length + 1,
+		step_code: `step_${requestType.steps.length + 1}`,
+		step_title: `Step ${requestType.steps.length + 1}`,
+		step_component: "DynamicStepRenderer",
+		is_required: true,
+		show_on_review: true,
+		expanded: true, // Ensure it's expanded by default
+		sections: [],
+	})
 }
 
 function deleteStep(index) {
-  if (confirm('Are you sure you want to delete this step?')) {
-    requestType.steps.splice(index, 1)
-    renumberSteps() // Renumber after deletion
-  }
+	if (confirm("Are you sure you want to delete this step?")) {
+		requestType.steps.splice(index, 1)
+		renumberSteps() // Renumber after deletion
+	}
 }
 
 function moveStep(index, direction) {
-  const newIndex = direction === 'up' ? index - 1 : index + 1
-  if (newIndex >= 0 && newIndex < requestType.steps.length) {
-    // Standard swap logic
-    const temp = requestType.steps[index]
-    requestType.steps[index] = requestType.steps[newIndex]
-    requestType.steps[newIndex] = temp
-    renumberSteps() // Renumber after move
-  }
+	const newIndex = direction === "up" ? index - 1 : index + 1
+	if (newIndex >= 0 && newIndex < requestType.steps.length) {
+		// Standard swap logic
+		const temp = requestType.steps[index]
+		requestType.steps[index] = requestType.steps[newIndex]
+		requestType.steps[newIndex] = temp
+		renumberSteps() // Renumber after move
+	}
 }
 
 function toggleStep(index) {
-  // Ensure the property exists before toggling
-  const step = requestType.steps[index]
-  step.expanded = (step.expanded === undefined) ? false : !step.expanded 
+	// Ensure the property exists before toggling
+	const step = requestType.steps[index]
+	step.expanded = step.expanded === undefined ? false : !step.expanded
 }
 
 // --- Section Management ---
 function addSection(stepIndex) {
-  if (!requestType.steps[stepIndex].sections) {
-    requestType.steps[stepIndex].sections = []
-  }
-  requestType.steps[stepIndex].sections.push({
-    id: generateUniqueId(), // Added stable ID
-    section_code: `section_${requestType.steps[stepIndex].sections.length + 1}`,
-    section_title: '',
-    section_type: 'Standard',
-    sequence: requestType.steps[stepIndex].sections.length + 1,
-    is_enabled: true,
-    is_required: true,
-    show_on_review: true,
-    fields: []
-  })
+	if (!requestType.steps[stepIndex].sections) {
+		requestType.steps[stepIndex].sections = []
+	}
+	requestType.steps[stepIndex].sections.push({
+		id: generateUniqueId(), // Added stable ID
+		section_code: `section_${requestType.steps[stepIndex].sections.length + 1}`,
+		section_title: "",
+		section_type: "Standard",
+		sequence: requestType.steps[stepIndex].sections.length + 1,
+		is_enabled: true,
+		is_required: true,
+		show_on_review: true,
+		fields: [],
+	})
 }
 
 function deleteSection(stepIndex, sectionIndex) {
-  requestType.steps[stepIndex].sections.splice(sectionIndex, 1)
+	requestType.steps[stepIndex].sections.splice(sectionIndex, 1)
 }
 
 // --- Field Management ---
 function addField(stepIndex, sectionIndex) {
-  if (!requestType.steps[stepIndex].sections[sectionIndex].fields) {
-    requestType.steps[stepIndex].sections[sectionIndex].fields = []
-  }
-  requestType.steps[stepIndex].sections[sectionIndex].fields.push({
-    id: generateUniqueId(), // Added stable ID
-    field_name: '',
-    field_label: '',
-    field_type: 'Data',
-    is_required: false,
-    show_on_review: true,
-    options: '',
-    validation: ''
-  })
+	if (!requestType.steps[stepIndex].sections[sectionIndex].fields) {
+		requestType.steps[stepIndex].sections[sectionIndex].fields = []
+	}
+	requestType.steps[stepIndex].sections[sectionIndex].fields.push({
+		id: generateUniqueId(), // Added stable ID
+		field_name: "",
+		field_label: "",
+		field_type: "Data",
+		is_required: false,
+		show_on_review: true,
+		options: "",
+		validation: "",
+	})
 }
 
 function deleteField(stepIndex, sectionIndex, fieldIndex) {
-  requestType.steps[stepIndex].sections[sectionIndex].fields.splice(fieldIndex, 1)
+	requestType.steps[stepIndex].sections[sectionIndex].fields.splice(
+		fieldIndex,
+		1,
+	)
 }
 
 // --- API Calls / Load / Save ---
 
 async function loadAvailableTemplates() {
-  try {
-    loading.value = true
-    const response = await call('lodgeick.api.get_step_templates')
-    availableTemplates.value = response || []
-  } catch (error) {
-    console.error('Failed to load templates:', error)
-    alert('Failed to load templates from backend')
-  } finally {
-    loading.value = false
-  }
+	try {
+		loading.value = true
+		const response = await call("lodgeick.api.get_step_templates")
+		availableTemplates.value = response || []
+	} catch (error) {
+		console.error("Failed to load templates:", error)
+		alert("Failed to load templates from backend")
+	} finally {
+		loading.value = false
+	}
 }
 
 async function applyTemplate(templateName) {
-  try {
-    loading.value = true
-    const response = await call('lodgeick.api.load_step_template', { template_name: templateName })
+	try {
+		loading.value = true
+		const response = await call("lodgeick.api.load_step_template", {
+			template_name: templateName,
+		})
 
-    if (!response || !response.success || !response.template) {
-      alert(`Failed to load template: ${response?.error || 'Unknown error'}`)
-      return
-    }
+		if (!response || !response.success || !response.template) {
+			alert(`Failed to load template: ${response?.error || "Unknown error"}`)
+			return
+		}
 
-    const template = response.template
+		const template = response.template
 
-    // Create new step from template
-    const newStep = {
-      id: generateUniqueId(), // Ensure new step has a unique ID
-      step_number: requestType.steps.length + 1,
-      step_code: template.step_config.step_code,
-      step_title: template.step_config.step_title,
-      step_component: template.step_config.step_component,
-      is_enabled: template.step_config.is_enabled ?? true,
-      is_required: template.step_config.is_required ?? true,
-      show_on_review: template.step_config.show_on_review ?? true,
-      description: template.step_config.description || '',
-      expanded: true, // IMPORTANT: Ensure step is expanded for visibility
-      sections: []
-    }
+		// Create new step from template
+		const newStep = {
+			id: generateUniqueId(), // Ensure new step has a unique ID
+			step_number: requestType.steps.length + 1,
+			step_code: template.step_config.step_code,
+			step_title: template.step_config.step_title,
+			step_component: template.step_config.step_component,
+			is_enabled: template.step_config.is_enabled ?? true,
+			is_required: template.step_config.is_required ?? true,
+			show_on_review: template.step_config.show_on_review ?? true,
+			description: template.step_config.description || "",
+			expanded: true, // IMPORTANT: Ensure step is expanded for visibility
+			sections: [],
+		}
 
-    // Add sections from template (Defensive checks added for existence)
-    if (template.sections && Array.isArray(template.sections)) {
-        for (const section of template.sections) {
-            const newSection = {
-                id: generateUniqueId(), // Ensure new section has a unique ID
-                section_code: section.section_code,
-                section_title: section.section_title,
-                section_type: section.section_type,
-                // ... (other section properties)
-                fields: []
-            }
+		// Add sections from template (Defensive checks added for existence)
+		if (template.sections && Array.isArray(template.sections)) {
+			for (const section of template.sections) {
+				const newSection = {
+					id: generateUniqueId(), // Ensure new section has a unique ID
+					section_code: section.section_code,
+					section_title: section.section_title,
+					section_type: section.section_type,
+					// ... (other section properties)
+					fields: [],
+				}
 
-            // Add fields from template
-            if (section.fields && Array.isArray(section.fields)) {
-                for (const field of section.fields) {
-                    newSection.fields.push({
-                        id: generateUniqueId(), // Ensure new field has a unique ID
-                        field_name: field.field_name,
-                        // ... (other field properties)
-                        // Note: Only necessary properties for the builder were kept for brevity
-                    })
-                }
-            }
+				// Add fields from template
+				if (section.fields && Array.isArray(section.fields)) {
+					for (const field of section.fields) {
+						newSection.fields.push({
+							id: generateUniqueId(), // Ensure new field has a unique ID
+							field_name: field.field_name,
+							// ... (other field properties)
+							// Note: Only necessary properties for the builder were kept for brevity
+						})
+					}
+				}
 
-            newStep.sections.push(newSection)
-        }
-    }
+				newStep.sections.push(newSection)
+			}
+		}
 
-    // Add step to request type
-    requestType.steps.push(newStep)
+		// Add step to request type
+		requestType.steps.push(newStep)
 
-    alert(`Template "${template.template_title}" applied successfully!`)
-  } catch (error) {
-    console.error('Failed to apply template:', error)
-    alert('Failed to apply template')
-  } finally {
-    loading.value = false
-  }
+		alert(`Template "${template.template_title}" applied successfully!`)
+	} catch (error) {
+		console.error("Failed to apply template:", error)
+		alert("Failed to apply template")
+	} finally {
+		loading.value = false
+	}
 }
 
-
 function loadTemplate() {
-  const rtName = prompt('Enter Request Type name to load:')
-  if (!rtName) return
+	const rtName = prompt("Enter Request Type name to load:")
+	if (!rtName) return
 
-  loadRequestTypeConfig(rtName)
+	loadRequestTypeConfig(rtName)
 }
 
 async function loadRequestTypeConfig(rtName) {
-  try {
-    loading.value = true
-    const response = await call('lodgeick.api.load_request_type_config', { request_type_name: rtName })
+	try {
+		loading.value = true
+		const response = await call("lodgeick.api.load_request_type_config", {
+			request_type_name: rtName,
+		})
 
-    if (!response.success) {
-      alert(`Failed to load Request Type: ${response.error}`)
-      return
-    }
+		if (!response.success) {
+			alert(`Failed to load Request Type: ${response.error}`)
+			return
+		}
 
-    const config = response.config
+		const config = response.config
 
-    // 1. Update basic metadata
-    requestType.name = config.name
-    requestType.category = config.category
-    requestType.description = config.description
-    requestType.collects_payment = config.collects_payment
-    requestType.make_payment = config.make_payment
-    
-    // 2. Process steps to ensure IDs and expanded status
-    requestType.steps = (config.steps || []).map(step => {
-      // Ensure the step is expanded and has an ID for proper rendering
-      step.expanded = true; 
-      step.id = step.id || generateUniqueId();
+		// 1. Update basic metadata
+		requestType.name = config.name
+		requestType.category = config.category
+		requestType.description = config.description
+		requestType.collects_payment = config.collects_payment
+		requestType.make_payment = config.make_payment
 
-      // Ensure sections also have IDs
-      step.sections = (step.sections || []).map(section => {
-        section.id = section.id || generateUniqueId();
-        
-        // Ensure fields also have IDs
-        section.fields = (section.fields || []).map(field => {
-          field.id = field.id || generateUniqueId();
-          return field;
-        });
+		// 2. Process steps to ensure IDs and expanded status
+		requestType.steps = (config.steps || []).map((step) => {
+			// Ensure the step is expanded and has an ID for proper rendering
+			step.expanded = true
+			step.id = step.id || generateUniqueId()
 
-        return section;
-      });
+			// Ensure sections also have IDs
+			step.sections = (step.sections || []).map((section) => {
+				section.id = section.id || generateUniqueId()
 
-      return step;
-    })
+				// Ensure fields also have IDs
+				section.fields = (section.fields || []).map((field) => {
+					field.id = field.id || generateUniqueId()
+					return field
+				})
 
+				return section
+			})
 
-    alert(`Request Type "${rtName}" loaded successfully!`)
-  } catch (error) {
-    console.error('Failed to load Request Type:', error)
-    alert('Failed to load Request Type')
-  } finally {
-    loading.value = false
-  }
+			return step
+		})
+
+		alert(`Request Type "${rtName}" loaded successfully!`)
+	} catch (error) {
+		console.error("Failed to load Request Type:", error)
+		alert("Failed to load Request Type")
+	} finally {
+		loading.value = false
+	}
 }
 
 // Save
 async function saveRequestType() {
-  // ... (Existing validation logic remains, but more robust checks are highly recommended)
-  // --- New: Preliminary Uniqueness Check (Crucial for robust API/DB saves) ---
-  const stepCodes = new Set();
-  const fieldNames = new Set();
+	// ... (Existing validation logic remains, but more robust checks are highly recommended)
+	// --- New: Preliminary Uniqueness Check (Crucial for robust API/DB saves) ---
+	const stepCodes = new Set()
+	const fieldNames = new Set()
 
-  for (const step of requestType.steps) {
-    if (stepCodes.has(step.step_code)) {
-      alert(`Error: Duplicate Step Code found: ${step.step_code}`)
-      return
-    }
-    stepCodes.add(step.step_code)
+	for (const step of requestType.steps) {
+		if (stepCodes.has(step.step_code)) {
+			alert(`Error: Duplicate Step Code found: ${step.step_code}`)
+			return
+		}
+		stepCodes.add(step.step_code)
 
-    if (!step.step_code || !step.step_title) {
-        alert('All steps must have a step code and title')
-        return
-    }
-    
-    for (const section of step.sections) {
-      if (!section.section_code || !section.section_title) {
-        alert('All sections must have a code and title')
-        return
-      }
+		if (!step.step_code || !step.step_title) {
+			alert("All steps must have a step code and title")
+			return
+		}
 
-      for (const field of section.fields) {
-        if (!field.field_name || !field.field_label || !field.field_type) {
-          alert('All fields must have a name, label, and type')
-          return
-        }
-        if (fieldNames.has(field.field_name)) {
-          alert(`Error: Duplicate Field Name found: ${field.field_name}. Field names must be unique across the entire Request Type.`)
-          return
-        }
-        fieldNames.add(field.field_name)
-      }
-    }
-  }
-  // --- End Uniqueness Check ---
+		for (const section of step.sections) {
+			if (!section.section_code || !section.section_title) {
+				alert("All sections must have a code and title")
+				return
+			}
 
+			for (const field of section.fields) {
+				if (!field.field_name || !field.field_label || !field.field_type) {
+					alert("All fields must have a name, label, and type")
+					return
+				}
+				if (fieldNames.has(field.field_name)) {
+					alert(
+						`Error: Duplicate Field Name found: ${field.field_name}. Field names must be unique across the entire Request Type.`,
+					)
+					return
+				}
+				fieldNames.add(field.field_name)
+			}
+		}
+	}
+	// --- End Uniqueness Check ---
 
-  try {
-    saving.value = true
-    // NOTE: It is advisable to clean the data before sending, removing the temporary 'id' and 'expanded' properties.
-    const configToSave = JSON.parse(JSON.stringify(requestType)); // Deep clone
-    configToSave.steps.forEach(step => {
-        delete step.id; // Remove temporary ID
-        delete step.expanded; // Remove temporary UI state
+	try {
+		saving.value = true
+		// NOTE: It is advisable to clean the data before sending, removing the temporary 'id' and 'expanded' properties.
+		const configToSave = JSON.parse(JSON.stringify(requestType)) // Deep clone
+		configToSave.steps.forEach((step) => {
+			delete step.id // Remove temporary ID
+			delete step.expanded // Remove temporary UI state
 
-        if (step.sections) {
-            step.sections.forEach(section => {
-                delete section.id;
-                if (section.fields) {
-                    section.fields.forEach(field => {
-                        delete field.id;
-                    });
-                }
-            });
-        }
-    });
+			if (step.sections) {
+				step.sections.forEach((section) => {
+					delete section.id
+					if (section.fields) {
+						section.fields.forEach((field) => {
+							delete field.id
+						})
+					}
+				})
+			}
+		})
 
+		const response = await call("lodgeick.api.save_request_type_config", {
+			config: configToSave,
+		})
 
-    const response = await call('lodgeick.api.save_request_type_config', { config: configToSave })
+		if (!response.success) {
+			alert(`Failed to save: ${response.error}`)
+			return
+		}
 
-    if (!response.success) {
-      alert(`Failed to save: ${response.error}`)
-      return
-    }
-
-    alert(response.message)
-  } catch (error) {
-    console.error('Failed to save Request Type:', error)
-    alert('Failed to save Request Type')
-  } finally {
-    saving.value = false
-  }
+		alert(response.message)
+	} catch (error) {
+		console.error("Failed to save Request Type:", error)
+		alert("Failed to save Request Type")
+	} finally {
+		saving.value = false
+	}
 }
 
 // JSON Export
 function copyJsonToClipboard() {
-  navigator.clipboard.writeText(jsonPreview.value)
-    .then(() => {
-      alert('JSON copied to clipboard!')
-    })
-    .catch(err => {
-      console.error('Failed to copy:', err)
-      alert('Failed to copy to clipboard')
-    })
+	navigator.clipboard
+		.writeText(jsonPreview.value)
+		.then(() => {
+			alert("JSON copied to clipboard!")
+		})
+		.catch((err) => {
+			console.error("Failed to copy:", err)
+			alert("Failed to copy to clipboard")
+		})
 }
 
 // Load templates on mount
 onMounted(() => {
-  loadAvailableTemplates()
+	loadAvailableTemplates()
 })
 </script>

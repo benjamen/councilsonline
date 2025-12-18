@@ -106,50 +106,50 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { Dialog, Button } from 'frappe-ui'
+import { Button, Dialog } from "frappe-ui"
+import { computed } from "vue"
 
 const props = defineProps({
 	open: {
 		type: Boolean,
-		default: false
+		default: false,
 	},
 	requestNumber: {
 		type: String,
-		default: ''
+		default: "",
 	},
 	requestId: {
 		type: String,
-		default: ''
+		default: "",
 	},
 	slaInfo: {
 		type: Object,
-		default: () => ({})
-	}
+		default: () => ({}),
+	},
 })
 
-const emit = defineEmits(['close', 'viewRequest', 'goToDashboard'])
+const emit = defineEmits(["close", "viewRequest", "goToDashboard"])
 
 const isOpen = computed({
 	get: () => props.open,
 	set: (value) => {
 		if (!value) {
-			emit('close')
+			emit("close")
 		}
-	}
+	},
 })
 
 /**
  * Format date for display
  */
 function formatDate(dateStr) {
-	if (!dateStr) return 'N/A'
+	if (!dateStr) return "N/A"
 	try {
 		const date = new Date(dateStr)
-		return date.toLocaleDateString('en-NZ', {
-			year: 'numeric',
-			month: 'long',
-			day: 'numeric'
+		return date.toLocaleDateString("en-NZ", {
+			year: "numeric",
+			month: "long",
+			day: "numeric",
 		})
 	} catch (error) {
 		return dateStr
@@ -160,7 +160,7 @@ function formatDate(dateStr) {
  * Handle view request details
  */
 function handleViewRequest() {
-	emit('viewRequest', props.requestId)
+	emit("viewRequest", props.requestId)
 	isOpen.value = false
 }
 
@@ -168,7 +168,7 @@ function handleViewRequest() {
  * Handle go to dashboard
  */
 function handleGoToDashboard() {
-	emit('goToDashboard')
+	emit("goToDashboard")
 	isOpen.value = false
 }
 </script>

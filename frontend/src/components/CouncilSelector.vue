@@ -133,58 +133,58 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
-import { useCouncilStore } from '../stores/councilStore'
+import { computed, onMounted, ref, watch } from "vue"
+import { useCouncilStore } from "../stores/councilStore"
 
 const props = defineProps({
-  modelValue: {
-    type: String,
-    default: null
-  },
-  label: {
-    type: String,
-    default: 'Select Council'
-  },
-  description: {
-    type: String,
-    default: ''
-  },
-  placeholder: {
-    type: String,
-    default: 'Choose a council...'
-  },
-  displayMode: {
-    type: String,
-    default: 'dropdown', // 'dropdown' or 'cards'
-    validator: (value) => ['dropdown', 'cards'].includes(value)
-  },
-  required: {
-    type: Boolean,
-    default: false
-  },
-  disabled: {
-    type: Boolean,
-    default: false
-  },
-  showLabel: {
-    type: Boolean,
-    default: true
-  },
-  showClearButton: {
-    type: Boolean,
-    default: false
-  },
-  showSelectedInfo: {
-    type: Boolean,
-    default: false
-  },
-  autoLoad: {
-    type: Boolean,
-    default: true
-  }
+	modelValue: {
+		type: String,
+		default: null,
+	},
+	label: {
+		type: String,
+		default: "Select Council",
+	},
+	description: {
+		type: String,
+		default: "",
+	},
+	placeholder: {
+		type: String,
+		default: "Choose a council...",
+	},
+	displayMode: {
+		type: String,
+		default: "dropdown", // 'dropdown' or 'cards'
+		validator: (value) => ["dropdown", "cards"].includes(value),
+	},
+	required: {
+		type: Boolean,
+		default: false,
+	},
+	disabled: {
+		type: Boolean,
+		default: false,
+	},
+	showLabel: {
+		type: Boolean,
+		default: true,
+	},
+	showClearButton: {
+		type: Boolean,
+		default: false,
+	},
+	showSelectedInfo: {
+		type: Boolean,
+		default: false,
+	},
+	autoLoad: {
+		type: Boolean,
+		default: true,
+	},
 })
 
-const emit = defineEmits(['update:modelValue', 'change'])
+const emit = defineEmits(["update:modelValue", "change"])
 
 const councilStore = useCouncilStore()
 
@@ -195,38 +195,43 @@ const loading = computed(() => councilStore.loading)
 const error = computed(() => councilStore.error)
 
 const selectedCouncilData = computed(() => {
-  if (!localSelectedCouncil.value) return null
-  return councils.value.find(c => c.council_code === localSelectedCouncil.value)
+	if (!localSelectedCouncil.value) return null
+	return councils.value.find(
+		(c) => c.council_code === localSelectedCouncil.value,
+	)
 })
 
 const formatWebsite = (url) => {
-  return url.replace(/^https?:\/\/(www\.)?/, '')
+	return url.replace(/^https?:\/\/(www\.)?/, "")
 }
 
 const selectCouncil = (councilCode) => {
-  if (props.disabled) return
-  localSelectedCouncil.value = councilCode
-  handleCouncilChange()
+	if (props.disabled) return
+	localSelectedCouncil.value = councilCode
+	handleCouncilChange()
 }
 
 const handleCouncilChange = () => {
-  emit('update:modelValue', localSelectedCouncil.value)
-  emit('change', localSelectedCouncil.value)
+	emit("update:modelValue", localSelectedCouncil.value)
+	emit("change", localSelectedCouncil.value)
 }
 
 const clearSelection = () => {
-  localSelectedCouncil.value = null
-  handleCouncilChange()
+	localSelectedCouncil.value = null
+	handleCouncilChange()
 }
 
-watch(() => props.modelValue, (newValue) => {
-  localSelectedCouncil.value = newValue
-})
+watch(
+	() => props.modelValue,
+	(newValue) => {
+		localSelectedCouncil.value = newValue
+	},
+)
 
 onMounted(async () => {
-  if (props.autoLoad && councils.value.length === 0) {
-    await councilStore.loadCouncils()
-  }
+	if (props.autoLoad && councils.value.length === 0) {
+		await councilStore.loadCouncils()
+	}
 })
 </script>
 

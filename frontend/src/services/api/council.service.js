@@ -1,4 +1,4 @@
-import { apiClient } from './base'
+import { apiClient } from "./base"
 
 /**
  * Council Service
@@ -11,23 +11,23 @@ export class CouncilService {
 	 */
 	getAllCouncils() {
 		return apiClient.createResource({
-			url: 'frappe.client.get_list',
+			url: "frappe.client.get_list",
 			params: {
-				doctype: 'Council',
+				doctype: "Council",
 				filters: { is_enabled: 1 },
 				fields: [
-					'name',
-					'council_name',
-					'council_code',
-					'region',
-					'logo',
-					'primary_color',
-					'is_enabled'
+					"name",
+					"council_name",
+					"council_code",
+					"region",
+					"logo",
+					"primary_color",
+					"is_enabled",
 				],
-				order_by: 'council_name asc'
+				order_by: "council_name asc",
 			},
 			auto: true,
-			cache: ['councils']
+			cache: ["councils"],
 		})
 	}
 
@@ -38,13 +38,13 @@ export class CouncilService {
 	 */
 	getCouncilByCode(councilCode) {
 		return apiClient.createResource({
-			url: 'frappe.client.get',
+			url: "frappe.client.get",
 			params: {
-				doctype: 'Council',
-				filters: { council_code: councilCode }
+				doctype: "Council",
+				filters: { council_code: councilCode },
 			},
 			auto: true,
-			cache: ['council', councilCode]
+			cache: ["council", councilCode],
 		})
 	}
 
@@ -55,10 +55,10 @@ export class CouncilService {
 	 */
 	getCouncilRequestTypes(councilCode) {
 		return apiClient.createResource({
-			url: 'lodgeick.api.get_council_request_types',
+			url: "lodgeick.api.get_council_request_types",
 			params: { council_code: councilCode },
 			auto: true,
-			cache: ['council-request-types', councilCode]
+			cache: ["council-request-types", councilCode],
 		})
 	}
 
@@ -68,8 +68,8 @@ export class CouncilService {
 	 * @returns {Promise<Object>} Council configuration
 	 */
 	async getCouncilConfig(councilCode) {
-		return apiClient.call('lodgeick.api.get_council_config', {
-			council_code: councilCode
+		return apiClient.call("lodgeick.api.get_council_config", {
+			council_code: councilCode,
 		})
 	}
 
@@ -80,17 +80,17 @@ export class CouncilService {
 	 */
 	getCouncilsByRegion(region) {
 		return apiClient.createResource({
-			url: 'frappe.client.get_list',
+			url: "frappe.client.get_list",
 			params: {
-				doctype: 'Council',
+				doctype: "Council",
 				filters: {
 					region,
-					is_enabled: 1
+					is_enabled: 1,
 				},
-				fields: ['name', 'council_name', 'council_code', 'logo'],
-				order_by: 'council_name asc'
+				fields: ["name", "council_name", "council_code", "logo"],
+				order_by: "council_name asc",
 			},
-			auto: true
+			auto: true,
 		})
 	}
 
@@ -100,14 +100,14 @@ export class CouncilService {
 	 * @returns {Promise<Array>} Matching councils
 	 */
 	async searchCouncils(query) {
-		return apiClient.call('frappe.client.get_list', {
-			doctype: 'Council',
+		return apiClient.call("frappe.client.get_list", {
+			doctype: "Council",
 			filters: {
-				council_name: ['like', `%${query}%`],
-				is_enabled: 1
+				council_name: ["like", `%${query}%`],
+				is_enabled: 1,
 			},
-			fields: ['name', 'council_name', 'council_code'],
-			limit: 10
+			fields: ["name", "council_name", "council_code"],
+			limit: 10,
 		})
 	}
 }

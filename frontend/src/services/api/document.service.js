@@ -1,4 +1,4 @@
-import { apiClient } from './base'
+import { apiClient } from "./base"
 
 /**
  * Document Service
@@ -18,7 +18,7 @@ export class DocumentService {
 	async uploadFile(file, options = {}) {
 		return apiClient.uploadFile(file, {
 			is_private: true,
-			...options
+			...options,
 		})
 	}
 
@@ -29,8 +29,8 @@ export class DocumentService {
 	 * @returns {Promise<Array<Object>>} Uploaded file documents
 	 */
 	async uploadMultipleFiles(files, options = {}) {
-		const uploadPromises = Array.from(files).map(file =>
-			this.uploadFile(file, options)
+		const uploadPromises = Array.from(files).map((file) =>
+			this.uploadFile(file, options),
 		)
 		return Promise.all(uploadPromises)
 	}
@@ -42,12 +42,12 @@ export class DocumentService {
 	 */
 	getFile(fileName) {
 		return apiClient.createResource({
-			url: 'frappe.client.get',
+			url: "frappe.client.get",
 			params: {
-				doctype: 'File',
-				name: fileName
+				doctype: "File",
+				name: fileName,
 			},
-			auto: true
+			auto: true,
 		})
 	}
 
@@ -59,17 +59,24 @@ export class DocumentService {
 	 */
 	getAttachedFiles(doctype, docname) {
 		return apiClient.createResource({
-			url: 'frappe.client.get_list',
+			url: "frappe.client.get_list",
 			params: {
-				doctype: 'File',
+				doctype: "File",
 				filters: {
 					attached_to_doctype: doctype,
-					attached_to_name: docname
+					attached_to_name: docname,
 				},
-				fields: ['name', 'file_name', 'file_url', 'file_size', 'is_private', 'creation'],
-				order_by: 'creation desc'
+				fields: [
+					"name",
+					"file_name",
+					"file_url",
+					"file_size",
+					"is_private",
+					"creation",
+				],
+				order_by: "creation desc",
 			},
-			auto: true
+			auto: true,
 		})
 	}
 
@@ -79,9 +86,9 @@ export class DocumentService {
 	 * @returns {Promise<void>}
 	 */
 	async deleteFile(fileName) {
-		return apiClient.call('frappe.client.delete', {
-			doctype: 'File',
-			name: fileName
+		return apiClient.call("frappe.client.delete", {
+			doctype: "File",
+			name: fileName,
 		})
 	}
 
@@ -91,8 +98,8 @@ export class DocumentService {
 	 * @returns {Promise<void>}
 	 */
 	async deleteMultipleFiles(fileNames) {
-		const deletePromises = fileNames.map(fileName =>
-			this.deleteFile(fileName)
+		const deletePromises = fileNames.map((fileName) =>
+			this.deleteFile(fileName),
 		)
 		return Promise.all(deletePromises)
 	}
@@ -103,13 +110,17 @@ export class DocumentService {
 	 * @returns {string} Full file URL
 	 */
 	getFileURL(fileName) {
-		if (fileName.startsWith('http://') || fileName.startsWith('https://')) {
+		if (fileName.startsWith("http://") || fileName.startsWith("https://")) {
 			return fileName
 		}
-		if (fileName.startsWith('/files/')) {
+		if (fileName.startsWith("/files/")) {
 			return window.location.origin + fileName
 		}
-		return window.location.origin + '/api/method/frappe.utils.file_manager.get_file?file_url=' + fileName
+		return (
+			window.location.origin +
+			"/api/method/frappe.utils.file_manager.get_file?file_url=" +
+			fileName
+		)
 	}
 
 	/**
@@ -118,12 +129,12 @@ export class DocumentService {
 	 * @param {string} fileName - Suggested file name for download
 	 */
 	downloadFile(fileUrl, fileName = null) {
-		const link = document.createElement('a')
+		const link = document.createElement("a")
 		link.href = this.getFileURL(fileUrl)
 		if (fileName) {
 			link.download = fileName
 		}
-		link.target = '_blank'
+		link.target = "_blank"
 		document.body.appendChild(link)
 		link.click()
 		document.body.removeChild(link)
@@ -136,10 +147,10 @@ export class DocumentService {
 	 * @returns {Promise<void>}
 	 */
 	async renameFile(fileName, newName) {
-		return apiClient.call('frappe.client.rename_doc', {
-			doctype: 'File',
+		return apiClient.call("frappe.client.rename_doc", {
+			doctype: "File",
 			old_name: fileName,
-			new_name: newName
+			new_name: newName,
 		})
 	}
 
@@ -150,10 +161,10 @@ export class DocumentService {
 	 * @returns {Promise<void>}
 	 */
 	async updateFileMetadata(fileName, metadata) {
-		return apiClient.call('frappe.client.set_value', {
-			doctype: 'File',
+		return apiClient.call("frappe.client.set_value", {
+			doctype: "File",
 			name: fileName,
-			fieldname: metadata
+			fieldname: metadata,
 		})
 	}
 
@@ -163,13 +174,13 @@ export class DocumentService {
 	 * @returns {string} Human-readable file size
 	 */
 	formatFileSize(bytes) {
-		if (bytes === 0) return '0 Bytes'
+		if (bytes === 0) return "0 Bytes"
 
 		const k = 1024
-		const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
+		const sizes = ["Bytes", "KB", "MB", "GB", "TB"]
 		const i = Math.floor(Math.log(bytes) / Math.log(k))
 
-		return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i]
+		return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i]
 	}
 
 	/**
@@ -181,11 +192,11 @@ export class DocumentService {
 	validateFileType(file, allowedTypes) {
 		if (!allowedTypes || allowedTypes.length === 0) return true
 
-		const fileExtension = '.' + file.name.split('.').pop().toLowerCase()
+		const fileExtension = "." + file.name.split(".").pop().toLowerCase()
 		const fileMimeType = file.type.toLowerCase()
 
-		return allowedTypes.some(type => {
-			if (type.startsWith('.')) {
+		return allowedTypes.some((type) => {
+			if (type.startsWith(".")) {
 				return fileExtension === type.toLowerCase()
 			}
 			return fileMimeType === type.toLowerCase()

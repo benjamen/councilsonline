@@ -1,4 +1,4 @@
-import { apiClient } from './base'
+import { apiClient } from "./base"
 
 /**
  * RFQ (Request for Quote) Service
@@ -13,13 +13,13 @@ export class RFQService {
 	 */
 	createRFQ(requestId, rfqMessage = null) {
 		return apiClient.createResource({
-			url: 'lodgeick.lodgeick.doctype.rfq_agent_details.rfq_agent_details.create_rfq_for_request',
-			method: 'POST',
+			url: "lodgeick.lodgeick.doctype.rfq_agent_details.rfq_agent_details.create_rfq_for_request",
+			method: "POST",
 			params: {
 				request_id: requestId,
-				rfq_message: rfqMessage
+				rfq_message: rfqMessage,
 			},
-			auto: true
+			auto: true,
 		})
 	}
 
@@ -31,13 +31,13 @@ export class RFQService {
 	 */
 	sendRFQToAgent(rfqId, agentId) {
 		return apiClient.createResource({
-			url: 'lodgeick.lodgeick.doctype.rfq_agent_details.rfq_agent_details.send_rfq_to_agent',
-			method: 'POST',
+			url: "lodgeick.lodgeick.doctype.rfq_agent_details.rfq_agent_details.send_rfq_to_agent",
+			method: "POST",
 			params: {
 				rfq_id: rfqId,
-				agent_id: agentId
+				agent_id: agentId,
 			},
-			auto: true
+			auto: true,
 		})
 	}
 
@@ -50,14 +50,14 @@ export class RFQService {
 	 */
 	engageAgent(rfqId, quoteAmount = null, quoteDetails = null) {
 		return apiClient.createResource({
-			url: 'lodgeick.lodgeick.doctype.rfq_agent_details.rfq_agent_details.engage_agent',
-			method: 'POST',
+			url: "lodgeick.lodgeick.doctype.rfq_agent_details.rfq_agent_details.engage_agent",
+			method: "POST",
 			params: {
 				rfq_id: rfqId,
 				quote_amount: quoteAmount,
-				quote_details: quoteDetails
+				quote_details: quoteDetails,
 			},
-			auto: true
+			auto: true,
 		})
 	}
 
@@ -67,10 +67,10 @@ export class RFQService {
 	 */
 	getAvailableAgents() {
 		return apiClient.createResource({
-			url: 'lodgeick.lodgeick.doctype.rfq_agent_details.rfq_agent_details.get_available_agents',
-			method: 'GET',
+			url: "lodgeick.lodgeick.doctype.rfq_agent_details.rfq_agent_details.get_available_agents",
+			method: "GET",
 			auto: true,
-			cache: ['available-agents']
+			cache: ["available-agents"],
 		})
 	}
 
@@ -81,12 +81,12 @@ export class RFQService {
 	 */
 	getRFQ(rfqId) {
 		return apiClient.createResource({
-			url: 'frappe.client.get',
+			url: "frappe.client.get",
 			params: {
-				doctype: 'RFQ Agent Details',
-				name: rfqId
+				doctype: "RFQ Agent Details",
+				name: rfqId,
 			},
-			auto: true
+			auto: true,
 		})
 	}
 
@@ -97,10 +97,10 @@ export class RFQService {
 	 * @returns {Promise<void>}
 	 */
 	async updateRFQ(rfqId, data) {
-		return apiClient.call('frappe.client.set_value', {
-			doctype: 'RFQ Agent Details',
+		return apiClient.call("frappe.client.set_value", {
+			doctype: "RFQ Agent Details",
 			name: rfqId,
-			fieldname: data
+			fieldname: data,
 		})
 	}
 
@@ -111,30 +111,30 @@ export class RFQService {
 	 */
 	getRFQsForRequest(requestId) {
 		return apiClient.createResource({
-			url: 'frappe.client.get_list',
+			url: "frappe.client.get_list",
 			params: {
-				doctype: 'RFQ Agent Details',
+				doctype: "RFQ Agent Details",
 				filters: {
-					request: requestId
+					request: requestId,
 				},
 				fields: [
-					'name',
-					'status',
-					'created_date',
-					'rfq_message',
-					'agent',
-					'agent_name',
-					'agent_email',
-					'agent_phone',
-					'agent_engaged',
-					'agent_engaged_date',
-					'quote_amount',
-					'quote_details',
-					'quote_received_date'
+					"name",
+					"status",
+					"created_date",
+					"rfq_message",
+					"agent",
+					"agent_name",
+					"agent_email",
+					"agent_phone",
+					"agent_engaged",
+					"agent_engaged_date",
+					"quote_amount",
+					"quote_details",
+					"quote_received_date",
 				],
-				order_by: 'created_date desc'
+				order_by: "created_date desc",
 			},
-			auto: true
+			auto: true,
 		})
 	}
 
@@ -145,10 +145,13 @@ export class RFQService {
 	 * @returns {Promise<void>}
 	 */
 	async cancelRFQ(rfqId, reason = null) {
-		return apiClient.call('lodgeick.lodgeick.doctype.rfq_agent_details.rfq_agent_details.cancel_rfq', {
-			rfq_id: rfqId,
-			cancellation_reason: reason
-		})
+		return apiClient.call(
+			"lodgeick.lodgeick.doctype.rfq_agent_details.rfq_agent_details.cancel_rfq",
+			{
+				rfq_id: rfqId,
+				cancellation_reason: reason,
+			},
+		)
 	}
 
 	/**
@@ -157,9 +160,12 @@ export class RFQService {
 	 * @returns {Promise<void>}
 	 */
 	async acceptQuote(rfqId) {
-		return apiClient.call('lodgeick.lodgeick.doctype.rfq_agent_details.rfq_agent_details.accept_quote', {
-			rfq_id: rfqId
-		})
+		return apiClient.call(
+			"lodgeick.lodgeick.doctype.rfq_agent_details.rfq_agent_details.accept_quote",
+			{
+				rfq_id: rfqId,
+			},
+		)
 	}
 
 	/**
@@ -169,10 +175,13 @@ export class RFQService {
 	 * @returns {Promise<void>}
 	 */
 	async rejectQuote(rfqId, reason = null) {
-		return apiClient.call('lodgeick.lodgeick.doctype.rfq_agent_details.rfq_agent_details.reject_quote', {
-			rfq_id: rfqId,
-			rejection_reason: reason
-		})
+		return apiClient.call(
+			"lodgeick.lodgeick.doctype.rfq_agent_details.rfq_agent_details.reject_quote",
+			{
+				rfq_id: rfqId,
+				rejection_reason: reason,
+			},
+		)
 	}
 }
 

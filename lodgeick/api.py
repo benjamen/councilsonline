@@ -6009,3 +6009,214 @@ def create_assessment_project_for_request(request, request_type):
 	except Exception as e:
 		frappe.log_error(f"Create Assessment Project Error: {str(e)}", "Assessment API Error")
 		frappe.throw(_("Failed to create Assessment Project: {0}").format(str(e)))
+
+
+# ==================== UNIVERSAL REQUEST ACTION BAR APIS ====================
+
+@frappe.whitelist()
+def get_request_summary_data(request_id):
+	"""
+	Universal API to get summary data for any request type
+	Used by the universal action bar and summary dashboard
+
+	Args:
+		request_id: Request ID
+
+	Returns:
+		dict: Summary metrics including tasks, meetings, communications, assessment status, and request type
+	"""
+	try:
+		# Get request details
+		request_doc = frappe.get_doc("Request", request_id)
+		request_type = request_doc.request_type
+
+		# Get tasks count (all tasks)
+		tasks_count = frappe.db.count("Project Task", {
+			"request": request_id
+		})
+
+		# Get open tasks count
+		open_tasks_count = frappe.db.count("Project Task", {
+			"request": request_id,
+			"status": ["in", ["Open", "In Progress", "Working"]]
+		})
+
+		# Get council meetings count
+		meetings_count = frappe.db.count("Council Meeting", {
+			"request": request_id
+		})
+
+		# Get communications count
+		communications_count = frappe.db.count("Communication Log", {
+			"request": request_id
+		})
+
+		# Get assessment project status if exists
+		assessment_project = frappe.db.get_value("Assessment Project",
+			{"request": request_id},
+			["name", "overall_status", "current_stage", "project_owner"],
+			as_dict=True
+		)
+
+		if assessment_project:
+			assessment_status = assessment_project.overall_status or "Not Started"
+			current_stage = assessment_project.current_stage or "Not Started"
+			assessment_project_name = assessment_project.name
+			assessment_owner = assessment_project.project_owner
+		else:
+			assessment_status = "Not Created"
+			current_stage = "N/A"
+			assessment_project_name = None
+			assessment_owner = None
+
+		# Get application-specific data based on request type
+		application_data = {}
+		if request_type == "Social Pension for Indigent Senior Citizens (SPISC)":
+			spisc_app = frappe.get_all("SPISC Application",
+				filters={"request": request_id},
+				fields=["eligibility_status", "age", "monthly_income"],
+				limit=1
+			)
+			if spisc_app:
+				application_data = {
+					"eligibility_status": spisc_app[0].eligibility_status or "Pending",
+					"age": spisc_app[0].age,
+					"monthly_income": spisc_app[0].monthly_income
+				}
+
+		elif request_type == "Resource Consent":
+			rc_app = frappe.get_all("Resource Consent Application",
+				filters={"request": request_id},
+				fields=["statutory_clock_status", "days_elapsed", "notification_decision"],
+				limit=1
+			)
+			if rc_app:
+				application_data = {
+					"statutory_clock_status": rc_app[0].statutory_clock_status or "Running",
+					"days_elapsed": rc_app[0].days_elapsed or 0,
+					"notification_decision": rc_app[0].notification_decision
+				}
+
+		return {
+			"success": True,
+			"request_type": request_type,
+			"tasks_count": tasks_count,
+			"open_tasks_count": open_tasks_count,
+			"meetings_count": meetings_count,
+			"communications_count": communications_count,
+			"assessment_status": assessment_status,
+			"current_stage": current_stage,
+			"assessment_project_name": assessment_project_name,
+			"assessment_owner": assessment_owner,
+			"requester_name": request_doc.requester_name,
+			"workflow_state": request_doc.workflow_state,
+			**application_data
+		}
+
+	except Exception as e:
+		frappe.log_error(f"Get Request Summary Error: {str(e)}", "Request API Error")
+		return {
+			"success": False,
+			"error": str(e)
+		}
+
+
+@frappe.whitelist()
+def send_request_notification(request_id, subject, message, channel="Email"):
+	"""
+	Send notification to requester for a request
+
+	Args:
+		request_id: Request ID
+		subject: Notification subject
+		message: Notification message
+		channel: Communication channel (Email, SMS, Both)
+
+	Returns:
+		dict: Success status
+	"""
+	try:
+		request_doc = frappe.get_doc("Request", request_id)
+
+		# Create Communication Log
+		comm_log = frappe.get_doc({
+			"doctype": "Communication Log",
+			"request": request_id,
+			"communication_type": "Outgoing",
+			"subject": subject,
+			"message": message,
+			"channel": channel,
+			"sent_by": frappe.session.user,
+			"sent_to": request_doc.requester_email,
+			"status": "Sent"
+		})
+		comm_log.insert(ignore_permissions=True)
+
+		# Send email if channel includes Email
+		if channel in ["Email", "Both"]:
+			if request_doc.requester_email:
+				frappe.sendmail(
+					recipients=[request_doc.requester_email],
+					subject=subject,
+					message=message,
+					reference_doctype="Request",
+					reference_name=request_id
+				)
+
+		# TODO: Add SMS sending logic if channel includes SMS
+
+		frappe.db.commit()
+
+		return {
+			"success": True,
+			"message": "Notification sent successfully"
+		}
+
+	except Exception as e:
+		frappe.log_error(f"Send Notification Error: {str(e)}", "Request API Error")
+		return {
+			"success": False,
+			"error": str(e)
+		}
+
+
+@frappe.whitelist()
+def add_internal_note(request_id, note, visibility="Internal Only"):
+	"""
+	Add internal note to request
+
+	Args:
+		request_id: Request ID
+		note: Note content
+		visibility: Note visibility (Internal Only, Share with Team)
+
+	Returns:
+		dict: Success status
+	"""
+	try:
+		# Create Communication Log for internal note
+		comm_log = frappe.get_doc({
+			"doctype": "Communication Log",
+			"request": request_id,
+			"communication_type": "Internal Note",
+			"subject": f"Internal Note - {frappe.utils.now()}",
+			"message": note,
+			"channel": "Internal",
+			"sent_by": frappe.session.user,
+			"visibility": visibility,
+			"status": "Logged"
+		})
+		comm_log.insert(ignore_permissions=True)
+		frappe.db.commit()
+
+		return {
+			"success": True,
+			"message": "Internal note added successfully"
+		}
+
+	except Exception as e:
+		frappe.log_error(f"Add Internal Note Error: {str(e)}", "Request API Error")
+		return {
+			"success": False,
+			"error": str(e)
+		}

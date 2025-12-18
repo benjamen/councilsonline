@@ -175,98 +175,107 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { computed, ref, watch } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Array,
-    default: () => []
-  }
+	modelValue: {
+		type: Array,
+		default: () => [],
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
 const localProperties = ref([...props.modelValue])
 const showPropertyForm = ref(false)
 const editingIndex = ref(null)
 
 const propertyForm = ref({
-  address: {
-    street: '',
-    suburb: '',
-    city: '',
-    postcode: ''
-  },
-  legal_description: '',
-  ownership_status: '',
-  is_default: false
+	address: {
+		street: "",
+		suburb: "",
+		city: "",
+		postcode: "",
+	},
+	legal_description: "",
+	ownership_status: "",
+	is_default: false,
 })
 
 const canSaveProperty = computed(() => {
-  return propertyForm.value.address.street && propertyForm.value.ownership_status
+	return (
+		propertyForm.value.address.street && propertyForm.value.ownership_status
+	)
 })
 
 const saveProperty = () => {
-  if (!canSaveProperty.value) return
+	if (!canSaveProperty.value) return
 
-  const newProperty = { ...propertyForm.value }
+	const newProperty = { ...propertyForm.value }
 
-  // If setting as default, unset other defaults
-  if (newProperty.is_default) {
-    localProperties.value.forEach(p => p.is_default = false)
-  }
+	// If setting as default, unset other defaults
+	if (newProperty.is_default) {
+		localProperties.value.forEach((p) => (p.is_default = false))
+	}
 
-  if (editingIndex.value !== null) {
-    localProperties.value[editingIndex.value] = newProperty
-    editingIndex.value = null
-  } else {
-    // If this is the first property, make it default
-    if (localProperties.value.length === 0) {
-      newProperty.is_default = true
-    }
-    localProperties.value.push(newProperty)
-  }
+	if (editingIndex.value !== null) {
+		localProperties.value[editingIndex.value] = newProperty
+		editingIndex.value = null
+	} else {
+		// If this is the first property, make it default
+		if (localProperties.value.length === 0) {
+			newProperty.is_default = true
+		}
+		localProperties.value.push(newProperty)
+	}
 
-  emit('update:modelValue', localProperties.value)
-  cancelPropertyForm()
+	emit("update:modelValue", localProperties.value)
+	cancelPropertyForm()
 }
 
 const editProperty = (index) => {
-  editingIndex.value = index
-  propertyForm.value = { ...localProperties.value[index] }
-  showPropertyForm.value = true
+	editingIndex.value = index
+	propertyForm.value = { ...localProperties.value[index] }
+	showPropertyForm.value = true
 }
 
 const removeProperty = (index) => {
-  if (confirm('Are you sure you want to remove this property?')) {
-    localProperties.value.splice(index, 1)
+	if (confirm("Are you sure you want to remove this property?")) {
+		localProperties.value.splice(index, 1)
 
-    // If we removed the default, make the first one default
-    if (localProperties.value.length > 0 && !localProperties.value.some(p => p.is_default)) {
-      localProperties.value[0].is_default = true
-    }
+		// If we removed the default, make the first one default
+		if (
+			localProperties.value.length > 0 &&
+			!localProperties.value.some((p) => p.is_default)
+		) {
+			localProperties.value[0].is_default = true
+		}
 
-    emit('update:modelValue', localProperties.value)
-  }
+		emit("update:modelValue", localProperties.value)
+	}
 }
 
 const cancelPropertyForm = () => {
-  showPropertyForm.value = false
-  editingIndex.value = null
-  propertyForm.value = {
-    address: {
-      street: '',
-      suburb: '',
-      city: '',
-      postcode: ''
-    },
-    legal_description: '',
-    ownership_status: '',
-    is_default: false
-  }
+	showPropertyForm.value = false
+	editingIndex.value = null
+	propertyForm.value = {
+		address: {
+			street: "",
+			suburb: "",
+			city: "",
+			postcode: "",
+		},
+		legal_description: "",
+		ownership_status: "",
+		is_default: false,
+	}
 }
 
-watch(() => props.modelValue, (newVal) => {
-  localProperties.value = [...newVal]
-}, { deep: true })
+watch(
+	() => props.modelValue,
+	(newVal) => {
+		localProperties.value = [...newVal]
+	},
+	{ deep: true },
+)
 </script>

@@ -220,125 +220,144 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, computed, reactive, watch } from 'vue'
+import { computed, defineEmits, defineProps, reactive, watch } from "vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  }
+	modelValue: {
+		type: Object,
+		required: true,
+	},
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 
 const localData = computed({
-  get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value)
+	get: () => props.modelValue,
+	set: (value) => emit("update:modelValue", value),
 })
 
 // Add consent type checks
 const hasConsentType = (type) => {
-  return props.modelValue.consent_types?.some(ct => ct.consent_type === type) || false
+	return (
+		props.modelValue.consent_types?.some((ct) => ct.consent_type === type) ||
+		false
+	)
 }
 
 const requiresHazardsAssessment = computed(() => {
-  return hasConsentType('Land Use') || hasConsentType('Subdivision')
+	return hasConsentType("Land Use") || hasConsentType("Subdivision")
 })
 
 // Add no_natural_hazards_confirmed field handling
-watch(() => localData.value.no_natural_hazards_confirmed, (newVal) => {
-  if (newVal && requiresHazardsAssessment.value) {
-    // Clear any hazards if user confirms none
-    const updatedData = { ...props.modelValue }
-    updatedData.natural_hazards = []
-    updatedData.no_natural_hazards_confirmed = true
-    emit('update:modelValue', updatedData)
-  }
-})
+watch(
+	() => localData.value.no_natural_hazards_confirmed,
+	(newVal) => {
+		if (newVal && requiresHazardsAssessment.value) {
+			// Clear any hazards if user confirms none
+			const updatedData = { ...props.modelValue }
+			updatedData.natural_hazards = []
+			updatedData.no_natural_hazards_confirmed = true
+			emit("update:modelValue", updatedData)
+		}
+	},
+)
 
 // NES Types matching backend schema
 const nesTypes = [
-  { value: 'Contaminated Soil (HAIL)', label: 'NES for Assessing and Managing Contaminants in Soil (HAIL)' },
-  { value: 'Air Quality', label: 'NES for Air Quality' },
-  { value: 'Drinking Water', label: 'NES for Sources of Human Drinking Water' },
-  { value: 'Freshwater', label: 'NES for Freshwater Management' },
-  { value: 'Plantation Forestry', label: 'NES for Plantation Forestry' },
-  { value: 'Electricity Transmission', label: 'NES for Electricity Transmission Activities' },
-  { value: 'Telecommunications', label: 'NES for Telecommunication Facilities' },
-  { value: 'Other', label: 'Other NES' }
+	{
+		value: "Contaminated Soil (HAIL)",
+		label: "NES for Assessing and Managing Contaminants in Soil (HAIL)",
+	},
+	{ value: "Air Quality", label: "NES for Air Quality" },
+	{ value: "Drinking Water", label: "NES for Sources of Human Drinking Water" },
+	{ value: "Freshwater", label: "NES for Freshwater Management" },
+	{ value: "Plantation Forestry", label: "NES for Plantation Forestry" },
+	{
+		value: "Electricity Transmission",
+		label: "NES for Electricity Transmission Activities",
+	},
+	{
+		value: "Telecommunications",
+		label: "NES for Telecommunication Facilities",
+	},
+	{ value: "Other", label: "Other NES" },
 ]
 
 // Initialize NES data structure if not exists
 if (!localData.value.nes_items) {
-  const updatedData = { ...props.modelValue }
-  updatedData.nes_items = []
-  emit('update:modelValue', updatedData)
+	const updatedData = { ...props.modelValue }
+	updatedData.nes_items = []
+	emit("update:modelValue", updatedData)
 }
 
 // Reactive NES data storage
 const nesData = reactive({})
 
 const getNESData = (nesType) => {
-  if (!nesData[nesType]) {
-    // Check if data exists in modelValue
-    const existing = localData.value.nes_items?.find(item => item.nes_type === nesType)
-    if (existing) {
-      nesData[nesType] = { ...existing }
-    } else {
-      nesData[nesType] = {
-        nes_type: nesType,
-        applies: false,
-        description: '',
-        compliance_notes: ''
-      }
-    }
-  }
-  return nesData[nesType]
+	if (!nesData[nesType]) {
+		// Check if data exists in modelValue
+		const existing = localData.value.nes_items?.find(
+			(item) => item.nes_type === nesType,
+		)
+		if (existing) {
+			nesData[nesType] = { ...existing }
+		} else {
+			nesData[nesType] = {
+				nes_type: nesType,
+				applies: false,
+				description: "",
+				compliance_notes: "",
+			}
+		}
+	}
+	return nesData[nesType]
 }
 
 const toggleNES = (nesType) => {
-  const data = getNESData(nesType)
-  data.applies = !data.applies
+	const data = getNESData(nesType)
+	data.applies = !data.applies
 
-  // Sync to modelValue
-  const updatedData = { ...props.modelValue }
-  if (!updatedData.nes_items) updatedData.nes_items = []
+	// Sync to modelValue
+	const updatedData = { ...props.modelValue }
+	if (!updatedData.nes_items) updatedData.nes_items = []
 
-  const existingIndex = updatedData.nes_items.findIndex(item => item.nes_type === nesType)
+	const existingIndex = updatedData.nes_items.findIndex(
+		(item) => item.nes_type === nesType,
+	)
 
-  if (data.applies) {
-    if (existingIndex >= 0) {
-      updatedData.nes_items[existingIndex] = { ...data }
-    } else {
-      updatedData.nes_items.push({ ...data })
-    }
-  } else {
-    if (existingIndex >= 0) {
-      updatedData.nes_items.splice(existingIndex, 1)
-    }
-  }
+	if (data.applies) {
+		if (existingIndex >= 0) {
+			updatedData.nes_items[existingIndex] = { ...data }
+		} else {
+			updatedData.nes_items.push({ ...data })
+		}
+	} else {
+		if (existingIndex >= 0) {
+			updatedData.nes_items.splice(existingIndex, 1)
+		}
+	}
 
-  emit('update:modelValue', updatedData)
+	emit("update:modelValue", updatedData)
 }
 
 const addHazard = () => {
-  const updatedData = { ...props.modelValue }
-  if (!updatedData.natural_hazards) {
-    updatedData.natural_hazards = []
-  }
-  updatedData.natural_hazards.push({
-    hazard_type: '',
-    risk_level: '',
-    mitigation_measures: ''
-  })
-  emit('update:modelValue', updatedData)
+	const updatedData = { ...props.modelValue }
+	if (!updatedData.natural_hazards) {
+		updatedData.natural_hazards = []
+	}
+	updatedData.natural_hazards.push({
+		hazard_type: "",
+		risk_level: "",
+		mitigation_measures: "",
+	})
+	emit("update:modelValue", updatedData)
 }
 
 const removeHazard = (index) => {
-  if (confirm('Remove this natural hazard?')) {
-    const updatedData = { ...props.modelValue }
-    updatedData.natural_hazards.splice(index, 1)
-    emit('update:modelValue', updatedData)
-  }
+	if (confirm("Remove this natural hazard?")) {
+		const updatedData = { ...props.modelValue }
+		updatedData.natural_hazards.splice(index, 1)
+		emit("update:modelValue", updatedData)
+	}
 }
 </script>

@@ -144,9 +144,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue"
+import { Button, Input } from "frappe-ui"
+import { computed, onMounted, ref } from "vue"
 import { useRoute } from "vue-router"
-import { Input, Button } from "frappe-ui"
 import { session } from "../data/session"
 import { useCouncilStore } from "../stores/councilStore"
 
@@ -159,32 +159,38 @@ const isLoading = ref(true)
 
 // Load council settings on mount
 onMounted(async () => {
-  try {
-    councilSettings.value = await councilStore.getCouncilSettings(councilCode.value)
-  } catch (error) {
-    console.error('Failed to load council settings:', error)
-  } finally {
-    isLoading.value = false
-  }
+	try {
+		councilSettings.value = await councilStore.getCouncilSettings(
+			councilCode.value,
+		)
+	} catch (error) {
+		console.error("Failed to load council settings:", error)
+	} finally {
+		isLoading.value = false
+	}
 })
 
 // Computed styles based on council branding
-const primaryColor = computed(() => councilSettings.value?.primary_color || '#2563eb')
-const secondaryColor = computed(() => councilSettings.value?.secondary_color || '#64748b')
+const primaryColor = computed(
+	() => councilSettings.value?.primary_color || "#2563eb",
+)
+const secondaryColor = computed(
+	() => councilSettings.value?.secondary_color || "#64748b",
+)
 
 const backgroundStyle = computed(() => {
-  const color = primaryColor.value
-  // Create a light gradient based on primary color
-  return {
-    background: `linear-gradient(to bottom right, ${color}15, ${secondaryColor.value}15)`
-  }
+	const color = primaryColor.value
+	// Create a light gradient based on primary color
+	return {
+		background: `linear-gradient(to bottom right, ${color}15, ${secondaryColor.value}15)`,
+	}
 })
 
 function submit(e) {
-  const formData = new FormData(e.target)
-  session.login.submit({
-    email: formData.get("email"),
-    password: formData.get("password"),
-  })
+	const formData = new FormData(e.target)
+	session.login.submit({
+		email: formData.get("email"),
+		password: formData.get("password"),
+	})
 }
 </script>

@@ -216,12 +216,12 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { Dropdown, Input, Button, call } from 'frappe-ui'
-import { session } from '../data/session'
-import { useCouncilStore } from '../stores/councilStore'
-import StatusBadge from '../components/StatusBadge.vue'
+import { Button, Dropdown, Input, call } from "frappe-ui"
+import { computed, onMounted, ref } from "vue"
+import { useRoute, useRouter } from "vue-router"
+import StatusBadge from "../components/StatusBadge.vue"
+import { session } from "../data/session"
+import { useCouncilStore } from "../stores/councilStore"
 
 const router = useRouter()
 const route = useRoute()
@@ -234,133 +234,145 @@ const isLoading = ref(true)
 
 // User info
 const userName = computed(() => {
-  const fullName = session.user_info?.full_name || session.user
-  return fullName.replace('@', ' ').split('.').join(' ')
+	const fullName = session.user_info?.full_name || session.user
+	return fullName.replace("@", " ").split(".").join(" ")
 })
 
 const userInitials = computed(() => {
-  const name = userName.value
-  const parts = name.split(' ')
-  if (parts.length >= 2) {
-    return (parts[0][0] + parts[1][0]).toUpperCase()
-  }
-  return name.substring(0, 2).toUpperCase()
+	const name = userName.value
+	const parts = name.split(" ")
+	if (parts.length >= 2) {
+		return (parts[0][0] + parts[1][0]).toUpperCase()
+	}
+	return name.substring(0, 2).toUpperCase()
 })
 
 // Filters
-const searchQuery = ref('')
-const filterStatus = ref('')
-const filterType = ref('')
+const searchQuery = ref("")
+const filterStatus = ref("")
+const filterType = ref("")
 
 // Computed styles
-const primaryColor = computed(() => councilSettings.value?.primary_color || '#2563eb')
+const primaryColor = computed(
+	() => councilSettings.value?.primary_color || "#2563eb",
+)
 
 // Computed stats
 const stats = computed(() => {
-  const data = requests.value || []
-  return {
-    total: data.length,
-    underReview: data.filter(r => r.status === 'Under Review').length,
-    approved: data.filter(r => r.status === 'Approved').length,
-    rfiPending: data.filter(r => r.status === 'RFI Issued').length,
-  }
+	const data = requests.value || []
+	return {
+		total: data.length,
+		underReview: data.filter((r) => r.status === "Under Review").length,
+		approved: data.filter((r) => r.status === "Approved").length,
+		rfiPending: data.filter((r) => r.status === "RFI Issued").length,
+	}
 })
 
 const statsArray = computed(() => [
-  { title: 'Total Requests', value: stats.value.total, icon: 'file-text' },
-  { title: 'Under Review', value: stats.value.underReview, icon: 'clock' },
-  { title: 'Approved', value: stats.value.approved, icon: 'check-circle' },
-  { title: 'Info Requested', value: stats.value.rfiPending, icon: 'alert-circle' },
+	{ title: "Total Requests", value: stats.value.total, icon: "file-text" },
+	{ title: "Under Review", value: stats.value.underReview, icon: "clock" },
+	{ title: "Approved", value: stats.value.approved, icon: "check-circle" },
+	{
+		title: "Info Requested",
+		value: stats.value.rfiPending,
+		icon: "alert-circle",
+	},
 ])
 
 // Filtered requests
 const filteredRequests = computed(() => {
-  let data = requests.value || []
+	let data = requests.value || []
 
-  // Search filter
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    data = data.filter(r =>
-      r.request_number?.toLowerCase().includes(query) ||
-      r.property_address?.toLowerCase().includes(query) ||
-      r.brief_description?.toLowerCase().includes(query)
-    )
-  }
+	// Search filter
+	if (searchQuery.value) {
+		const query = searchQuery.value.toLowerCase()
+		data = data.filter(
+			(r) =>
+				r.request_number?.toLowerCase().includes(query) ||
+				r.property_address?.toLowerCase().includes(query) ||
+				r.brief_description?.toLowerCase().includes(query),
+		)
+	}
 
-  // Status filter
-  if (filterStatus.value) {
-    data = data.filter(r => r.status === filterStatus.value)
-  }
+	// Status filter
+	if (filterStatus.value) {
+		data = data.filter((r) => r.status === filterStatus.value)
+	}
 
-  // Type filter
-  if (filterType.value) {
-    data = data.filter(r => r.request_type?.includes(filterType.value))
-  }
+	// Type filter
+	if (filterType.value) {
+		data = data.filter((r) => r.request_type?.includes(filterType.value))
+	}
 
-  return data
+	return data
 })
 
 // Load council settings and requests
 onMounted(async () => {
-  try {
-    // Load council settings
-    councilSettings.value = await councilStore.getCouncilSettings(councilCode.value)
+	try {
+		// Load council settings
+		councilSettings.value = await councilStore.getCouncilSettings(
+			councilCode.value,
+		)
 
-    // Load council-specific requests
-    const response = await call('lodgeick.api.get_council_requests', {
-      council_code: councilCode.value
-    })
-    requests.value = response || []
-  } catch (error) {
-    console.error('Failed to load council data:', error)
-  } finally {
-    isLoading.value = false
-  }
+		// Load council-specific requests
+		const response = await call("lodgeick.api.get_council_requests", {
+			council_code: councilCode.value,
+		})
+		requests.value = response || []
+	} catch (error) {
+		console.error("Failed to load council data:", error)
+	} finally {
+		isLoading.value = false
+	}
 })
 
 // Format date
 const formatDate = (dateStr) => {
-  if (!dateStr) return 'N/A'
-  const date = new Date(dateStr)
-  return date.toLocaleDateString('en-NZ', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  })
+	if (!dateStr) return "N/A"
+	const date = new Date(dateStr)
+	return date.toLocaleDateString("en-NZ", {
+		year: "numeric",
+		month: "short",
+		day: "numeric",
+	})
 }
 
 // Navigation
 const goToNewRequest = () => {
-  router.push({
-    name: 'NewRequest',
-    query: {
-      council: councilCode.value,
-      locked: 'true'
-    }
-  })
+	router.push({
+		name: "NewRequest",
+		query: {
+			council: councilCode.value,
+			locked: "true",
+		},
+	})
 }
 
 const viewRequest = (requestId) => {
-  router.push({ name: 'RequestDetail', params: { id: requestId } })
+	router.push({ name: "RequestDetail", params: { id: requestId } })
 }
 
 const editRequest = (requestId) => {
-  router.push({ name: 'RequestDetail', params: { id: requestId } })
+	router.push({ name: "RequestDetail", params: { id: requestId } })
 }
 
 const goToAccount = () => {
-  router.push({ name: 'CouncilAccount', params: { councilCode: councilCode.value } })
+	router.push({
+		name: "CouncilAccount",
+		params: { councilCode: councilCode.value },
+	})
 }
 
 // User menu
 const userMenuOptions = [
-  {
-    label: 'My Account',
-    onClick: goToAccount,
-  },
-  {
-    label: 'Sign Out',
-    onClick: () => session.logout.submit(),
-  },
+	{
+		label: "My Account",
+		onClick: goToAccount,
+	},
+	{
+		label: "Sign Out",
+		onClick: () => session.logout.submit(),
+	},
 ]
 </script>

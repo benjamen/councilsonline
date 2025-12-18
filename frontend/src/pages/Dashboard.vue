@@ -218,143 +218,144 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { Dropdown, Input, Button } from 'frappe-ui'
-import { session } from '../data/session'
-import { requestService } from '../services'
-import StatusBadge from '../components/StatusBadge.vue'
-import StatCard from '../components/StatCard.vue'
+import { Button, Dropdown, Input } from "frappe-ui"
+import { computed, ref } from "vue"
+import { useRouter } from "vue-router"
+import StatCard from "../components/StatCard.vue"
+import StatusBadge from "../components/StatusBadge.vue"
+import { session } from "../data/session"
+import { requestService } from "../services"
 
 const router = useRouter()
 
 // User info
 const userName = computed(() => {
-  const fullName = session.user_info?.full_name || session.user
-  return fullName.replace('@', ' ').split('.').join(' ')
+	const fullName = session.user_info?.full_name || session.user
+	return fullName.replace("@", " ").split(".").join(" ")
 })
 
 const userInitials = computed(() => {
-  const name = userName.value
-  const parts = name.split(' ')
-  if (parts.length >= 2) {
-    return (parts[0][0] + parts[1][0]).toUpperCase()
-  }
-  return name.substring(0, 2).toUpperCase()
+	const name = userName.value
+	const parts = name.split(" ")
+	if (parts.length >= 2) {
+		return (parts[0][0] + parts[1][0]).toUpperCase()
+	}
+	return name.substring(0, 2).toUpperCase()
 })
 
 // Filters
-const searchQuery = ref('')
-const filterStatus = ref('')
-const filterCouncil = ref('')
-const filterType = ref('')
+const searchQuery = ref("")
+const filterStatus = ref("")
+const filterCouncil = ref("")
+const filterType = ref("")
 
 // Get user's requests using service
 const requests = requestService.getUserRequests()
 
 // Available councils from requests
 const availableCouncils = computed(() => {
-  const data = requests.data || []
-  const councils = [...new Set(data.map(r => r.council).filter(Boolean))]
-  return councils.sort()
+	const data = requests.data || []
+	const councils = [...new Set(data.map((r) => r.council).filter(Boolean))]
+	return councils.sort()
 })
 
 // Computed stats
 const stats = computed(() => {
-  const data = requests.data || []
-  return {
-    total: data.length,
-    underReview: data.filter(r => r.status === 'Under Review').length,
-    approved: data.filter(r => r.status === 'Approved').length,
-    rfiPending: data.filter(r => r.status === 'RFI Issued').length,
-  }
+	const data = requests.data || []
+	return {
+		total: data.length,
+		underReview: data.filter((r) => r.status === "Under Review").length,
+		approved: data.filter((r) => r.status === "Approved").length,
+		rfiPending: data.filter((r) => r.status === "RFI Issued").length,
+	}
 })
 
 // Filtered requests
 const filteredRequests = computed(() => {
-  let data = requests.data || []
+	let data = requests.data || []
 
-  // Search filter
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    data = data.filter(r =>
-      r.request_number?.toLowerCase().includes(query) ||
-      r.property_address?.toLowerCase().includes(query) ||
-      r.brief_description?.toLowerCase().includes(query)
-    )
-  }
+	// Search filter
+	if (searchQuery.value) {
+		const query = searchQuery.value.toLowerCase()
+		data = data.filter(
+			(r) =>
+				r.request_number?.toLowerCase().includes(query) ||
+				r.property_address?.toLowerCase().includes(query) ||
+				r.brief_description?.toLowerCase().includes(query),
+		)
+	}
 
-  // Status filter
-  if (filterStatus.value) {
-    data = data.filter(r => r.status === filterStatus.value)
-  }
+	// Status filter
+	if (filterStatus.value) {
+		data = data.filter((r) => r.status === filterStatus.value)
+	}
 
-  // Council filter
-  if (filterCouncil.value) {
-    data = data.filter(r => r.council === filterCouncil.value)
-  }
+	// Council filter
+	if (filterCouncil.value) {
+		data = data.filter((r) => r.council === filterCouncil.value)
+	}
 
-  // Type filter
-  if (filterType.value) {
-    data = data.filter(r => r.request_type?.includes(filterType.value))
-  }
+	// Type filter
+	if (filterType.value) {
+		data = data.filter((r) => r.request_type?.includes(filterType.value))
+	}
 
-  return data
+	return data
 })
 
 // Format date
 const formatDate = (dateStr) => {
-  if (!dateStr) return 'N/A'
-  const date = new Date(dateStr)
-  return date.toLocaleDateString('en-NZ', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  })
+	if (!dateStr) return "N/A"
+	const date = new Date(dateStr)
+	return date.toLocaleDateString("en-NZ", {
+		year: "numeric",
+		month: "short",
+		day: "numeric",
+	})
 }
 
 // Get short council name
 const getCouncilShortName = (councilName) => {
-  if (!councilName) return 'N/A'
-  // Extract council code from names like "TAYTAY-PH"
-  return councilName.split('-')[0]
+	if (!councilName) return "N/A"
+	// Extract council code from names like "TAYTAY-PH"
+	return councilName.split("-")[0]
 }
 
 // Navigation
 const goToNewRequest = () => {
-  router.push({ name: 'NewRequest' })
+	router.push({ name: "NewRequest" })
 }
 
 const viewRequest = (requestId) => {
-  router.push({ name: 'RequestDetail', params: { id: requestId } })
+	router.push({ name: "RequestDetail", params: { id: requestId } })
 }
 
 const editRequest = (requestId) => {
-  router.push({ name: 'RequestDetail', params: { id: requestId } })
+	router.push({ name: "RequestDetail", params: { id: requestId } })
 }
 
 // Navigation
 const goToInternal = () => {
-  router.push({ name: 'InternalRequestManagement' })
+	router.push({ name: "InternalRequestManagement" })
 }
 
 const goToSettings = () => {
-  router.push({ name: 'Settings' })
+	router.push({ name: "Settings" })
 }
 
 // User menu
 const userMenuOptions = [
-  {
-    label: 'Staff Portal',
-    onClick: goToInternal,
-  },
-  {
-    label: 'Settings',
-    onClick: goToSettings,
-  },
-  {
-    label: 'Sign Out',
-    onClick: () => session.logout.submit(),
-  },
+	{
+		label: "Staff Portal",
+		onClick: goToInternal,
+	},
+	{
+		label: "Settings",
+		onClick: goToSettings,
+	},
+	{
+		label: "Sign Out",
+		onClick: () => session.logout.submit(),
+	},
 ]
 </script>
