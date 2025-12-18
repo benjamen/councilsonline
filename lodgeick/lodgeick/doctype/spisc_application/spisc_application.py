@@ -70,6 +70,51 @@ class SPISCApplication(Document):
 		"""Sync display fields to parent Request using standardized utility"""
 		sync_to_request(self)
 
+	def on_submit(self):
+		"""Auto-create Assessment Project when application is submitted"""
+		if self.request and not self.get_assessment_project():
+			self.create_assessment_project()
+
+	def get_assessment_project(self):
+		"""Check if Assessment Project already exists for this application"""
+		return frappe.db.get_value(
+			"Assessment Project",
+			{"request": self.request},
+			"name"
+		)
+
+	def create_assessment_project(self):
+		"""Create Assessment Project with tasks for this SPISC application"""
+		try:
+			# Call the existing API method to create assessment project
+			from lodgeick.api import create_assessment_project_for_request
+
+			project = create_assessment_project_for_request(
+				request=self.request,
+				request_type="Social Pension for Indigent Senior Citizens (SPISC)"
+			)
+
+			if project:
+				frappe.msgprint(
+					frappe._("Assessment Project {0} created successfully with automated tasks").format(
+						frappe.bold(project.name)
+					),
+					title="Assessment Project Created",
+					indicator="green"
+				)
+
+		except Exception as e:
+			frappe.log_error(
+				message=str(e),
+				title=f"Failed to create Assessment Project for {self.name}"
+			)
+			# Don't block submission if assessment project creation fails
+			frappe.msgprint(
+				frappe._("Application submitted successfully, but Assessment Project creation failed. Please create it manually."),
+				title="Warning",
+				indicator="orange"
+			)
+
 	def assess_eligibility(self, assessed_by=None):
 		"""
 		Council staff method to assess applicant eligibility
