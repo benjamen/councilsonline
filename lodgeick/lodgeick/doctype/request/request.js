@@ -11,6 +11,9 @@
 frappe.ui.form.on("Request", {
 	refresh: function(frm) {
 		if (!frm.is_new()) {
+			// Add visual status indicators (NEW!)
+			add_status_visualization(frm);
+
 			// Add universal action bar with all standard actions
 			add_universal_action_bar(frm);
 
@@ -502,4 +505,446 @@ function upload_document(frm) {
 			frm.reload_doc();
 		}
 	});
+}
+
+/**
+ * List View Settings
+ * Enhanced list view with color-coded status indicators and custom formatters
+ */
+frappe.listview_settings['Request'] = {
+	add_fields: ['workflow_state', 'priority', 'is_overdue', 'target_completion_date', 'assigned_to'],
+
+	// Color-coded status indicators
+	get_indicator: function(doc) {
+		const status = doc.workflow_state || 'Draft';
+		const indicatorMap = {
+			// Draft & Submission states
+			'Draft': ['orange', 'Draft'],
+			'Submitted': ['blue', 'Submitted'],
+
+			// Processing states
+			'Acknowledged': ['cyan', 'Acknowledged'],
+			'Processing': ['orange', 'Processing'],
+
+			// RFI states
+			'RFI Issued': ['purple', 'RFI Issued'],
+			'RFI Received': ['purple', 'RFI Received'],
+
+			// Decision states
+			'Pending Decision': ['yellow', 'Pending Decision'],
+			'Approved': ['green', 'Approved'],
+			'Approved with Conditions': ['green', 'Approved (Conditions)'],
+			'Declined': ['red', 'Declined'],
+
+			// Terminal states
+			'Withdrawn': ['gray', 'Withdrawn'],
+			'Cancelled': ['gray', 'Cancelled'],
+			'Completed': ['darkgreen', 'Completed'],
+
+			// Building Consent specific
+			'Awaiting Inspection': ['blue', 'Awaiting Inspection'],
+			'Inspections Complete': ['green', 'Inspections Complete'],
+			'CCC Issued': ['darkgreen', 'CCC Issued'],
+
+			// Appeal state
+			'Under Appeal': ['orange', 'Under Appeal']
+		};
+
+		return indicatorMap[status] || ['gray', status];
+	},
+
+	// Custom formatters for specific columns
+	formatters: {
+		request_number: function(value, field, doc) {
+			// Bold request numbers for easier scanning
+			return `<strong>${value}</strong>`;
+		},
+
+		target_completion_date: function(value, field, doc) {
+			if (!value) return '';
+
+			// Calculate days remaining and add color coding
+			const target_date = frappe.datetime.str_to_obj(value);
+			const today = frappe.datetime.now_date(true);
+			const days_remaining = frappe.datetime.get_day_diff(target_date, today);
+
+			let color = '';
+			let icon = '';
+
+			if (days_remaining < 0) {
+				color = 'red';
+				icon = '<i class="fa fa-exclamation-triangle" style="margin-right: 4px;"></i>';
+			} else if (days_remaining <= 5) {
+				color = 'orange';
+				icon = '<i class="fa fa-clock-o" style="margin-right: 4px;"></i>';
+			}
+
+			return `<span style="color: ${color}">${icon}${frappe.datetime.str_to_user(value)}</span>`;
+		},
+
+		priority: function(value, field, doc) {
+			if (!value) return '';
+
+			// Color-coded priority badges
+			const priorityMap = {
+				'Urgent': '<span class="badge badge-danger">Urgent</span>',
+				'High': '<span class="badge badge-warning">High</span>',
+				'Standard': '<span class="badge badge-info">Standard</span>',
+				'Low': '<span class="badge badge-secondary">Low</span>'
+			};
+
+			return priorityMap[value] || value;
+		}
+	},
+
+	// Custom filter buttons
+	button: {
+		show: function(doc) {
+			return doc.workflow_state !== 'Completed' && doc.workflow_state !== 'Cancelled';
+		},
+		get_label: function() {
+			return __('View Request');
+		},
+		get_description: function(doc) {
+			return __('Open request details');
+		},
+		action: function(doc) {
+			frappe.set_route('Form', 'Request', doc.name);
+		}
+	},
+
+	// Quick filter buttons
+	onload: function(listview) {
+		// Add "Overdue Requests" filter button
+		listview.page.add_inner_button(__('Overdue Requests'), function() {
+			listview.filter_area.clear();
+			listview.filter_area.add([[listview.doctype, 'is_overdue', '=', 1]]);
+		});
+
+		// Add "My Assignments" filter button if user is logged in
+		if (frappe.session.user !== 'Guest') {
+			listview.page.add_inner_button(__('My Assignments'), function() {
+				listview.filter_area.clear();
+				listview.filter_area.add([[listview.doctype, 'assigned_to', '=', frappe.session.user]]);
+			});
+		}
+
+		// Add "Active Requests" filter button
+		listview.page.add_inner_button(__('Active Requests'), function() {
+			listview.filter_area.clear();
+			listview.filter_area.add([
+				[listview.doctype, 'workflow_state', 'in', ['Processing', 'Acknowledged', 'Pending Decision']]
+			]);
+		});
+	}
+};
+
+
+// ========================================
+// NEW: Status Visualization Functions
+// ========================================
+
+/**
+ * Add status visualization to the form
+ */
+function add_status_visualization(frm) {
+	// Add status pill to page title area
+	add_status_pill_to_header(frm);
+
+	// Render status card in the HTML field (NEW!)
+	render_status_card(frm);
+
+	// Render requester card (Sprint 3)
+	render_requester_card(frm);
+
+	// Render timeline visual (Sprint 3)
+	render_timeline_visual(frm);
+
+	// Add workflow progression indicator if workflow is active
+	if (frm.doc.workflow_state) {
+		add_workflow_progression_indicator(frm);
+	}
+
+	// Add SLA countdown if target date exists
+	if (frm.doc.target_completion_date) {
+		add_sla_countdown_indicator(frm);
+	}
+}
+
+/**
+ * Add status pill to the form header
+ */
+function add_status_pill_to_header(frm) {
+	// Remove existing status pill
+	frm.page.wrapper.find('.form-status-pill').remove();
+
+	if (!frm.doc.workflow_state) return;
+
+	// Import renderStatusPill from status_pill.js
+	// Note: These are loaded globally via hooks.py
+	if (typeof lodgeick === 'undefined' || typeof lodgeick.status === 'undefined' || typeof lodgeick.status.renderStatusPill === 'undefined') {
+		console.error('status_pill.js not loaded');
+		return;
+	}
+
+	const status_pill_html = lodgeick.status.renderStatusPill(frm.doc.workflow_state);
+
+	// Add to title area
+	frm.page.set_secondary_action(() => {}, {
+		icon: '',
+		size: 'sm'
+	});
+
+	$(status_pill_html)
+		.addClass('form-status-pill')
+		.css({
+			'margin-left': '12px',
+			'display': 'inline-block',
+			'vertical-align': 'middle'
+		})
+		.insertAfter(frm.page.title_area.find('.title-text'));
+}
+
+/**
+ * Add workflow progression indicator
+ */
+function add_workflow_progression_indicator(frm) {
+	// Find or create workflow section in dashboard
+	const dashboard = frm.dashboard.wrapper;
+
+	// Remove existing workflow progression
+	dashboard.find('.workflow-progression-section').remove();
+
+	if (typeof lodgeick === 'undefined' || typeof lodgeick.workflow === 'undefined' || typeof lodgeick.workflow.renderWorkflowProgression === 'undefined') {
+		console.error('workflow_progression.js not loaded');
+		return;
+	}
+
+	const workflow_html = lodgeick.workflow.renderWorkflowProgression(
+		frm.doc.workflow_state,
+		frm.doc.request_type,
+		frm.doc.request_category
+	);
+
+	const section_html = `
+		<div class="workflow-progression-section" style="margin: 20px 0;">
+			<h6 style="margin-bottom: 12px; color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
+				Workflow Progress
+			</h6>
+			${workflow_html}
+		</div>
+	`;
+
+	dashboard.prepend(section_html);
+}
+
+/**
+ * Add SLA countdown indicator
+ */
+function add_sla_countdown_indicator(frm) {
+	if (!frm.doc.target_completion_date) return;
+
+	// Calculate days remaining
+	const target_date = frappe.datetime.str_to_obj(frm.doc.target_completion_date);
+	const today = frappe.datetime.now_date(true);
+	const days_remaining = frappe.datetime.get_day_diff(target_date, today);
+
+	// Determine SLA status
+	let sla_class = 'sla-on-track';
+	let sla_icon = 'check-circle';
+	let sla_text = `${days_remaining} days remaining`;
+	let sla_color = 'green';
+
+	if (days_remaining < 0) {
+		sla_class = 'sla-overdue';
+		sla_icon = 'alert-triangle';
+		sla_text = `${Math.abs(days_remaining)} days overdue`;
+		sla_color = 'red';
+	} else if (days_remaining <= 5) {
+		sla_class = 'sla-warning';
+		sla_icon = 'clock';
+		sla_text = `${days_remaining} days remaining (urgent)`;
+		sla_color = 'orange';
+	}
+
+	// Add to dashboard
+	const dashboard = frm.dashboard.wrapper;
+	dashboard.find('.sla-countdown-section').remove();
+
+	const sla_html = `
+		<div class="sla-countdown-section" style="margin: 20px 0;">
+			<div class="sla-indicator ${sla_class}">
+				<i class="fa fa-${sla_icon}" style="font-size: 18px;"></i>
+				<div style="flex: 1;">
+					<strong style="display: block;">${sla_text}</strong>
+					<small style="opacity: 0.8;">Target: ${frappe.datetime.str_to_user(frm.doc.target_completion_date)}</small>
+				</div>
+			</div>
+		</div>
+	`;
+
+	dashboard.prepend(sla_html);
+
+	// Also add prominent indicator if overdue
+	if (days_remaining < 0) {
+		frm.dashboard.add_comment(
+			__('<strong>This request is overdue!</strong> The target completion date has passed. Please prioritize this request or update the timeline.'),
+			'red',
+			true
+		);
+	} else if (days_remaining <= 3) {
+		frm.dashboard.add_comment(
+			__('<strong>Urgent:</strong> This request is due in {0} days.').format(days_remaining),
+			'orange',
+			true
+		);
+	}
+}
+
+/**
+ * Render status card in the HTML field
+ */
+function render_status_card(frm) {
+	const field = frm.get_field('status_card_html');
+	if (!field) return;
+
+	// Check if required functions are loaded
+	if (typeof lodgeick === 'undefined' || typeof lodgeick.status === 'undefined' || typeof lodgeick.workflow === 'undefined') {
+		console.error('Status components not loaded');
+		field.$wrapper.html('<p class="text-muted">Loading status components...</p>');
+		return;
+	}
+
+	// Build status pill
+	const status_pill = lodgeick.status.renderStatusPill(frm.doc.workflow_state || 'Draft');
+
+	// Build workflow progression
+	const workflow_progression = lodgeick.workflow.renderWorkflowProgression(
+		frm.doc.workflow_state || 'Draft',
+		frm.doc.request_type,
+		frm.doc.request_category
+	);
+
+	// Build SLA indicator
+	let sla_section = '';
+	if (frm.doc.target_completion_date) {
+		const target_date = frappe.datetime.str_to_obj(frm.doc.target_completion_date);
+		const today = frappe.datetime.now_date(true);
+		const days_remaining = frappe.datetime.get_day_diff(target_date, today);
+
+		let sla_class = 'sla-on-track';
+		let sla_icon = 'check-circle';
+		let sla_text = `${days_remaining} days remaining`;
+
+		if (days_remaining < 0) {
+			sla_class = 'sla-overdue';
+			sla_icon = 'alert-triangle';
+			sla_text = `${Math.abs(days_remaining)} days overdue`;
+		} else if (days_remaining <= 5) {
+			sla_class = 'sla-warning';
+			sla_icon = 'clock';
+			sla_text = `${days_remaining} days remaining (urgent)`;
+		}
+
+		sla_section = `
+			<div class="sla-section" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e5e7eb;">
+				<div class="sla-indicator ${sla_class}">
+					<i class="fa fa-${sla_icon}" style="font-size: 18px;"></i>
+					<div style="flex: 1; margin-left: 10px;">
+						<strong style="display: block;">${sla_text}</strong>
+						<small style="opacity: 0.8;">Target: ${frappe.datetime.str_to_user(frm.doc.target_completion_date)}</small>
+					</div>
+				</div>
+			</div>
+		`;
+	}
+
+	// Combine into status card
+	const html = `
+		<div class="request-status-card">
+			<div class="status-header">
+				<h3>Current Status</h3>
+				${status_pill}
+			</div>
+			<div class="workflow-progression">
+				${workflow_progression}
+			</div>
+			${sla_section}
+		</div>
+	`;
+
+	field.$wrapper.html(html);
+}
+
+/**
+ * Render requester card in the HTML field
+ */
+function render_requester_card(frm) {
+	const field = frm.get_field('requester_card_html');
+	if (!field) return;
+
+	// Get requester initials for avatar
+	const get_initials = (name) => {
+		if (!name) return '?';
+		return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+	};
+
+	const requester_initials = get_initials(frm.doc.requester_name);
+	const has_agent = frm.doc.agent && frm.doc.agent_name;
+
+	// Build requester card HTML
+	const html = `
+		<div class="requester-card">
+			<div class="requester-primary">
+				<div class="avatar" title="${frm.doc.requester_name || 'No requester'}">${requester_initials}</div>
+				<div class="details">
+					<h4>${frm.doc.requester_name || 'No Requester'}</h4>
+					<p class="text-muted">
+						${frm.doc.requester_email ? `<i class="fa fa-envelope"></i> ${frm.doc.requester_email}` : 'No email'}
+						${frm.doc.requester_phone ? `<br><i class="fa fa-phone"></i> ${frm.doc.requester_phone}` : ''}
+					</p>
+					${frm.doc.organization ? `<p class="text-muted"><i class="fa fa-building"></i> ${frm.doc.organization}</p>` : ''}
+				</div>
+				${frm.doc.requester ? `
+					<button class="btn btn-sm btn-default" onclick="frappe.set_route('Form', 'User', '${frm.doc.requester}')">
+						View Profile
+					</button>
+				` : ''}
+			</div>
+			${has_agent ? `
+				<div class="agent-section">
+					<h5><i class="fa fa-user-tie"></i> Agent / Representative</h5>
+					<p><strong>${frm.doc.agent_name}</strong></p>
+					<p class="text-muted">
+						${frm.doc.agent_email ? `<i class="fa fa-envelope"></i> ${frm.doc.agent_email}` : ''}
+						${frm.doc.agent_phone ? `<br><i class="fa fa-phone"></i> ${frm.doc.agent_phone}` : ''}
+					</p>
+					<button class="btn btn-xs btn-default" onclick="frappe.set_route('Form', 'User', '${frm.doc.agent}')">
+						View Agent Profile
+					</button>
+				</div>
+			` : ''}
+		</div>
+	`;
+
+	field.$wrapper.html(html);
+}
+
+/**
+ * Render timeline visual in the HTML field
+ */
+function render_timeline_visual(frm) {
+	const field = frm.get_field('timeline_visual_html');
+	if (!field) return;
+
+	// Check if required function is loaded
+	if (typeof lodgeick === 'undefined' || typeof lodgeick.timeline === 'undefined' || typeof lodgeick.timeline.renderTimelineVisual === 'undefined') {
+		console.error('timeline_visual.js not loaded');
+		field.$wrapper.html('<p class="text-muted">Loading timeline component...</p>');
+		return;
+	}
+
+	// Render timeline
+	const html = lodgeick.timeline.renderTimelineVisual(frm);
+	field.$wrapper.html(html);
 }

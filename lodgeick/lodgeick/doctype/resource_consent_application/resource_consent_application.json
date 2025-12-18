@@ -61,9 +61,9 @@
   "lodgement_fees_paid",
   "lodgement_payments",
   "section_break_signatures",
-  "applicant_signature_first_name",
-  "applicant_signature_last_name",
-  "applicant_signature_date",
+  "requester_signature_first_name",
+  "requester_signature_last_name",
+  "requester_signature_date",
   "column_break_agent_signature",
   "agent_signature_first_name",
   "agent_signature_last_name",
@@ -1132,7 +1132,7 @@
    "label": "Requester First Name"
   },
   {
-   "fieldname": "applicant_signature_last_name",
+   "fieldname": "requester_signature_last_name",
    "fieldtype": "Data",
    "label": "Requester Last Name"
   },

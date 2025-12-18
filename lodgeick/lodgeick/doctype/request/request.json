@@ -7,19 +7,28 @@
  "engine": "InnoDB",
  "field_order": [
   "summary_tab",
-  "summary_section",
+  "status_card_html",
+  "section_break_essentials",
   "request_number",
   "request_category",
   "request_type",
-  "column_break_pazx",
   "council",
   "priority",
-  "status",
-  "workflow_state",
+  "column_break_timeline",
+  "section_break_timeline",
+  "submitted_date",
+  "acknowledged_date",
+  "target_completion_date",
   "is_overdue",
+  "column_break_assignment",
+  "section_break_assignment",
+  "assigned_to",
+  "assigned_team",
+  "assessment_project",
   "section_break_history",
   "status_history",
   "request_details_tab",
+  "requester_card_html",
   "section_break_requester",
   "requester",
   "requester_name",
@@ -43,11 +52,7 @@
   "section_break_delivery",
   "delivery_preference",
   "tab_break_asdq",
-  "section_break_assessment",
-  "assessment_project",
-  "section_break_assignment",
-  "assigned_to",
-  "assigned_team",
+  "section_break_processing",
   "processing_notes",
   "payments_and_invoicing_tab",
   "section_break_fees",
@@ -68,10 +73,8 @@
   "invoice_address",
   "purchase_order_number",
   "timeframes_tab",
+  "timeline_visual_html",
   "section_break_dates",
-  "submitted_date",
-  "acknowledged_date",
-  "target_completion_date",
   "actual_completion_date",
   "attachments_tab",
   "section_break_attachments",
@@ -92,6 +95,8 @@
   {
    "fieldname": "request_type",
    "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Request Type",
    "mandatory_depends_on": "eval:doc.status!='Draft'",
    "options": "Request Type"
@@ -114,9 +119,11 @@
    "options": "Resource Consent\nBuilding Consent\nService Request\nLicense\nPermit\nComplaint\nInformation Request\nSocial Assistance\nOther"
   },
   {
+   "_comment": "Hidden from UI - workflow_state is the primary status field. Kept in backend for API/report compatibility and automatic sync via handle_workflow_state_change()",
    "allow_on_submit": 1,
    "fieldname": "status",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Status",
    "options": "Draft\nSubmitted\nAcknowledged\nProcessing\nRFI Issued\nRFI Received\nPending Decision\nApproved\nApproved with Conditions\nDeclined\nWithdrawn\nCancelled\nCompleted",
    "reqd": 1
@@ -124,6 +131,8 @@
   {
    "fieldname": "priority",
    "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Priority",
    "options": "Low\nStandard\nHigh\nUrgent"
   },
@@ -131,6 +140,8 @@
    "allow_on_submit": 1,
    "fieldname": "workflow_state",
    "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Workflow State",
    "options": "Workflow State",
    "read_only": 1
@@ -143,10 +154,11 @@
    "read_only": 1
   },
   {
+   "collapsible": 1,
    "description": "Details about the person or entity submitting this request",
    "fieldname": "section_break_requester",
    "fieldtype": "Section Break",
-   "label": "Requester Information"
+   "label": "Requester Information (Raw Fields)"
   },
   {
    "fieldname": "requester",
@@ -159,6 +171,7 @@
    "fetch_from": "requester.full_name",
    "fieldname": "requester_name",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Requester Name",
    "read_only": 1
   },
@@ -269,6 +282,7 @@
   {
    "fieldname": "submitted_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "Submitted Date",
    "read_only": 1
   },
@@ -283,6 +297,7 @@
    "description": "Calculated based on request type SLA",
    "fieldname": "target_completion_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "Target Completion Date",
    "read_only": 1
   },
@@ -301,6 +316,8 @@
    "allow_on_submit": 1,
    "fieldname": "assigned_to",
    "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Assigned To",
    "options": "User"
   },
@@ -409,11 +426,11 @@
    "label": "Invoicing Details"
   },
   {
-   "default": "Applicant",
+   "default": "Requester",
    "fieldname": "invoice_to",
    "fieldtype": "Select",
    "label": "Invoice To",
-   "options": "Applicant\nAgent/Representative\nOrganization\nOther"
+   "options": "Requester\nAgent/Representative\nOrganization\nOther"
   },
   {
    "depends_on": "eval:doc.invoice_to=='Other'",
@@ -446,6 +463,7 @@
    "label": "Purchase Order Number"
   },
   {
+   "collapsible": 1,
    "description": "Choose how you would like to receive communications",
    "fieldname": "section_break_delivery",
    "fieldtype": "Section Break",
@@ -547,6 +565,49 @@
    "fieldname": "summary_section",
    "fieldtype": "Section Break",
    "label": "Summary"
+  },
+  {
+   "fieldname": "status_card_html",
+   "fieldtype": "HTML",
+   "label": "Status Card"
+  },
+  {
+   "fieldname": "section_break_essentials",
+   "fieldtype": "Section Break",
+   "label": "Request Essentials"
+  },
+  {
+   "fieldname": "column_break_timeline",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_timeline",
+   "fieldtype": "Section Break",
+   "label": "Timeline"
+  },
+  {
+   "fieldname": "column_break_assignment",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_assignment",
+   "fieldtype": "Section Break",
+   "label": "Assignment & Responsibility"
+  },
+  {
+   "fieldname": "section_break_processing",
+   "fieldtype": "Section Break",
+   "label": "Processing Notes"
+  },
+  {
+   "fieldname": "requester_card_html",
+   "fieldtype": "HTML",
+   "label": "Requester Card"
+  },
+  {
+   "fieldname": "timeline_visual_html",
+   "fieldtype": "HTML",
+   "label": "Timeline Visual"
   }
  ],
  "index_web_pages_for_search": 1,

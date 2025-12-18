@@ -25,10 +25,16 @@ app_license = "mit"
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/lodgeick/css/lodgeick.css"
+app_include_css = [
+	"/assets/lodgeick/css/request_status.css"
+]
+
 app_include_js = [
 	"/assets/lodgeick/js/action_bar_utils.js",
-	"/assets/lodgeick/js/summary_dashboard.js"
+	"/assets/lodgeick/js/summary_dashboard.js",
+	"/assets/lodgeick/js/status_pill.js",
+	"/assets/lodgeick/js/workflow_progression.js",
+	"/assets/lodgeick/js/timeline_visual.js"
 ]
 
 # include js, css files in header of web template

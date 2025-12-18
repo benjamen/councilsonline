@@ -1,0 +1,650 @@
+/**
+ * Request Status Visualization Styles
+ *
+ * Styles for status pills, workflow progression, and SLA indicators
+ */
+
+/* ========================================
+   Status Pills
+   ======================================== */
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.status-pill i {
+    font-size: 12px;
+}
+
+/* Color variants */
+.status-gray {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.status-blue {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.status-cyan {
+    background: #cffafe;
+    color: #0e7490;
+}
+
+.status-orange {
+    background: #fed7aa;
+    color: #c2410c;
+}
+
+.status-purple {
+    background: #e9d5ff;
+    color: #7c3aed;
+}
+
+.status-yellow {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.status-green {
+    background: #d1fae5;
+    color: #047857;
+}
+
+.status-red {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+/* Hover states */
+.status-pill:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ========================================
+   Status Card
+   ======================================== */
+
+.request-status-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.request-status-card .status-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.request-status-card .status-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.request-status-card .workflow-progression {
+    margin: 16px 0;
+}
+
+.request-status-card .sla-section {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.request-status-card .status-actions {
+    margin-top: 16px;
+    display: flex;
+    gap: 8px;
+}
+
+/* ========================================
+   SLA Indicators
+   ======================================== */
+
+.sla-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.sla-indicator i {
+    font-size: 16px;
+}
+
+.sla-indicator small {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+.sla-on-track {
+    background: #d1fae5;
+    color: #047857;
+}
+
+.sla-warning {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.sla-overdue {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+/* ========================================
+   Workflow Progression Bar
+   ======================================== */
+
+.workflow-progression-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    padding: 20px 0;
+}
+
+.workflow-step {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    z-index: 2;
+}
+
+.workflow-step-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e5e7eb;
+    color: #6b7280;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 3px solid #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.workflow-step-label {
+    margin-top: 8px;
+    font-size: 11px;
+    text-align: center;
+    color: #6b7280;
+    max-width: 80px;
+    line-height: 1.3;
+}
+
+/* Step states */
+.workflow-step.completed .workflow-step-icon {
+    background: #10b981;
+    color: #ffffff;
+}
+
+.workflow-step.active .workflow-step-icon {
+    background: #3b82f6;
+    color: #ffffff;
+    animation: pulse 2s infinite;
+}
+
+.workflow-step.active .workflow-step-label {
+    color: #1f2937;
+    font-weight: 600;
+}
+
+.workflow-step.pending .workflow-step-icon {
+    background: #f3f4f6;
+    color: #9ca3af;
+}
+
+/* Connector line */
+.workflow-connector {
+    position: absolute;
+    top: 38px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: #e5e7eb;
+    z-index: 1;
+}
+
+.workflow-connector-progress {
+    height: 100%;
+    background: #10b981;
+    transition: width 0.5s ease;
+}
+
+/* Pulse animation for active step */
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(59, 130, 246, 0);
+    }
+}
+
+/* ========================================
+   Timeline Visual (for Timeframes tab)
+   ======================================== */
+
+.timeline-visual {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 20px 0;
+}
+
+.milestone {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+    position: relative;
+}
+
+.milestone-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e5e7eb;
+    color: #6b7280;
+    font-size: 16px;
+    flex-shrink: 0;
+    z-index: 2;
+}
+
+.milestone-content {
+    flex: 1;
+    padding-top: 4px;
+}
+
+.milestone-content strong {
+    display: block;
+    font-size: 14px;
+    color: #1f2937;
+    margin-bottom: 4px;
+}
+
+.milestone-content small {
+    color: #6b7280;
+    font-size: 12px;
+}
+
+.milestone-connector {
+    position: absolute;
+    left: 35px;
+    top: 56px;
+    bottom: 0;
+    width: 2px;
+    background: #e5e7eb;
+}
+
+.milestone:last-child .milestone-connector {
+    display: none;
+}
+
+/* Milestone states */
+.milestone.complete .milestone-icon {
+    background: #10b981;
+    color: #ffffff;
+}
+
+.milestone.complete .milestone-content strong {
+    color: #047857;
+}
+
+.milestone.pending .milestone-icon {
+    background: #f3f4f6;
+    color: #9ca3af;
+}
+
+.milestone.overdue .milestone-icon {
+    background: #ef4444;
+    color: #ffffff;
+}
+
+.milestone.overdue .milestone-content strong {
+    color: #dc2626;
+}
+
+/* Timeline header */
+.timeline-header {
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.timeline-header h4 {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.timeline-header p {
+    margin: 0;
+}
+
+/* Timeline milestones container */
+.timeline-milestones {
+    margin-bottom: 24px;
+}
+
+/* Milestone date and relative time */
+.milestone-date {
+    display: block;
+    margin-top: 2px;
+    font-weight: 500;
+    color: #374151;
+}
+
+.milestone-relative {
+    display: block;
+    margin-top: 2px;
+    font-style: italic;
+}
+
+/* Processing metrics */
+.processing-metrics {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 20px;
+}
+
+.processing-metrics h5 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.processing-metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.processing-metric:last-child {
+    border-bottom: none;
+}
+
+.metric-label {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.metric-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+/* Requester Card */
+.requester-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.requester-primary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.requester-primary .avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #e0e7ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 600;
+    color: #4f46e5;
+    flex-shrink: 0;
+}
+
+.requester-primary .details {
+    flex: 1;
+}
+
+.requester-primary .details h4 {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.requester-primary .details p {
+    margin: 0;
+    font-size: 13px;
+}
+
+.agent-section {
+    margin-top: 16px;
+    padding: 12px;
+    background: #f9fafb;
+    border-radius: 6px;
+}
+
+.agent-section h5 {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.agent-section p {
+    margin: 4px 0;
+    font-size: 13px;
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+
+@media (max-width: 768px) {
+    .workflow-progression-bar {
+        overflow-x: auto;
+        padding-bottom: 10px;
+    }
+
+    .workflow-step-label {
+        font-size: 10px;
+        max-width: 60px;
+    }
+
+    .workflow-step-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 12px;
+    }
+
+    .request-status-card {
+        padding: 16px;
+    }
+
+    .sla-indicator {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    /* Requester card responsive */
+    .requester-primary {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .requester-primary .avatar {
+        margin: 0 auto 12px;
+    }
+
+    /* Timeline responsive */
+    .timeline-visual {
+        padding: 12px 0;
+    }
+
+    .milestone {
+        padding: 12px 8px;
+    }
+
+    .milestone-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+
+    .processing-metrics {
+        padding: 12px;
+    }
+
+    .processing-metric {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .workflow-step-label {
+        font-size: 11px;
+        max-width: 70px;
+    }
+}
+
+/* ========================================
+   Accessibility Enhancements
+   ======================================== */
+
+/* Focus indicators for interactive elements */
+.status-pill:focus,
+.requester-card button:focus,
+.timeline-visual button:focus,
+.request-status-card button:focus {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+}
+
+/* Ensure sufficient touch target sizes (minimum 44x44px) */
+.requester-card button,
+.timeline-visual button,
+.request-status-card button {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 8px 16px;
+}
+
+/* Improve text contrast */
+.text-muted {
+    color: #6b7280 !important;
+}
+
+/* Screen reader only text */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Focus-visible for better keyboard navigation */
+*:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .status-pill {
+        border: 2px solid currentColor;
+    }
+
+    .workflow-step-icon {
+        border: 2px solid currentColor;
+    }
+
+    .milestone-icon {
+        border: 2px solid currentColor;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .workflow-step.active .workflow-step-icon {
+        animation: none;
+    }
+}
+
+/* ========================================
+   Dark Mode Support (if needed)
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+    .request-status-card {
+        background: #1f2937;
+        border-color: #374151;
+    }
+
+    .request-status-card .status-header h3 {
+        color: #f9fafb;
+    }
+
+    .workflow-step-icon {
+        border-color: #1f2937;
+    }
+
+    .milestone-content strong {
+        color: #f9fafb;
+    }
+}
