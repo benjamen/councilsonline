@@ -5,10 +5,14 @@ def execute():
 	Create Assessment Template and Task Templates for SPISC applications
 
 	This patch creates:
-	1. Assessment Template for SPISC with 4 stages
-	2. Task Templates for each stage (11 total tasks)
+	1. Assessment Stage Types (if they don't exist)
+	2. Assessment Template for SPISC with 4 stages
+	3. Task Templates for each stage (11 total tasks)
 	"""
 	frappe.flags.in_import = True
+
+	# Step 0: Ensure Assessment Stage Types exist
+	create_assessment_stage_types()
 
 	# Step 1: Create Assessment Template
 	create_assessment_template()
@@ -19,6 +23,28 @@ def execute():
 	frappe.db.commit()
 	frappe.flags.in_import = False
 	print("✅ SPISC Assessment Infrastructure created successfully!")
+
+
+def create_assessment_stage_types():
+	"""Create Assessment Stage Types if they don't exist"""
+
+	stage_types = [
+		"Vetting",
+		"Technical Assessment",
+		"Decision",
+		"Implementation"
+	]
+
+	for stage_type in stage_types:
+		if not frappe.db.exists("Assessment Stage Type", stage_type):
+			doc = frappe.get_doc({
+				"doctype": "Assessment Stage Type",
+				"stage_type": stage_type
+			})
+			doc.insert(ignore_permissions=True)
+			print(f"✅ Created Assessment Stage Type: {stage_type}")
+		else:
+			print(f"Assessment Stage Type '{stage_type}' already exists")
 
 
 def create_assessment_template():
