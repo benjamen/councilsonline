@@ -533,11 +533,18 @@ function make_applicant_fields_readonly(frm) {
 function add_custom_buttons(frm) {
 	if (frm.is_new()) return;
 
-	// Button to view linked request
+	// Prominent button to view linked request (main hub)
 	if (frm.doc.request) {
-		frm.add_custom_button(__('View Request'), function() {
+		frm.add_custom_button(__('View Request (Main Hub)'), function() {
 			frappe.set_route('Form', 'Request', frm.doc.request);
-		}, __('Actions'));
+		}).addClass('btn-primary');
+
+		// Add helpful message
+		frm.dashboard.add_comment(
+			__('Use the <strong>Request form</strong> to access Tasks, Meetings, Communications, and Assessment Project.'),
+			'blue',
+			true
+		);
 	}
 
 	// Button to refresh condition templates
