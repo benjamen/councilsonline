@@ -11,20 +11,20 @@
 frappe.ui.form.on("Request", {
 	refresh: function(frm) {
 		if (!frm.is_new()) {
-			// Add visual status indicators (NEW!)
-			add_status_visualization(frm);
-
-			// Add universal action bar with all standard actions
+			// Add universal action bar with all standard actions (immediate)
 			add_universal_action_bar(frm);
 
-			// Add summary dashboard showing key metrics
-			add_summary_dashboard(frm);
-
-			// Add application-specific quick actions
+			// Add application-specific quick actions (immediate)
 			add_application_quick_actions(frm);
 
-			// Enhance form sections with visual styling
+			// Enhance form sections with visual styling (immediate)
 			enhance_form_sections(frm);
+
+			// Defer dashboard-dependent components to allow dashboard initialization
+			setTimeout(() => {
+				add_status_visualization(frm);
+				add_summary_dashboard(frm);
+			}, 100);
 		}
 	},
 
