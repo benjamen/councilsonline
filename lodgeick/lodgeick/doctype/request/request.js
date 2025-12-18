@@ -97,6 +97,12 @@ function add_universal_action_bar(frm) {
  * Add summary dashboard with key metrics
  */
 function add_summary_dashboard(frm) {
+	// Check if dashboard is ready
+	if (!frm.dashboard || !frm.dashboard.wrapper) {
+		console.warn('Dashboard not ready for summary dashboard');
+		return;
+	}
+
 	// Remove existing dashboard if present
 	frm.dashboard.wrapper.find('.request-summary-dashboard').remove();
 
@@ -119,6 +125,12 @@ function add_summary_dashboard(frm) {
  * Render the summary dashboard
  */
 function render_dashboard(frm, data) {
+	// Check if dashboard is ready
+	if (!frm.dashboard || !frm.dashboard.wrapper) {
+		console.warn('Dashboard not ready for rendering');
+		return;
+	}
+
 	// Determine dashboard color based on request type
 	let dashboard_color = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'; // Default purple
 
@@ -709,6 +721,12 @@ function add_status_pill_to_header(frm) {
  * Add workflow progression indicator
  */
 function add_workflow_progression_indicator(frm) {
+	// Check if dashboard is ready
+	if (!frm.dashboard || !frm.dashboard.wrapper) {
+		console.warn('Dashboard not ready for workflow progression indicator');
+		return;
+	}
+
 	// Find or create workflow section in dashboard
 	const dashboard = frm.dashboard.wrapper;
 
@@ -743,6 +761,12 @@ function add_workflow_progression_indicator(frm) {
  */
 function add_sla_countdown_indicator(frm) {
 	if (!frm.doc.target_completion_date) return;
+
+	// Check if dashboard is ready
+	if (!frm.dashboard || !frm.dashboard.wrapper) {
+		console.warn('Dashboard not ready for SLA countdown indicator');
+		return;
+	}
 
 	// Calculate days remaining
 	const target_date = frappe.datetime.str_to_obj(frm.doc.target_completion_date);
