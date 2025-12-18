@@ -687,6 +687,12 @@ function add_status_visualization(frm) {
  * Add status pill to the form header
  */
 function add_status_pill_to_header(frm) {
+	// Check if page wrapper is ready
+	if (!frm.page || !frm.page.wrapper) {
+		console.warn('Page wrapper not ready for status pill');
+		return;
+	}
+
 	// Remove existing status pill
 	frm.page.wrapper.find('.form-status-pill').remove();
 
@@ -700,6 +706,12 @@ function add_status_pill_to_header(frm) {
 	}
 
 	const status_pill_html = lodgeick.status.renderStatusPill(frm.doc.workflow_state);
+
+	// Check if title area is ready
+	if (!frm.page.title_area) {
+		console.warn('Title area not ready for status pill');
+		return;
+	}
 
 	// Add to title area
 	frm.page.set_secondary_action(() => {}, {
