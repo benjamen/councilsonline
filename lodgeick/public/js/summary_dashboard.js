@@ -5,7 +5,7 @@
  * Configurable for different request types with custom metrics.
  */
 
-import { getLinkedDocumentCount } from './action_bar_utils.js';
+frappe.provide('lodgeick.dashboard');
 
 /**
  * Create a summary dashboard above the form
@@ -15,7 +15,7 @@ import { getLinkedDocumentCount } from './action_bar_utils.js';
  * @param {Array} config.metrics - Array of metric configurations
  * @param {string} config.color - Dashboard background color (default: purple gradient)
  */
-export function createSummaryDashboard(frm, config = {}) {
+lodgeick.dashboard.createSummaryDashboard = function(frm, config = {}) {
 	const default_config = {
 		api_method: 'lodgeick.api.get_request_summary_data',
 		color: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -61,11 +61,11 @@ export function createSummaryDashboard(frm, config = {}) {
 		},
 		callback: function(r) {
 			if (r.message) {
-				renderDashboard(frm, dashboard_config, r.message);
+				lodgeick.dashboard.renderDashboard(frm, dashboard_config, r.message);
 			}
 		}
 	});
-}
+};
 
 /**
  * Render the dashboard HTML
@@ -73,7 +73,7 @@ export function createSummaryDashboard(frm, config = {}) {
  * @param {Object} config - Dashboard configuration
  * @param {Object} data - Dashboard data from API
  */
-function renderDashboard(frm, config, data) {
+lodgeick.dashboard.renderDashboard = function(frm, config, data) {
 	const metrics_html = config.metrics.map(metric => {
 		const value = data[metric.field] || (metric.is_status ? 'Not Started' : 0);
 		const display_value = metric.is_status ? value : `<strong>${value}</strong>`;
@@ -109,20 +109,20 @@ function renderDashboard(frm, config, data) {
 	`;
 
 	frm.dashboard.wrapper.prepend(dashboard_html);
-}
+};
 
 /**
  * Create a simple count dashboard without API call
  * @param {Object} frm - Frappe form object
  * @param {Array} count_configs - Array of {label, doctype, icon, color}
  */
-export async function createSimpleCountDashboard(frm, count_configs) {
+lodgeick.dashboard.createSimpleCountDashboard = async function(frm, count_configs) {
 	const counts = {};
 
 	// Fetch all counts in parallel
 	await Promise.all(
 		count_configs.map(async (cfg) => {
-			counts[cfg.doctype] = await getLinkedDocumentCount(frm.doc.name, cfg.doctype);
+			counts[cfg.doctype] = await lodgeick.actionBar.getLinkedDocumentCount(frm.doc.name, cfg.doctype);
 		})
 	);
 
@@ -141,8 +141,8 @@ export async function createSimpleCountDashboard(frm, count_configs) {
 		data[cfg.doctype] = counts[cfg.doctype];
 	});
 
-	renderDashboard(frm, { metrics }, data);
-}
+	lodgeick.dashboard.renderDashboard(frm, { metrics }, data);
+};
 
 /**
  * Update a specific metric in the dashboard
@@ -150,7 +150,7 @@ export async function createSimpleCountDashboard(frm, count_configs) {
  * @param {string} metric_label - Label of metric to update
  * @param {string|number} new_value - New value to display
  */
-export function updateDashboardMetric(frm, metric_label, new_value) {
+lodgeick.dashboard.updateDashboardMetric = function(frm, metric_label, new_value) {
 	const dashboard = frm.dashboard.wrapper.find('.request-summary-dashboard');
 	if (dashboard.length) {
 		const metrics = dashboard.find('.dashboard-metric');
@@ -161,7 +161,7 @@ export function updateDashboardMetric(frm, metric_label, new_value) {
 			}
 		});
 	}
-}
+};
 
 /**
  * Create custom metric card
@@ -171,7 +171,7 @@ export function updateDashboardMetric(frm, metric_label, new_value) {
  * @param {string} color - Text color
  * @returns {string} HTML for metric card
  */
-export function createMetricCard(label, value, icon, color = 'white') {
+lodgeick.dashboard.createMetricCard = function(label, value, icon, color = 'white') {
 	return `
 		<div class="dashboard-metric" style="flex: 1; text-align: center; padding: 10px;">
 			<div style="font-size: 14px; color: rgba(255,255,255,0.9); margin-bottom: 5px;">
@@ -185,4 +185,4 @@ export function createMetricCard(label, value, icon, color = 'white') {
 			</div>
 		</div>
 	`;
-}
+};

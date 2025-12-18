@@ -5,23 +5,25 @@
  * Provides consistent UX for Tasks, Meetings, Communications, and Assessment Projects.
  */
 
+frappe.provide('lodgeick.actionBar');
+
 /**
  * View linked documents in list view filtered by request
  * @param {Object} frm - Frappe form object
  * @param {string} doctype - DocType to view (e.g., 'Project Task', 'Council Meeting')
  */
-export function viewLinkedDocuments(frm, doctype) {
+lodgeick.actionBar.viewLinkedDocuments = function(frm, doctype) {
 	frappe.route_options = {
 		"request": frm.doc.name
 	};
 	frappe.set_route("List", doctype);
-}
+};
 
 /**
  * Open the Assessment Project linked to this request
  * @param {Object} frm - Frappe form object
  */
-export function openAssessmentProject(frm) {
+lodgeick.actionBar.openAssessmentProject = function(frm) {
 	if (frm.doc.assessment_project) {
 		frappe.set_route('Form', 'Assessment Project', frm.doc.assessment_project);
 	} else {
@@ -46,7 +48,7 @@ export function openAssessmentProject(frm) {
 			}
 		});
 	}
-}
+};
 
 /**
  * Create a new linked document with default values
@@ -54,20 +56,20 @@ export function openAssessmentProject(frm) {
  * @param {string} doctype - DocType to create
  * @param {Object} defaults - Default field values
  */
-export function createLinkedDocument(frm, doctype, defaults = {}) {
+lodgeick.actionBar.createLinkedDocument = function(frm, doctype, defaults = {}) {
 	const doc_defaults = {
 		request: frm.doc.name,
 		...defaults
 	};
 
 	frappe.new_doc(doctype, doc_defaults);
-}
+};
 
 /**
  * Show dialog to send notification to requester
  * @param {Object} frm - Frappe form object
  */
-export function showSendNotificationDialog(frm) {
+lodgeick.actionBar.showSendNotificationDialog = function(frm) {
 	const d = new frappe.ui.Dialog({
 		title: __('Send Notification'),
 		fields: [
@@ -119,13 +121,13 @@ export function showSendNotificationDialog(frm) {
 	});
 
 	d.show();
-}
+};
 
 /**
  * Show dialog to add internal note to request
  * @param {Object} frm - Frappe form object
  */
-export function showAddInternalNoteDialog(frm) {
+lodgeick.actionBar.showAddInternalNoteDialog = function(frm) {
 	const d = new frappe.ui.Dialog({
 		title: __('Add Internal Note'),
 		fields: [
@@ -169,7 +171,7 @@ export function showAddInternalNoteDialog(frm) {
 	});
 
 	d.show();
-}
+};
 
 /**
  * Create quick action button for creating linked document
@@ -179,12 +181,12 @@ export function showAddInternalNoteDialog(frm) {
  * @param {Object} defaults - Default field values
  * @param {string} group - Button group name
  */
-export function addCreateButton(frm, label, doctype, defaults, group) {
+lodgeick.actionBar.addCreateButton = function(frm, label, doctype, defaults, group) {
 	frm.add_custom_button(__(label),
-		() => createLinkedDocument(frm, doctype, defaults),
+		() => lodgeick.actionBar.createLinkedDocument(frm, doctype, defaults),
 		__(group)
 	);
-}
+};
 
 /**
  * Create quick action button for viewing linked documents
@@ -193,12 +195,12 @@ export function addCreateButton(frm, label, doctype, defaults, group) {
  * @param {string} doctype - DocType to view
  * @param {string} group - Button group name
  */
-export function addViewButton(frm, label, doctype, group) {
+lodgeick.actionBar.addViewButton = function(frm, label, doctype, group) {
 	frm.add_custom_button(__(label),
-		() => viewLinkedDocuments(frm, doctype),
+		() => lodgeick.actionBar.viewLinkedDocuments(frm, doctype),
 		__(group)
 	);
-}
+};
 
 /**
  * Get count of linked documents for dashboard
@@ -206,7 +208,7 @@ export function addViewButton(frm, label, doctype, group) {
  * @param {string} doctype - DocType to count
  * @returns {Promise<number>} Count of linked documents
  */
-export async function getLinkedDocumentCount(request_id, doctype) {
+lodgeick.actionBar.getLinkedDocumentCount = async function(request_id, doctype) {
 	return new Promise((resolve, reject) => {
 		frappe.call({
 			method: 'frappe.client.get_count',
@@ -223,4 +225,4 @@ export async function getLinkedDocumentCount(request_id, doctype) {
 			}
 		});
 	});
-}
+};
