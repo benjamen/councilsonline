@@ -100,9 +100,12 @@ after_install = "lodgeick.install.after_install"
 fixtures = [
 	{"dt": "Print Format", "filters": [["module", "=", "Lodgeick"]]},
 	{"dt": "Workspace", "filters": [["module", "=", "Lodgeick"]]},
-	"lodgeick.lodgeick.fixtures.request_types",
-	"lodgeick.lodgeick.fixtures.councils",
-	"lodgeick.lodgeick.fixtures.council_request_types"
+	"lodgeick.lodgeick.lodgeick.fixtures.request_types",
+	"lodgeick.lodgeick.lodgeick.fixtures.councils",
+	"lodgeick.lodgeick.lodgeick.fixtures.council_request_types",
+	"lodgeick.lodgeick.lodgeick.fixtures.assessment_stage_types",
+	"lodgeick.lodgeick.lodgeick.fixtures.assessment_templates",
+	"lodgeick.lodgeick.lodgeick.fixtures.task_templates_spisc"
 ]
 
 # Uninstallation
