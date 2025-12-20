@@ -132,6 +132,18 @@ def create_workflow():
                 "doc_status": "1",
                 "allow_edit": "Lodgeick Admin",
                 "is_optional_state": 1  # Optional
+            },
+            {
+                "state": "Payment Pending",
+                "doc_status": "1",
+                "allow_edit": "Lodgeick User",
+                "is_optional_state": 1  # Optional - SPISC only
+            },
+            {
+                "state": "Paid",
+                "doc_status": "1",
+                "allow_edit": "Lodgeick User",
+                "is_optional_state": 1  # Optional - SPISC only
             }
         ],
 
@@ -154,7 +166,7 @@ def create_workflow():
                 "action": "Acknowledge",
                 "next_state": "Acknowledged",
                 "allowed": "Lodgeick User",
-                "allow_self_approval": 0
+                "allow_self_approval": 1  # Enable for testing/small councils
             },
 
             # Acknowledged → Processing
@@ -187,17 +199,17 @@ def create_workflow():
                 "next_state": "RFI Issued",
                 "allowed": "Lodgeick User",
                 "allow_self_approval": 1,
-                "condition": "doc.request_type in ['Resource Consent']"
+                "condition": "doc.request_type in ['Resource Consent', 'Social Pension for Indigent Senior Citizens (SPISC)']"
             },
 
-            # Processing → Send to Manager (Resource Consent)
+            # Processing → Send to Manager (Resource Consent, SPISC)
             {
                 "state": "Processing",
                 "action": "Send to Manager",
                 "next_state": "Pending Decision",
                 "allowed": "Lodgeick User",
                 "allow_self_approval": 1,
-                "condition": "doc.request_type in ['Resource Consent']"
+                "condition": "doc.request_type in ['Resource Consent', 'Social Pension for Indigent Senior Citizens (SPISC)']"
             },
 
             # RFI Issued → RFI Received
@@ -324,6 +336,36 @@ def create_workflow():
                 "action": "Mark Under Appeal",
                 "next_state": "Under Appeal",
                 "allowed": "Lodgeick Admin",
+                "allow_self_approval": 1
+            },
+
+            # === SPISC PAYMENT FLOW ===
+
+            # Approved → Payment Pending (SPISC)
+            {
+                "state": "Approved",
+                "action": "Setup Payment",
+                "next_state": "Payment Pending",
+                "allowed": "Lodgeick User",
+                "allow_self_approval": 1,
+                "condition": "doc.request_type == 'Social Pension for Indigent Senior Citizens (SPISC)'"
+            },
+
+            # Payment Pending → Paid
+            {
+                "state": "Payment Pending",
+                "action": "Mark as Paid",
+                "next_state": "Paid",
+                "allowed": "Lodgeick User",
+                "allow_self_approval": 1
+            },
+
+            # Paid → Completed
+            {
+                "state": "Paid",
+                "action": "Complete",
+                "next_state": "Completed",
+                "allowed": "Lodgeick User",
                 "allow_self_approval": 1
             },
 
