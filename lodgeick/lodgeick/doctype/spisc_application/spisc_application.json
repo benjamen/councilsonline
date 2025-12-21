@@ -9,7 +9,6 @@
   "request",
   "section_summary",
   "request_number",
-  "status",
   "workflow_state",
   "column_break_summary",
   "submitted_date",
@@ -104,21 +103,12 @@
    "read_only": 1
   },
   {
-   "fetch_from": "request.status",
-   "fieldname": "status",
+   "fetch_from": "request.workflow_state",
+   "fieldname": "workflow_state",
    "fieldtype": "Data",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Status",
-   "read_only": 1
-  },
-  {
-   "fetch_from": "request.workflow_state",
-   "fieldname": "workflow_state",
-   "fieldtype": "Link",
-   "in_list_view": 1,
    "label": "Workflow State",
-   "options": "Workflow State",
    "read_only": 1
   },
   {
@@ -147,7 +137,6 @@
   },
   {
    "bold": 1,
-   "fetch_from": "request.requester_name",
    "fieldname": "applicant_name",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -155,7 +144,6 @@
    "read_only": 1
   },
   {
-   "fetch_from": "age",
    "fieldname": "applicant_age_display",
    "fieldtype": "Data",
    "label": "Age",

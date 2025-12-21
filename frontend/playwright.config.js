@@ -20,6 +20,13 @@ export default defineConfig({
 		video: "retain-on-failure",
 		actionTimeout: 10 * 1000,
 		navigationTimeout: 30 * 1000,
+
+		// Headed mode support for visual debugging
+		...(process.env.HEADED && {
+			headless: false,
+			slowMo: 500, // Slow down actions by 500ms for visual debugging
+			video: "on", // Always record video in headed mode
+		}),
 	},
 
 	projects: [

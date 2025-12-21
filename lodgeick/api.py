@@ -572,9 +572,27 @@ def create_spisc_application(request_name, data):
         municipality = data.get("municipality", "Taytay")
         province = data.get("province", "Rizal")
 
+    # Get request document to access virtual properties
+    request_doc = frappe.get_doc("Request", request_name)
+
+    # Calculate age from birth_date if not provided
+    age_value = data.get("age")
+    if not age_value and data.get("birth_date"):
+        from datetime import datetime
+        birth_date = data.get("birth_date")
+        if isinstance(birth_date, str):
+            birth_date = datetime.strptime(birth_date, "%Y-%m-%d")
+        today = datetime.today()
+        age_value = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+
     spisc_app = frappe.get_doc({
         "doctype": "SPISC Application",
         "request": request_name,
+
+        # Manually populate fields (removed invalid fetch_from)
+        "applicant_name": request_doc.requester_name,  # Virtual @property from Request
+        "applicant_age_display": str(age_value) if age_value else "",
+        "age": age_value,
 
         # Personal Information (domain-specific fields only)
         "birth_date": data.get("birth_date"),
@@ -980,6 +998,12 @@ def create_draft_request(data=None, current_step=None, total_steps=None):
             request_doc.db_set("application_doctype", application.doctype, update_modified=False)
             request_doc.db_set("application_name", application.name, update_modified=False)
 
+        # Save draft step information for resume functionality
+        if current_step is not None:
+            request_doc.db_set("draft_current_step", current_step, update_modified=False)
+        if total_steps is not None:
+            request_doc.db_set("draft_total_steps", total_steps, update_modified=False)
+
         frappe.db.commit()
 
         return {
@@ -1058,6 +1082,12 @@ def update_draft_request(request_id, data, current_step=None, total_steps=None):
             if application:
                 request_doc.db_set("application_doctype", application.doctype, update_modified=False)
                 request_doc.db_set("application_name", application.name, update_modified=False)
+
+        # Save draft step information for resume functionality
+        if current_step is not None:
+            request_doc.db_set("draft_current_step", current_step, update_modified=False)
+        if total_steps is not None:
+            request_doc.db_set("draft_total_steps", total_steps, update_modified=False)
 
         request_doc.flags.ignore_mandatory = True
         request_doc.flags.ignore_permissions = True
@@ -1426,7 +1456,7 @@ def get_staff_users():
 
 
 @frappe.whitelist()
-def book_council_meeting(request_id=None, request_type_code=None, meeting_type="Pre-Application Meeting",
+def book_council_meeting(request_id=None, request_type_code=None, meeting_type="Council Meeting",
                          meeting_purpose=None, discussion_points=None, attendees=None, preferred_time_slots=None):
     """
     Book a council meeting for a request (or standalone for pre-application) and create a Pre-Application Meeting record
@@ -1470,7 +1500,7 @@ def book_council_meeting(request_id=None, request_type_code=None, meeting_type="
 
             # Check if a meeting already exists for this request
             existing_meeting = frappe.db.get_value(
-                "Pre-Application Meeting",
+                "Council Meeting",
                 {
                     "request": request_id,
                     "status": ["in", ["Requested", "Scheduled", "Confirmed"]]
@@ -1497,7 +1527,7 @@ def book_council_meeting(request_id=None, request_type_code=None, meeting_type="
 
         # Create Pre-Application Meeting
         meeting_doc = frappe.get_doc({
-            "doctype": "Pre-Application Meeting",
+            "doctype": "Council Meeting",
             "request": request_id if (request_id and request_id != "draft") else None,
             "council": council_name,
             "meeting_type": meeting_type,
@@ -1800,7 +1830,7 @@ def get_meeting_details(meeting_id):
         dict: Meeting details
     """
     try:
-        meeting = frappe.get_doc("Pre-Application Meeting", meeting_id)
+        meeting = frappe.get_doc("Council Meeting", meeting_id)
 
         # Check permissions
         if not meeting.has_permission("read"):
@@ -1883,7 +1913,7 @@ def get_request_meetings(request_id):
             frappe.throw(_("You do not have permission to view this request"))
 
         meetings = frappe.get_all(
-            "Pre-Application Meeting",
+            "Council Meeting",
             filters={"request": request_id},
             fields=[
                 "name", "meeting_type", "status", "scheduled_start", "scheduled_end",
@@ -1943,10 +1973,10 @@ def schedule_meeting(meeting_id, scheduled_start, scheduled_end, meeting_locatio
         dict: Updated meeting details
     """
     try:
-        meeting = frappe.get_doc("Pre-Application Meeting", meeting_id)
+        meeting = frappe.get_doc("Council Meeting", meeting_id)
 
         # Check permissions - only council staff can schedule
-        if not (frappe.has_permission("Pre-Application Meeting", "write", meeting)
+        if not (frappe.has_permission("Council Meeting", "write", meeting)
                 or "Consent Planner" in frappe.get_roles()
                 or "System Manager" in frappe.get_roles()):
             frappe.throw(_("You do not have permission to schedule meetings"))
@@ -1999,10 +2029,10 @@ def reschedule_meeting(meeting_id, new_scheduled_start, new_scheduled_end, reaso
         dict: Updated meeting details
     """
     try:
-        meeting = frappe.get_doc("Pre-Application Meeting", meeting_id)
+        meeting = frappe.get_doc("Council Meeting", meeting_id)
 
         # Check permissions
-        if not (frappe.has_permission("Pre-Application Meeting", "write", meeting)
+        if not (frappe.has_permission("Council Meeting", "write", meeting)
                 or "Consent Planner" in frappe.get_roles()
                 or "System Manager" in frappe.get_roles()):
             frappe.throw(_("You do not have permission to reschedule meetings"))
@@ -2077,7 +2107,7 @@ def cancel_meeting(meeting_id, reason=None):
         dict: Cancellation confirmation
     """
     try:
-        meeting = frappe.get_doc("Pre-Application Meeting", meeting_id)
+        meeting = frappe.get_doc("Council Meeting", meeting_id)
 
         # Check permission
         if not meeting.has_permission("write"):
@@ -2158,10 +2188,10 @@ def complete_meeting(meeting_id, meeting_notes=None, outcome_summary=None,
         dict: Updated meeting details
     """
     try:
-        meeting = frappe.get_doc("Pre-Application Meeting", meeting_id)
+        meeting = frappe.get_doc("Council Meeting", meeting_id)
 
         # Check permissions - only council staff can complete
-        if not (frappe.has_permission("Pre-Application Meeting", "write", meeting)
+        if not (frappe.has_permission("Council Meeting", "write", meeting)
                 or "Consent Planner" in frappe.get_roles()
                 or "System Manager" in frappe.get_roles()):
             frappe.throw(_("You do not have permission to complete meetings"))
@@ -2201,10 +2231,10 @@ def cancel_meeting(meeting_id, reason=None):
         dict: Cancellation confirmation
     """
     try:
-        meeting = frappe.get_doc("Pre-Application Meeting", meeting_id)
+        meeting = frappe.get_doc("Council Meeting", meeting_id)
 
         # Check permissions
-        if not (frappe.has_permission("Pre-Application Meeting", "write", meeting)
+        if not (frappe.has_permission("Council Meeting", "write", meeting)
                 or meeting.requested_by == frappe.session.user
                 or "Consent Planner" in frappe.get_roles()
                 or "System Manager" in frappe.get_roles()):
@@ -2291,7 +2321,7 @@ def get_user_meetings(status=None, from_date=None, to_date=None):
 
         # Get meetings where user is applicant or council planner
         meetings = frappe.get_all(
-            "Pre-Application Meeting",
+            "Council Meeting",
             filters=filters,
             fields=[
                 "name", "request", "meeting_type", "status", "scheduled_start", "scheduled_end",
@@ -2304,7 +2334,7 @@ def get_user_meetings(status=None, from_date=None, to_date=None):
         # Filter for user's meetings (permission check)
         user_meetings = []
         for meeting in meetings:
-            meeting_doc = frappe.get_doc("Pre-Application Meeting", meeting.name)
+            meeting_doc = frappe.get_doc("Council Meeting", meeting.name)
             if meeting_doc.has_permission("read"):
                 # Get request number
                 request_doc = frappe.get_doc("Request", meeting.request)
@@ -5480,13 +5510,13 @@ def load_request_type_config(request_type_name):
 # ============================================================
 
 @frappe.whitelist()
-def get_meeting_config(council_code, meeting_type="Pre-Application Meeting"):
+def get_meeting_config(council_code, meeting_type="Council Meeting"):
 	"""
 	Get meeting configuration for a specific council and meeting type
 
 	Args:
 		council_code: Council code (e.g., 'TYT', 'AKL')
-		meeting_type: Type of meeting (default: 'Pre-Application Meeting')
+		meeting_type: Type of meeting (default: 'Council Meeting')
 
 	Returns:
 		dict: Meeting configuration including duration, buffer time, etc.
@@ -5521,7 +5551,7 @@ def get_meeting_config(council_code, meeting_type="Pre-Application Meeting"):
 
 
 @frappe.whitelist()
-def get_available_meeting_slots(council_code, meeting_type="Pre-Application Meeting", start_date=None, end_date=None, duration_minutes=None):
+def get_available_meeting_slots(council_code, meeting_type="Council Meeting", start_date=None, end_date=None, duration_minutes=None):
 	"""
 	Get available meeting time slots for a council based on business hours and existing bookings
 
@@ -5929,7 +5959,7 @@ def get_spisc_summary_data(request_id):
 		})
 
 		# Get meetings count
-		meetings_count = frappe.db.count("Pre-Application Meeting", {
+		meetings_count = frappe.db.count("Council Meeting", {
 			"request": request_id
 		})
 
