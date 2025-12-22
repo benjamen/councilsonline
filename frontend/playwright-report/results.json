@@ -9,7 +9,7 @@
     "globalTimeout": 0,
     "grep": {},
     "grepInvert": null,
-    "maxFailures": 3,
+    "maxFailures": 0,
     "metadata": {
       "actualWorkers": 1
     },
@@ -93,14 +93,14 @@
       "specs": [],
       "suites": [
         {
-          "title": "BUG-001: Project Task Autoname (E2E)",
+          "title": "BUG-003: SPISC Application Draft Save (E2E)",
           "file": "e2e/regression-bugs-v1.3.spec.js",
-          "line": 21,
+          "line": 237,
           "column": 6,
           "specs": [
             {
-              "title": "should create tasks from template without duplicate errors",
-              "ok": false,
+              "title": "should save draft SPISC request without validation error",
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -113,427 +113,33 @@
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 10912,
-                      "error": {
-                        "message": "TimeoutError: page.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[name=\"usr\"]')\u001b[22m\n",
-                        "stack": "TimeoutError: page.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[name=\"usr\"]')\u001b[22m\n\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js:27:14",
-                        "location": {
-                          "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js",
-                          "column": 14,
-                          "line": 27
-                        },
-                        "snippet": "  25 | \t\t// Login as council staff\n  26 | \t\tawait page.goto('/login');\n> 27 | \t\tawait page.fill('[name=\"usr\"]', 'Administrator');\n     | \t\t           ^\n  28 | \t\tawait page.fill('[name=\"pwd\"]', 'admin');\n  29 | \t\tawait page.click('button[type=\"submit\"]');\n  30 | \t\tawait page.waitForLoadState('networkidle');"
-                      },
-                      "errors": [
+                      "status": "passed",
+                      "duration": 9549,
+                      "errors": [],
+                      "stdout": [
                         {
-                          "location": {
-                            "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js",
-                            "column": 14,
-                            "line": 27
-                          },
-                          "message": "TimeoutError: page.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[name=\"usr\"]')\u001b[22m\n\n\n  25 | \t\t// Login as council staff\n  26 | \t\tawait page.goto('/login');\n> 27 | \t\tawait page.fill('[name=\"usr\"]', 'Administrator');\n     | \t\t           ^\n  28 | \t\tawait page.fill('[name=\"pwd\"]', 'admin');\n  29 | \t\tawait page.click('button[type=\"submit\"]');\n  30 | \t\tawait page.waitForLoadState('networkidle');\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js:27:14"
+                          "text": "✓ BUG-003: No fetch_from error (other validation may exist)\n"
                         }
                       ],
-                      "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-12-22T00:26:06.665Z",
+                      "startTime": "2025-12-22T00:29:55.144Z",
                       "annotations": [],
                       "attachments": [
                         {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-45d46-te-without-duplicate-errors-chromium-desktop/test-failed-1.png"
-                        },
-                        {
                           "name": "video",
                           "contentType": "video/webm",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-45d46-te-without-duplicate-errors-chromium-desktop/video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-45d46-te-without-duplicate-errors-chromium-desktop/error-context.md"
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-a561c-st-without-validation-error-chromium-desktop/video.webm"
                         }
-                      ],
-                      "errorLocation": {
-                        "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js",
-                        "column": 14,
-                        "line": 27
-                      }
+                      ]
                     }
                   ],
-                  "status": "unexpected"
-                }
-              ],
-              "id": "cd5021c0521f870e5876-25f696d83cd844ed61fa",
-              "file": "e2e/regression-bugs-v1.3.spec.js",
-              "line": 22,
-              "column": 2
-            },
-            {
-              "title": "should display unique task names in Project Task list view",
-              "ok": false,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium-desktop",
-                  "projectName": "chromium-desktop",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 10975,
-                      "error": {
-                        "message": "TimeoutError: page.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[name=\"usr\"]')\u001b[22m\n",
-                        "stack": "TimeoutError: page.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[name=\"usr\"]')\u001b[22m\n\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js:76:14",
-                        "location": {
-                          "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js",
-                          "column": 14,
-                          "line": 76
-                        },
-                        "snippet": "  74 | \t\t// Login\n  75 | \t\tawait page.goto('/login');\n> 76 | \t\tawait page.fill('[name=\"usr\"]', 'Administrator');\n     | \t\t           ^\n  77 | \t\tawait page.fill('[name=\"pwd\"]', 'admin');\n  78 | \t\tawait page.click('button[type=\"submit\"]');\n  79 | \t\tawait page.waitForLoadState('networkidle');"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js",
-                            "column": 14,
-                            "line": 76
-                          },
-                          "message": "TimeoutError: page.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[name=\"usr\"]')\u001b[22m\n\n\n  74 | \t\t// Login\n  75 | \t\tawait page.goto('/login');\n> 76 | \t\tawait page.fill('[name=\"usr\"]', 'Administrator');\n     | \t\t           ^\n  77 | \t\tawait page.fill('[name=\"pwd\"]', 'admin');\n  78 | \t\tawait page.click('button[type=\"submit\"]');\n  79 | \t\tawait page.waitForLoadState('networkidle');\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js:76:14"
-                        }
-                      ],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-12-22T00:26:17.911Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-33160-s-in-Project-Task-list-view-chromium-desktop/test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-33160-s-in-Project-Task-list-view-chromium-desktop/video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-33160-s-in-Project-Task-list-view-chromium-desktop/error-context.md"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js",
-                        "column": 14,
-                        "line": 76
-                      }
-                    }
-                  ],
-                  "status": "unexpected"
-                }
-              ],
-              "id": "cd5021c0521f870e5876-11ce154e4b7aef159464",
-              "file": "e2e/regression-bugs-v1.3.spec.js",
-              "line": 73,
-              "column": 2
-            },
-            {
-              "title": "should create tasks from template without duplicate errors",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium-mobile",
-                  "projectName": "chromium-mobile",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "cd5021c0521f870e5876-3cb75342f01f90d65353",
-              "file": "e2e/regression-bugs-v1.3.spec.js",
-              "line": 22,
-              "column": 2
-            },
-            {
-              "title": "should display unique task names in Project Task list view",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium-mobile",
-                  "projectName": "chromium-mobile",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "cd5021c0521f870e5876-57f5b8b9952e6e8d157d",
-              "file": "e2e/regression-bugs-v1.3.spec.js",
-              "line": 73,
-              "column": 2
-            }
-          ]
-        },
-        {
-          "title": "BUG-002: Council Meeting DocType (E2E)",
-          "file": "e2e/regression-bugs-v1.3.spec.js",
-          "line": 105,
-          "column": 6,
-          "specs": [
-            {
-              "title": "should load Council Meeting list page without 404",
-              "ok": false,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium-desktop",
-                  "projectName": "chromium-desktop",
-                  "results": [
-                    {
-                      "workerIndex": 2,
-                      "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 10724,
-                      "error": {
-                        "message": "TimeoutError: page.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[name=\"usr\"]')\u001b[22m\n",
-                        "stack": "TimeoutError: page.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[name=\"usr\"]')\u001b[22m\n\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js:109:14",
-                        "location": {
-                          "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js",
-                          "column": 14,
-                          "line": 109
-                        },
-                        "snippet": "  107 | \t\t// Login\n  108 | \t\tawait page.goto('/login');\n> 109 | \t\tawait page.fill('[name=\"usr\"]', 'Administrator');\n      | \t\t           ^\n  110 | \t\tawait page.fill('[name=\"pwd\"]', 'admin');\n  111 | \t\tawait page.click('button[type=\"submit\"]');\n  112 | \t\tawait page.waitForLoadState('networkidle');"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js",
-                            "column": 14,
-                            "line": 109
-                          },
-                          "message": "TimeoutError: page.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[name=\"usr\"]')\u001b[22m\n\n\n  107 | \t\t// Login\n  108 | \t\tawait page.goto('/login');\n> 109 | \t\tawait page.fill('[name=\"usr\"]', 'Administrator');\n      | \t\t           ^\n  110 | \t\tawait page.fill('[name=\"pwd\"]', 'admin');\n  111 | \t\tawait page.click('button[type=\"submit\"]');\n  112 | \t\tawait page.waitForLoadState('networkidle');\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js:109:14"
-                        }
-                      ],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-12-22T00:26:29.805Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-85198-eting-list-page-without-404-chromium-desktop/test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-85198-eting-list-page-without-404-chromium-desktop/video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-85198-eting-list-page-without-404-chromium-desktop/error-context.md"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js",
-                        "column": 14,
-                        "line": 109
-                      }
-                    }
-                  ],
-                  "status": "unexpected"
-                }
-              ],
-              "id": "cd5021c0521f870e5876-7ed1db8a66ba5986f717",
-              "file": "e2e/regression-bugs-v1.3.spec.js",
-              "line": 106,
-              "column": 2
-            },
-            {
-              "title": "should create new Council Meeting successfully",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium-desktop",
-                  "projectName": "chromium-desktop",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "cd5021c0521f870e5876-9812723c1817d3e3324c",
-              "file": "e2e/regression-bugs-v1.3.spec.js",
-              "line": 135,
-              "column": 2
-            },
-            {
-              "title": "should call book_council_meeting API successfully",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium-desktop",
-                  "projectName": "chromium-desktop",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "cd5021c0521f870e5876-fce937492a71f1dfb8b6",
-              "file": "e2e/regression-bugs-v1.3.spec.js",
-              "line": 165,
-              "column": 2
-            },
-            {
-              "title": "should not have Pre-Application Meeting references",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium-desktop",
-                  "projectName": "chromium-desktop",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "cd5021c0521f870e5876-1434a57b8c5914c77234",
-              "file": "e2e/regression-bugs-v1.3.spec.js",
-              "line": 209,
-              "column": 2
-            },
-            {
-              "title": "should load Council Meeting list page without 404",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium-mobile",
-                  "projectName": "chromium-mobile",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "cd5021c0521f870e5876-10d703bcc163f9a64635",
-              "file": "e2e/regression-bugs-v1.3.spec.js",
-              "line": 106,
-              "column": 2
-            },
-            {
-              "title": "should create new Council Meeting successfully",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium-mobile",
-                  "projectName": "chromium-mobile",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "cd5021c0521f870e5876-26d69bcece5157f30f50",
-              "file": "e2e/regression-bugs-v1.3.spec.js",
-              "line": 135,
-              "column": 2
-            },
-            {
-              "title": "should call book_council_meeting API successfully",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium-mobile",
-                  "projectName": "chromium-mobile",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "cd5021c0521f870e5876-ded4d927c2f56f7cbb3e",
-              "file": "e2e/regression-bugs-v1.3.spec.js",
-              "line": 165,
-              "column": 2
-            },
-            {
-              "title": "should not have Pre-Application Meeting references",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium-mobile",
-                  "projectName": "chromium-mobile",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "cd5021c0521f870e5876-c9db09a51fece5a27ba0",
-              "file": "e2e/regression-bugs-v1.3.spec.js",
-              "line": 209,
-              "column": 2
-            }
-          ]
-        },
-        {
-          "title": "BUG-003: SPISC Application Draft Save (E2E)",
-          "file": "e2e/regression-bugs-v1.3.spec.js",
-          "line": 235,
-          "column": 6,
-          "specs": [
-            {
-              "title": "should save draft SPISC request without validation error",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium-desktop",
-                  "projectName": "chromium-desktop",
-                  "results": [],
-                  "status": "skipped"
+                  "status": "expected"
                 }
               ],
               "id": "cd5021c0521f870e5876-318151bd41a1ec9575fa",
               "file": "e2e/regression-bugs-v1.3.spec.js",
-              "line": 236,
+              "line": 238,
               "column": 2
             },
             {
@@ -542,18 +148,38 @@
               "tags": [],
               "tests": [
                 {
-                  "timeout": 60000,
+                  "timeout": 90000,
                   "annotations": [],
                   "expectedStatus": "passed",
                   "projectId": "chromium-desktop",
                   "projectName": "chromium-desktop",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5014,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-22T00:30:02.600Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-2b06d-t-name-correctly-after-save-chromium-desktop/video.webm"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "cd5021c0521f870e5876-e2b6181d6423681079d4",
               "file": "e2e/regression-bugs-v1.3.spec.js",
-              "line": 292,
+              "line": 294,
               "column": 2
             },
             {
@@ -567,13 +193,33 @@
                   "expectedStatus": "passed",
                   "projectId": "chromium-desktop",
                   "projectName": "chromium-desktop",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4450,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-22T00:30:07.629Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-ce4de-on-with-age-field-populated-chromium-desktop/video.webm"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "cd5021c0521f870e5876-6c7707bf8128c854454d",
               "file": "e2e/regression-bugs-v1.3.spec.js",
-              "line": 332,
+              "line": 334,
               "column": 2
             },
             {
@@ -582,18 +228,42 @@
               "tags": [],
               "tests": [
                 {
-                  "timeout": 60000,
+                  "timeout": 90000,
                   "annotations": [],
                   "expectedStatus": "passed",
                   "projectId": "chromium-mobile",
                   "projectName": "chromium-mobile",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10545,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✓ BUG-003: No fetch_from error (other validation may exist)\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-22T00:30:12.751Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-a561c-st-without-validation-error-chromium-mobile/video.webm"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "cd5021c0521f870e5876-77affcf651598adc5571",
               "file": "e2e/regression-bugs-v1.3.spec.js",
-              "line": 236,
+              "line": 238,
               "column": 2
             },
             {
@@ -602,18 +272,38 @@
               "tags": [],
               "tests": [
                 {
-                  "timeout": 60000,
+                  "timeout": 90000,
                   "annotations": [],
                   "expectedStatus": "passed",
                   "projectId": "chromium-mobile",
                   "projectName": "chromium-mobile",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4474,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-22T00:30:23.520Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-2b06d-t-name-correctly-after-save-chromium-mobile/video.webm"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "cd5021c0521f870e5876-9cfed5561b4a74b8e883",
               "file": "e2e/regression-bugs-v1.3.spec.js",
-              "line": 292,
+              "line": 294,
               "column": 2
             },
             {
@@ -627,61 +317,33 @@
                   "expectedStatus": "passed",
                   "projectId": "chromium-mobile",
                   "projectName": "chromium-mobile",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4722,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-22T00:30:25.736Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-ce4de-on-with-age-field-populated-chromium-mobile/video.webm"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
                 }
               ],
               "id": "cd5021c0521f870e5876-42ffbc9e97c52ef1b880",
               "file": "e2e/regression-bugs-v1.3.spec.js",
-              "line": 332,
-              "column": 2
-            }
-          ]
-        },
-        {
-          "title": "Regression Suite Summary",
-          "file": "e2e/regression-bugs-v1.3.spec.js",
-          "line": 371,
-          "column": 6,
-          "specs": [
-            {
-              "title": "should verify all critical DocTypes exist",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium-desktop",
-                  "projectName": "chromium-desktop",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "cd5021c0521f870e5876-a17f14baef36fa2a3577",
-              "file": "e2e/regression-bugs-v1.3.spec.js",
-              "line": 372,
-              "column": 2
-            },
-            {
-              "title": "should verify all critical DocTypes exist",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium-mobile",
-                  "projectName": "chromium-mobile",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "cd5021c0521f870e5876-f81b013c1730f3d007f9",
-              "file": "e2e/regression-bugs-v1.3.spec.js",
-              "line": 372,
+              "line": 334,
               "column": 2
             }
           ]
@@ -689,17 +351,13 @@
       ]
     }
   ],
-  "errors": [
-    {
-      "message": "Testing stopped early after 3 maximum allowed failures."
-    }
-  ],
+  "errors": [],
   "stats": {
-    "startTime": "2025-12-22T00:26:05.394Z",
-    "duration": 36225.805,
-    "expected": 0,
-    "skipped": 17,
-    "unexpected": 3,
+    "startTime": "2025-12-22T00:29:53.869Z",
+    "duration": 41301.028,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 0,
     "flaky": 0
   }
 }

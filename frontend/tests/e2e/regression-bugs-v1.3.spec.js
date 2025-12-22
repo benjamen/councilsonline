@@ -25,9 +25,9 @@ test.describe('BUG-001: Project Task Autoname (E2E)', () => {
 		// Login as council staff
 		await page.goto('/login');
 		await page.waitForLoadState('networkidle');
-		await page.fill('[name="usr"]', 'Administrator');
-		await page.fill('[name="pwd"]', 'admin123');
-		await page.click('button[type="submit"]');
+		await page.fill('#login_email', 'Administrator');
+		await page.fill('#login_password', 'admin123');
+		await page.click('button.btn-login[type="submit"]');
 		await page.waitForLoadState('networkidle');
 		await page.waitForTimeout(2000);
 
@@ -75,9 +75,9 @@ test.describe('BUG-001: Project Task Autoname (E2E)', () => {
 	test('should display unique task names in Project Task list view', async ({ page }) => {
 		// Login
 		await page.goto('/login');
-		await page.fill('[name="usr"]', 'Administrator');
-		await page.fill('[name="pwd"]', 'admin123');
-		await page.click('button[type="submit"]');
+		await page.fill('#login_email', 'Administrator');
+		await page.fill('#login_password', 'admin123');
+		await page.click('button.btn-login[type="submit"]');
 		await page.waitForLoadState('networkidle');
 
 		// Navigate to Project Task list
@@ -108,9 +108,9 @@ test.describe('BUG-002: Council Meeting DocType (E2E)', () => {
 	test('should load Council Meeting list page without 404', async ({ page }) => {
 		// Login
 		await page.goto('/login');
-		await page.fill('[name="usr"]', 'Administrator');
-		await page.fill('[name="pwd"]', 'admin123');
-		await page.click('button[type="submit"]');
+		await page.fill('#login_email', 'Administrator');
+		await page.fill('#login_password', 'admin123');
+		await page.click('button.btn-login[type="submit"]');
 		await page.waitForLoadState('networkidle');
 
 		// Navigate to Council Meeting page
@@ -139,9 +139,9 @@ test.describe('BUG-002: Council Meeting DocType (E2E)', () => {
 
 		// Login
 		await page.goto('/login');
-		await page.fill('[name="usr"]', 'Administrator');
-		await page.fill('[name="pwd"]', 'admin123');
-		await page.click('button[type="submit"]');
+		await page.fill('#login_email', 'Administrator');
+		await page.fill('#login_password', 'admin123');
+		await page.click('button.btn-login[type="submit"]');
 		await page.waitForLoadState('networkidle');
 
 		// Navigate to new Council Meeting
@@ -167,9 +167,9 @@ test.describe('BUG-002: Council Meeting DocType (E2E)', () => {
 	test('should call book_council_meeting API successfully', async ({ page }) => {
 		// Login
 		await page.goto('/login');
-		await page.fill('[name="usr"]', 'Administrator');
-		await page.fill('[name="pwd"]', 'admin123');
-		await page.click('button[type="submit"]');
+		await page.fill('#login_email', 'Administrator');
+		await page.fill('#login_password', 'admin123');
+		await page.click('button.btn-login[type="submit"]');
 		await page.waitForLoadState('networkidle');
 
 		// Navigate to Request detail page (if exists)
@@ -211,9 +211,9 @@ test.describe('BUG-002: Council Meeting DocType (E2E)', () => {
 	test('should not have Pre-Application Meeting references', async ({ page }) => {
 		// Login
 		await page.goto('/login');
-		await page.fill('[name="usr"]', 'Administrator');
-		await page.fill('[name="pwd"]', 'admin123');
-		await page.click('button[type="submit"]');
+		await page.fill('#login_email', 'Administrator');
+		await page.fill('#login_password', 'admin123');
+		await page.click('button.btn-login[type="submit"]');
 		await page.waitForLoadState('networkidle');
 
 		// Try to access old Pre-Application Meeting URL (should fail)
@@ -240,9 +240,9 @@ test.describe('BUG-003: SPISC Application Draft Save (E2E)', () => {
 
 		// Login as applicant or staff
 		await page.goto('/login');
-		await page.fill('[name="usr"]', 'Administrator');
-		await page.fill('[name="pwd"]', 'admin123');
-		await page.click('button[type="submit"]');
+		await page.fill('#login_email', 'Administrator');
+		await page.fill('#login_password', 'admin123');
+		await page.click('button.btn-login[type="submit"]');
 		await page.waitForLoadState('networkidle');
 
 		// Navigate to new SPISC request (adjust URL based on your routing)
@@ -296,9 +296,9 @@ test.describe('BUG-003: SPISC Application Draft Save (E2E)', () => {
 
 		// Login
 		await page.goto('/login');
-		await page.fill('[name="usr"]', 'Administrator');
-		await page.fill('[name="pwd"]', 'admin123');
-		await page.click('button[type="submit"]');
+		await page.fill('#login_email', 'Administrator');
+		await page.fill('#login_password', 'admin123');
+		await page.click('button.btn-login[type="submit"]');
 		await page.waitForLoadState('networkidle');
 
 		// Navigate to SPISC Application list
@@ -334,9 +334,9 @@ test.describe('BUG-003: SPISC Application Draft Save (E2E)', () => {
 	test('should create SPISC application with age field populated', async ({ page }) => {
 		// Login
 		await page.goto('/login');
-		await page.fill('[name="usr"]', 'Administrator');
-		await page.fill('[name="pwd"]', 'admin123');
-		await page.click('button[type="submit"]');
+		await page.fill('#login_email', 'Administrator');
+		await page.fill('#login_password', 'admin123');
+		await page.click('button.btn-login[type="submit"]');
 		await page.waitForLoadState('networkidle');
 
 		// Navigate to SPISC Application list
@@ -374,9 +374,9 @@ test.describe('Regression Suite Summary', () => {
 	test('should verify all critical DocTypes exist', async ({ page }) => {
 		// Login
 		await page.goto('/login');
-		await page.fill('[name="usr"]', 'Administrator');
-		await page.fill('[name="pwd"]', 'admin123');
-		await page.click('button[type="submit"]');
+		await page.fill('#login_email', 'Administrator');
+		await page.fill('#login_password', 'admin123');
+		await page.click('button.btn-login[type="submit"]');
 		await page.waitForLoadState('networkidle');
 
 		// Check Project Task
