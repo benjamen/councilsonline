@@ -777,7 +777,7 @@ def update_spisc_application(spisc_app, data):
             )
 
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist(allow_guest=True, methods=["POST"])
 @rate_limit(calls=10, period=60, guest_only=True)  # 10 drafts per minute for guests, unlimited for authenticated users
 def create_draft_request(data=None, current_step=None, total_steps=None):
     """
@@ -792,6 +792,10 @@ def create_draft_request(data=None, current_step=None, total_steps=None):
         dict: Created request details
     """
     try:
+        # Ensure this is a POST request
+        if frappe.request.method != "POST":
+            frappe.throw("This endpoint only accepts POST requests. Please use the form to create a draft request.", frappe.PermissionError)
+
         # Log incoming request for debugging
         frappe.logger().info(f"create_draft_request called - data type: {type(data)}, current_step: {current_step}")
         frappe.logger().info(f"create_draft_request - data value: {data}")
