@@ -154,14 +154,12 @@
    "fieldtype": "Column Break"
   },
   {
-   "fetch_from": "request.requester_email",
    "fieldname": "applicant_email",
    "fieldtype": "Data",
    "label": "Email",
    "read_only": 1
   },
   {
-   "fetch_from": "request.requester_phone",
    "fieldname": "applicant_phone",
    "fieldtype": "Data",
    "label": "Mobile Number",

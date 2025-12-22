@@ -591,6 +591,8 @@ def create_spisc_application(request_name, data):
 
         # Manually populate fields (removed invalid fetch_from)
         "applicant_name": request_doc.requester_name,  # Virtual @property from Request
+        "applicant_email": request_doc.requester_email,  # Virtual @property from Request
+        "applicant_phone": request_doc.requester_phone,  # Direct field from Request
         "applicant_age_display": str(age_value) if age_value else "",
         "age": age_value,
 
