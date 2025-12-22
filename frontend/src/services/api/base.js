@@ -112,45 +112,77 @@ export class BaseAPIClient {
 	 * @returns {Promise<Object>} File document
 	 */
 	async uploadFile(file, options = {}) {
-		try {
-			const formData = new FormData()
-			formData.append("file", file)
+		const maxRetries = 3
+		const retryDelay = 1000 // Start with 1 second
 
-			if (options.doctype) formData.append("doctype", options.doctype)
-			if (options.docname) formData.append("docname", options.docname)
-			if (options.fieldname) formData.append("fieldname", options.fieldname)
-			if (options.is_private !== undefined) {
-				formData.append("is_private", options.is_private ? "1" : "0")
+		for (let attempt = 0; attempt <= maxRetries; attempt++) {
+			try {
+				const formData = new FormData()
+				formData.append("file", file)
+
+				if (options.doctype) formData.append("doctype", options.doctype)
+				if (options.docname) formData.append("docname", options.docname)
+				if (options.fieldname) formData.append("fieldname", options.fieldname)
+				if (options.is_private !== undefined) {
+					formData.append("is_private", options.is_private ? "1" : "0")
+				}
+
+				const headers = {}
+
+				// Add CSRF token if available
+				if (window.csrf_token) {
+					headers["X-Frappe-CSRF-Token"] = window.csrf_token
+				}
+
+				const response = await fetch("/api/method/upload_file", {
+					method: "POST",
+					headers: headers,
+					credentials: "include",
+					body: formData,
+				})
+
+				if (!response.ok) {
+					const errorData = await response.json().catch(() => ({}))
+
+					// Check if it's a file not found error (OSError) that can be retried
+					if (response.status === 500 && errorData.exc_type === "OSError" && attempt < maxRetries) {
+						const waitTime = retryDelay * Math.pow(2, attempt) // Exponential backoff
+						console.log(`File upload failed (attempt ${attempt + 1}/${maxRetries + 1}). Retrying in ${waitTime}ms...`)
+						await new Promise(resolve => setTimeout(resolve, waitTime))
+						continue // Retry
+					}
+
+					throw new Error(`Upload failed (${response.status}): ${errorData.exception || response.statusText}`)
+				}
+
+				const data = await response.json()
+
+				if (data.exc) {
+					// Check if it's an OSError that can be retried
+					if (data.exc_type === "OSError" && attempt < maxRetries) {
+						const waitTime = retryDelay * Math.pow(2, attempt)
+						console.log(`File upload failed with OSError (attempt ${attempt + 1}/${maxRetries + 1}). Retrying in ${waitTime}ms...`)
+						await new Promise(resolve => setTimeout(resolve, waitTime))
+						continue // Retry
+					}
+					throw new Error(data.exc)
+				}
+
+				// Success - return the uploaded file
+				return data.message
+
+			} catch (error) {
+				// If this is the last attempt, throw the error
+				if (attempt === maxRetries) {
+					this.handleError(error)
+					throw error
+				}
+
+				// For other errors on non-final attempts, retry
+				const waitTime = retryDelay * Math.pow(2, attempt)
+				console.log(`Upload error (attempt ${attempt + 1}/${maxRetries + 1}): ${error.message}. Retrying in ${waitTime}ms...`)
+				await new Promise(resolve => setTimeout(resolve, waitTime))
 			}
-
-			const headers = {}
-
-			// Add CSRF token if available
-			if (window.csrf_token) {
-				headers["X-Frappe-CSRF-Token"] = window.csrf_token
-			}
-
-			const response = await fetch("/api/method/upload_file", {
-				method: "POST",
-				headers: headers,
-				credentials: "include",
-				body: formData,
-			})
-
-			if (!response.ok) {
-				throw new Error(`Upload failed: ${response.statusText}`)
-			}
-
-			const data = await response.json()
-
-			if (data.exc) {
-				throw new Error(data.exc)
-			}
-
-			return data.message
-		} catch (error) {
-			this.handleError(error)
-			throw error
 		}
 	}
 }

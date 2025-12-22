@@ -68,7 +68,7 @@
           <div class="grid md:grid-cols-5 gap-4">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
-              <Input v-model="searchQuery" placeholder="Request number, property..." />
+              <Input v-model="searchQuery" placeholder="Request number, address..." />
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Council</label>
@@ -126,7 +126,7 @@
                     Applicant
                   </th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Property
+                    Address
                   </th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Status
