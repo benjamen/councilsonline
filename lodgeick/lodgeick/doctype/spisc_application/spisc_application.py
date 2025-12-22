@@ -8,8 +8,37 @@ from lodgeick.utils.application_sync import sync_to_request
 
 
 class SPISCApplication(Document):
+	def onload(self):
+		"""Auto-populate fields from Request when loading for display"""
+		if self.request:
+			try:
+				request_doc = frappe.get_doc("Request", self.request)
+
+				# Populate fields that were removed from fetch_from (virtual properties)
+				if not self.applicant_name:
+					self.applicant_name = request_doc.requester_name
+				if not self.applicant_email:
+					self.applicant_email = request_doc.requester_email
+				if not self.applicant_phone:
+					self.applicant_phone = request_doc.requester_phone
+			except Exception as e:
+				frappe.log_error(
+					message=f"Failed to populate applicant fields from Request: {str(e)}",
+					title=f"SPISC Application {self.name} - Auto-populate Error"
+				)
+
 	def validate(self):
 		"""Validate SPISC application before saving"""
+		# Ensure applicant fields are populated from Request before saving
+		if self.request:
+			try:
+				request_doc = frappe.get_doc("Request", self.request)
+				self.applicant_name = request_doc.requester_name
+				self.applicant_email = request_doc.requester_email
+				self.applicant_phone = request_doc.requester_phone
+			except Exception:
+				pass  # Don't block validation if Request doesn't exist
+
 		self.calculate_age()
 		self.set_full_address_display()
 		self.check_eligibility_criteria()
@@ -164,10 +193,11 @@ class SPISCApplication(Document):
 
 	def get_display_description(self):
 		"""Get brief description for Request list view"""
-		# Get applicant name from parent Request
+		# Get applicant name from parent Request (uses virtual property)
 		applicant_name = "Unknown"
 		if self.request:
-			applicant_name = frappe.db.get_value("Request", self.request, "requester_name") or "Unknown"
+			request = frappe.get_doc("Request", self.request)
+			applicant_name = request.requester_name or "Unknown"
 
 		desc = f"{applicant_name} - SPISC Application"
 		if self.age:
