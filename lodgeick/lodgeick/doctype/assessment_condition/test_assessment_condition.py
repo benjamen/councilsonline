@@ -15,7 +15,7 @@ class TestAssessmentCondition(FrappeTestCase):
 				"name": "TEST-ASSESS-001",
 				"request": "TEST-REQ-001"
 			})
-			project.insert(ignore_permissions=True)
+			project.insert(ignore_permissions=True, ignore_if_duplicate=True)
 
 	def test_create_condition(self):
 		"""Test basic condition creation"""

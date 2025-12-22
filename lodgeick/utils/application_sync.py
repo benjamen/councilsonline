@@ -146,10 +146,11 @@ def get_spisc_address(doc):
 
 def get_spisc_description(doc):
 	"""Build brief description for SPISC Application"""
-	# Get applicant name from parent Request
+	# Get applicant name from parent Request (uses virtual property if available)
 	applicant_name = "Unknown"
 	if doc.request:
-		applicant_name = frappe.db.get_value("Request", doc.request, "requester_name") or "Unknown"
+		request = frappe.get_doc("Request", doc.request)
+		applicant_name = request.requester_name or "Unknown"
 
 	desc = f"{applicant_name} - SPISC Application"
 	if doc.age:
@@ -159,10 +160,11 @@ def get_spisc_description(doc):
 
 def get_resource_consent_description(doc):
 	"""Build brief description for Resource Consent Application"""
-	# Get applicant name from parent Request
+	# Get applicant name from parent Request (uses virtual property if available)
 	applicant_name = "Unknown"
 	if doc.request:
-		applicant_name = frappe.db.get_value("Request", doc.request, "requester_name") or "Unknown"
+		request = frappe.get_doc("Request", doc.request)
+		applicant_name = request.requester_name or "Unknown"
 
 	desc = f"{applicant_name} - Resource Consent"
 
@@ -181,10 +183,11 @@ def get_resource_consent_description(doc):
 
 def get_building_consent_description(doc):
 	"""Build brief description for Building Consent Application"""
-	# Get applicant name from parent Request
+	# Get applicant name from parent Request (uses virtual property if available)
 	applicant_name = "Unknown"
 	if doc.request:
-		applicant_name = frappe.db.get_value("Request", doc.request, "requester_name") or "Unknown"
+		request = frappe.get_doc("Request", doc.request)
+		applicant_name = request.requester_name or "Unknown"
 
 	desc = f"{applicant_name} - Building Consent"
 

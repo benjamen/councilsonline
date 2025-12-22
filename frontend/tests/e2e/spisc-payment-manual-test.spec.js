@@ -9,7 +9,7 @@ import { login } from './fixtures/auth.js'
 import { startSPISCApplication } from './fixtures/request-flow.js'
 import { fillPersonalInformation, fillHouseholdInformation } from './fixtures/spisc-data.js'
 
-const BASE_URL = 'http://localhost:8080'
+const BASE_URL = 'http://localhost:8090'
 
 test.describe('SPISC Payment Fields Manual Test', () => {
     test.setTimeout(240000) // 4 minutes

@@ -15,18 +15,18 @@ export async function login(page, options = {}) {
     const {
         username = 'Administrator',
         password = 'admin123',
-        baseUrl = 'http://localhost:8080'
+        baseUrl = 'http://localhost:8090'
     } = options
 
     console.log(`[Auth] Logging in as ${username}`)
 
     // Navigate to frontend login page
-    await page.goto(`${baseUrl}/frontend/login`, { waitUntil: 'networkidle' })
-    await page.waitForTimeout(1000)
+    await page.goto(`${baseUrl}/frontend/account/login`, { waitUntil: 'networkidle' })
+    await page.waitForTimeout(2000)
 
-    // Check if already logged in (redirects to home)
+    // Check if already logged in (redirects to dashboard)
     const currentUrl = page.url()
-    if (!currentUrl.includes('/login')) {
+    if (currentUrl.includes('/dashboard') || currentUrl.includes('/home')) {
         console.log('[Auth] Already logged in')
         return true
     }
@@ -55,15 +55,15 @@ export async function login(page, options = {}) {
     console.log('[Auth] Submitted login form')
 
     // Wait for redirect
-    await page.waitForTimeout(3000)
+    await page.waitForTimeout(5000)
 
     // Verify login succeeded
     const finalUrl = page.url()
-    if (finalUrl.includes('/login')) {
+    if (finalUrl.includes('/account/login') || finalUrl.includes('/login')) {
         throw new Error('Login failed - still on login page')
     }
 
-    console.log('[Auth] Login successful')
+    console.log('[Auth] Login successful - redirected to:', finalUrl)
     return true
 }
 
@@ -91,22 +91,22 @@ export async function logout(page) {
  * @param {Object} options - Login options
  */
 export async function ensureLoggedIn(page, options = {}) {
-    const baseUrl = options.baseUrl || 'http://localhost:8080'
+    const baseUrl = options.baseUrl || 'http://localhost:8090'
 
     // Check if we're on a login page
     const currentUrl = page.url()
-    if (currentUrl.includes('/login')) {
+    if (currentUrl.includes('/account/login') || currentUrl.includes('/login')) {
         await login(page, options)
     } else {
         // Try to access a protected page to verify login status
         console.log('[Auth] Checking login status')
-        await page.goto(`${baseUrl}/frontend`, { waitUntil: 'networkidle' })
-        await page.waitForTimeout(1000)
+        await page.goto(`${baseUrl}/frontend/dashboard`, { waitUntil: 'networkidle' })
+        await page.waitForTimeout(2000)
 
-        if (page.url().includes('/login')) {
+        if (page.url().includes('/account/login') || page.url().includes('/login')) {
             await login(page, options)
         } else {
-            console.log('[Auth] Already logged in')
+            console.log('[Auth] Already logged in - at:', page.url())
         }
     }
 }

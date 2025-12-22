@@ -9,8 +9,8 @@ import { test, expect } from '@playwright/test'
 import { login } from './fixtures/auth.js'
 import { startSPISCApplication } from './fixtures/request-flow.js'
 
-const BASE_URL = 'http://localhost:8080'
-const BACKEND_URL = 'http://localhost:8000'
+const BASE_URL = 'http://localhost:8090'
+const BACKEND_URL = 'http://localhost:8090'
 
 test.describe('SPISC Address Field Saving', () => {
     test.setTimeout(120000) // 2 minutes

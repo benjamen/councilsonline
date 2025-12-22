@@ -8,7 +8,7 @@
       @back="goBack"
     >
       <template #actions>
-        <StatusBadge v-if="request.data" :status="request.data.status" />
+        <StatusBadge v-if="request.data" :status="request.data.workflow_state" />
         <Dropdown v-if="request.data" :options="actionMenuOptions">
           <template #default="{ open }">
             <Button variant="outline" theme="gray">

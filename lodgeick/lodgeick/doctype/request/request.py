@@ -3,8 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
-from frappe.utils import now, add_days, getdate, date_diff, format_date
-from datetime import datetime, timedelta
+from frappe.utils import now, add_days, getdate
 
 
 class Request(Document):
@@ -28,12 +27,12 @@ class Request(Document):
 
     def validate(self):
         """Validation before saving"""
-        # 1. Set default status if not set
-        if not self.status:
-            self.status = "Draft"
+        # 1. Set default workflow_state if not set
+        if not self.workflow_state:
+            self.workflow_state = "Draft"
 
         # 2. Validate council and request type association (skip for drafts)
-        if self.status != "Draft":
+        if self.workflow_state != "Draft":
             self.validate_council_license()
             self.validate_request_type_for_council()
 
@@ -99,8 +98,9 @@ class Request(Document):
         if not self.submitted_date:
             self.submitted_date = getdate()
 
-        # Set status to Submitted
-        self.status = "Submitted"
+        # Set workflow_state to Submitted
+        if not self.workflow_state or self.workflow_state == "Draft":
+            self.workflow_state = "Submitted"
 
     def on_submit(self):
         """Actions when document is submitted"""
@@ -115,18 +115,23 @@ class Request(Document):
 
     def on_update_after_submit(self):
         """Actions after document is updated post-submission"""
-        # Track status changes
-        if self.has_value_changed("status"):
-            old_status = self.get_doc_before_save().status if self.get_doc_before_save() else None
-            self.add_status_history(old_status, self.status, "Status updated")
-
         # Handle workflow state changes
         if self.has_value_changed("workflow_state"):
             old_state = self.get_doc_before_save().workflow_state if self.get_doc_before_save() else None
             self.handle_workflow_state_change(old_state, self.workflow_state)
 
-        # If status changed to Acknowledged, set acknowledged date
-        if self.status == "Acknowledged" and not self.acknowledged_date:
+            # Add to status history
+            self.add_status_history(old_state, self.workflow_state, "Workflow state changed")
+
+            # Emit real-time notification for workflow state change
+            self.emit_realtime_update("workflow_state_changed", {
+                "old_state": old_state,
+                "new_state": self.workflow_state,
+                "request_number": self.name
+            })
+
+        # If workflow_state changed to Acknowledged, set acknowledged date
+        if self.workflow_state == "Acknowledged" and not self.acknowledged_date:
             self.acknowledged_date = getdate()
             self.calculate_target_completion_date()
 
@@ -147,15 +152,88 @@ class Request(Document):
         self.target_completion_date = add_working_days(start_date, sla_days)
 
     def calculate_total_fees(self):
-        """Calculate total fees from fee line items"""
+        """Calculate total fees from fee line items and set computed fields"""
+        # Calculate subtotal from fees
         total = 0
         if self.fees:
             for fee in self.fees:
                 total += fee.total or 0
 
+        # Set the computed values (these will also be available as properties)
+        self._total_fees_excl_gst = total
+        self._gst_amount = total * 0.15  # 15% GST
+        self._total_fees_incl_gst = total + self._gst_amount
+
+        # Also set the actual fields for now (backward compatibility)
         self.total_fees_excl_gst = total
-        self.gst_amount = total * 0.15  # 15% GST
+        self.gst_amount = total * 0.15
         self.total_fees_incl_gst = total + self.gst_amount
+
+    @property
+    def computed_total_fees_excl_gst(self):
+        """Computed property for total fees excluding GST"""
+        if hasattr(self, '_total_fees_excl_gst'):
+            return self._total_fees_excl_gst
+
+        total = 0
+        if self.fees:
+            for fee in self.fees:
+                total += fee.total or 0
+        return total
+
+    @property
+    def computed_gst_amount(self):
+        """Computed property for GST amount"""
+        if hasattr(self, '_gst_amount'):
+            return self._gst_amount
+        return self.computed_total_fees_excl_gst * 0.15
+
+    @property
+    def computed_total_fees_incl_gst(self):
+        """Computed property for total fees including GST"""
+        if hasattr(self, '_total_fees_incl_gst'):
+            return self._total_fees_incl_gst
+        return self.computed_total_fees_excl_gst + self.computed_gst_amount
+
+    @property
+    def requester_name(self):
+        """Get requester name from User document"""
+        if self.requester:
+            return frappe.db.get_value("User", self.requester, "full_name")
+        return None
+
+    @property
+    def requester_email(self):
+        """Get requester email from User document"""
+        if self.requester:
+            return frappe.db.get_value("User", self.requester, "email")
+        return None
+
+    @property
+    def agent_name(self):
+        """Get agent name from User document"""
+        if self.agent:
+            return frappe.db.get_value("User", self.agent, "full_name")
+        return None
+
+    @property
+    def agent_email(self):
+        """Get agent email from User document"""
+        if self.agent:
+            return frappe.db.get_value("User", self.agent, "email")
+        return None
+
+    @property
+    def is_overdue(self):
+        """Calculate if request is overdue based on target completion date"""
+        if not self.target_completion_date:
+            return False
+        return getdate() > getdate(self.target_completion_date)
+
+    @property
+    def status(self):
+        """Backward compatibility property - returns workflow_state"""
+        return self.workflow_state
 
     def add_status_history(self, from_status, to_status, reason=None):
         """Add entry to status history"""
@@ -169,7 +247,9 @@ class Request(Document):
 
     def send_acknowledgment_email(self):
         """Queue acknowledgment email to be sent in background (non-blocking)"""
-        if not self.requester_email:
+        # Get requester email from User document
+        requester_email = frappe.db.get_value("User", self.requester, "email") if self.requester else None
+        if not requester_email:
             return
 
         # Enqueue email to background job - prevents blocking request processing
@@ -179,15 +259,12 @@ class Request(Document):
             timeout=300,
             is_async=True,
             request=self.name,
-            recipient=self.requester_email
+            recipient=requester_email
         )
         frappe.logger().info(f"Acknowledgment email queued for {self.name}")
 
     def handle_workflow_state_change(self, old_state, new_state):
         """Handle business logic for workflow state transitions"""
-
-        # Add status history tracking
-        self.add_status_history(old_state, new_state, "Workflow state changed")
 
         # State: Acknowledged - Create assessment project
         if new_state == "Acknowledged":
@@ -216,10 +293,6 @@ class Request(Document):
                 self.db_set("actual_completion_date", completion_date, update_modified=False)
                 self.actual_completion_date = completion_date
 
-            # Update status field for backward compatibility
-            self.db_set("status", new_state, update_modified=False)
-            self.status = new_state
-
             indicator = "green" if new_state.startswith("Approved") or new_state == "Completed" else "red"
             frappe.msgprint(
                 f"Request {new_state.lower()}.",
@@ -229,15 +302,42 @@ class Request(Document):
 
         # State: Withdrawn/Cancelled - Mark as closed
         elif new_state in ["Withdrawn", "Cancelled"]:
-            # Update status field for backward compatibility
-            self.db_set("status", new_state, update_modified=False)
-            self.status = new_state
-
             frappe.msgprint(
                 f"Request {new_state.lower()}.",
                 alert=True,
                 indicator="red"
             )
+
+    def emit_realtime_update(self, event_type, data):
+        """Emit real-time update via socket.io to all users watching this request"""
+        try:
+            # Publish to request-specific channel
+            frappe.publish_realtime(
+                event=f"request_update:{self.name}",
+                message={
+                    "event_type": event_type,
+                    "data": data,
+                    "timestamp": now()
+                },
+                doctype="Request",
+                docname=self.name
+            )
+
+            # Also publish to requester's personal channel
+            if self.requester:
+                frappe.publish_realtime(
+                    event="request_update",
+                    message={
+                        "event_type": event_type,
+                        "request": self.name,
+                        "data": data,
+                        "timestamp": now()
+                    },
+                    user=self.requester
+                )
+        except Exception as e:
+            # Don't fail the transaction if real-time notification fails
+            frappe.log_error(f"Failed to emit real-time update for {self.name}: {str(e)}")
 
     def auto_create_assessment_project(self):
         """Auto-create assessment project when request is acknowledged"""
@@ -357,12 +457,12 @@ def is_public_holiday(date):
 
 
 @frappe.whitelist()
-def get_my_requests(status=None, page=1, page_size=20):
+def get_my_requests(workflow_state=None, page=1, page_size=20):
     """
     Get requests for current user with pagination support
 
     Args:
-        status: Filter by status (optional)
+        workflow_state: Filter by workflow state (optional)
         page: Page number (1-indexed, default: 1)
         page_size: Items per page (default: 20, max: 100)
 
@@ -383,8 +483,8 @@ def get_my_requests(status=None, page=1, page_size=20):
     offset = (page - 1) * page_size
 
     filters = {"requester": user}
-    if status:
-        filters["status"] = status
+    if workflow_state:
+        filters["workflow_state"] = workflow_state
 
     conditions = get_filter_conditions(filters)
 
@@ -398,7 +498,7 @@ def get_my_requests(status=None, page=1, page_size=20):
     # Use SQL JOIN to avoid N+1 query - fetch council name in single query
     requests = frappe.db.sql("""
         SELECT
-            r.name, r.request_number, r.status,
+            r.name, r.request_number, r.workflow_state,
             r.brief_description, r.submitted_date, r.target_completion_date,
             r.is_overdue, r.request_type, r.request_category, r.council, r.creation,
             c.council_name
@@ -452,7 +552,7 @@ def get_my_applications():
             "name",
             "request_number",
             "request_type",
-            "status",
+            "workflow_state",
             "council",
             "property_address",
             "brief_description",
@@ -554,14 +654,14 @@ def calculate_fees(request_type, building_value=None):
 
 
 @frappe.whitelist()
-def get_all_requests_for_staff(page=1, page_size=20, status=None, council=None):
+def get_all_requests_for_staff(page=1, page_size=20, workflow_state=None, council=None):
     """
     Get all requests for internal staff view with pagination
 
     Args:
         page: Page number (1-indexed, default: 1)
         page_size: Items per page (default: 20, max: 100)
-        status: Filter by status (optional)
+        workflow_state: Filter by workflow state (optional)
         council: Filter by council (optional)
 
     Returns:
@@ -574,8 +674,8 @@ def get_all_requests_for_staff(page=1, page_size=20, status=None, council=None):
 
     # Build filters
     filters = {}
-    if status:
-        filters["status"] = status
+    if workflow_state:
+        filters["workflow_state"] = workflow_state
     if council:
         filters["council"] = council
 
@@ -584,16 +684,16 @@ def get_all_requests_for_staff(page=1, page_size=20, status=None, council=None):
 
     # Use SQL JOIN to avoid N+1 query
     where_clause = "1=1"
-    if status:
-        where_clause += f" AND r.status = {frappe.db.escape(status)}"
+    if workflow_state:
+        where_clause += f" AND r.workflow_state = {frappe.db.escape(workflow_state)}"
     if council:
         where_clause += f" AND r.council = {frappe.db.escape(council)}"
 
     requests = frappe.db.sql(f"""
         SELECT
-            r.name, r.request_number, r.request_type, r.request_category,
-            r.brief_description, r.council, r.status, r.submitted_date,
-            r.target_completion_date, r.assigned_to, r.priority,
+            r.name, r.request_number, r.request_type,
+            r.brief_description, r.council, r.workflow_state, r.submitted_date,
+            r.target_completion_date, r.assigned_to,
             r.owner, r.creation, r.modified,
             c.council_name
         FROM `tabRequest` r
@@ -610,3 +710,143 @@ def get_all_requests_for_staff(page=1, page_size=20, status=None, council=None):
         "page_size": page_size,
         "total_pages": (total + page_size - 1) // page_size
     }
+
+
+@frappe.whitelist()
+def generate_invoice_pdf(request_name):
+    """
+    Generate invoice PDF for a request using Frappe's Print Format
+
+    Args:
+        request_name: Name of the Request document
+
+    Returns:
+        dict: Contains PDF file info or error
+    """
+    try:
+        request = frappe.get_doc("Request", request_name)
+
+        # Generate PDF using the Invoice print format
+        pdf = frappe.get_print(
+            "Request",
+            request_name,
+            print_format="Invoice",
+            as_pdf=True
+        )
+
+        # Save PDF as File attachment
+        file_name = f"Invoice_{request_name}.pdf"
+        file_doc = frappe.get_doc({
+            "doctype": "File",
+            "file_name": file_name,
+            "attached_to_doctype": "Request",
+            "attached_to_name": request_name,
+            "content": pdf,
+            "is_private": 1
+        })
+        file_doc.save(ignore_permissions=True)
+
+        return {
+            "success": True,
+            "file_url": file_doc.file_url,
+            "file_name": file_name
+        }
+
+    except Exception as e:
+        frappe.log_error(f"Error generating invoice PDF: {str(e)}", "Invoice PDF Generation")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@frappe.whitelist()
+def email_invoice(request_name, recipient_email=None):
+    """
+    Email invoice PDF to applicant or specified recipient
+
+    Args:
+        request_name: Name of the Request document
+        recipient_email: Optional email override (default: applicant email)
+
+    Returns:
+        dict: Success status
+    """
+    try:
+        request = frappe.get_doc("Request", request_name)
+        council = frappe.get_doc("Council", request.council)
+
+        # Determine recipient
+        if not recipient_email:
+            recipient_email = request.applicant_email or frappe.db.get_value("User", request.requester, "email")
+
+        if not recipient_email:
+            return {
+                "success": False,
+                "error": "No recipient email found"
+            }
+
+        # Generate PDF
+        pdf_result = generate_invoice_pdf(request_name)
+        if not pdf_result.get("success"):
+            return pdf_result
+
+        # Email subject and message
+        subject = f"Invoice for {request.request_type} Application - {request.name}"
+
+        message = f"""
+        <div style="font-family: Arial, sans-serif; max-width: 600px;">
+            <h2>Invoice for Your Application</h2>
+
+            <p>Dear {request.applicant_name or 'Applicant'},</p>
+
+            <p>Please find attached the invoice for your {request.request_type} application.</p>
+
+            <div style="background: #f8f9fa; padding: 15px; border-left: 4px solid #007bff; margin: 20px 0;">
+                <p style="margin: 5px 0;"><strong>Request Number:</strong> {request.name}</p>
+                <p style="margin: 5px 0;"><strong>Total Amount:</strong> ${request.total_fees_incl_gst or 0:.2f} (incl GST)</p>
+                <p style="margin: 5px 0;"><strong>Status:</strong> {request.payment_status or 'Pending'}</p>
+            </div>
+
+            <p>Payment can be made via:</p>
+            <ul>
+                <li>Online at our portal</li>
+                <li>Bank transfer (reference: {request.name})</li>
+                <li>In person at {council.council_name}</li>
+            </ul>
+
+            <p style="margin-top: 20px;">If you have any questions, please contact us at {council.contact_email}</p>
+
+            <p style="margin-top: 30px; font-size: 12px; color: #666;">
+                This is an automated message from {council.council_name}
+            </p>
+        </div>
+        """
+
+        # Send email with PDF attachment
+        frappe.sendmail(
+            recipients=[recipient_email],
+            subject=subject,
+            message=message,
+            attachments=[{
+                "fname": pdf_result["file_name"],
+                "fcontent": frappe.get_doc("File", {"file_url": pdf_result["file_url"]}).get_content()
+            }],
+            reference_doctype="Request",
+            reference_name=request_name
+        )
+
+        # Log in request
+        request.add_comment("Comment", f"Invoice emailed to {recipient_email}")
+
+        return {
+            "success": True,
+            "message": f"Invoice emailed to {recipient_email}"
+        }
+
+    except Exception as e:
+        frappe.log_error(f"Error emailing invoice: {str(e)}", "Invoice Email")
+        return {
+            "success": False,
+            "error": str(e)
+        }

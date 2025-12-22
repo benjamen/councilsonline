@@ -24,10 +24,12 @@ test.describe('BUG-001: Project Task Autoname (E2E)', () => {
 
 		// Login as council staff
 		await page.goto('/login');
+		await page.waitForLoadState('networkidle');
 		await page.fill('[name="usr"]', 'Administrator');
-		await page.fill('[name="pwd"]', 'admin');
+		await page.fill('[name="pwd"]', 'admin123');
 		await page.click('button[type="submit"]');
 		await page.waitForLoadState('networkidle');
+		await page.waitForTimeout(2000);
 
 		// Navigate to Assessment Project list
 		await page.goto('/app/assessment-project');
@@ -74,7 +76,7 @@ test.describe('BUG-001: Project Task Autoname (E2E)', () => {
 		// Login
 		await page.goto('/login');
 		await page.fill('[name="usr"]', 'Administrator');
-		await page.fill('[name="pwd"]', 'admin');
+		await page.fill('[name="pwd"]', 'admin123');
 		await page.click('button[type="submit"]');
 		await page.waitForLoadState('networkidle');
 
@@ -107,7 +109,7 @@ test.describe('BUG-002: Council Meeting DocType (E2E)', () => {
 		// Login
 		await page.goto('/login');
 		await page.fill('[name="usr"]', 'Administrator');
-		await page.fill('[name="pwd"]', 'admin');
+		await page.fill('[name="pwd"]', 'admin123');
 		await page.click('button[type="submit"]');
 		await page.waitForLoadState('networkidle');
 
@@ -138,7 +140,7 @@ test.describe('BUG-002: Council Meeting DocType (E2E)', () => {
 		// Login
 		await page.goto('/login');
 		await page.fill('[name="usr"]', 'Administrator');
-		await page.fill('[name="pwd"]', 'admin');
+		await page.fill('[name="pwd"]', 'admin123');
 		await page.click('button[type="submit"]');
 		await page.waitForLoadState('networkidle');
 
@@ -166,7 +168,7 @@ test.describe('BUG-002: Council Meeting DocType (E2E)', () => {
 		// Login
 		await page.goto('/login');
 		await page.fill('[name="usr"]', 'Administrator');
-		await page.fill('[name="pwd"]', 'admin');
+		await page.fill('[name="pwd"]', 'admin123');
 		await page.click('button[type="submit"]');
 		await page.waitForLoadState('networkidle');
 
@@ -210,7 +212,7 @@ test.describe('BUG-002: Council Meeting DocType (E2E)', () => {
 		// Login
 		await page.goto('/login');
 		await page.fill('[name="usr"]', 'Administrator');
-		await page.fill('[name="pwd"]', 'admin');
+		await page.fill('[name="pwd"]', 'admin123');
 		await page.click('button[type="submit"]');
 		await page.waitForLoadState('networkidle');
 
@@ -239,7 +241,7 @@ test.describe('BUG-003: SPISC Application Draft Save (E2E)', () => {
 		// Login as applicant or staff
 		await page.goto('/login');
 		await page.fill('[name="usr"]', 'Administrator');
-		await page.fill('[name="pwd"]', 'admin');
+		await page.fill('[name="pwd"]', 'admin123');
 		await page.click('button[type="submit"]');
 		await page.waitForLoadState('networkidle');
 
@@ -295,7 +297,7 @@ test.describe('BUG-003: SPISC Application Draft Save (E2E)', () => {
 		// Login
 		await page.goto('/login');
 		await page.fill('[name="usr"]', 'Administrator');
-		await page.fill('[name="pwd"]', 'admin');
+		await page.fill('[name="pwd"]', 'admin123');
 		await page.click('button[type="submit"]');
 		await page.waitForLoadState('networkidle');
 
@@ -333,7 +335,7 @@ test.describe('BUG-003: SPISC Application Draft Save (E2E)', () => {
 		// Login
 		await page.goto('/login');
 		await page.fill('[name="usr"]', 'Administrator');
-		await page.fill('[name="pwd"]', 'admin');
+		await page.fill('[name="pwd"]', 'admin123');
 		await page.click('button[type="submit"]');
 		await page.waitForLoadState('networkidle');
 
@@ -373,7 +375,7 @@ test.describe('Regression Suite Summary', () => {
 		// Login
 		await page.goto('/login');
 		await page.fill('[name="usr"]', 'Administrator');
-		await page.fill('[name="pwd"]', 'admin');
+		await page.fill('[name="pwd"]', 'admin123');
 		await page.click('button[type="submit"]');
 		await page.waitForLoadState('networkidle');
 

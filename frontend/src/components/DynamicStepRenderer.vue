@@ -115,8 +115,7 @@ import {
 import { ChevronUpIcon } from "@heroicons/vue/20/solid"
 import { computed, ref, watch } from "vue"
 import DynamicFieldRenderer from "./DynamicFieldRenderer.vue"
-// The import for the utility function is commented out to effectively disable the filter
-// import { isSectionVisible } from '../utils/conditionalLogic'
+import { isSectionVisible } from '../utils/conditionalLogic'
 
 const props = defineProps({
 	stepConfig: {

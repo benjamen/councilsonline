@@ -79,7 +79,9 @@ export interface Request {
 	request_number: string
 	request_type: string
 	request_category?: string
-	status: RequestStatus
+	workflow_state: RequestStatus
+	// Deprecated: Use workflow_state instead
+	status?: RequestStatus
 	requester: string
 	applicant_name?: string
 	council?: string
@@ -130,6 +132,8 @@ export interface SPISCApplication {
 	province?: string
 	monthly_income?: number
 	household_size?: number
+	workflow_state?: string
+	// Deprecated: Use workflow_state instead
 	status?: string
 	creation: string
 }
@@ -140,6 +144,8 @@ export interface ResourceConsentApplication {
 	activity_status?: string
 	consent_types?: ConsentType[]
 	property_details?: string
+	workflow_state?: string
+	// Deprecated: Use workflow_state instead
 	status?: string
 	creation: string
 }
@@ -153,6 +159,8 @@ export interface BuildingConsentApplication {
 	request: string
 	building_work_type?: string
 	property_details?: string
+	workflow_state?: string
+	// Deprecated: Use workflow_state instead
 	status?: string
 	creation: string
 }

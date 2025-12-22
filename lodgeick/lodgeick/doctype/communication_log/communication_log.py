@@ -28,15 +28,17 @@ class CommunicationLog(Document):
             if self.direction == "Outgoing":
                 self.sender = frappe.db.get_value("User", frappe.session.user, "email")
             else:
-                # Get applicant email from request
-                self.sender = frappe.db.get_value("Request", self.request, "requester_email")
+                # Get applicant email from request (uses virtual property)
+                request = frappe.get_doc("Request", self.request)
+                self.sender = request.requester_email
 
         if not self.recipient:
             if self.direction == "Incoming":
                 self.recipient = frappe.db.get_value("User", frappe.session.user, "email")
             else:
-                # Get applicant email from request
-                self.recipient = frappe.db.get_value("Request", self.request, "requester_email")
+                # Get applicant email from request (uses virtual property)
+                request = frappe.get_doc("Request", self.request)
+                self.recipient = request.requester_email
 
     def after_insert(self):
         """Actions after inserting communication log"""

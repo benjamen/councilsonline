@@ -8,9 +8,9 @@
       @back="goBack"
     >
       <template #actions>
-        <StatusBadge v-if="request.data" :status="request.data.status" />
+        <StatusBadge v-if="request.data" :status="request.data.workflow_state" />
         <Button
-          v-if="request.data?.status === 'Draft'"
+          v-if="request.data?.workflow_state === 'Draft'"
           @click="handleSubmitApplication"
           variant="solid"
           theme="blue"
@@ -59,7 +59,7 @@
               <div>
                 <label class="text-sm font-medium text-gray-500">Status</label>
                 <div class="mt-1">
-                  <StatusBadge :status="request.data.status" />
+                  <StatusBadge :status="request.data.workflow_state" />
                 </div>
               </div>
               <div>
@@ -551,7 +551,7 @@
 
             <div class="space-y-3">
               <Button
-                v-if="request.data.status === 'Draft'"
+                v-if="request.data.workflow_state === 'Draft'"
                 @click="handleEditDraft"
                 variant="solid"
                 theme="blue"
@@ -592,7 +592,7 @@
               </Button>
 
               <Button
-                v-if="request.data.status === 'Draft'"
+                v-if="request.data.workflow_state === 'Draft'"
                 @click="handleDeleteDraft"
                 variant="outline"
                 class="w-full justify-start text-red-600 hover:text-red-700"

@@ -109,6 +109,8 @@ after_install = "lodgeick.install.after_install"
 fixtures = [
 	{"dt": "Print Format", "filters": [["module", "=", "Lodgeick"]]},
 	{"dt": "Workspace", "filters": [["module", "=", "Lodgeick"]]},
+	{"dt": "Number Card", "filters": [["module", "=", "Lodgeick"]]},
+	{"dt": "Dashboard Chart", "filters": [["module", "=", "Lodgeick"]]},
 	"lodgeick.lodgeick.lodgeick.fixtures.request_types",
 	"lodgeick.lodgeick.lodgeick.fixtures.councils",
 	"lodgeick.lodgeick.lodgeick.fixtures.council_request_types",
@@ -177,23 +179,12 @@ doc_events = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"lodgeick.tasks.all"
-# 	],
-# 	"daily": [
-# 		"lodgeick.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"lodgeick.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"lodgeick.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"lodgeick.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+	"daily": [
+		"lodgeick.tasks.rfi_reminders.send_rfi_due_date_reminders",
+		"lodgeick.tasks.rfi_reminders.escalate_overdue_rfis"
+	]
+}
 
 # Testing
 # -------

@@ -12,7 +12,7 @@
 import { test, expect } from '@playwright/test'
 import { login, logout } from './fixtures/auth.js'
 
-const BASE_URL = 'http://localhost:8080'
+const BASE_URL = 'http://localhost:8090'
 const COUNCIL_CODE = 'TAYTAY-PH'
 
 test.describe('SPISC Entry Points & Authentication', () => {

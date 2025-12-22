@@ -19,8 +19,8 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-const BASE_URL = 'http://localhost:8080'
-const BACKEND_URL = 'http://localhost:8000'
+const BASE_URL = 'http://localhost:8090'
+const BACKEND_URL = 'http://localhost:8090'
 
 let applicationNumber = null
 
@@ -83,6 +83,19 @@ test.describe('SPISC Complete Workflow E2E', () => {
             console.log('[Phase 1] Filling Step 5: Declaration & Submission')
             await fillDeclaration(page, testImagePath)
 
+            // Step 6: Fill Preferred Payment Method (still on declaration page)
+            console.log('[Phase 1] Filling Payment Method...')
+
+            // Scroll to payment method field
+            await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
+            await page.waitForTimeout(500)
+
+            // Find and fill payment method dropdown
+            const paymentSelect = page.locator('select#payment_method, select[name="payment_method"]').first()
+            await paymentSelect.selectOption({ index: 1 }) // Select first actual option (index 0 is placeholder)
+            console.log('[Phase 1] ✓ Selected payment method')
+            await page.waitForTimeout(1000)
+
             // Submit the application
             console.log('[Phase 1] Submitting application...')
 
@@ -90,7 +103,7 @@ test.describe('SPISC Complete Workflow E2E', () => {
             await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
             await page.waitForTimeout(1000)
 
-            const submitButton = page.locator('button:has-text("Submit")').first()
+            const submitButton = page.locator('button:has-text("Submit"), button:has-text("Next")').last()
             await submitButton.click()
             await page.waitForTimeout(5000)
 
@@ -152,7 +165,9 @@ test.describe('SPISC Complete Workflow E2E', () => {
             const nameVisible = await nameField.isVisible().catch(() => false)
 
             if (nameVisible) {
-                const applicantName = await nameField.inputValue()
+                const applicantName = await nameField.textContent().catch(() =>
+                    nameField.locator('input').inputValue().catch(() => 'N/A')
+                )
                 console.log(`[Phase 2] ✓ Applicant Name visible: ${applicantName}`)
             } else {
                 console.log('[Phase 2] ⚠ Applicant name field not yet visible (may need form reload)')

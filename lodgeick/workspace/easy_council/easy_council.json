@@ -177,8 +177,8 @@
   {
    "color": "Orange",
    "doc_view": "List",
-   "label": "Pre-Application Meeting",
-   "link_to": "Pre-Application Meeting",
+   "label": "Council Meeting",
+   "link_to": "Council Meeting",
    "stats_filter": "[]",
    "type": "DocType"
   },

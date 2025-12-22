@@ -9,7 +9,7 @@
     "globalTimeout": 0,
     "grep": {},
     "grepInvert": null,
-    "maxFailures": 0,
+    "maxFailures": 3,
     "metadata": {
       "actualWorkers": 1
     },
@@ -86,25 +86,25 @@
   },
   "suites": [
     {
-      "title": "e2e/spisc-backend-workflow.spec.js",
-      "file": "e2e/spisc-backend-workflow.spec.js",
+      "title": "e2e/regression-bugs-v1.3.spec.js",
+      "file": "e2e/regression-bugs-v1.3.spec.js",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "SPISC Application Backend Workflow",
-          "file": "e2e/spisc-backend-workflow.spec.js",
-          "line": 44,
+          "title": "BUG-001: Project Task Autoname (E2E)",
+          "file": "e2e/regression-bugs-v1.3.spec.js",
+          "line": 21,
           "column": 6,
           "specs": [
             {
-              "title": "Complete SPISC backend workflow",
+              "title": "should create tasks from template without duplicate errors",
               "ok": false,
               "tags": [],
               "tests": [
                 {
-                  "timeout": 60000,
+                  "timeout": 90000,
                   "annotations": [],
                   "expectedStatus": "passed",
                   "projectId": "chromium-desktop",
@@ -114,85 +114,66 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 20045,
+                      "duration": 10912,
                       "error": {
-                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.spisc-summary-dashboard')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('.spisc-summary-dashboard')\u001b[22m\n",
-                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.spisc-summary-dashboard')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('.spisc-summary-dashboard')\u001b[22m\n\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-backend-workflow.spec.js:95:27",
+                        "message": "TimeoutError: page.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[name=\"usr\"]')\u001b[22m\n",
+                        "stack": "TimeoutError: page.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[name=\"usr\"]')\u001b[22m\n\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js:27:14",
                         "location": {
-                          "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-backend-workflow.spec.js",
-                          "column": 27,
-                          "line": 95
+                          "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js",
+                          "column": 14,
+                          "line": 27
                         },
-                        "snippet": "  93 | \t\t// Check for summary dashboard\n  94 | \t\tconst dashboard = page.locator('.spisc-summary-dashboard');\n> 95 | \t\tawait expect(dashboard).toBeVisible({ timeout: 10000 });\n     | \t\t                        ^\n  96 | \t\tconsole.log('✅ Summary dashboard is visible');\n  97 |\n  98 | \t\t// Verify dashboard has gradient background"
+                        "snippet": "  25 | \t\t// Login as council staff\n  26 | \t\tawait page.goto('/login');\n> 27 | \t\tawait page.fill('[name=\"usr\"]', 'Administrator');\n     | \t\t           ^\n  28 | \t\tawait page.fill('[name=\"pwd\"]', 'admin');\n  29 | \t\tawait page.click('button[type=\"submit\"]');\n  30 | \t\tawait page.waitForLoadState('networkidle');"
                       },
                       "errors": [
                         {
                           "location": {
-                            "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-backend-workflow.spec.js",
-                            "column": 27,
-                            "line": 95
+                            "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js",
+                            "column": 14,
+                            "line": 27
                           },
-                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.spisc-summary-dashboard')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('.spisc-summary-dashboard')\u001b[22m\n\n\n  93 | \t\t// Check for summary dashboard\n  94 | \t\tconst dashboard = page.locator('.spisc-summary-dashboard');\n> 95 | \t\tawait expect(dashboard).toBeVisible({ timeout: 10000 });\n     | \t\t                        ^\n  96 | \t\tconsole.log('✅ Summary dashboard is visible');\n  97 |\n  98 | \t\t// Verify dashboard has gradient background\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-backend-workflow.spec.js:95:27"
+                          "message": "TimeoutError: page.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[name=\"usr\"]')\u001b[22m\n\n\n  25 | \t\t// Login as council staff\n  26 | \t\tawait page.goto('/login');\n> 27 | \t\tawait page.fill('[name=\"usr\"]', 'Administrator');\n     | \t\t           ^\n  28 | \t\tawait page.fill('[name=\"pwd\"]', 'admin');\n  29 | \t\tawait page.click('button[type=\"submit\"]');\n  30 | \t\tawait page.waitForLoadState('networkidle');\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js:27:14"
                         }
                       ],
-                      "stdout": [
-                        {
-                          "text": "=== PHASE 1: Login to Frappe ===\n"
-                        },
-                        {
-                          "text": "Successfully logged in to Frappe\n"
-                        },
-                        {
-                          "text": "✅ Logged in successfully\n"
-                        },
-                        {
-                          "text": "\n=== PHASE 2: Find existing SPISC Application ===\n"
-                        },
-                        {
-                          "text": "✅ Opened SPISC Application: SPISC-2025-240\n"
-                        },
-                        {
-                          "text": "\n=== PHASE 3: Verify Summary Dashboard ===\n"
-                        }
-                      ],
+                      "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-12-17T17:23:00.101Z",
+                      "startTime": "2025-12-22T00:26:06.665Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-spisc-backend-workflow-b784a-lete-SPISC-backend-workflow-chromium-desktop/test-failed-1.png"
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-45d46-te-without-duplicate-errors-chromium-desktop/test-failed-1.png"
                         },
                         {
                           "name": "video",
                           "contentType": "video/webm",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-spisc-backend-workflow-b784a-lete-SPISC-backend-workflow-chromium-desktop/video.webm"
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-45d46-te-without-duplicate-errors-chromium-desktop/video.webm"
                         },
                         {
                           "name": "error-context",
                           "contentType": "text/markdown",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-spisc-backend-workflow-b784a-lete-SPISC-backend-workflow-chromium-desktop/error-context.md"
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-45d46-te-without-duplicate-errors-chromium-desktop/error-context.md"
                         }
                       ],
                       "errorLocation": {
-                        "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-backend-workflow.spec.js",
-                        "column": 27,
-                        "line": 95
+                        "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js",
+                        "column": 14,
+                        "line": 27
                       }
                     }
                   ],
                   "status": "unexpected"
                 }
               ],
-              "id": "0e5461a4331905f7ac8a-b77956e211ea0dfb1a91",
-              "file": "e2e/spisc-backend-workflow.spec.js",
-              "line": 53,
+              "id": "cd5021c0521f870e5876-25f696d83cd844ed61fa",
+              "file": "e2e/regression-bugs-v1.3.spec.js",
+              "line": 22,
               "column": 2
             },
             {
-              "title": "Verify SPISC Assessment Template exists",
+              "title": "should display unique task names in Project Task list view",
               "ok": false,
               "tags": [],
               "tests": [
@@ -207,77 +188,115 @@
                       "workerIndex": 1,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 20972,
+                      "duration": 10975,
                       "error": {
-                        "message": "TimeoutError: locator.inputValue: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[data-fieldname=\"template_name\"]')\u001b[22m\n",
-                        "stack": "TimeoutError: locator.inputValue: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[data-fieldname=\"template_name\"]')\u001b[22m\n\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-backend-workflow.spec.js:388:85",
+                        "message": "TimeoutError: page.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[name=\"usr\"]')\u001b[22m\n",
+                        "stack": "TimeoutError: page.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[name=\"usr\"]')\u001b[22m\n\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js:76:14",
                         "location": {
-                          "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-backend-workflow.spec.js",
-                          "column": 85,
-                          "line": 388
+                          "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js",
+                          "column": 14,
+                          "line": 76
                         },
-                        "snippet": "  386 |\n  387 | \t\t\t// Verify template details (use input selectors to be more specific)\n> 388 | \t\t\tconst templateName = await page.locator('input[data-fieldname=\"template_name\"]').inputValue();\n      | \t\t\t                                                                                 ^\n  389 | \t\t\tconst requestType = await page.locator('input[data-fieldname=\"request_type\"]').inputValue();\n  390 | \t\t\tconst budgetHours = await page.locator('input[data-fieldname=\"default_budget_hours\"]').inputValue();\n  391 |"
+                        "snippet": "  74 | \t\t// Login\n  75 | \t\tawait page.goto('/login');\n> 76 | \t\tawait page.fill('[name=\"usr\"]', 'Administrator');\n     | \t\t           ^\n  77 | \t\tawait page.fill('[name=\"pwd\"]', 'admin');\n  78 | \t\tawait page.click('button[type=\"submit\"]');\n  79 | \t\tawait page.waitForLoadState('networkidle');"
                       },
                       "errors": [
                         {
                           "location": {
-                            "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-backend-workflow.spec.js",
-                            "column": 85,
-                            "line": 388
+                            "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js",
+                            "column": 14,
+                            "line": 76
                           },
-                          "message": "TimeoutError: locator.inputValue: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[data-fieldname=\"template_name\"]')\u001b[22m\n\n\n  386 |\n  387 | \t\t\t// Verify template details (use input selectors to be more specific)\n> 388 | \t\t\tconst templateName = await page.locator('input[data-fieldname=\"template_name\"]').inputValue();\n      | \t\t\t                                                                                 ^\n  389 | \t\t\tconst requestType = await page.locator('input[data-fieldname=\"request_type\"]').inputValue();\n  390 | \t\t\tconst budgetHours = await page.locator('input[data-fieldname=\"default_budget_hours\"]').inputValue();\n  391 |\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-backend-workflow.spec.js:388:85"
+                          "message": "TimeoutError: page.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[name=\"usr\"]')\u001b[22m\n\n\n  74 | \t\t// Login\n  75 | \t\tawait page.goto('/login');\n> 76 | \t\tawait page.fill('[name=\"usr\"]', 'Administrator');\n     | \t\t           ^\n  77 | \t\tawait page.fill('[name=\"pwd\"]', 'admin');\n  78 | \t\tawait page.click('button[type=\"submit\"]');\n  79 | \t\tawait page.waitForLoadState('networkidle');\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js:76:14"
                         }
                       ],
-                      "stdout": [
-                        {
-                          "text": "\n=== Verify SPISC Assessment Template ===\n"
-                        },
-                        {
-                          "text": "Successfully logged in to Frappe\n"
-                        },
-                        {
-                          "text": "✅ SPISC Assessment Template found\n"
-                        }
-                      ],
+                      "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-12-17T17:23:20.784Z",
+                      "startTime": "2025-12-22T00:26:17.911Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-spisc-backend-workflow-b1d50--Assessment-Template-exists-chromium-desktop/test-failed-1.png"
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-33160-s-in-Project-Task-list-view-chromium-desktop/test-failed-1.png"
                         },
                         {
                           "name": "video",
                           "contentType": "video/webm",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-spisc-backend-workflow-b1d50--Assessment-Template-exists-chromium-desktop/video.webm"
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-33160-s-in-Project-Task-list-view-chromium-desktop/video.webm"
                         },
                         {
                           "name": "error-context",
                           "contentType": "text/markdown",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-spisc-backend-workflow-b1d50--Assessment-Template-exists-chromium-desktop/error-context.md"
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-33160-s-in-Project-Task-list-view-chromium-desktop/error-context.md"
                         }
                       ],
                       "errorLocation": {
-                        "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-backend-workflow.spec.js",
-                        "column": 85,
-                        "line": 388
+                        "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js",
+                        "column": 14,
+                        "line": 76
                       }
                     }
                   ],
                   "status": "unexpected"
                 }
               ],
-              "id": "0e5461a4331905f7ac8a-9300e68d6843a59764fe",
-              "file": "e2e/spisc-backend-workflow.spec.js",
-              "line": 358,
+              "id": "cd5021c0521f870e5876-11ce154e4b7aef159464",
+              "file": "e2e/regression-bugs-v1.3.spec.js",
+              "line": 73,
               "column": 2
             },
             {
-              "title": "Verify SPISC Task Templates exist",
+              "title": "should create tasks from template without duplicate errors",
               "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium-mobile",
+                  "projectName": "chromium-mobile",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cd5021c0521f870e5876-3cb75342f01f90d65353",
+              "file": "e2e/regression-bugs-v1.3.spec.js",
+              "line": 22,
+              "column": 2
+            },
+            {
+              "title": "should display unique task names in Project Task list view",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium-mobile",
+                  "projectName": "chromium-mobile",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cd5021c0521f870e5876-57f5b8b9952e6e8d157d",
+              "file": "e2e/regression-bugs-v1.3.spec.js",
+              "line": 73,
+              "column": 2
+            }
+          ]
+        },
+        {
+          "title": "BUG-002: Council Meeting DocType (E2E)",
+          "file": "e2e/regression-bugs-v1.3.spec.js",
+          "line": 105,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should load Council Meeting list page without 404",
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -290,69 +309,379 @@
                     {
                       "workerIndex": 2,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 8732,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "\n=== Verify SPISC Task Templates ===\n"
+                      "status": "failed",
+                      "duration": 10724,
+                      "error": {
+                        "message": "TimeoutError: page.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[name=\"usr\"]')\u001b[22m\n",
+                        "stack": "TimeoutError: page.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[name=\"usr\"]')\u001b[22m\n\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js:109:14",
+                        "location": {
+                          "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js",
+                          "column": 14,
+                          "line": 109
                         },
+                        "snippet": "  107 | \t\t// Login\n  108 | \t\tawait page.goto('/login');\n> 109 | \t\tawait page.fill('[name=\"usr\"]', 'Administrator');\n      | \t\t           ^\n  110 | \t\tawait page.fill('[name=\"pwd\"]', 'admin');\n  111 | \t\tawait page.click('button[type=\"submit\"]');\n  112 | \t\tawait page.waitForLoadState('networkidle');"
+                      },
+                      "errors": [
                         {
-                          "text": "Successfully logged in to Frappe\n"
-                        },
-                        {
-                          "text": "✅ Found 12 SPISC Task Templates\n"
-                        },
-                        {
-                          "text": "   ✓ SPISC-VET-001 found\n"
-                        },
-                        {
-                          "text": "   ✓ SPISC-VET-002 found\n"
-                        },
-                        {
-                          "text": "   ✓ SPISC-VET-003 found\n"
-                        },
-                        {
-                          "text": "   ✓ SPISC-TA-001 found\n"
-                        },
-                        {
-                          "text": "   ✓ SPISC-TA-002 found\n"
-                        },
-                        {
-                          "text": "   ✓ SPISC-TA-003 found\n"
-                        },
-                        {
-                          "text": "   ✓ SPISC-TA-004 found\n"
-                        },
-                        {
-                          "text": "   ✓ SPISC-DEC-001 found\n"
-                        },
-                        {
-                          "text": "   ✓ SPISC-DEC-002 found\n"
-                        },
-                        {
-                          "text": "   ✓ SPISC-DEC-003 found\n"
-                        },
-                        {
-                          "text": "   ✓ SPISC-IMP-001 found\n"
-                        },
-                        {
-                          "text": "   ✓ SPISC-IMP-002 found\n"
+                          "location": {
+                            "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js",
+                            "column": 14,
+                            "line": 109
+                          },
+                          "message": "TimeoutError: page.fill: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[name=\"usr\"]')\u001b[22m\n\n\n  107 | \t\t// Login\n  108 | \t\tawait page.goto('/login');\n> 109 | \t\tawait page.fill('[name=\"usr\"]', 'Administrator');\n      | \t\t           ^\n  110 | \t\tawait page.fill('[name=\"pwd\"]', 'admin');\n  111 | \t\tawait page.click('button[type=\"submit\"]');\n  112 | \t\tawait page.waitForLoadState('networkidle');\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js:109:14"
                         }
                       ],
+                      "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-12-17T17:23:42.365Z",
+                      "startTime": "2025-12-22T00:26:29.805Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-85198-eting-list-page-without-404-chromium-desktop/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-85198-eting-list-page-without-404-chromium-desktop/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-85198-eting-list-page-without-404-chromium-desktop/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/regression-bugs-v1.3.spec.js",
+                        "column": 14,
+                        "line": 109
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
-              "id": "0e5461a4331905f7ac8a-58934ed55d7ad675cc4c",
-              "file": "e2e/spisc-backend-workflow.spec.js",
-              "line": 414,
+              "id": "cd5021c0521f870e5876-7ed1db8a66ba5986f717",
+              "file": "e2e/regression-bugs-v1.3.spec.js",
+              "line": 106,
+              "column": 2
+            },
+            {
+              "title": "should create new Council Meeting successfully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium-desktop",
+                  "projectName": "chromium-desktop",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cd5021c0521f870e5876-9812723c1817d3e3324c",
+              "file": "e2e/regression-bugs-v1.3.spec.js",
+              "line": 135,
+              "column": 2
+            },
+            {
+              "title": "should call book_council_meeting API successfully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium-desktop",
+                  "projectName": "chromium-desktop",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cd5021c0521f870e5876-fce937492a71f1dfb8b6",
+              "file": "e2e/regression-bugs-v1.3.spec.js",
+              "line": 165,
+              "column": 2
+            },
+            {
+              "title": "should not have Pre-Application Meeting references",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium-desktop",
+                  "projectName": "chromium-desktop",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cd5021c0521f870e5876-1434a57b8c5914c77234",
+              "file": "e2e/regression-bugs-v1.3.spec.js",
+              "line": 209,
+              "column": 2
+            },
+            {
+              "title": "should load Council Meeting list page without 404",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium-mobile",
+                  "projectName": "chromium-mobile",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cd5021c0521f870e5876-10d703bcc163f9a64635",
+              "file": "e2e/regression-bugs-v1.3.spec.js",
+              "line": 106,
+              "column": 2
+            },
+            {
+              "title": "should create new Council Meeting successfully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium-mobile",
+                  "projectName": "chromium-mobile",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cd5021c0521f870e5876-26d69bcece5157f30f50",
+              "file": "e2e/regression-bugs-v1.3.spec.js",
+              "line": 135,
+              "column": 2
+            },
+            {
+              "title": "should call book_council_meeting API successfully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium-mobile",
+                  "projectName": "chromium-mobile",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cd5021c0521f870e5876-ded4d927c2f56f7cbb3e",
+              "file": "e2e/regression-bugs-v1.3.spec.js",
+              "line": 165,
+              "column": 2
+            },
+            {
+              "title": "should not have Pre-Application Meeting references",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium-mobile",
+                  "projectName": "chromium-mobile",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cd5021c0521f870e5876-c9db09a51fece5a27ba0",
+              "file": "e2e/regression-bugs-v1.3.spec.js",
+              "line": 209,
+              "column": 2
+            }
+          ]
+        },
+        {
+          "title": "BUG-003: SPISC Application Draft Save (E2E)",
+          "file": "e2e/regression-bugs-v1.3.spec.js",
+          "line": 235,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should save draft SPISC request without validation error",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium-desktop",
+                  "projectName": "chromium-desktop",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cd5021c0521f870e5876-318151bd41a1ec9575fa",
+              "file": "e2e/regression-bugs-v1.3.spec.js",
+              "line": 236,
+              "column": 2
+            },
+            {
+              "title": "should display applicant name correctly after save",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium-desktop",
+                  "projectName": "chromium-desktop",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cd5021c0521f870e5876-e2b6181d6423681079d4",
+              "file": "e2e/regression-bugs-v1.3.spec.js",
+              "line": 292,
+              "column": 2
+            },
+            {
+              "title": "should create SPISC application with age field populated",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium-desktop",
+                  "projectName": "chromium-desktop",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cd5021c0521f870e5876-6c7707bf8128c854454d",
+              "file": "e2e/regression-bugs-v1.3.spec.js",
+              "line": 332,
+              "column": 2
+            },
+            {
+              "title": "should save draft SPISC request without validation error",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium-mobile",
+                  "projectName": "chromium-mobile",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cd5021c0521f870e5876-77affcf651598adc5571",
+              "file": "e2e/regression-bugs-v1.3.spec.js",
+              "line": 236,
+              "column": 2
+            },
+            {
+              "title": "should display applicant name correctly after save",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium-mobile",
+                  "projectName": "chromium-mobile",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cd5021c0521f870e5876-9cfed5561b4a74b8e883",
+              "file": "e2e/regression-bugs-v1.3.spec.js",
+              "line": 292,
+              "column": 2
+            },
+            {
+              "title": "should create SPISC application with age field populated",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium-mobile",
+                  "projectName": "chromium-mobile",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cd5021c0521f870e5876-42ffbc9e97c52ef1b880",
+              "file": "e2e/regression-bugs-v1.3.spec.js",
+              "line": 332,
+              "column": 2
+            }
+          ]
+        },
+        {
+          "title": "Regression Suite Summary",
+          "file": "e2e/regression-bugs-v1.3.spec.js",
+          "line": 371,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should verify all critical DocTypes exist",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium-desktop",
+                  "projectName": "chromium-desktop",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cd5021c0521f870e5876-a17f14baef36fa2a3577",
+              "file": "e2e/regression-bugs-v1.3.spec.js",
+              "line": 372,
+              "column": 2
+            },
+            {
+              "title": "should verify all critical DocTypes exist",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium-mobile",
+                  "projectName": "chromium-mobile",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cd5021c0521f870e5876-f81b013c1730f3d007f9",
+              "file": "e2e/regression-bugs-v1.3.spec.js",
+              "line": 372,
               "column": 2
             }
           ]
@@ -360,13 +689,17 @@
       ]
     }
   ],
-  "errors": [],
+  "errors": [
+    {
+      "message": "Testing stopped early after 3 maximum allowed failures."
+    }
+  ],
   "stats": {
-    "startTime": "2025-12-17T17:22:58.682Z",
-    "duration": 52552.261,
-    "expected": 1,
-    "skipped": 0,
-    "unexpected": 2,
+    "startTime": "2025-12-22T00:26:05.394Z",
+    "duration": 36225.805,
+    "expected": 0,
+    "skipped": 17,
+    "unexpected": 3,
     "flaky": 0
   }
 }

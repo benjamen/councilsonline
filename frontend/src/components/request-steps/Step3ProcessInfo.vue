@@ -5,7 +5,7 @@
 
     <div v-if="requestTypeDetails" class="space-y-6">
 
-      <!-- Note: Pre-Application Meeting booking has been moved to before the application starts -->
+      <!-- Note: Council Meeting booking has been moved to before the application starts -->
       <!-- Users can book meetings from the request type selection page -->
 
       <div class="bg-white border border-gray-200 rounded-lg p-6">

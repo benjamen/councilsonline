@@ -2,6 +2,11 @@ import { defineStore } from "pinia"
 import { requestService } from "../services"
 
 export const useRequestStore = defineStore("request", {
+	persist: {
+		key: 'requestStore',
+		storage: localStorage,
+		paths: ['currentRequestId', 'formData', 'currentStep', 'requestTypeCode']
+	},
 	state: () => ({
 		// Current request being edited
 		currentRequestId: null,
