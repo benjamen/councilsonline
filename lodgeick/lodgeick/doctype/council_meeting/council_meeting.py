@@ -6,7 +6,7 @@ from frappe.model.document import Document
 from frappe.utils import now_datetime, add_to_date
 
 
-class PreApplicationMeeting(Document):
+class CouncilMeeting(Document):
 	def before_insert(self):
 		"""Set default values before insert"""
 		if not self.requested_by:
@@ -269,9 +269,9 @@ def get_permission_query_conditions(user):
 
 	# Users see meetings for their requests or where they are assigned
 	return f"""(
-		`tabPre-Application Meeting`.requested_by = '{user}'
-		OR `tabPre-Application Meeting`.council_planner = '{user}'
-		OR `tabPre-Application Meeting`.request IN (
+		`tabCouncil Meeting`.requested_by = '{user}'
+		OR `tabCouncil Meeting`.council_planner = '{user}'
+		OR `tabCouncil Meeting`.request IN (
 			SELECT name FROM `tabRequest` WHERE owner = '{user}'
 		)
 	)"""
@@ -320,7 +320,7 @@ def accept_time_slot(meeting_id, slot_index):
 	Returns:
 		dict: Success status and updated meeting data
 	"""
-	meeting = frappe.get_doc("Pre-Application Meeting", meeting_id)
+	meeting = frappe.get_doc("Council Meeting", meeting_id)
 
 	if not meeting.preferred_time_slots or len(meeting.preferred_time_slots) <= slot_index:
 		frappe.throw("Invalid time slot index")
@@ -367,7 +367,7 @@ def decline_time_slot(meeting_id, slot_index, planner_notes=None):
 	Returns:
 		dict: Success status and updated meeting data
 	"""
-	meeting = frappe.get_doc("Pre-Application Meeting", meeting_id)
+	meeting = frappe.get_doc("Council Meeting", meeting_id)
 
 	if not meeting.preferred_time_slots or len(meeting.preferred_time_slots) <= slot_index:
 		frappe.throw("Invalid time slot index")
@@ -406,7 +406,7 @@ def propose_alternative_time(meeting_id, slot_index, alternative_start, alternat
 	Returns:
 		dict: Success status and updated meeting data
 	"""
-	meeting = frappe.get_doc("Pre-Application Meeting", meeting_id)
+	meeting = frappe.get_doc("Council Meeting", meeting_id)
 
 	if not meeting.preferred_time_slots or len(meeting.preferred_time_slots) <= slot_index:
 		frappe.throw("Invalid time slot index")
@@ -443,7 +443,7 @@ def accept_alternative_time(meeting_id, slot_index):
 	Returns:
 		dict: Success status and updated meeting data
 	"""
-	meeting = frappe.get_doc("Pre-Application Meeting", meeting_id)
+	meeting = frappe.get_doc("Council Meeting", meeting_id)
 
 	if not meeting.preferred_time_slots or len(meeting.preferred_time_slots) <= slot_index:
 		frappe.throw("Invalid time slot index")

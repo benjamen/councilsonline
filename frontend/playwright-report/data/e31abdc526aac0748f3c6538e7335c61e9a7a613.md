@@ -1,0 +1,150 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e4]:
+  - banner [ref=e5]:
+    - generic [ref=e8]:
+      - img [ref=e10]
+      - generic [ref=e12]:
+        - heading "Lodgeick" [level=1] [ref=e13]
+        - paragraph [ref=e14]: Council Request Management
+  - generic [ref=e16]:
+    - generic [ref=e17]:
+      - generic [ref=e18]: Modern Council Request Management
+      - heading "Request Council Services Online" [level=2] [ref=e19]
+      - paragraph [ref=e20]: Lodgeick is a comprehensive platform for ratepayers, civilians, and suppliers to request council services digitally. Submit consents, service requests, and applications online. Track progress and manage all your council interactions in one place.
+      - generic [ref=e21]:
+        - button "Create Account" [ref=e22] [cursor=pointer]:
+          - img [ref=e23]
+          - generic [ref=e25]: Create Account
+        - button "Sign In" [ref=e26] [cursor=pointer]:
+          - img [ref=e27]
+          - generic [ref=e29]: Sign In
+      - generic [ref=e30]:
+        - paragraph [ref=e31]: Trusted by councils across New Zealand
+        - generic [ref=e32]:
+          - generic [ref=e33]:
+            - generic [ref=e34]: 20+
+            - generic [ref=e35]: Councils
+          - generic [ref=e36]:
+            - generic [ref=e37]: 10k+
+            - generic [ref=e38]: Applications
+          - generic [ref=e39]:
+            - generic [ref=e40]: 99.9%
+            - generic [ref=e41]: Uptime
+    - generic [ref=e42]:
+      - generic [ref=e43]:
+        - generic [ref=e44]:
+          - generic [ref=e45]:
+            - img [ref=e47]
+            - generic [ref=e49]:
+              - generic [ref=e50]: BC-2025-001 Approved
+              - generic [ref=e51]: Building Consent - New Dwelling
+          - generic [ref=e52]:
+            - img [ref=e54]
+            - generic [ref=e56]:
+              - generic [ref=e57]: RC-2025-042 Under Review
+              - generic [ref=e58]: 15 days remaining
+          - generic [ref=e59]:
+            - img [ref=e61]
+            - generic [ref=e63]:
+              - generic [ref=e64]: RFI Required
+              - generic [ref=e65]: Additional information needed
+        - generic [ref=e67]:
+          - generic [ref=e68]: Processing time
+          - generic [ref=e69]: 12 days average
+      - generic [ref=e72]: ✓ Secure & Compliant
+  - generic [ref=e74]:
+    - generic [ref=e75]:
+      - heading "Everything You Need for Council Requests" [level=3] [ref=e76]
+      - paragraph [ref=e77]: Streamline your council interactions with powerful tools for ratepayers, civilians, and suppliers
+    - generic [ref=e78]:
+      - generic [ref=e79]:
+        - img [ref=e81]
+        - heading "Digital Requests" [level=4] [ref=e84]
+        - paragraph [ref=e85]: Submit consents, service requests, and applications online with guided forms and instant validation
+      - generic [ref=e86]:
+        - img [ref=e88]
+        - heading "Real-time Tracking" [level=4] [ref=e91]
+        - paragraph [ref=e92]: Monitor your request status, processing timeline, and receive instant notifications
+      - generic [ref=e93]:
+        - img [ref=e95]
+        - heading "Secure Payments" [level=4] [ref=e97]
+        - paragraph [ref=e98]: Pay fees and invoices online with credit card or bank transfer, with instant receipt generation
+      - generic [ref=e99]:
+        - img [ref=e101]
+        - heading "Direct Communication" [level=4] [ref=e103]
+        - paragraph [ref=e104]: Communicate directly with council staff, respond to information requests, and manage all correspondence
+      - generic [ref=e105]:
+        - img [ref=e107]
+        - heading "Document Management" [level=4] [ref=e111]
+        - paragraph [ref=e112]: Upload plans, quotes, reports, and supporting documents with version control and secure storage
+      - generic [ref=e113]:
+        - img [ref=e115]
+        - heading "Transparent Process" [level=4] [ref=e117]
+        - paragraph [ref=e118]: Clear status updates, statutory timeframes, and automated compliance checks for your requests
+  - generic [ref=e120]:
+    - generic [ref=e121]:
+      - heading "Simple Process, Powerful Results" [level=3] [ref=e122]
+      - paragraph [ref=e123]: Submit your council request in 4 easy steps
+    - generic [ref=e124]:
+      - generic [ref=e125]:
+        - generic [ref=e126]: "1"
+        - heading "Create Account" [level=4] [ref=e127]
+        - paragraph [ref=e128]: Register for free and set up your profile as a ratepayer, civilian, or supplier
+      - generic [ref=e129]:
+        - generic [ref=e130]: "2"
+        - heading "Submit Request" [level=4] [ref=e131]
+        - paragraph [ref=e132]: Complete the guided form and upload any required documents or quotes
+      - generic [ref=e133]:
+        - generic [ref=e134]: "3"
+        - heading "Track Progress" [level=4] [ref=e135]
+        - paragraph [ref=e136]: Monitor status updates and respond to any council information requests
+      - generic [ref=e137]:
+        - generic [ref=e138]: "4"
+        - heading "Get Result" [level=4] [ref=e139]
+        - paragraph [ref=e140]: Receive your decision, approval, or service completion notification
+  - generic [ref=e142]:
+    - heading "Ready to Get Started?" [level=3] [ref=e143]
+    - paragraph [ref=e144]: Join thousands of ratepayers and suppliers using Lodgeick for faster, easier council service requests
+    - generic [ref=e145]:
+      - button "Create Free Account" [ref=e146] [cursor=pointer]
+      - button "Sign In to Existing Account" [ref=e147] [cursor=pointer]
+  - contentinfo [ref=e148]:
+    - generic [ref=e149]:
+      - generic [ref=e150]:
+        - generic [ref=e151]:
+          - heading "Lodgeick" [level=4] [ref=e152]
+          - paragraph [ref=e153]: Modern request management platform connecting ratepayers, civilians, and suppliers with their councils
+        - generic [ref=e154]:
+          - heading "Product" [level=4] [ref=e155]
+          - list [ref=e156]:
+            - listitem [ref=e157]:
+              - link "Features" [ref=e158]:
+                - /url: "#features"
+            - listitem [ref=e159]:
+              - link "How it Works" [ref=e160]:
+                - /url: "#how-it-works"
+            - listitem [ref=e161]:
+              - link "Pricing" [ref=e162]:
+                - /url: "#"
+        - generic [ref=e163]:
+          - heading "Support" [level=4] [ref=e164]
+          - list [ref=e165]:
+            - listitem [ref=e166]:
+              - link "Help Center" [ref=e167]:
+                - /url: "#"
+            - listitem [ref=e168]:
+              - link "Contact Us" [ref=e169]:
+                - /url: "#"
+            - listitem [ref=e170]:
+              - link "System Status" [ref=e171]:
+                - /url: "#"
+        - generic [ref=e172]:
+          - heading "Contact" [level=4] [ref=e173]
+          - list [ref=e174]:
+            - listitem [ref=e175]: support@lodgeick.com
+            - listitem [ref=e176]: 0800 LODGEICK
+            - listitem [ref=e177]: Wellington, New Zealand
+      - paragraph [ref=e179]: © 2025 Lodgeick. All rights reserved. Built with ❤️ in Aotearoa.
+```

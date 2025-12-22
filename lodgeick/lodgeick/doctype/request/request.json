@@ -11,7 +11,6 @@
   "section_break_essentials",
   "request_number",
   "request_type",
-  "council",
   "column_break_timeline",
   "application_doctype",
   "application_name",
@@ -58,7 +57,8 @@
   "attachments_tab",
   "section_break_attachments",
   "attachments",
-  "amended_from"
+  "amended_from",
+  "draft_full_data"
  ],
  "fields": [
   {
@@ -76,17 +76,6 @@
    "label": "Request Type",
    "mandatory_depends_on": "eval:doc.workflow_state!='Draft'",
    "options": "Request Type",
-   "search_index": 1
-  },
-  {
-   "description": "The council processing this request",
-   "fieldname": "council",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Council",
-   "options": "Council",
-   "reqd": 1,
    "search_index": 1
   },
   {
@@ -329,6 +318,15 @@
    "fieldtype": "Link",
    "label": "Amended From",
    "options": "Request",
+   "read_only": 1
+  },
+  {
+   "fieldname": "draft_full_data",
+   "fieldtype": "Long Text",
+   "hidden": 1,
+   "label": "Draft Full Data",
+   "no_copy": 1,
+   "print_hide": 1,
    "read_only": 1
   },
   {

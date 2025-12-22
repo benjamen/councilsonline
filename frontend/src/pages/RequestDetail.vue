@@ -84,13 +84,13 @@
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Property Information</h2>
 
             <div class="grid grid-cols-2 gap-4">
-              <div v-if="request.data.property_address">
+              <div v-if="enrichedRequest.property_address">
                 <label class="text-sm font-medium text-gray-500">Address</label>
-                <p class="mt-1 text-sm text-gray-900">{{ request.data.property_address }}</p>
+                <p class="mt-1 text-sm text-gray-900">{{ enrichedRequest.property_address }}</p>
               </div>
-              <div v-if="request.data.legal_description">
+              <div v-if="enrichedRequest.legal_description">
                 <label class="text-sm font-medium text-gray-500">Legal Description</label>
-                <p class="mt-1 text-sm text-gray-900">{{ request.data.legal_description }}</p>
+                <p class="mt-1 text-sm text-gray-900">{{ enrichedRequest.legal_description }}</p>
               </div>
             </div>
           </div>
@@ -102,23 +102,23 @@
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="text-sm font-medium text-gray-500">Name</label>
-                <p class="mt-1 text-sm text-gray-900">{{ request.data.requester_name || 'N/A' }}</p>
+                <p class="mt-1 text-sm text-gray-900">{{ enrichedRequest.requester_name || 'N/A' }}</p>
               </div>
               <div>
                 <label class="text-sm font-medium text-gray-500">Email</label>
-                <p class="mt-1 text-sm text-gray-900">{{ request.data.requester_email || 'N/A' }}</p>
+                <p class="mt-1 text-sm text-gray-900">{{ enrichedRequest.requester_email || 'N/A' }}</p>
               </div>
               <div>
                 <label class="text-sm font-medium text-gray-500">Phone</label>
-                <p class="mt-1 text-sm text-gray-900">{{ request.data.requester_phone || 'N/A' }}</p>
+                <p class="mt-1 text-sm text-gray-900">{{ enrichedRequest.requester_phone || 'N/A' }}</p>
               </div>
               <div>
                 <label class="text-sm font-medium text-gray-500">Address</label>
-                <p class="mt-1 text-sm text-gray-900">{{ request.data.applicant_address || 'N/A' }}</p>
+                <p class="mt-1 text-sm text-gray-900">{{ enrichedRequest.applicant_address || 'N/A' }}</p>
               </div>
-              <div v-if="request.data.applicant_company">
+              <div v-if="enrichedRequest.applicant_company">
                 <label class="text-sm font-medium text-gray-500">Company/Organization</label>
-                <p class="mt-1 text-sm text-gray-900">{{ request.data.applicant_company }}</p>
+                <p class="mt-1 text-sm text-gray-900">{{ enrichedRequest.applicant_company }}</p>
               </div>
             </div>
           </div>
@@ -365,7 +365,7 @@
                       class="border-b border-gray-100 pb-3"
                     >
                       <label class="text-sm font-medium text-gray-500">{{ field.review_label || field.field_label }}</label>
-                      <p class="mt-1 text-sm text-gray-900">{{ formatFieldValue(field, request.data[field.field_name]) }}</p>
+                      <p class="mt-1 text-sm text-gray-900">{{ formatFieldValue(field, enrichedRequest[field.field_name]) }}</p>
                     </div>
                   </div>
                 </div>
@@ -817,6 +817,31 @@ const parsedFormData = computed(() => {
 	}
 })
 
+// Create enriched request data that merges request.data with draft_full_data
+const enrichedRequest = computed(() => {
+	if (!request.data) return {}
+
+	try {
+		let fullFormData = {}
+		if (request.data.draft_full_data) {
+			fullFormData =
+				typeof request.data.draft_full_data === "string"
+					? JSON.parse(request.data.draft_full_data)
+					: request.data.draft_full_data
+		}
+
+		// Merge request.data with full form data from draft_full_data
+		// draft_full_data takes precedence for any overlapping keys
+		return {
+			...request.data,
+			...fullFormData
+		}
+	} catch (error) {
+		console.error("Error merging form data:", error)
+		return request.data
+	}
+})
+
 // Get review sections from request type configuration (same logic as ReviewStep)
 const reviewSections = computed(() => {
 	if (!requestTypeConfig.data?.steps) return []
@@ -827,8 +852,8 @@ const reviewSections = computed(() => {
 
 // Check if property details should be displayed (same logic as ReviewStep)
 const hasPropertyDetails = computed(() => {
-	// Show if request has property address
-	if (request.data?.property_address) {
+	// Show if request has property address (check enriched data)
+	if (enrichedRequest.value?.property_address) {
 		return true
 	}
 

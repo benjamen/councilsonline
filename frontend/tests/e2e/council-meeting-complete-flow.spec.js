@@ -5,21 +5,43 @@ test.describe("Council Meeting Complete Flow", () => {
 		// Login
 		await page.goto("http://localhost:8090/frontend")
 		await page.waitForLoadState("networkidle")
+		await page.waitForTimeout(1000)
 
-		const logInLink = page.locator(
-			'a:has-text("Log In"), button:has-text("Log In")',
-		)
-		if (await logInLink.isVisible({ timeout: 2000 }).catch(() => false)) {
-			await logInLink.click()
-			await page.waitForLoadState("networkidle")
-			await page.fill(
-				'input[type="email"], input[type="text"]',
-				"Administrator",
-			)
-			await page.fill('input[type="password"]', "admin123")
-			await page.click('button:has-text("Sign In")')
+		// Check if already logged in by looking for user menu or New Request button
+		const newRequestBtn = page.locator('button:has-text("New Request"), a:has-text("New Request"), button:has-text("New Application"), a:has-text("New Application")')
+		const isLoggedIn = await newRequestBtn.isVisible({ timeout: 2000 }).catch(() => false)
+
+		if (!isLoggedIn) {
+			console.log("Not logged in, attempting to log in...")
+			const logInLink = page.locator(
+				'a:has-text("Log In"), button:has-text("Log In"), button:has-text("Sign In")',
+			).first()
+
+			if (await logInLink.isVisible({ timeout: 2000 }).catch(() => false)) {
+				await logInLink.click()
+				await page.waitForLoadState("networkidle")
+				await page.waitForTimeout(1000)
+			}
+
+			// Fill login form
+			const usernameField = page.locator('input[type="email"], input[type="text"]').first()
+			const passwordField = page.locator('input[type="password"]').first()
+
+			await usernameField.fill("Administrator")
+			await page.waitForTimeout(300)
+			await passwordField.fill("admin123")
+			await page.waitForTimeout(300)
+			await page.locator('button:has-text("Sign In"), button[type="submit"]').first().click()
 			await page.waitForLoadState("networkidle")
 			await page.waitForTimeout(2000)
+
+			// Verify login successful
+			await page.waitForSelector('button:has-text("New Request"), a:has-text("New Request"), button:has-text("New Application")', {
+				timeout: 10000,
+			})
+			console.log("Login successful!")
+		} else {
+			console.log("Already logged in")
 		}
 	})
 
@@ -31,10 +53,10 @@ test.describe("Council Meeting Complete Flow", () => {
 		// Start new application
 		console.log("Step 1: Starting new application...")
 		await page.click(
-			'button:has-text("New Application"), a:has-text("New Application")',
+			'button:has-text("New Request"), a:has-text("New Request"), button:has-text("New Application"), a:has-text("New Application")',
 		)
 		await page.waitForLoadState("networkidle")
-		console.log("✓ New application clicked")
+		console.log("✓ New application/request clicked")
 
 		// Select Taytay council
 		console.log("\nStep 2: Selecting Taytay council...")
@@ -72,7 +94,7 @@ test.describe("Council Meeting Complete Flow", () => {
 		// CRITICAL: Verify meeting banner is now visible
 		console.log("\nStep 5: Checking for meeting banner...")
 		const meetingBanner = page.locator(
-			'h3:has-text("Pre-Application Meeting Available")',
+			'h3:has-text("Council Meeting Available")',
 		)
 		const bannerVisible = await meetingBanner
 			.isVisible({ timeout: 5000 })
@@ -128,11 +150,14 @@ test.describe("Council Meeting Complete Flow", () => {
 		console.log("\nStep 7: Verifying modal fields...")
 		const meetingTypeField = page.locator("select").first()
 		const purposeField = page.locator("textarea").first()
+		// Time slots can be either select dropdowns (when available slots loaded) or datetime-local inputs
+		const timeSlotSelects = page.locator('select:has-text("-- Select a time slot --")')
 		const timeSlotInputs = page.locator('input[type="datetime-local"]')
+		const hasTimeSlotFields = (await timeSlotSelects.count()) > 0 || (await timeSlotInputs.count()) > 0
 
 		expect(await meetingTypeField.isVisible()).toBe(true)
 		expect(await purposeField.isVisible()).toBe(true)
-		expect(await timeSlotInputs.count()).toBeGreaterThanOrEqual(1)
+		expect(hasTimeSlotFields).toBe(true)
 		console.log("✓ All form fields present")
 
 		// Fill out the form
@@ -141,14 +166,24 @@ test.describe("Council Meeting Complete Flow", () => {
 			"I would like to discuss the requirements for my SPISC application and ensure I have all the necessary documentation.",
 		)
 
-		// Fill first time slot
-		const now = new Date()
-		now.setDate(now.getDate() + 7) // One week from now
-		now.setHours(10, 0, 0, 0) // 10:00 AM
-		const datetime = now.toISOString().slice(0, 16) // Format: YYYY-MM-DDTHH:mm
-
-		await timeSlotInputs.first().fill(datetime)
-		console.log("✓ Form filled")
+		// Fill first time slot - check if it's a select or input field
+		if ((await timeSlotSelects.count()) > 0) {
+			// If available slots exist, select the first option from dropdown
+			const firstSelect = timeSlotSelects.first()
+			const options = await firstSelect.locator('option').allTextContents()
+			if (options.length > 1) { // Skip the "-- Select a time slot --" option
+				await firstSelect.selectOption({ index: 1 })
+				console.log("✓ Form filled (selected available slot)")
+			}
+		} else if ((await timeSlotInputs.count()) > 0) {
+			// Otherwise use datetime-local input
+			const now = new Date()
+			now.setDate(now.getDate() + 7) // One week from now
+			now.setHours(10, 0, 0, 0) // 10:00 AM
+			const datetime = now.toISOString().slice(0, 16) // Format: YYYY-MM-DDTHH:mm
+			await timeSlotInputs.first().fill(datetime)
+			console.log("✓ Form filled (manual datetime)")
+		}
 
 		// Verify the "Request Meeting" button is enabled
 		const submitButton = page.locator('button:has-text("Request Meeting")')
@@ -181,20 +216,42 @@ test.describe("Council Meeting Complete Flow", () => {
 		// Verify Council Meeting section appears
 		console.log("\nStep 2: Checking Council Meeting section...")
 		const meetingH2 = page.locator('h2:has-text("Council Meeting")')
-		const sectionVisible = await meetingH2
-			.isVisible({ timeout: 5000 })
-			.catch(() => false)
-		console.log("Council Meeting section visible:", sectionVisible)
-		expect(sectionVisible).toBe(true)
 
-		// Verify button
+		// Wait for the section to appear (with longer timeout for mobile)
+		try {
+			await meetingH2.waitFor({ state: 'visible', timeout: 10000 })
+			console.log("Council Meeting section visible: true")
+		} catch (e) {
+			// If not visible, scroll down (might be below fold on mobile)
+			await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
+			await page.waitForTimeout(1000)
+
+			// Try again after scrolling
+			const sectionVisible = await meetingH2.isVisible({ timeout: 5000 }).catch(() => false)
+			console.log("Council Meeting section visible after scroll:", sectionVisible)
+			expect(sectionVisible).toBe(true)
+		}
+
+		// Verify button - scroll to it first to ensure it's in viewport
 		const requestMeetingBtn = page.locator(
 			'button:has-text("Request Council Meeting")',
 		)
+
+		// Scroll to the button
+		await requestMeetingBtn.scrollIntoViewIfNeeded().catch(() => {})
+		await page.waitForTimeout(500)
+
 		const btnVisible = await requestMeetingBtn
 			.isVisible({ timeout: 5000 })
 			.catch(() => false)
 		console.log("Request Council Meeting button visible:", btnVisible)
+
+		// If still not visible, take a screenshot for debugging
+		if (!btnVisible) {
+			await page.screenshot({ path: "/tmp/request-detail-debug.png" })
+			console.log("Debug screenshot saved: /tmp/request-detail-debug.png")
+		}
+
 		expect(btnVisible).toBe(true)
 
 		// Click button

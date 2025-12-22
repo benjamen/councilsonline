@@ -11,7 +11,7 @@
               </svg>
             </div>
             <div>
-              <h1 class="text-xl font-bold text-gray-900">Lodgeick</h1>
+              <h1 class="text-xl font-bold text-gray-900">Councils Online</h1>
               <p class="text-xs text-gray-500">Council Request Management</p>
             </div>
           </div>
@@ -39,7 +39,7 @@
             <span class="text-blue-600">Online</span>
           </h2>
           <p class="text-xl text-gray-600 mb-8 leading-relaxed">
-            Lodgeick is a comprehensive platform for ratepayers, civilians, and suppliers to request
+            Councils Online is a comprehensive platform for ratepayers, civilians, and suppliers to request
             council services digitally. Submit consents, service requests, and applications online.
             Track progress and manage all your council interactions in one place.
           </p>
@@ -231,7 +231,7 @@
           Ready to Get Started?
         </h3>
         <p class="text-xl text-blue-100 mb-8">
-          Join thousands of ratepayers and suppliers using Lodgeick for faster, easier council service requests
+          Join thousands of ratepayers and suppliers using Councils Online for faster, easier council service requests
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
           <button
@@ -255,7 +255,7 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid md:grid-cols-4 gap-8">
           <div>
-            <h4 class="text-white font-bold mb-4">Lodgeick</h4>
+            <h4 class="text-white font-bold mb-4">Councils Online</h4>
             <p class="text-sm text-gray-400">
               Modern request management platform connecting ratepayers, civilians, and suppliers with their councils
             </p>
@@ -279,14 +279,14 @@
           <div>
             <h4 class="text-white font-semibold mb-4">Contact</h4>
             <ul class="space-y-2 text-sm text-gray-400">
-              <li>support@lodgeick.com</li>
-              <li>0800 LODGEICK</li>
+              <li>support@councilsonline.com</li>
+              <li>0800 COUNCILS</li>
               <li>Wellington, New Zealand</li>
             </ul>
           </div>
         </div>
         <div class="border-t border-gray-800 mt-12 pt-8 text-center text-sm text-gray-500">
-          <p>&copy; 2025 Lodgeick. All rights reserved. Built with ❤️ in Aotearoa.</p>
+          <p>&copy; 2025 Councils Online. All rights reserved. Built with ❤️ in Aotearoa.</p>
         </div>
       </div>
     </footer>

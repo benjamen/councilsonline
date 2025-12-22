@@ -86,105 +86,21 @@
   },
   "suites": [
     {
-      "title": "e2e/regression-bugs-v1.3.spec.js",
-      "file": "e2e/regression-bugs-v1.3.spec.js",
+      "title": "e2e/council-meeting-complete-flow.spec.js",
+      "file": "e2e/council-meeting-complete-flow.spec.js",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "BUG-003: SPISC Application Draft Save (E2E)",
-          "file": "e2e/regression-bugs-v1.3.spec.js",
-          "line": 237,
+          "title": "Council Meeting Complete Flow",
+          "file": "e2e/council-meeting-complete-flow.spec.js",
+          "line": 3,
           "column": 6,
           "specs": [
             {
-              "title": "should save draft SPISC request without validation error",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 90000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium-desktop",
-                  "projectName": "chromium-desktop",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 9549,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "✓ BUG-003: No fetch_from error (other validation may exist)\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-12-22T00:29:55.144Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-a561c-st-without-validation-error-chromium-desktop/video.webm"
-                        }
-                      ]
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "cd5021c0521f870e5876-318151bd41a1ec9575fa",
-              "file": "e2e/regression-bugs-v1.3.spec.js",
-              "line": 238,
-              "column": 2
-            },
-            {
-              "title": "should display applicant name correctly after save",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 90000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium-desktop",
-                  "projectName": "chromium-desktop",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 5014,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-12-22T00:30:02.600Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-2b06d-t-name-correctly-after-save-chromium-desktop/video.webm"
-                        }
-                      ]
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "cd5021c0521f870e5876-e2b6181d6423681079d4",
-              "file": "e2e/regression-bugs-v1.3.spec.js",
-              "line": 294,
-              "column": 2
-            },
-            {
-              "title": "should create SPISC application with age field populated",
-              "ok": true,
+              "title": "Meeting banner appears during application flow and modal works",
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -197,118 +113,214 @@
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 4450,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-12-22T00:30:07.629Z",
-                      "annotations": [],
-                      "attachments": [
+                      "status": "failed",
+                      "duration": 10781,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m1\u001b[39m\nReceived:    \u001b[31m0\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m1\u001b[39m\nReceived:    \u001b[31m0\u001b[39m\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js:135:40",
+                        "location": {
+                          "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js",
+                          "column": 40,
+                          "line": 135
+                        },
+                        "snippet": "  133 | \t\texpect(await meetingTypeField.isVisible()).toBe(true)\n  134 | \t\texpect(await purposeField.isVisible()).toBe(true)\n> 135 | \t\texpect(await timeSlotInputs.count()).toBeGreaterThanOrEqual(1)\n      | \t\t                                     ^\n  136 | \t\tconsole.log(\"✓ All form fields present\")\n  137 |\n  138 | \t\t// Fill out the form"
+                      },
+                      "errors": [
                         {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-ce4de-on-with-age-field-populated-chromium-desktop/video.webm"
+                          "location": {
+                            "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js",
+                            "column": 40,
+                            "line": 135
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m1\u001b[39m\nReceived:    \u001b[31m0\u001b[39m\n\n  133 | \t\texpect(await meetingTypeField.isVisible()).toBe(true)\n  134 | \t\texpect(await purposeField.isVisible()).toBe(true)\n> 135 | \t\texpect(await timeSlotInputs.count()).toBeGreaterThanOrEqual(1)\n      | \t\t                                     ^\n  136 | \t\tconsole.log(\"✓ All form fields present\")\n  137 |\n  138 | \t\t// Fill out the form\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js:135:40"
                         }
-                      ]
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "cd5021c0521f870e5876-6c7707bf8128c854454d",
-              "file": "e2e/regression-bugs-v1.3.spec.js",
-              "line": 334,
-              "column": 2
-            },
-            {
-              "title": "should save draft SPISC request without validation error",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 90000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium-mobile",
-                  "projectName": "chromium-mobile",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 10545,
-                      "errors": [],
+                      ],
                       "stdout": [
                         {
-                          "text": "✓ BUG-003: No fetch_from error (other validation may exist)\n"
+                          "text": "\n=== TEST: Meeting Banner During Application Flow ===\n\n"
+                        },
+                        {
+                          "text": "Step 1: Starting new application...\n"
+                        },
+                        {
+                          "text": "✓ New application/request clicked\n"
+                        },
+                        {
+                          "text": "\nStep 2: Selecting Taytay council...\n"
+                        },
+                        {
+                          "text": "✓ Taytay selected\n"
+                        },
+                        {
+                          "text": "\nStep 3: Selecting SPISC request type...\n"
+                        },
+                        {
+                          "text": "✓ SPISC selected\n"
+                        },
+                        {
+                          "text": "\nStep 4: Skipping process info...\n"
+                        },
+                        {
+                          "text": "✓ On application step\n"
+                        },
+                        {
+                          "text": "\nStep 5: Checking for meeting banner...\n"
+                        },
+                        {
+                          "text": "Meeting banner visible: \u001b[33mtrue\u001b[39m\n"
+                        },
+                        {
+                          "text": "✓ Meeting banner is visible!\n"
+                        },
+                        {
+                          "text": "Request Council Meeting button visible: \u001b[33mtrue\u001b[39m\n"
+                        },
+                        {
+                          "text": "\nStep 6: Clicking Request Council Meeting button...\n"
+                        },
+                        {
+                          "text": "Has circular JSON error: \u001b[33mfalse\u001b[39m\n"
+                        },
+                        {
+                          "text": "✓ No circular JSON errors!\n"
+                        },
+                        {
+                          "text": "Modal visible: \u001b[33mtrue\u001b[39m\n"
+                        },
+                        {
+                          "text": "✓ Modal opened successfully!\n"
+                        },
+                        {
+                          "text": "\nStep 7: Verifying modal fields...\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-12-22T00:30:12.751Z",
+                      "startTime": "2025-12-22T11:20:20.746Z",
                       "annotations": [],
                       "attachments": [
                         {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-a561c-st-without-validation-error-chromium-mobile/video.webm"
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-council-meeting-comple-e1505-cation-flow-and-modal-works-chromium-desktop/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-council-meeting-comple-e1505-cation-flow-and-modal-works-chromium-desktop/error-context.md"
                         }
-                      ]
+                      ],
+                      "errorLocation": {
+                        "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js",
+                        "column": 40,
+                        "line": 135
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
-              "id": "cd5021c0521f870e5876-77affcf651598adc5571",
-              "file": "e2e/regression-bugs-v1.3.spec.js",
-              "line": 238,
+              "id": "159db2bb103daf356b49-5838b08666267b123912",
+              "file": "e2e/council-meeting-complete-flow.spec.js",
+              "line": 26,
               "column": 2
             },
             {
-              "title": "should display applicant name correctly after save",
-              "ok": true,
+              "title": "Meeting banner on RequestDetail page also works",
+              "ok": false,
               "tags": [],
               "tests": [
                 {
-                  "timeout": 90000,
+                  "timeout": 60000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "chromium-mobile",
-                  "projectName": "chromium-mobile",
+                  "projectId": "chromium-desktop",
+                  "projectName": "chromium-desktop",
                   "results": [
                     {
                       "workerIndex": 1,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 4474,
-                      "errors": [],
-                      "stdout": [],
+                      "status": "failed",
+                      "duration": 7970,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js:208:22",
+                        "location": {
+                          "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js",
+                          "column": 22,
+                          "line": 208
+                        },
+                        "snippet": "  206 | \t\t\t.catch(() => false)\n  207 | \t\tconsole.log(\"Request Council Meeting button visible:\", btnVisible)\n> 208 | \t\texpect(btnVisible).toBe(true)\n      | \t\t                   ^\n  209 |\n  210 | \t\t// Click button\n  211 | \t\tconsole.log(\"\\nStep 3: Clicking button to open modal...\")"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js",
+                            "column": 22,
+                            "line": 208
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\n  206 | \t\t\t.catch(() => false)\n  207 | \t\tconsole.log(\"Request Council Meeting button visible:\", btnVisible)\n> 208 | \t\texpect(btnVisible).toBe(true)\n      | \t\t                   ^\n  209 |\n  210 | \t\t// Click button\n  211 | \t\tconsole.log(\"\\nStep 3: Clicking button to open modal...\")\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js:208:22"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "\n=== TEST: Meeting Banner on RequestDetail Page ===\n\n"
+                        },
+                        {
+                          "text": "Step 1: Navigating to existing request...\n"
+                        },
+                        {
+                          "text": "✓ Request detail page loaded\n"
+                        },
+                        {
+                          "text": "\nStep 2: Checking Council Meeting section...\n"
+                        },
+                        {
+                          "text": "Council Meeting section visible: true\n"
+                        },
+                        {
+                          "text": "Request Council Meeting button visible: \u001b[33mfalse\u001b[39m\n"
+                        }
+                      ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-12-22T00:30:23.520Z",
+                      "startTime": "2025-12-22T11:20:32.876Z",
                       "annotations": [],
                       "attachments": [
                         {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-council-meeting-comple-56e55-questDetail-page-also-works-chromium-desktop/test-failed-1.png"
+                        },
+                        {
                           "name": "video",
                           "contentType": "video/webm",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-2b06d-t-name-correctly-after-save-chromium-mobile/video.webm"
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-council-meeting-comple-56e55-questDetail-page-also-works-chromium-desktop/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-council-meeting-comple-56e55-questDetail-page-also-works-chromium-desktop/error-context.md"
                         }
-                      ]
+                      ],
+                      "errorLocation": {
+                        "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js",
+                        "column": 22,
+                        "line": 208
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
-              "id": "cd5021c0521f870e5876-9cfed5561b4a74b8e883",
-              "file": "e2e/regression-bugs-v1.3.spec.js",
-              "line": 294,
+              "id": "159db2bb103daf356b49-6195d09705c0350b6a1b",
+              "file": "e2e/council-meeting-complete-flow.spec.js",
+              "line": 171,
               "column": 2
             },
             {
-              "title": "should create SPISC application with age field populated",
-              "ok": true,
+              "title": "Meeting banner appears during application flow and modal works",
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -319,31 +331,162 @@
                   "projectName": "chromium-mobile",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 4722,
-                      "errors": [],
-                      "stdout": [],
+                      "status": "failed",
+                      "duration": 12007,
+                      "error": {
+                        "message": "TimeoutError: page.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"New Request\"), a:has-text(\"New Request\"), button:has-text(\"New Application\"), a:has-text(\"New Application\")')\u001b[22m\n",
+                        "stack": "TimeoutError: page.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"New Request\"), a:has-text(\"New Request\"), button:has-text(\"New Application\"), a:has-text(\"New Application\")')\u001b[22m\n\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js:33:14",
+                        "location": {
+                          "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js",
+                          "column": 14,
+                          "line": 33
+                        },
+                        "snippet": "  31 | \t\t// Start new application\n  32 | \t\tconsole.log(\"Step 1: Starting new application...\")\n> 33 | \t\tawait page.click(\n     | \t\t           ^\n  34 | \t\t\t'button:has-text(\"New Request\"), a:has-text(\"New Request\"), button:has-text(\"New Application\"), a:has-text(\"New Application\")',\n  35 | \t\t)\n  36 | \t\tawait page.waitForLoadState(\"networkidle\")"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js",
+                            "column": 14,
+                            "line": 33
+                          },
+                          "message": "TimeoutError: page.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"New Request\"), a:has-text(\"New Request\"), button:has-text(\"New Application\"), a:has-text(\"New Application\")')\u001b[22m\n\n\n  31 | \t\t// Start new application\n  32 | \t\tconsole.log(\"Step 1: Starting new application...\")\n> 33 | \t\tawait page.click(\n     | \t\t           ^\n  34 | \t\t\t'button:has-text(\"New Request\"), a:has-text(\"New Request\"), button:has-text(\"New Application\"), a:has-text(\"New Application\")',\n  35 | \t\t)\n  36 | \t\tawait page.waitForLoadState(\"networkidle\")\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js:33:14"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "\n=== TEST: Meeting Banner During Application Flow ===\n\n"
+                        },
+                        {
+                          "text": "Step 1: Starting new application...\n"
+                        }
+                      ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-12-22T00:30:25.736Z",
+                      "startTime": "2025-12-22T11:20:40.956Z",
                       "annotations": [],
                       "attachments": [
                         {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-council-meeting-comple-e1505-cation-flow-and-modal-works-chromium-mobile/test-failed-1.png"
+                        },
+                        {
                           "name": "video",
                           "contentType": "video/webm",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-regression-bugs-v1.3-B-ce4de-on-with-age-field-populated-chromium-mobile/video.webm"
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-council-meeting-comple-e1505-cation-flow-and-modal-works-chromium-mobile/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-council-meeting-comple-e1505-cation-flow-and-modal-works-chromium-mobile/error-context.md"
                         }
-                      ]
+                      ],
+                      "errorLocation": {
+                        "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js",
+                        "column": 14,
+                        "line": 33
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
-              "id": "cd5021c0521f870e5876-42ffbc9e97c52ef1b880",
-              "file": "e2e/regression-bugs-v1.3.spec.js",
-              "line": 334,
+              "id": "159db2bb103daf356b49-812d1bfeeddf23afc849",
+              "file": "e2e/council-meeting-complete-flow.spec.js",
+              "line": 26,
+              "column": 2
+            },
+            {
+              "title": "Meeting banner on RequestDetail page also works",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium-mobile",
+                  "projectName": "chromium-mobile",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 16969,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js:197:27",
+                        "location": {
+                          "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js",
+                          "column": 27,
+                          "line": 197
+                        },
+                        "snippet": "  195 | \t\t\tconst sectionVisible = await meetingH2.isVisible({ timeout: 5000 }).catch(() => false)\n  196 | \t\t\tconsole.log(\"Council Meeting section visible after scroll:\", sectionVisible)\n> 197 | \t\t\texpect(sectionVisible).toBe(true)\n      | \t\t\t                       ^\n  198 | \t\t}\n  199 |\n  200 | \t\t// Verify button"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js",
+                            "column": 27,
+                            "line": 197
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\n  195 | \t\t\tconst sectionVisible = await meetingH2.isVisible({ timeout: 5000 }).catch(() => false)\n  196 | \t\t\tconsole.log(\"Council Meeting section visible after scroll:\", sectionVisible)\n> 197 | \t\t\texpect(sectionVisible).toBe(true)\n      | \t\t\t                       ^\n  198 | \t\t}\n  199 |\n  200 | \t\t// Verify button\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js:197:27"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "\n=== TEST: Meeting Banner on RequestDetail Page ===\n\n"
+                        },
+                        {
+                          "text": "Step 1: Navigating to existing request...\n"
+                        },
+                        {
+                          "text": "✓ Request detail page loaded\n"
+                        },
+                        {
+                          "text": "\nStep 2: Checking Council Meeting section...\n"
+                        },
+                        {
+                          "text": "Council Meeting section visible after scroll: \u001b[33mfalse\u001b[39m\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-22T11:20:54.105Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-council-meeting-comple-56e55-questDetail-page-also-works-chromium-mobile/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-council-meeting-comple-56e55-questDetail-page-also-works-chromium-mobile/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-council-meeting-comple-56e55-questDetail-page-also-works-chromium-mobile/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js",
+                        "column": 27,
+                        "line": 197
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "159db2bb103daf356b49-1998214f03df250459d7",
+              "file": "e2e/council-meeting-complete-flow.spec.js",
+              "line": 171,
               "column": 2
             }
           ]
@@ -353,11 +496,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-12-22T00:29:53.869Z",
-    "duration": 41301.028,
-    "expected": 6,
+    "startTime": "2025-12-22T11:20:18.168Z",
+    "duration": 54072.657999999996,
+    "expected": 0,
     "skipped": 0,
-    "unexpected": 0,
+    "unexpected": 4,
     "flaky": 0
   }
 }

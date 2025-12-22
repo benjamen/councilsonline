@@ -7,6 +7,36 @@ import frappe
 from frappe.utils import get_url
 
 
+def send_email(recipients, subject, message, reference_doctype=None, reference_name=None, attachments=None, now=True):
+	"""Generic email sending function
+
+	Args:
+		recipients: List of email addresses
+		subject: Email subject
+		message: Email message (HTML)
+		reference_doctype: Optional DocType for reference
+		reference_name: Optional document name for reference
+		attachments: Optional list of attachments
+		now: Send immediately (default True)
+	"""
+	try:
+		frappe.sendmail(
+			recipients=recipients,
+			subject=subject,
+			message=message,
+			reference_doctype=reference_doctype,
+			reference_name=reference_name,
+			attachments=attachments,
+			now=now
+		)
+
+		frappe.logger().info(f"Email sent: {subject} to {', '.join(recipients)}")
+
+	except Exception as e:
+		frappe.log_error(f"Failed to send email '{subject}': {str(e)}", "Email Error")
+		# Don't raise - email failure shouldn't break the workflow
+
+
 def send_acknowledgment(request, recipient):
 	"""Send acknowledgment email in background
 

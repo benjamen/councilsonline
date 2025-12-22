@@ -62,17 +62,17 @@
   {
    "document_type": "Request",
    "label": "Open Requests",
-   "quick_list_filter": "[[\"Request\",\"status\",\"=\",\"Open\",false]]"
+   "quick_list_filter": "[[\"Request\",\"workflow_state\",\"in\",[\"Submitted\",\"Acknowledged\",\"Processing\"],false]]"
   },
   {
    "document_type": "Request",
    "label": "Draft Requests",
-   "quick_list_filter": "[[\"Request\",\"status\",\"=\",\"Draft\",false]]"
+   "quick_list_filter": "[[\"Request\",\"workflow_state\",\"=\",\"Draft\",false]]"
   },
   {
    "document_type": "Request",
    "label": "Completed Requests",
-   "quick_list_filter": "[[\"Request\",\"status\",\"=\",\"Completed\",false]]"
+   "quick_list_filter": "[[\"Request\",\"workflow_state\",\"in\",[\"Approved\",\"Approved with Conditions\",\"Completed\"],false]]"
   }
  ],
  "roles": [],

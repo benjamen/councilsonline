@@ -1,0 +1,190 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e4]:
+  - banner [ref=e5]:
+    - generic [ref=e7]:
+      - generic [ref=e8]:
+        - button "Go back" [ref=e9] [cursor=pointer]:
+          - img [ref=e10]
+        - generic [ref=e12]:
+          - heading "SPISC-2025-121" [level=1] [ref=e13]
+          - paragraph [ref=e14]: Social Pension for Indigent Senior Citizens (SPISC)
+      - generic [ref=e15]:
+        - generic [ref=e16]: Draft
+        - button "Submit Application" [ref=e18] [cursor=pointer]:
+          - generic [ref=e19]: Submit Application
+  - generic [ref=e21]:
+    - generic [ref=e22]:
+      - generic [ref=e23]:
+        - heading "Application Overview" [level=2] [ref=e24]
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - text: Request Number
+            - paragraph [ref=e27]: SPISC-2025-121
+          - generic [ref=e28]:
+            - text: Type
+            - paragraph [ref=e29]: Social Pension for Indigent Senior Citizens (SPISC)
+          - generic [ref=e30]:
+            - text: Status
+            - generic [ref=e32]: Draft
+          - generic [ref=e34]:
+            - text: Submitted Date
+            - paragraph [ref=e35]: 11 Dec 2025, 03:41 pm
+        - generic [ref=e36]:
+          - text: Brief Description
+          - paragraph [ref=e37]: Administrator - SPISC Application
+        - generic [ref=e38]:
+          - text: Detailed Description
+          - generic [ref=e39]: N/A
+      - generic [ref=e40]:
+        - heading "Applicant Information" [level=2] [ref=e41]
+        - generic [ref=e42]:
+          - generic [ref=e43]:
+            - text: Name
+            - paragraph [ref=e44]: N/A
+          - generic [ref=e45]:
+            - text: Email
+            - paragraph [ref=e46]: N/A
+          - generic [ref=e47]:
+            - text: Phone
+            - paragraph [ref=e48]: N/A
+          - generic [ref=e49]:
+            - text: Address
+            - paragraph [ref=e50]: N/A
+      - generic [ref=e51]:
+        - heading "SPISC Application Details" [level=2] [ref=e52]
+        - generic [ref=e53]:
+          - generic [ref=e54]:
+            - heading "Personal Information" [level=3] [ref=e55]
+            - generic [ref=e56]:
+              - generic [ref=e57]:
+                - text: Birth Date
+                - paragraph [ref=e58]: N/A
+              - generic [ref=e59]:
+                - text: Age
+                - paragraph [ref=e60]: N/A
+              - generic [ref=e61]:
+                - text: Sex
+                - paragraph [ref=e62]: N/A
+              - generic [ref=e63]:
+                - text: Civil Status
+                - paragraph [ref=e64]: N/A
+          - generic [ref=e65]:
+            - heading "Household & Economic Information" [level=3] [ref=e66]
+            - generic [ref=e67]:
+              - generic [ref=e68]:
+                - text: Household Size
+                - paragraph [ref=e69]: N/A
+              - generic [ref=e70]:
+                - text: Living Arrangement
+                - paragraph [ref=e71]: N/A
+              - generic [ref=e72]:
+                - text: Monthly Income
+                - paragraph [ref=e73]: ₱0
+              - generic [ref=e74]:
+                - text: Income Source
+                - paragraph [ref=e75]: N/A
+              - generic [ref=e76]:
+                - text: 4Ps Beneficiary
+                - paragraph [ref=e77]: "No"
+          - heading "Identity Documents" [level=3] [ref=e79]
+      - generic [ref=e80]:
+        - generic [ref=e81]:
+          - generic [ref=e82]:
+            - heading "Council Meeting" [level=2] [ref=e83]
+            - paragraph [ref=e84]: Schedule a meeting with council planners to discuss your application
+          - generic [ref=e85]: Requested
+        - generic [ref=e87]:
+          - generic [ref=e88]:
+            - generic [ref=e89]: Type:Pre-Application Meeting
+            - generic [ref=e90]: Status:Requested
+            - generic [ref=e91]: Format:In Person
+          - generic [ref=e92]:
+            - text: "Purpose:"
+            - paragraph [ref=e93]: I would like to discuss my SPISC application requirements.
+          - generic [ref=e94]:
+            - text: "Proposed Time Slots:"
+            - list [ref=e95]:
+              - listitem [ref=e96]:
+                - img [ref=e97]
+                - text: Thursday, 11 December 2025 at 09:00 am
+              - listitem [ref=e99]:
+                - img [ref=e100]
+                - text: Thursday, 11 December 2025 at 10:15 am
+              - listitem [ref=e102]:
+                - img [ref=e103]
+                - text: Thursday, 11 December 2025 at 11:30 am
+          - generic [ref=e105]:
+            - button "Edit Request" [ref=e106] [cursor=pointer]:
+              - img [ref=e107]
+              - text: Edit Request
+            - button "Cancel Meeting" [ref=e109] [cursor=pointer]:
+              - img [ref=e110]
+              - text: Cancel Meeting
+      - generic [ref=e112]:
+        - heading "Application Details" [level=2] [ref=e113]
+        - generic [ref=e115]:
+          - text: Province
+          - paragraph [ref=e116]: Rizal
+      - generic [ref=e117]:
+        - generic [ref=e118]:
+          - heading "Payment to be Received" [level=2] [ref=e119]
+          - generic [ref=e120]: Pending
+        - generic [ref=e122]:
+          - img [ref=e123]
+          - generic [ref=e125]:
+            - paragraph [ref=e126]: Benefit Payment Information
+            - paragraph [ref=e127]: Once your application is approved, you will receive payment from the council. Please ensure your bank details are up to date.
+        - generic [ref=e128]:
+          - generic [ref=e129]:
+            - generic [ref=e130]: Benefit Amount
+            - generic [ref=e131]: $0.00
+          - generic [ref=e132]:
+            - generic [ref=e133]: Payment Status
+            - generic [ref=e134]: Pending
+      - generic [ref=e135]:
+        - generic [ref=e136]:
+          - heading "Documents" [level=2] [ref=e137]
+          - button "Upload Document" [ref=e138] [cursor=pointer]:
+            - img [ref=e139]
+            - generic [ref=e141]: Upload Document
+        - generic [ref=e142]:
+          - img [ref=e143]
+          - paragraph [ref=e145]: No documents uploaded yet
+    - generic [ref=e146]:
+      - generic [ref=e147]:
+        - heading "Processing Timeline" [level=2] [ref=e148]
+        - generic [ref=e150]:
+          - img [ref=e152]
+          - generic [ref=e154]:
+            - paragraph [ref=e155]: Application Created
+            - paragraph [ref=e156]: 11 Dec 2025, 03:41 pm
+      - generic [ref=e157]:
+        - heading "Quick Actions" [level=2] [ref=e158]
+        - generic [ref=e159]:
+          - button "Edit Draft" [ref=e160] [cursor=pointer]:
+            - img [ref=e161]
+            - generic [ref=e163]: Edit Draft
+          - button "Send Message" [ref=e164] [cursor=pointer]:
+            - img [ref=e165]
+            - generic [ref=e167]: Send Message
+          - button "Print Application" [ref=e168] [cursor=pointer]:
+            - img [ref=e169]
+            - generic [ref=e171]: Print Application
+          - button "Delete Draft" [ref=e172] [cursor=pointer]:
+            - img [ref=e173]
+            - generic [ref=e175]: Delete Draft
+      - generic [ref=e176]:
+        - heading "Need Help?" [level=3] [ref=e177]
+        - paragraph [ref=e178]: Contact TayTay Council for assistance with your application.
+        - generic [ref=e179]:
+          - generic [ref=e180]:
+            - img [ref=e181]
+            - link "benjamen.walsh@gmail.com" [ref=e183] [cursor=pointer]:
+              - /url: mailto:benjamen.walsh@gmail.com
+          - generic [ref=e184]:
+            - img [ref=e185]
+            - link "+63 2 8123 4567" [ref=e187] [cursor=pointer]:
+              - /url: tel:+63 2 8123 4567
+```

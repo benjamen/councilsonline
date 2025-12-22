@@ -1462,7 +1462,7 @@ def get_staff_users():
 
 
 @frappe.whitelist()
-def book_council_meeting(request_id=None, request_type_code=None, meeting_type="Council Meeting",
+def book_council_meeting(request_id=None, request_type_code=None, meeting_type="Pre-Application Meeting",
                          meeting_purpose=None, discussion_points=None, attendees=None, preferred_time_slots=None):
     """
     Book a council meeting for a request (or standalone for pre-application) and create a Pre-Application Meeting record
@@ -1941,12 +1941,12 @@ def get_request_meetings(request_id):
             meeting.proposed_slots = frappe.get_all(
                 "Meeting Preferred Time Slot",
                 filters={"parent": meeting.name},
-                fields=["proposed_datetime"],
-                order_by="proposed_datetime asc"
+                fields=["preferred_start"],
+                order_by="preferred_start asc"
             )
             # Extract just the datetime values
             if meeting.proposed_slots:
-                meeting.proposed_slots = [slot.proposed_datetime for slot in meeting.proposed_slots]
+                meeting.proposed_slots = [slot.preferred_start for slot in meeting.proposed_slots]
 
         return meetings
 

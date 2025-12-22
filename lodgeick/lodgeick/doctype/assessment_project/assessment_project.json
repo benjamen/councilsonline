@@ -219,6 +219,12 @@
   {
    "link_doctype": "Project Task",
    "link_fieldname": "assessment_project"
+  },
+  {
+   "link_doctype": "Project Task",
+   "link_fieldname": "assessment_project",
+   "custom": 1,
+   "label": "Gantt Chart"
   }
  ],
  "modified": "2025-12-16 16:03:25.058647",

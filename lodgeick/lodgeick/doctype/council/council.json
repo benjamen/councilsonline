@@ -1,11 +1,11 @@
 {
  "actions": [],
- "autoname": "field:council_code",
  "creation": "2025-11-26 00:00:00",
  "default_view": "List",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
+ "issingle": 1,
  "field_order": [
   "identity_section",
   "council_code",
@@ -348,12 +348,9 @@
  "modified_by": "Administrator",
  "module": "Lodgeick",
  "name": "Council",
- "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
-   "create": 1,
-   "delete": 1,
    "email": 1,
    "export": 1,
    "print": 1,

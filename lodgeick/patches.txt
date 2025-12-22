@@ -16,3 +16,5 @@ lodgeick.lodgeick.patches.sync_spisc_payment_step
 # SPISC assessment infrastructure now loads via fixtures (see hooks.py)
 lodgeick.patches.v1_3.setup_lodgeick_roles
 lodgeick.patches.v1_3.migrate_status_to_workflow
+# v1.4 - Single Tenant Migration
+lodgeick.patches.v1_4.convert_council_to_single

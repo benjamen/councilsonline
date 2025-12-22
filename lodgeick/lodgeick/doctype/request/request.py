@@ -51,49 +51,8 @@ class Request(Document):
         # 6. Calculate total fees
         self.calculate_total_fees()
 
-    def validate_council_license(self):
-        """Validate that council is active and has valid license"""
-        if not self.council:
-            frappe.throw("Council is required")
-
-        council = frappe.get_doc("Council", self.council)
-
-        if not council.is_active:
-            frappe.throw(f"Council '{council.council_name}' is not active")
-
-        if not council.is_license_valid():
-            frappe.throw(f"Council '{council.council_name}' license has expired")
-
-        if not council.can_accept_requests():
-            frappe.throw(f"Council '{council.council_name}' has reached its monthly request limit")
-
-    def validate_request_type_for_council(self):
-        """Validate that request type is enabled for selected council"""
-        if not self.council or not self.request_type:
-            return
-
-        # Check if request type is enabled for this council
-        enabled = frappe.db.get_value(
-            "Council Request Type",
-            {
-                "parent": self.council,
-                "request_type": self.request_type,
-                "is_enabled": 1
-            },
-            "name"
-        )
-
-        if not enabled:
-            council_name = frappe.db.get_value("Council", self.council, "council_name")
-            request_type_name = frappe.db.get_value("Request Type", self.request_type, "type_name")
-            frappe.throw(f"Request type '{request_type_name}' is not available for {council_name}")
-
     def before_submit(self):
         """Actions before document is submitted"""
-        # Validate council and request type before submission
-        self.validate_council_license()
-        self.validate_request_type_for_council()
-
         # Set submitted date
         if not self.submitted_date:
             self.submitted_date = getdate()

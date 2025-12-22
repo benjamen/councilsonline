@@ -47,12 +47,12 @@
   {
    "document_type": "Request",
    "label": "Open Requests",
-   "quick_list_filter": "[[\"Request\",\"status\",\"in\",[\"Submitted\",\"Acknowledged\",\"Processing\"],false]]"
+   "quick_list_filter": "[[\"Request\",\"workflow_state\",\"in\",[\"Submitted\",\"Acknowledged\",\"Processing\"],false]]"
   },
   {
    "document_type": "Request",
    "label": "Completed Requests",
-   "quick_list_filter": "[[\"Request\",\"status\",\"in\",[\"Approved\",\"Approved with Conditions\"],false]]"
+   "quick_list_filter": "[[\"Request\",\"workflow_state\",\"in\",[\"Approved\",\"Approved with Conditions\"],false]]"
   }
  ],
  "roles": [],

@@ -14,36 +14,42 @@ test.describe("Request Communication Features", () => {
 		const isLoggedIn = await newRequestButton.isVisible().catch(() => false)
 
 		if (!isLoggedIn) {
-			// Log in
-			const signInButton = page.locator('button:has-text("Sign In")')
-			const logInLink = page.locator(
-				'a:has-text("Log In"), button:has-text("Log In")',
-			)
+			console.log("Not logged in, attempting to log in...")
+			// Log in - look for Sign In button
+			const signInButton = page.locator('button:has-text("Sign In")').first()
 
 			if (await signInButton.isVisible({ timeout: 2000 }).catch(() => false)) {
+				console.log("Found Sign In button, clicking...")
 				await signInButton.click()
 				await page.waitForLoadState("networkidle")
-			} else if (
-				await logInLink.isVisible({ timeout: 2000 }).catch(() => false)
-			) {
-				await logInLink.click()
-				await page.waitForLoadState("networkidle")
+				await page.waitForTimeout(1000)
 			}
 
-			await page.fill(
-				'input[type="email"], input[type="text"], input[placeholder*="email"], input[placeholder*="username"]',
-				"Administrator",
-			)
-			await page.fill(
-				'input[type="password"], input[placeholder*="password"]',
-				"admin123",
-			)
-			await page.click('button:has-text("Sign In")')
+			// Fill login form
+			console.log("Filling login credentials...")
+			const usernameInput = page.locator('input[type="email"], input[type="text"], input[placeholder*="email"], input[placeholder*="username"]').first()
+			const passwordInput = page.locator('input[type="password"], input[placeholder*="password"]').first()
+
+			await usernameInput.fill("Administrator")
+			await page.waitForTimeout(300)
+			await passwordInput.fill("admin123")
+			await page.waitForTimeout(300)
+
+			// Click Sign In button on login form
+			const loginSubmit = page.locator('button:has-text("Sign In"), button[type="submit"]').first()
+			console.log("Clicking Sign In to submit login...")
+			await loginSubmit.click()
 			await page.waitForLoadState("networkidle")
 			await page.waitForTimeout(2000)
+
+			// Verify login successful
+			console.log("Waiting for New Request button to confirm login...")
 			await page.waitForSelector('button:has-text("New Request")', {
 				timeout: 10000,
 			})
+			console.log("Login successful!")
+		} else {
+			console.log("Already logged in")
 		}
 
 		// Create a draft SPISC request for testing

@@ -62,22 +62,22 @@
   {
    "document_type": "Request",
    "label": "Open Requests",
-   "quick_list_filter": "[[\"Request\",\"status\",\"in\",[\"Submitted\",\"Acknowledged\",\"Processing\"],false]]"
+   "quick_list_filter": "[[\"Request\",\"workflow_state\",\"in\",[\"Submitted\",\"Acknowledged\",\"Processing\"],false]]"
   },
   {
    "document_type": "Request",
    "label": "Draft Requests",
-   "quick_list_filter": "[[\"Request\",\"status\",\"=\",\"Draft\",false]]"
+   "quick_list_filter": "[[\"Request\",\"workflow_state\",\"=\",\"Draft\",false]]"
   },
   {
    "document_type": "Request",
    "label": "Overdue",
-   "quick_list_filter": "[[\"Request\",\"status\",\"in\",[\"Submitted\",\"Acknowledged\",\"Processing\",\"RFI Issued\",\"Pending Decision\"],false]]"
+   "quick_list_filter": "[[\"Request\",\"workflow_state\",\"in\",[\"Submitted\",\"Acknowledged\",\"Processing\",\"RFI Issued\",\"Pending Decision\"],false]]"
   },
   {
    "document_type": "Request",
    "label": "Completed Requests",
-   "quick_list_filter": "[[\"Request\",\"status\",\"in\",[\"Approved\",\"Approved with Conditions\"],false]]"
+   "quick_list_filter": "[[\"Request\",\"workflow_state\",\"in\",[\"Approved\",\"Approved with Conditions\"],false]]"
   }
  ],
  "roles": [],

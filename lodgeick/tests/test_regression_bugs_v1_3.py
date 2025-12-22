@@ -84,10 +84,13 @@ class TestBug001ProjectTaskAutoname(FrappeTestCase):
         errors = []
         created_tasks = []
 
+        # Store site name in main thread before spawning child threads
+        site_name = frappe.local.site
+
         def create_project_with_tasks(project_number):
             """Create Assessment Project with tasks."""
             try:
-                frappe.init(site=frappe.local.site)
+                frappe.init(site=site_name)
                 frappe.connect()
 
                 # Create unique request
@@ -167,10 +170,13 @@ class TestBug001ProjectTaskAutoname(FrappeTestCase):
         errors = []
         created_tasks = []
 
+        # Store site name in main thread before spawning child threads
+        site_name = frappe.local.site
+
         def create_multiple_tasks(thread_id):
             """Create 3 tasks per thread."""
             try:
-                frappe.init(site=frappe.local.site)
+                frappe.init(site=site_name)
                 frappe.connect()
 
                 for i in range(3):

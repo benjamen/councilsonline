@@ -17,4 +17,11 @@ def get_context(context):
     # The boot dict is automatically added by Frappe
     context.no_cache = 1
 
+    # Add CSRF token to boot data so it's available as window.csrf_token
+    csrf_token = frappe.sessions.get_csrf_token()
+    context.boot = {
+        'csrf_token': csrf_token,
+        'user': frappe.session.user
+    }
+
     return context

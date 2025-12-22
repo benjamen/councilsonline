@@ -49,36 +49,39 @@ app.use(pageMetaPlugin)
 
 // Initialize CSRF token before mounting
 async function initApp() {
-	// Fetch CSRF token from session
-	try {
-		console.log('[main.js] Fetching CSRF token from API...')
-		const response = await fetch('/api/method/frappe.auth.get_logged_user', {
-			credentials: 'include'
-		})
-		console.log('[main.js] CSRF fetch response status:', response.status, response.ok)
+	// Check if CSRF token is already in boot data (injected by backend)
+	if (window.csrf_token) {
+		console.log('[main.js] ✅ CSRF token loaded from boot data')
+	} else {
+		// Fallback: try to get from cookies
+		console.log('[main.js] No boot CSRF token, trying cookies...')
+		const csrfFromCookie = document.cookie.split('; ').find(row => row.startsWith('csrf_token='))
 
-		if (response.ok) {
-			const data = await response.json()
-			console.log('[main.js] API response:', data)
-
-			// CSRF token should be in cookies
-			const csrfFromCookie = document.cookie.split('; ').find(row => row.startsWith('csrf_token='))
-			console.log('[main.js] Current cookies:', document.cookie)
-			console.log('[main.js] CSRF cookie found:', csrfFromCookie)
-
-			if (csrfFromCookie) {
-				window.csrf_token = csrfFromCookie.split('=')[1]
-				console.log('[main.js] ✅ CSRF token set successfully:', window.csrf_token)
-			} else {
-				console.warn('[main.js] ⚠️ No CSRF token found in cookies!')
-				console.warn('[main.js] You are accessing from:', window.location.href)
-				console.warn('[main.js] Development should use http://localhost:8080 (Vite dev server)')
-			}
+		if (csrfFromCookie) {
+			window.csrf_token = csrfFromCookie.split('=')[1]
+			console.log('[main.js] ✅ CSRF token found in cookies')
 		} else {
-			console.error('[main.js] Failed to fetch CSRF token - response not OK')
+			// Final fallback: fetch from API
+			try {
+				console.log('[main.js] Fetching CSRF token from API...')
+				const response = await fetch('/api/method/frappe.auth.get_logged_user', {
+					credentials: 'include'
+				})
+
+				if (response.ok) {
+					// Check cookies again after API call
+					const csrfAfterFetch = document.cookie.split('; ').find(row => row.startsWith('csrf_token='))
+					if (csrfAfterFetch) {
+						window.csrf_token = csrfAfterFetch.split('=')[1]
+						console.log('[main.js] ✅ CSRF token set after API fetch')
+					} else {
+						console.warn('[main.js] ⚠️ No CSRF token available')
+					}
+				}
+			} catch (error) {
+				console.error('[main.js] ❌ Could not fetch CSRF token:', error)
+			}
 		}
-	} catch (error) {
-		console.error('[main.js] ❌ Could not fetch CSRF token:', error)
 	}
 
 	const socket = initSocket()

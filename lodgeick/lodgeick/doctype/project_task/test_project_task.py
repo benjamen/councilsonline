@@ -187,10 +187,13 @@ class TestProjectTask(FrappeTestCase):
         errors = []
         created_tasks = []
 
+        # Store site name in main thread before spawning child threads
+        site_name = frappe.local.site
+
         def create_task(task_number):
             """Worker function to create a task in separate thread."""
             try:
-                frappe.init(site=frappe.local.site)
+                frappe.init(site=site_name)
                 frappe.connect()
 
                 task = frappe.get_doc({
@@ -247,10 +250,13 @@ class TestProjectTask(FrappeTestCase):
         errors = []
         created_tasks = []
 
+        # Store site name in main thread before spawning child threads
+        site_name = frappe.local.site
+
         def create_project_with_tasks(project_number):
             """Worker function to create Assessment Project with tasks."""
             try:
-                frappe.init(site=frappe.local.site)
+                frappe.init(site=site_name)
                 frappe.connect()
 
                 # Create unique request for this project
