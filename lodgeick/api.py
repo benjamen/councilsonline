@@ -2402,144 +2402,75 @@ def get_user_requests(status=None):
 # ============================================================================
 
 @frappe.whitelist(allow_guest=True)
-def get_active_councils():
+def get_council():
     """
-    Get all active councils for public display
+    Get the single council for this site (Single DocType)
 
     Returns:
-        list: List of active councils with basic info
+        dict: Council details including branding and configuration
     """
-    councils = frappe.get_all(
-        "Council",
-        filters={"is_active": 1},
-        fields=["council_code", "council_name", "logo", "website", "primary_color", "secondary_color", "is_active"],
-        order_by="council_name",
-        limit_page_length=0  # No limit - return all active councils from database
-    )
-
-    return councils
-
-
-@frappe.whitelist(allow_guest=True)
-def get_council_by_code(council_code):
-    """
-    Get council details by code (for URL parameter handling)
-
-    Args:
-        council_code: Council code (e.g., AKL, WLG)
-
-    Returns:
-        dict: Council details or None if not found/inactive
-    """
-    if not council_code:
-        return None
-
-    try:
-        council = frappe.get_doc("Council", council_code)
-
-        if not council.is_active:
-            return None
-
-        return {
-            "council_code": council.council_code,
-            "council_name": council.council_name,
-            "official_name": council.official_name,
-            "logo": council.logo,
-            "primary_color": council.primary_color,
-            "secondary_color": council.secondary_color,
-            "website": council.website,
-            "contact_email": council.contact_email,
-            "contact_phone": council.contact_phone,
-            "is_license_valid": council.is_license_valid()
-        }
-
-    except frappe.DoesNotExistError:
-        return None
-
-
-@frappe.whitelist(allow_guest=True)
-def get_user_councils(user=None):
-    """
-    Get councils associated with current user
-
-    Args:
-        user: User email (optional, defaults to current user)
-
-    Returns:
-        dict: User's default council and associated councils
-    """
-    user = user or frappe.session.user
-
-    # Get default council (only if field exists)
-    default_council = None
-    if frappe.db.has_column("User", "default_council"):
-        default_council = frappe.db.get_value("User", user, "default_council")
-
-    # Get all requests submitted by this user to find associated councils
-    user_councils = frappe.db.sql("""
-        SELECT DISTINCT council
-        FROM `tabRequest`
-        WHERE applicant = %s AND council IS NOT NULL
-    """, user, as_dict=True)
-
-    associated_councils = [uc.get("council") for uc in user_councils if uc.get("council")]
+    council = frappe.get_single("Council")
 
     return {
-        "default_council": default_council,
-        "associated_councils": associated_councils
+        "council_code": council.council_code,
+        "council_name": council.council_name,
+        "official_name": council.official_name,
+        "logo": council.logo,
+        "primary_color": council.primary_color,
+        "secondary_color": council.secondary_color,
+        "website": council.website,
+        "contact_email": council.contact_email,
+        "contact_phone": council.contact_phone,
+        "redirect_dashboard_to_council": council.redirect_dashboard_to_council,
+        "allow_system_wide_dashboard": council.allow_system_wide_dashboard,
+        "show_council_switcher": council.show_council_switcher,
+        "custom_domain": council.custom_domain,
+        "login_page_custom_html": council.login_page_custom_html,
     }
 
 
 @frappe.whitelist(allow_guest=True)
-def get_request_types_for_council(council_code):
+def get_request_types():
     """
-    Get enabled request types for a specific council
-
-    Args:
-        council_code: Council code
+    Get enabled request types for this site's council
 
     Returns:
         list: List of enabled request types with council-specific pricing
     """
-    if not council_code:
-        return []
+    council = frappe.get_single("Council")
 
-    try:
-        council = frappe.get_doc("Council", council_code)
+    enabled_types = []
 
-        if not council.is_active or not council.is_license_valid():
-            return []
+    for rt in council.enabled_request_types:
+        if rt.is_enabled:
+            request_type_doc = frappe.get_doc("Request Type", rt.request_type)
 
-        enabled_types = []
+            enabled_types.append({
+                "name": request_type_doc.name,
+                "type_name": request_type_doc.type_name,
+                "request_type_name": request_type_doc.type_name,  # Alias for frontend compatibility
+                "type_code": request_type_doc.type_code,
+                "category": request_type_doc.category,
+                "description": rt.brief_description if rt.brief_description else (request_type_doc.description if hasattr(request_type_doc, 'description') else ""),
+                "base_fee": rt.base_fee_override if rt.base_fee_override else request_type_doc.base_fee,
+                "sla_days": rt.sla_days_override if rt.sla_days_override else request_type_doc.processing_sla_days,
+                "fee_calculation_method": request_type_doc.fee_calculation_method,
+                "process_description": rt.process_description or "",
+                # Smart defaults based on category
+                "requires_property": request_type_doc.requires_property if hasattr(request_type_doc, 'requires_property') else (request_type_doc.category != "Social Assistance"),
+                "requires_payment": request_type_doc.requires_payment if hasattr(request_type_doc, 'requires_payment') else (request_type_doc.base_fee > 0)
+            })
 
-        for rt in council.enabled_request_types:
-            if rt.is_enabled:
-                request_type_doc = frappe.get_doc("Request Type", rt.request_type)
-
-                enabled_types.append({
-                    "name": request_type_doc.name,
-                    "type_name": request_type_doc.type_name,
-                    "request_type_name": request_type_doc.type_name,  # Alias for frontend compatibility
-                    "type_code": request_type_doc.type_code,
-                    "category": request_type_doc.category,
-                    "description": rt.brief_description if rt.brief_description else (request_type_doc.description if hasattr(request_type_doc, 'description') else ""),
-                    "base_fee": rt.base_fee_override if rt.base_fee_override else request_type_doc.base_fee,
-                    "sla_days": rt.sla_days_override if rt.sla_days_override else request_type_doc.processing_sla_days,
-                    "fee_calculation_method": request_type_doc.fee_calculation_method,
-                    "process_description": rt.process_description or "",
-                    # Smart defaults based on category
-                    "requires_property": request_type_doc.requires_property if hasattr(request_type_doc, 'requires_property') else (request_type_doc.category != "Social Assistance"),
-                    "requires_payment": request_type_doc.requires_payment if hasattr(request_type_doc, 'requires_payment') else (request_type_doc.base_fee > 0)
-                })
-
-        return enabled_types
-
-    except frappe.DoesNotExistError:
-        return []
+    return enabled_types
 
 
-@frappe.whitelist()
-def set_user_default_council(council_code):
+# REMOVED: set_user_default_council - no longer needed in single-tenant
+# REMOVED: get_locked_council - no longer needed in single-tenant
+# REMOVED: set_locked_council - no longer needed in single-tenant
+# REMOVED: clear_locked_council - no longer needed in single-tenant
+
+@frappe.whitelist(allow_guest=True)
+def get_council_landing_page():
     """
     Set default council for current user
 
