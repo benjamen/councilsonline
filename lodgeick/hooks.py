@@ -112,7 +112,9 @@ fixtures = [
 	{"dt": "Number Card", "filters": [["module", "=", "Lodgeick"]]},
 	{"dt": "Dashboard Chart", "filters": [["module", "=", "Lodgeick"]]},
 	"lodgeick.lodgeick.lodgeick.fixtures.request_types",
-	"lodgeick.lodgeick.lodgeick.fixtures.councils",
+	# REMOVED: Multi-instance councils fixture (now using Single DocType)
+	# "lodgeick.lodgeick.lodgeick.fixtures.councils",
+	"lodgeick.lodgeick.lodgeick.fixtures.taytay.taytay_council",  # Single DocType Council
 	"lodgeick.lodgeick.lodgeick.fixtures.council_request_types",
 	"lodgeick.lodgeick.lodgeick.fixtures.assessment_stage_types",
 	"lodgeick.lodgeick.lodgeick.fixtures.assessment_templates",
