@@ -2810,13 +2810,12 @@ def get_council_settings(council_code):
 # ============================================================================
 
 @frappe.whitelist()
-def track_login_event(source, council_code=None):
+def track_login_event(source):
     """
-    Track login events for analytics
+    Track login events for analytics (single-tenant)
 
     Args:
-        source: Login source ('system-wide' or 'council-specific')
-        council_code: Council code if council-specific login
+        source: Login source (e.g., 'web', 'mobile', 'api')
     """
     try:
         # Create login tracking record
@@ -2824,7 +2823,6 @@ def track_login_event(source, council_code=None):
             "doctype": "Login Event",
             "user": frappe.session.user,
             "source": source,
-            "council": council_code,
             "timestamp": frappe.utils.now(),
             "ip_address": frappe.local.request_ip,
             "user_agent": frappe.local.request.headers.get("User-Agent")
