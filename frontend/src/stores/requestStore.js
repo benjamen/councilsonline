@@ -32,13 +32,13 @@ export const useRequestStore = defineStore("request", {
 	getters: {
 		isFirstStep: (state) => state.currentStep === 0,
 
-		// === NEW GETTER: Total Steps (matches logic in NewRequest.vue) ===
+		// === SINGLE-TENANT: Total Steps (matches logic in NewRequest.vue) ===
 		totalSteps: (state) => {
 			if (state.requestTypeConfig?.steps) {
-				// 3 Static Steps (Council, Type, Process Info) + Dynamic Steps + 1 Review Step
-				return state.requestTypeConfig.steps.length + 4
+				// Single-tenant: Type (0) + Process Info (1) + Dynamic Steps + Review (Last)
+				return state.requestTypeConfig.steps.length + 3
 			}
-			return 4 // Default: 3 Static + 1 Review
+			return 3 // Default: Type, Process Info, Review (no Council step)
 		},
 		// =================================================================
 
@@ -173,8 +173,14 @@ export const useRequestStore = defineStore("request", {
 					this.formData = draft.form_data || {}
 				}
 
-				// Use draft_current_step from the document
-				this.currentStep = draft.draft_current_step || 0
+				// Use draft_current_step from the document (clamp to valid range)
+				const draftStep = draft.draft_current_step || 0
+				const maxStep = this.totalSteps - 1
+				this.currentStep = Math.min(Math.max(0, draftStep), maxStep)
+
+				if (draftStep !== this.currentStep) {
+					console.warn(`[RequestStore] Draft had invalid step ${draftStep}, clamped to ${this.currentStep} (max: ${maxStep})`)
+				}
 			} catch (error) {
 				console.error("Failed to load draft:", error)
 				this.error = error.message || "Failed to load draft"

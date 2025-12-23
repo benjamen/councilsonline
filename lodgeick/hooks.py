@@ -219,7 +219,7 @@ scheduler_events = {
 # Request Events
 # ----------------
 # before_request = ["lodgeick.utils.before_request"]
-after_request = ["lodgeick.utils.after_request"]
+# after_request = ["lodgeick.utils.after_request"]  # Disabled - function doesn't exist
 
 # Job Events
 # ----------

@@ -966,7 +966,6 @@ def create_draft_request(data=None, current_step=None, total_steps=None):
             "property": property_link,  # Link to Property DocType
             "property_address": data.get("property_address"),
             "legal_description": data.get("legal_description"),
-            "council": data.get("council"),  # Add council field
             "requester": frappe.session.user,  # The user who created it (may be agent)
             "requester_name": applicant_name,  # The actual applicant (client or self)
             "requester_email": applicant_email,  # The actual applicant email
@@ -1492,7 +1491,6 @@ def book_council_meeting(request_id=None, request_type_code=None, meeting_type="
         preferred_time_slots = preferred_time_slots or []
 
         request_doc = None
-        council_name = None
 
         # Handle draft/standalone meetings (no request_id yet)
         if request_id and request_id != "draft":
@@ -1502,7 +1500,6 @@ def book_council_meeting(request_id=None, request_type_code=None, meeting_type="
 
             # Get the request document
             request_doc = frappe.get_doc("Request", request_id)
-            council_name = request_doc.council
 
             # Check if a meeting already exists for this request
             existing_meeting = frappe.db.get_value(
@@ -1520,22 +1517,11 @@ def book_council_meeting(request_id=None, request_type_code=None, meeting_type="
                     "meeting_id": existing_meeting,
                     "message": f"A meeting request already exists: {existing_meeting}"
                 }
-        else:
-            # For standalone/draft meetings, get council from session or default
-            # Try to get from locked council in session
-            locked_council = frappe.session.get("locked_council")
-            if locked_council:
-                council_name = locked_council
-            else:
-                # Get first available council as fallback
-                councils = frappe.get_all("Council", filters={"is_active": 1}, limit=1)
-                council_name = councils[0].name if councils else None
 
-        # Create Pre-Application Meeting
+        # Create Pre-Application Meeting (single-tenant: no council field needed)
         meeting_doc = frappe.get_doc({
             "doctype": "Council Meeting",
             "request": request_id if (request_id and request_id != "draft") else None,
-            "council": council_name,
             "meeting_type": meeting_type,
             "status": "Requested",
             "meeting_purpose": meeting_purpose or f"Discuss {request_type_code or 'application'} requirements",
@@ -1635,7 +1621,7 @@ def book_council_meeting(request_id=None, request_type_code=None, meeting_type="
         }
 
     except Exception as e:
-        frappe.log_error(f"Book Council Meeting Error: {str(e)}", "Meeting Booking Error")
+        frappe.log_error(str(e), "Meeting Booking Error")
         frappe.throw(_("Failed to book meeting: {0}").format(str(e)))
 
 
@@ -1661,8 +1647,8 @@ def send_request_message(request_id, subject, message, communication_type="Email
         if request_doc.requester != frappe.session.user:
             frappe.throw("You don't have permission to send messages for this request")
 
-        # Get council email
-        council_doc = frappe.get_doc("Council", request_doc.council)
+        # Get council email (single-tenant)
+        council_doc = frappe.get_single("Council")
         council_email = council_doc.contact_email
 
         # Create Communication Log
@@ -1889,8 +1875,7 @@ def get_meeting_details(meeting_id):
                 "name": request_doc.name,
                 "request_number": request_doc.request_number,
                 "request_type": request_doc.request_type,
-                "status": request_doc.status,
-                "council": request_doc.council
+                "status": request_doc.status
             }
         }
 
@@ -2384,7 +2369,7 @@ def get_user_requests(status=None):
             fields=[
                 "name", "request_number", "request_type", "status",
                 "requester_name", "requester_email", "requester_phone",
-                "council", "brief_description", "creation", "modified",
+                "brief_description", "creation", "modified",
                 "workflow_state"
             ],
             order_by="modified desc"
@@ -4438,16 +4423,15 @@ def create_payout(request_id, payout_amount, payment_method, payout_date=None,
 
 
 @frappe.whitelist()
-def create_payout_batch(batch_name, batch_type, request_type=None, council=None,
+def create_payout_batch(batch_name, batch_type, request_type=None,
 					   period_start=None, period_end=None):
 	"""
-	Create a payout batch for bulk processing
+	Create a payout batch for bulk processing (single-tenant)
 
 	Args:
 		batch_name: Name of the batch
 		batch_type: Monthly Pension/One-time Assistance/Emergency Aid/Burial-Medical
 		request_type: Filter by request type
-		council: Council ID
 		period_start, period_end: Payout period
 
 	Returns:
@@ -4459,7 +4443,6 @@ def create_payout_batch(batch_name, batch_type, request_type=None, council=None,
 			"batch_name": batch_name,
 			"batch_type": batch_type,
 			"request_type": request_type,
-			"council": council or "TAYTAY-PH",
 			"period_start": period_start,
 			"period_end": period_end,
 			"batch_status": "Draft",

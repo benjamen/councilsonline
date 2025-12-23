@@ -117,48 +117,6 @@
             </form>
           </div>
 
-          <!-- Council Preferences Tab -->
-          <div v-else-if="currentTab === 'council'" class="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-            <h2 class="text-2xl font-bold text-gray-900 mb-2">Council Preferences</h2>
-            <p class="text-gray-600 mb-6">Set your default council for new applications</p>
-
-            <form @submit.prevent="updateCouncil" class="space-y-6">
-              <div>
-                <CouncilSelector
-                  v-model="profileForm.default_council"
-                  label="Default Council"
-                  description="This council will be pre-selected when you create new requests"
-                  display-mode="dropdown"
-                  :show-clear-button="true"
-                />
-              </div>
-
-              <div v-if="profile.default_council_data" class="mt-4 p-4 bg-gray-50 rounded-lg">
-                <h4 class="font-medium text-gray-900 mb-2">Current Default Council</h4>
-                <div class="flex items-center space-x-3">
-                  <div
-                    class="w-10 h-10 rounded flex items-center justify-center text-white font-bold"
-                    :style="{ backgroundColor: profile.default_council_data.primary_color || '#3B82F6' }"
-                  >
-                    {{ profile.default_council_data.council_code }}
-                  </div>
-                  <div>
-                    <p class="font-medium text-gray-900">{{ profile.default_council_data.council_name }}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="flex justify-end space-x-4">
-                <Button @click="resetCouncilForm" variant="outline" theme="gray">
-                  Cancel
-                </Button>
-                <Button type="submit" variant="solid" theme="blue" :loading="saving">
-                  Save Changes
-                </Button>
-              </div>
-            </form>
-          </div>
-
           <!-- Organization Tab (for suppliers) -->
           <div v-else-if="currentTab === 'organization'" class="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
             <h2 class="text-2xl font-bold text-gray-900 mb-2">Organization Details</h2>
@@ -282,7 +240,6 @@
 import { Button, Input, call } from "frappe-ui"
 import { computed, onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
-import CouncilSelector from "../components/CouncilSelector.vue"
 
 const router = useRouter()
 
@@ -290,7 +247,6 @@ const router = useRouter()
 const currentTab = ref("profile")
 const tabs = [
 	{ key: "profile", label: "Profile", icon: "user-icon" },
-	{ key: "council", label: "Council", icon: "building-icon" },
 	{ key: "organization", label: "Organization", icon: "office-icon" },
 	{ key: "security", label: "Security", icon: "lock-icon" },
 ]

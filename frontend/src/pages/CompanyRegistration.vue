@@ -446,16 +446,7 @@
           <div v-show="currentStep === 2" class="space-y-6">
             <h2 class="text-xl font-semibold text-gray-900 mb-4">Default Settings</h2>
 
-            <div>
-              <CouncilSelector
-                v-model="formData.default_council"
-                label="Default Council (Optional)"
-                description="Select your primary council for applications. You can work with multiple councils."
-                display-mode="dropdown"
-                :required="false"
-                :show-clear-button="true"
-              />
-            </div>
+            <!-- Single-tenant: No council selection needed -->
 
             <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <h3 class="text-sm font-medium text-blue-900 mb-2">Agent Permissions</h3>
@@ -589,7 +580,6 @@ import { Button, Input } from "frappe-ui"
 import { computed, ref } from "vue"
 import { useRouter } from "vue-router"
 import AddressLookup from "../components/AddressLookup.vue"
-import CouncilSelector from "../components/CouncilSelector.vue"
 import {
 	validateEmail,
 	validateNZBN,

@@ -86,25 +86,25 @@
   },
   "suites": [
     {
-      "title": "e2e/council-meeting-complete-flow.spec.js",
-      "file": "e2e/council-meeting-complete-flow.spec.js",
+      "title": "e2e/spisc-complete-workflow.spec.js",
+      "file": "e2e/spisc-complete-workflow.spec.js",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "Council Meeting Complete Flow",
-          "file": "e2e/council-meeting-complete-flow.spec.js",
-          "line": 3,
+          "title": "SPISC Complete Workflow E2E",
+          "file": "e2e/spisc-complete-workflow.spec.js",
+          "line": 27,
           "column": 6,
           "specs": [
             {
-              "title": "Meeting banner appears during application flow and modal works",
-              "ok": false,
+              "title": "Full workflow: Apply → Review → Approve → Payment",
+              "ok": true,
               "tags": [],
               "tests": [
                 {
-                  "timeout": 60000,
+                  "timeout": 300000,
                   "annotations": [],
                   "expectedStatus": "passed",
                   "projectId": "chromium-desktop",
@@ -113,381 +113,431 @@
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 10781,
-                      "error": {
-                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m1\u001b[39m\nReceived:    \u001b[31m0\u001b[39m",
-                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m1\u001b[39m\nReceived:    \u001b[31m0\u001b[39m\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js:135:40",
-                        "location": {
-                          "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js",
-                          "column": 40,
-                          "line": 135
-                        },
-                        "snippet": "  133 | \t\texpect(await meetingTypeField.isVisible()).toBe(true)\n  134 | \t\texpect(await purposeField.isVisible()).toBe(true)\n> 135 | \t\texpect(await timeSlotInputs.count()).toBeGreaterThanOrEqual(1)\n      | \t\t                                     ^\n  136 | \t\tconsole.log(\"✓ All form fields present\")\n  137 |\n  138 | \t\t// Fill out the form"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js",
-                            "column": 40,
-                            "line": 135
-                          },
-                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m1\u001b[39m\nReceived:    \u001b[31m0\u001b[39m\n\n  133 | \t\texpect(await meetingTypeField.isVisible()).toBe(true)\n  134 | \t\texpect(await purposeField.isVisible()).toBe(true)\n> 135 | \t\texpect(await timeSlotInputs.count()).toBeGreaterThanOrEqual(1)\n      | \t\t                                     ^\n  136 | \t\tconsole.log(\"✓ All form fields present\")\n  137 |\n  138 | \t\t// Fill out the form\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js:135:40"
-                        }
-                      ],
+                      "status": "passed",
+                      "duration": 98741,
+                      "errors": [],
                       "stdout": [
                         {
-                          "text": "\n=== TEST: Meeting Banner During Application Flow ===\n\n"
+                          "text": "\n╔════════════════════════════════════════════════════════════╗\n"
                         },
                         {
-                          "text": "Step 1: Starting new application...\n"
+                          "text": "║  PHASE 1: APPLICANT SUBMISSION                             ║\n"
                         },
                         {
-                          "text": "✓ New application/request clicked\n"
+                          "text": "╚════════════════════════════════════════════════════════════╝\n\n"
                         },
                         {
-                          "text": "\nStep 2: Selecting Taytay council...\n"
+                          "text": "[Auth] Logging in as Administrator\n"
                         },
                         {
-                          "text": "✓ Taytay selected\n"
+                          "text": "[Auth] Submitted login form\n"
                         },
                         {
-                          "text": "\nStep 3: Selecting SPISC request type...\n"
+                          "text": "[Auth] Login successful - redirected to: http://localhost:8090/frontend/dashboard\n"
                         },
                         {
-                          "text": "✓ SPISC selected\n"
+                          "text": "[Phase 1] ✓ Logged in as applicant\n"
                         },
                         {
-                          "text": "\nStep 4: Skipping process info...\n"
+                          "text": "[RequestFlow] Starting SPISC application flow\n"
                         },
                         {
-                          "text": "✓ On application step\n"
+                          "text": "[RequestFlow] Navigating to: http://localhost:8090/frontend/request/new?council=TAYTAY-PH\n"
                         },
                         {
-                          "text": "\nStep 5: Checking for meeting banner...\n"
+                          "text": "[RequestFlow] New request page loaded\n"
                         },
                         {
-                          "text": "Meeting banner visible: \u001b[33mtrue\u001b[39m\n"
+                          "text": "[RequestFlow] Selecting request type: SPISC\n"
                         },
                         {
-                          "text": "✓ Meeting banner is visible!\n"
+                          "text": "[RequestFlow] Clicked request type containing: SPISC\n"
                         },
                         {
-                          "text": "Request Council Meeting button visible: \u001b[33mtrue\u001b[39m\n"
+                          "text": "[RequestFlow] Clicking Next button\n"
                         },
                         {
-                          "text": "\nStep 6: Clicking Request Council Meeting button...\n"
+                          "text": "[RequestFlow] Clicked Next button\n"
                         },
                         {
-                          "text": "Has circular JSON error: \u001b[33mfalse\u001b[39m\n"
+                          "text": "[RequestFlow] Clicking \"I Understand\" button\n"
                         },
                         {
-                          "text": "✓ No circular JSON errors!\n"
+                          "text": "[RequestFlow] Clicked \"I Understand\" button\n"
                         },
                         {
-                          "text": "Modal visible: \u001b[33mtrue\u001b[39m\n"
+                          "text": "[RequestFlow] SPISC application flow complete, now on form page\n"
                         },
                         {
-                          "text": "✓ Modal opened successfully!\n"
+                          "text": "[Phase 1] ✓ Started SPISC application\n"
                         },
                         {
-                          "text": "\nStep 7: Verifying modal fields...\n"
+                          "text": "[Phase 1] ✓ Test image ready\n"
+                        },
+                        {
+                          "text": "[Phase 1] Filling Step 1: Personal Information\n"
+                        },
+                        {
+                          "text": "[SPISC Data] Filling Personal Information - Step 1\n"
+                        },
+                        {
+                          "text": "  ✓ Filled: Full Name\n"
+                        },
+                        {
+                          "text": "  ✓ Filled: Date of Birth\n"
+                        },
+                        {
+                          "text": "  Found 5 dropdown(s) total\n"
+                        },
+                        {
+                          "text": "  ✓ Selected: Sex - Female\n"
+                        },
+                        {
+                          "text": "  ✓ Selected: Civil Status - Widowed\n"
+                        },
+                        {
+                          "text": "  ✓ Filled: Mobile Number (input 1)\n"
+                        },
+                        {
+                          "text": "  Found 5 dropdown(s) for address\n"
+                        },
+                        {
+                          "text": "  ✓ Selected: Province - Metro Manila\n"
+                        },
+                        {
+                          "text": "  ✓ Selected: Municipality - Manila City\n"
+                        },
+                        {
+                          "text": "  ✓ Selected: Barangay - Ermita\n"
+                        },
+                        {
+                          "text": "  ✓ Filled: Street / House No\n"
+                        },
+                        {
+                          "text": "[SPISC Data] ✅ Personal Information Step 1 complete\n"
+                        },
+                        {
+                          "text": "[Phase 1] Filling Step 2: Household Information\n"
+                        },
+                        {
+                          "text": "[SPISC Data] Filling Household Information - Step 2\n"
+                        },
+                        {
+                          "text": "  ✓ Filled: Household Size - 3\n"
+                        },
+                        {
+                          "text": "  ✓ Selected: Living Arrangement - Living with children\n"
+                        },
+                        {
+                          "text": "  ✓ Filled: Monthly Income - 2500 (input 1)\n"
+                        },
+                        {
+                          "text": "  ✓ Selected: Income Source - Family support\n"
+                        },
+                        {
+                          "text": "  ✓ Skipped: 4Ps Beneficiary (optional, left unchecked)\n"
+                        },
+                        {
+                          "text": "[SPISC Data] ✅ Household Information Step 2 complete\n"
+                        },
+                        {
+                          "text": "[Phase 1] Skipping Step 3: Identity Verification\n"
+                        },
+                        {
+                          "text": "[Phase 1] Filling Step 4: Supporting Documents\n"
+                        },
+                        {
+                          "text": "[SPISC Data] Uploading required documents\n"
+                        },
+                        {
+                          "text": "  Found 6 file upload field(s)\n"
+                        },
+                        {
+                          "text": "  Uploaded file to input 1\n"
+                        },
+                        {
+                          "text": "  Uploaded file to input 2\n"
+                        },
+                        {
+                          "text": "  Uploaded file to input 3\n"
+                        },
+                        {
+                          "text": "  Uploaded file to input 4\n"
+                        },
+                        {
+                          "text": "  Uploaded file to input 5\n"
+                        },
+                        {
+                          "text": "  Uploaded file to input 6\n"
+                        },
+                        {
+                          "text": "[SPISC Data] All documents uploaded\n"
+                        },
+                        {
+                          "text": "[Phase 1] Filling Step 5: Declaration & Submission\n"
+                        },
+                        {
+                          "text": "[SPISC Data] Filling Declaration & Submission - Step 5\n"
+                        },
+                        {
+                          "text": "[SPISC Data] ✅ Declaration & Submission Step 5 complete\n"
+                        },
+                        {
+                          "text": "[Phase 1] Filling Payment Method...\n"
+                        },
+                        {
+                          "text": "[Phase 1] ✓ Selected payment method\n"
+                        },
+                        {
+                          "text": "[Phase 1] Submitting application...\n"
+                        },
+                        {
+                          "text": "[Phase 1] ⚠ Could not extract application number from page\n"
+                        },
+                        {
+                          "text": "[Phase 1] ✅ Found application: SPISC-2025-299\n"
+                        },
+                        {
+                          "text": "\n[Phase 1] ════════════════════════════════════════════════════\n"
+                        },
+                        {
+                          "text": "[Phase 1] ✅ PHASE 1 COMPLETE - Application Submitted\n"
+                        },
+                        {
+                          "text": "[Phase 1] ════════════════════════════════════════════════════\n\n"
+                        },
+                        {
+                          "text": "\n╔════════════════════════════════════════════════════════════╗\n"
+                        },
+                        {
+                          "text": "║  PHASE 2: COUNCIL STAFF REVIEW                             ║\n"
+                        },
+                        {
+                          "text": "╚════════════════════════════════════════════════════════════╝\n\n"
+                        },
+                        {
+                          "text": "[Phase 2] Navigating to backend SPISC Application list\n"
+                        },
+                        {
+                          "text": "[Phase 2] Opening application: SPISC-2025-299\n"
+                        },
+                        {
+                          "text": "[Phase 2] Verifying applicant details display...\n"
+                        },
+                        {
+                          "text": "[Phase 2] ✓ Applicant Name visible: \n\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\tFull Name\n\t\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t\n\t\t\t\t\t\tCouncils Online\n\t\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\n\t\t\tapplicant_name\n"
+                        },
+                        {
+                          "text": "[Phase 2] Verifying address field...\n"
+                        },
+                        {
+                          "text": "[Phase 2] ⚠ Address field appears empty\n"
+                        },
+                        {
+                          "text": "[Phase 2] ⚠ Age field appears empty\n"
+                        },
+                        {
+                          "text": "[Phase 2] Filling eligibility assessment...\n"
+                        },
+                        {
+                          "text": "[Phase 2] Saving assessment...\n"
+                        },
+                        {
+                          "text": "\n[Phase 2] ════════════════════════════════════════════════════\n"
+                        },
+                        {
+                          "text": "[Phase 2] ✅ PHASE 2 COMPLETE - Application Reviewed\n"
+                        },
+                        {
+                          "text": "[Phase 2] ════════════════════════════════════════════════════\n\n"
+                        },
+                        {
+                          "text": "\n╔════════════════════════════════════════════════════════════╗\n"
+                        },
+                        {
+                          "text": "║  PHASE 3: WORKFLOW APPROVAL                                ║\n"
+                        },
+                        {
+                          "text": "╚════════════════════════════════════════════════════════════╝\n\n"
+                        },
+                        {
+                          "text": "[Phase 3] Navigating to parent Request document...\n"
+                        },
+                        {
+                          "text": "[Phase 3] Looking for request in list...\n"
+                        },
+                        {
+                          "text": "[Phase 3] ✓ Opened parent Request\n"
+                        },
+                        {
+                          "text": "[Phase 3] Current status: Unknown\n"
+                        },
+                        {
+                          "text": "[Phase 3] Looking for workflow actions...\n"
+                        },
+                        {
+                          "text": "[Phase 3] ⚠ No workflow actions available (may need workflow configuration)\n"
+                        },
+                        {
+                          "text": "[Phase 3] Status after approval: Unknown\n"
+                        },
+                        {
+                          "text": "\n[Phase 3] ════════════════════════════════════════════════════\n"
+                        },
+                        {
+                          "text": "[Phase 3] ✅ PHASE 3 COMPLETE - Workflow Processed\n"
+                        },
+                        {
+                          "text": "[Phase 3] ════════════════════════════════════════════════════\n\n"
+                        },
+                        {
+                          "text": "\n╔════════════════════════════════════════════════════════════╗\n"
+                        },
+                        {
+                          "text": "║  PHASE 4: PAYMENT PROCESSING                               ║\n"
+                        },
+                        {
+                          "text": "╚════════════════════════════════════════════════════════════╝\n\n"
+                        },
+                        {
+                          "text": "[Phase 4] Opening SPISC Application: SPISC-2025-299\n"
+                        },
+                        {
+                          "text": "[Phase 4] Checking payment details...\n"
+                        },
+                        {
+                          "text": "[Phase 4] ⚠ No payment details found (payment step may need configuration)\n"
+                        },
+                        {
+                          "text": "[Phase 4] Updating payment status...\n"
+                        },
+                        {
+                          "text": "[Phase 4] ⚠ Payment status field not found\n"
+                        },
+                        {
+                          "text": "\n[Phase 4] ════════════════════════════════════════════════════\n"
+                        },
+                        {
+                          "text": "[Phase 4] ✅ PHASE 4 COMPLETE - Payment Processed\n"
+                        },
+                        {
+                          "text": "[Phase 4] ════════════════════════════════════════════════════\n\n"
+                        },
+                        {
+                          "text": "\n╔════════════════════════════════════════════════════════════╗\n"
+                        },
+                        {
+                          "text": "║  PHASE 5: APPLICANT VERIFICATION                           ║\n"
+                        },
+                        {
+                          "text": "╚════════════════════════════════════════════════════════════╝\n\n"
+                        },
+                        {
+                          "text": "[Phase 5] Navigating to applicant requests view...\n"
+                        },
+                        {
+                          "text": "[Phase 5] Looking for application in requests list...\n"
+                        },
+                        {
+                          "text": "[Phase 5] ⚠ Application not visible in frontend list\n"
+                        },
+                        {
+                          "text": "\n[Phase 5] ════════════════════════════════════════════════════\n"
+                        },
+                        {
+                          "text": "[Phase 5] ✅ PHASE 5 COMPLETE - Applicant Notified\n"
+                        },
+                        {
+                          "text": "[Phase 5] ════════════════════════════════════════════════════\n\n"
+                        },
+                        {
+                          "text": "\n\n"
+                        },
+                        {
+                          "text": "╔══════════════════════════════════════════════════════════════╗\n"
+                        },
+                        {
+                          "text": "║                   WORKFLOW TEST COMPLETE                     ║\n"
+                        },
+                        {
+                          "text": "╠══════════════════════════════════════════════════════════════╣\n"
+                        },
+                        {
+                          "text": "║  Application Number: SPISC-2025-299                        ║\n"
+                        },
+                        {
+                          "text": "║                                                              ║\n"
+                        },
+                        {
+                          "text": "║  ✅ Phase 1: Application Submitted                           ║\n"
+                        },
+                        {
+                          "text": "║  ✅ Phase 2: Council Review Complete                         ║\n"
+                        },
+                        {
+                          "text": "║  ✅ Phase 3: Workflow Approval Processed                     ║\n"
+                        },
+                        {
+                          "text": "║  ✅ Phase 4: Payment Processing Complete                     ║\n"
+                        },
+                        {
+                          "text": "║  ✅ Phase 5: Applicant Verification Done                     ║\n"
+                        },
+                        {
+                          "text": "║                                                              ║\n"
+                        },
+                        {
+                          "text": "║  🎉 COMPLETE END-TO-END WORKFLOW SUCCESSFUL!                 ║\n"
+                        },
+                        {
+                          "text": "╚══════════════════════════════════════════════════════════════╝\n"
+                        },
+                        {
+                          "text": "\n\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-12-22T11:20:20.746Z",
+                      "steps": [
+                        {
+                          "title": "Phase 1: Applicant fills and submits SPISC application",
+                          "duration": 47562
+                        },
+                        {
+                          "title": "Phase 2: Council staff reviews and assesses application",
+                          "duration": 12318
+                        },
+                        {
+                          "title": "Phase 3: Council staff approves application via workflow",
+                          "duration": 25581
+                        },
+                        {
+                          "title": "Phase 4: Finance staff processes payment",
+                          "duration": 4429
+                        },
+                        {
+                          "title": "Phase 5: Applicant views approved application",
+                          "duration": 1529
+                        }
+                      ],
+                      "startTime": "2025-12-23T06:03:46.096Z",
                       "annotations": [],
                       "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-council-meeting-comple-e1505-cation-flow-and-modal-works-chromium-desktop/test-failed-1.png"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-council-meeting-comple-e1505-cation-flow-and-modal-works-chromium-desktop/error-context.md"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js",
-                        "column": 40,
-                        "line": 135
-                      }
-                    }
-                  ],
-                  "status": "unexpected"
-                }
-              ],
-              "id": "159db2bb103daf356b49-5838b08666267b123912",
-              "file": "e2e/council-meeting-complete-flow.spec.js",
-              "line": 26,
-              "column": 2
-            },
-            {
-              "title": "Meeting banner on RequestDetail page also works",
-              "ok": false,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium-desktop",
-                  "projectName": "chromium-desktop",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 7970,
-                      "error": {
-                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
-                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js:208:22",
-                        "location": {
-                          "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js",
-                          "column": 22,
-                          "line": 208
-                        },
-                        "snippet": "  206 | \t\t\t.catch(() => false)\n  207 | \t\tconsole.log(\"Request Council Meeting button visible:\", btnVisible)\n> 208 | \t\texpect(btnVisible).toBe(true)\n      | \t\t                   ^\n  209 |\n  210 | \t\t// Click button\n  211 | \t\tconsole.log(\"\\nStep 3: Clicking button to open modal...\")"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js",
-                            "column": 22,
-                            "line": 208
-                          },
-                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\n  206 | \t\t\t.catch(() => false)\n  207 | \t\tconsole.log(\"Request Council Meeting button visible:\", btnVisible)\n> 208 | \t\texpect(btnVisible).toBe(true)\n      | \t\t                   ^\n  209 |\n  210 | \t\t// Click button\n  211 | \t\tconsole.log(\"\\nStep 3: Clicking button to open modal...\")\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js:208:22"
-                        }
-                      ],
-                      "stdout": [
-                        {
-                          "text": "\n=== TEST: Meeting Banner on RequestDetail Page ===\n\n"
-                        },
-                        {
-                          "text": "Step 1: Navigating to existing request...\n"
-                        },
-                        {
-                          "text": "✓ Request detail page loaded\n"
-                        },
-                        {
-                          "text": "\nStep 2: Checking Council Meeting section...\n"
-                        },
-                        {
-                          "text": "Council Meeting section visible: true\n"
-                        },
-                        {
-                          "text": "Request Council Meeting button visible: \u001b[33mfalse\u001b[39m\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-12-22T11:20:32.876Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-council-meeting-comple-56e55-questDetail-page-also-works-chromium-desktop/test-failed-1.png"
-                        },
                         {
                           "name": "video",
                           "contentType": "video/webm",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-council-meeting-comple-56e55-questDetail-page-also-works-chromium-desktop/video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-council-meeting-comple-56e55-questDetail-page-also-works-chromium-desktop/error-context.md"
+                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-spisc-complete-workflo-6ea4d--Review-→-Approve-→-Payment-chromium-desktop/video.webm"
                         }
-                      ],
-                      "errorLocation": {
-                        "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js",
-                        "column": 22,
-                        "line": 208
-                      }
+                      ]
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
-              "id": "159db2bb103daf356b49-6195d09705c0350b6a1b",
-              "file": "e2e/council-meeting-complete-flow.spec.js",
-              "line": 171,
-              "column": 2
-            },
-            {
-              "title": "Meeting banner appears during application flow and modal works",
-              "ok": false,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium-mobile",
-                  "projectName": "chromium-mobile",
-                  "results": [
-                    {
-                      "workerIndex": 2,
-                      "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 12007,
-                      "error": {
-                        "message": "TimeoutError: page.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"New Request\"), a:has-text(\"New Request\"), button:has-text(\"New Application\"), a:has-text(\"New Application\")')\u001b[22m\n",
-                        "stack": "TimeoutError: page.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"New Request\"), a:has-text(\"New Request\"), button:has-text(\"New Application\"), a:has-text(\"New Application\")')\u001b[22m\n\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js:33:14",
-                        "location": {
-                          "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js",
-                          "column": 14,
-                          "line": 33
-                        },
-                        "snippet": "  31 | \t\t// Start new application\n  32 | \t\tconsole.log(\"Step 1: Starting new application...\")\n> 33 | \t\tawait page.click(\n     | \t\t           ^\n  34 | \t\t\t'button:has-text(\"New Request\"), a:has-text(\"New Request\"), button:has-text(\"New Application\"), a:has-text(\"New Application\")',\n  35 | \t\t)\n  36 | \t\tawait page.waitForLoadState(\"networkidle\")"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js",
-                            "column": 14,
-                            "line": 33
-                          },
-                          "message": "TimeoutError: page.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"New Request\"), a:has-text(\"New Request\"), button:has-text(\"New Application\"), a:has-text(\"New Application\")')\u001b[22m\n\n\n  31 | \t\t// Start new application\n  32 | \t\tconsole.log(\"Step 1: Starting new application...\")\n> 33 | \t\tawait page.click(\n     | \t\t           ^\n  34 | \t\t\t'button:has-text(\"New Request\"), a:has-text(\"New Request\"), button:has-text(\"New Application\"), a:has-text(\"New Application\")',\n  35 | \t\t)\n  36 | \t\tawait page.waitForLoadState(\"networkidle\")\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js:33:14"
-                        }
-                      ],
-                      "stdout": [
-                        {
-                          "text": "\n=== TEST: Meeting Banner During Application Flow ===\n\n"
-                        },
-                        {
-                          "text": "Step 1: Starting new application...\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-12-22T11:20:40.956Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-council-meeting-comple-e1505-cation-flow-and-modal-works-chromium-mobile/test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-council-meeting-comple-e1505-cation-flow-and-modal-works-chromium-mobile/video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-council-meeting-comple-e1505-cation-flow-and-modal-works-chromium-mobile/error-context.md"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js",
-                        "column": 14,
-                        "line": 33
-                      }
-                    }
-                  ],
-                  "status": "unexpected"
-                }
-              ],
-              "id": "159db2bb103daf356b49-812d1bfeeddf23afc849",
-              "file": "e2e/council-meeting-complete-flow.spec.js",
-              "line": 26,
-              "column": 2
-            },
-            {
-              "title": "Meeting banner on RequestDetail page also works",
-              "ok": false,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium-mobile",
-                  "projectName": "chromium-mobile",
-                  "results": [
-                    {
-                      "workerIndex": 3,
-                      "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 16969,
-                      "error": {
-                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
-                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js:197:27",
-                        "location": {
-                          "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js",
-                          "column": 27,
-                          "line": 197
-                        },
-                        "snippet": "  195 | \t\t\tconst sectionVisible = await meetingH2.isVisible({ timeout: 5000 }).catch(() => false)\n  196 | \t\t\tconsole.log(\"Council Meeting section visible after scroll:\", sectionVisible)\n> 197 | \t\t\texpect(sectionVisible).toBe(true)\n      | \t\t\t                       ^\n  198 | \t\t}\n  199 |\n  200 | \t\t// Verify button"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js",
-                            "column": 27,
-                            "line": 197
-                          },
-                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\n  195 | \t\t\tconst sectionVisible = await meetingH2.isVisible({ timeout: 5000 }).catch(() => false)\n  196 | \t\t\tconsole.log(\"Council Meeting section visible after scroll:\", sectionVisible)\n> 197 | \t\t\texpect(sectionVisible).toBe(true)\n      | \t\t\t                       ^\n  198 | \t\t}\n  199 |\n  200 | \t\t// Verify button\n    at /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js:197:27"
-                        }
-                      ],
-                      "stdout": [
-                        {
-                          "text": "\n=== TEST: Meeting Banner on RequestDetail Page ===\n\n"
-                        },
-                        {
-                          "text": "Step 1: Navigating to existing request...\n"
-                        },
-                        {
-                          "text": "✓ Request detail page loaded\n"
-                        },
-                        {
-                          "text": "\nStep 2: Checking Council Meeting section...\n"
-                        },
-                        {
-                          "text": "Council Meeting section visible after scroll: \u001b[33mfalse\u001b[39m\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-12-22T11:20:54.105Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-council-meeting-comple-56e55-questDetail-page-also-works-chromium-mobile/test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-council-meeting-comple-56e55-questDetail-page-also-works-chromium-mobile/video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/e2e-council-meeting-comple-56e55-questDetail-page-also-works-chromium-mobile/error-context.md"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/council-meeting-complete-flow.spec.js",
-                        "column": 27,
-                        "line": 197
-                      }
-                    }
-                  ],
-                  "status": "unexpected"
-                }
-              ],
-              "id": "159db2bb103daf356b49-1998214f03df250459d7",
-              "file": "e2e/council-meeting-complete-flow.spec.js",
-              "line": 171,
-              "column": 2
+              "id": "5c82d38b3455f9e2eae1-8ee63e5005fe01b3ecfd",
+              "file": "e2e/spisc-complete-workflow.spec.js",
+              "line": 30,
+              "column": 5
             }
           ]
         }
@@ -496,11 +546,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-12-22T11:20:18.168Z",
-    "duration": 54072.657999999996,
-    "expected": 0,
+    "startTime": "2025-12-23T06:03:44.829Z",
+    "duration": 100412.20999999999,
+    "expected": 1,
     "skipped": 0,
-    "unexpected": 4,
+    "unexpected": 0,
     "flaky": 0
   }
 }

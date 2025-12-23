@@ -28,7 +28,7 @@ const isOpen = computed({
 	set: (value) => emit("update:show", value),
 })
 
-const meetingType = ref("Council Meeting")
+const meetingType = ref("Pre-Application Meeting")
 const meetingPurpose = ref("")
 const discussionPoints = ref("")
 const booking = ref(false)
@@ -186,7 +186,7 @@ const toggleAvailableSlotsView = () => {
 
 const handleClose = () => {
 	if (!booking.value) {
-		meetingType.value = "Council Meeting"
+		meetingType.value = "Pre-Application Meeting"
 		meetingPurpose.value = ""
 		discussionPoints.value = ""
 		attendees.value = []
@@ -280,11 +280,10 @@ const handleBook = async () => {
 							class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
 							:disabled="booking"
 						>
-							<option value="Council Meeting">Council Meeting</option>
-							<option value="Site Visit">Site Visit</option>
+							<option value="Pre-Application Meeting">Pre-Application Meeting</option>
 							<option value="Follow-up Meeting">Follow-up Meeting</option>
-							<option value="Technical Review">Technical Review</option>
-							<option value="Other">Other</option>
+							<option value="Clarification Meeting">Clarification Meeting</option>
+							<option value="Final Review Meeting">Final Review Meeting</option>
 						</select>
 					</div>
 

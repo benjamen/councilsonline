@@ -53,7 +53,8 @@
                     />
                 </div>
 
-                <div v-else-if="getCurrentStepTitle() === 'Review'">
+                <!-- Review step: Show when at or beyond last step (defensive check for out-of-bounds) -->
+                <div v-else-if="store.currentStep >= totalSteps - 1">
                     <ReviewStep
                         v-model="store.formData"
                         :request-type-config="store.requestTypeConfig"
@@ -65,7 +66,7 @@
                     :stepConfig="getCurrentStepConfig()"
                     v-model="store.formData"
                 />
-                
+
                 <div v-else>
                     <h2 class="text-xl font-bold text-red-600">ERROR: Step {{ store.currentStep }} Fallback Hit!</h2>
                     <p class="mt-2">The dynamic step condition failed to render. Check the following values:</p>
@@ -241,22 +242,21 @@ const canNavigateNext = computed(() => {
 
 /**
  * Can only save draft after:
- * - Step 1: Council selected
- * - Step 2: Request type selected
- * - Step 3: Process info read and confirmed
- * So allow saving from step 4 onwards (step index >= 3)
+ * - Step 0: Request type selected
+ * - Step 1: Process info read and confirmed
+ * So allow saving from step 2 onwards (step index >= 2) - single-tenant
  */
 const canSaveDraft = computed(() => {
-	return store.currentStep >= 3
+	return store.currentStep >= 2
 })
 
 // Get configuration for current step (for dynamic validation)
 const currentStepConfig = computed(() => {
 	if (!store.requestTypeConfig?.steps) return null
 
-	// Steps 0-2 are fixed (Council, Type, Process Info)
-	// Dynamic steps start at index 3
-	const dynamicStepIndex = store.currentStep - 3
+	// Single-tenant: Steps 0-1 are fixed (Type, Process Info)
+	// Dynamic steps start at index 2
+	const dynamicStepIndex = store.currentStep - 2
 
 	if (
 		dynamicStepIndex >= 0 &&
@@ -271,7 +271,7 @@ const currentStepConfig = computed(() => {
 // Show meeting banner after Process Info (step 3) if council meetings are available
 const shouldShowMeetingBanner = computed(() => {
 	return (
-		store.currentStep > 2 && // After Process Info step
+		store.currentStep > 1 && // After Process Info step (single-tenant: step 1)
 		store.currentStep < totalSteps.value - 1 && // Before Review step
 		store.requestTypeConfig?.council_meeting_available === 1
 	)
@@ -297,9 +297,9 @@ function getCurrentStepTitle() {
 
 function getCurrentStepConfig() {
 	const index = store.currentStep
-	const dynamicStepsStart = 3
+	const dynamicStepsStart = 2 // Single-tenant: 0=Type, 1=Process Info, 2+=Dynamic
 
-	// Check if the current step is within the dynamic steps range (3 up to totalSteps - 2)
+	// Check if the current step is within the dynamic steps range (2 up to totalSteps - 2)
 	// totalSteps - 1 is the Review step index.
 	if (index < dynamicStepsStart || index >= totalSteps.value - 1) {
 		return null
@@ -347,21 +347,15 @@ async function selectRequestType(requestTypeCode) {
 }
 
 async function handleNext() {
-	// Validation for Step 0 (Council Selection)
-	if (store.currentStep === 0 && !store.formData.council) {
-		alert("Please select a council before continuing.")
-		return
-	}
-
-	// Validation for Step 1 (Request Type Selection)
-	if (store.currentStep === 1 && !store.formData.request_type) {
+	// Single-tenant: Step 0 is Request Type Selection (no council step)
+	if (store.currentStep === 0 && !store.formData.request_type) {
 		alert("Please select a request type before continuing.")
 		return
 	}
 
 	// Validate current step before allowing navigation (for dynamic steps)
 	if (
-		store.currentStep >= 2 &&
+		store.currentStep >= 1 &&
 		usesConfigurableSteps.value &&
 		currentStepConfig.value
 	) {
@@ -374,9 +368,9 @@ async function handleNext() {
 		}
 	}
 
-	// Auto-save after Process Info step (step 2) to create draft
+	// Auto-save after Process Info step (step 1 in single-tenant) to create draft
 	// This ensures the request has an ID for features like "Book Meeting" and "Send Message"
-	if (store.currentStep === 2 && !store.currentRequestId) {
+	if (store.currentStep === 1 && !store.currentRequestId) {
 		console.log("[NewRequest] Auto-saving draft after Process Info step...")
 		console.log("[NewRequest] requestTypeConfig:", store.requestTypeConfig)
 		console.log(
@@ -411,7 +405,10 @@ async function handleNext() {
 		await store.saveProgress()
 	}
 
-	store.nextStep()
+	// Don't advance beyond the last step (Review step should use Submit button)
+	if (store.currentStep < totalSteps.value - 1) {
+		store.nextStep()
+	}
 }
 
 function handlePrevious() {

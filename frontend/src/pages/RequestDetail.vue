@@ -102,7 +102,7 @@
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="text-sm font-medium text-gray-500">Name</label>
-                <p class="mt-1 text-sm text-gray-900">{{ enrichedRequest.requester_name || 'N/A' }}</p>
+                <p class="mt-1 text-sm text-gray-900">{{ enrichedRequest.full_name || enrichedRequest.requester_name || 'N/A' }}</p>
               </div>
               <div>
                 <label class="text-sm font-medium text-gray-500">Email</label>
@@ -110,11 +110,11 @@
               </div>
               <div>
                 <label class="text-sm font-medium text-gray-500">Phone</label>
-                <p class="mt-1 text-sm text-gray-900">{{ enrichedRequest.requester_phone || 'N/A' }}</p>
+                <p class="mt-1 text-sm text-gray-900">{{ enrichedRequest.mobile_number || enrichedRequest.requester_phone || 'N/A' }}</p>
               </div>
               <div>
                 <label class="text-sm font-medium text-gray-500">Address</label>
-                <p class="mt-1 text-sm text-gray-900">{{ enrichedRequest.applicant_address || 'N/A' }}</p>
+                <p class="mt-1 text-sm text-gray-900">{{ formatAddress(enrichedRequest.address_line) || enrichedRequest.applicant_address || 'N/A' }}</p>
               </div>
               <div v-if="enrichedRequest.applicant_company">
                 <label class="text-sm font-medium text-gray-500">Company/Organization</label>
@@ -124,7 +124,7 @@
           </div>
 
           <!-- SPISC Application Details - only show if request is SPISC -->
-          <div v-if="request.data?.request_type?.includes('SPISC') && request.data.application_name" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div v-if="request.data?.request_type?.includes('SPISC')" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">SPISC Application Details</h2>
 
             <div class="space-y-6">
@@ -134,19 +134,19 @@
                 <div class="grid grid-cols-2 gap-4">
                   <div>
                     <label class="text-sm font-medium text-gray-500">Birth Date</label>
-                    <p class="mt-1 text-sm text-gray-900">{{ formatDate(request.data.birth_date) || 'N/A' }}</p>
+                    <p class="mt-1 text-sm text-gray-900">{{ formatDate(enrichedRequest.birth_date) || 'N/A' }}</p>
                   </div>
                   <div>
                     <label class="text-sm font-medium text-gray-500">Age</label>
-                    <p class="mt-1 text-sm text-gray-900">{{ request.data.age || 'N/A' }}</p>
+                    <p class="mt-1 text-sm text-gray-900">{{ enrichedRequest.age || 'N/A' }}</p>
                   </div>
                   <div>
                     <label class="text-sm font-medium text-gray-500">Sex</label>
-                    <p class="mt-1 text-sm text-gray-900">{{ request.data.sex || 'N/A' }}</p>
+                    <p class="mt-1 text-sm text-gray-900">{{ enrichedRequest.sex || 'N/A' }}</p>
                   </div>
                   <div>
                     <label class="text-sm font-medium text-gray-500">Civil Status</label>
-                    <p class="mt-1 text-sm text-gray-900">{{ request.data.civil_status || 'N/A' }}</p>
+                    <p class="mt-1 text-sm text-gray-900">{{ enrichedRequest.civil_status || 'N/A' }}</p>
                   </div>
                 </div>
               </div>
@@ -157,23 +157,23 @@
                 <div class="grid grid-cols-2 gap-4">
                   <div>
                     <label class="text-sm font-medium text-gray-500">Household Size</label>
-                    <p class="mt-1 text-sm text-gray-900">{{ request.data.household_size || 'N/A' }}</p>
+                    <p class="mt-1 text-sm text-gray-900">{{ enrichedRequest.household_size || 'N/A' }}</p>
                   </div>
                   <div>
                     <label class="text-sm font-medium text-gray-500">Living Arrangement</label>
-                    <p class="mt-1 text-sm text-gray-900">{{ request.data.living_arrangement || 'N/A' }}</p>
+                    <p class="mt-1 text-sm text-gray-900">{{ enrichedRequest.living_arrangement || 'N/A' }}</p>
                   </div>
                   <div>
                     <label class="text-sm font-medium text-gray-500">Monthly Income</label>
-                    <p class="mt-1 text-sm text-gray-900">₱{{ request.data.monthly_income || '0' }}</p>
+                    <p class="mt-1 text-sm text-gray-900">₱{{ enrichedRequest.monthly_income || '0' }}</p>
                   </div>
                   <div>
                     <label class="text-sm font-medium text-gray-500">Income Source</label>
-                    <p class="mt-1 text-sm text-gray-900">{{ request.data.income_source || 'N/A' }}</p>
+                    <p class="mt-1 text-sm text-gray-900">{{ enrichedRequest.income_source || 'N/A' }}</p>
                   </div>
                   <div>
                     <label class="text-sm font-medium text-gray-500">4Ps Beneficiary</label>
-                    <p class="mt-1 text-sm text-gray-900">{{ request.data.is_4ps_beneficiary ? 'Yes' : 'No' }}</p>
+                    <p class="mt-1 text-sm text-gray-900">{{ enrichedRequest.is_4ps_beneficiary ? 'Yes' : 'No' }}</p>
                   </div>
                 </div>
               </div>
@@ -957,6 +957,27 @@ const formatSimpleValue = (value) => {
 	}
 
 	return value
+}
+
+// Helper function to format address from address_line object
+const formatAddress = (addressObj) => {
+	if (!addressObj) return null
+
+	// If it's already a string, return it
+	if (typeof addressObj === "string") return addressObj
+
+	// If it's an object with full_address, use that
+	if (addressObj.full_address) return addressObj.full_address
+
+	// Otherwise build address from components
+	const parts = []
+	if (addressObj.address_line) parts.push(addressObj.address_line)
+	if (addressObj.barangay) parts.push(`Brgy. ${addressObj.barangay}`)
+	if (addressObj.municipality) parts.push(addressObj.municipality)
+	if (addressObj.province) parts.push(addressObj.province)
+	if (addressObj.zip_code) parts.push(addressObj.zip_code)
+
+	return parts.length > 0 ? parts.join(", ") : null
 }
 
 const goBack = () => {
