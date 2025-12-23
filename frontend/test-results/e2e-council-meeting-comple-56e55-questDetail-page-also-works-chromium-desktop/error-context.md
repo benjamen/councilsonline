@@ -177,14 +177,5 @@
             - generic [ref=e175]: Delete Draft
       - generic [ref=e176]:
         - heading "Need Help?" [level=3] [ref=e177]
-        - paragraph [ref=e178]: Contact TayTay Council for assistance with your application.
-        - generic [ref=e179]:
-          - generic [ref=e180]:
-            - img [ref=e181]
-            - link "benjamen.walsh@gmail.com" [ref=e183] [cursor=pointer]:
-              - /url: mailto:benjamen.walsh@gmail.com
-          - generic [ref=e184]:
-            - img [ref=e185]
-            - link "+63 2 8123 4567" [ref=e187] [cursor=pointer]:
-              - /url: tel:+63 2 8123 4567
+        - paragraph [ref=e178]: Contact the council for assistance with your application.
 ```

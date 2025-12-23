@@ -58,16 +58,8 @@ test.describe("Council Meeting Complete Flow", () => {
 		await page.waitForLoadState("networkidle")
 		console.log("✓ New application/request clicked")
 
-		// Select Taytay council
-		console.log("\nStep 2: Selecting Taytay council...")
-		await page.locator('button:has-text("Taytay")').click()
-		await page.waitForTimeout(500)
-		await page.locator('button:has-text("Next")').click()
-		await page.waitForTimeout(1000)
-		console.log("✓ Taytay selected")
-
-		// Select SPISC (has council meeting enabled)
-		console.log("\nStep 3: Selecting SPISC request type...")
+		// Single-tenant: Skip council selection step (removed in v1.4)
+		console.log("\nStep 2: Selecting SPISC request type (council pre-selected)...")
 		const spinner = page.locator(".animate-spin")
 		if (await spinner.isVisible().catch(() => false)) {
 			await spinner.waitFor({ state: "hidden", timeout: 10000 })
@@ -84,7 +76,7 @@ test.describe("Council Meeting Complete Flow", () => {
 		console.log("✓ SPISC selected")
 
 		// Skip process info (Step 3)
-		console.log("\nStep 4: Skipping process info...")
+		console.log("\nStep 3: Skipping process info...")
 		await page
 			.locator('button:has-text("I Understand - Continue to Application")')
 			.click()
@@ -92,7 +84,7 @@ test.describe("Council Meeting Complete Flow", () => {
 		console.log("✓ On application step")
 
 		// CRITICAL: Verify meeting banner is now visible
-		console.log("\nStep 5: Checking for meeting banner...")
+		console.log("\nStep 4: Checking for meeting banner...")
 		const meetingBanner = page.locator(
 			'h3:has-text("Council Meeting Available")',
 		)
@@ -114,7 +106,7 @@ test.describe("Council Meeting Complete Flow", () => {
 		expect(btnVisible).toBe(true)
 
 		// CRITICAL: Click the button to open modal
-		console.log("\nStep 6: Clicking Request Council Meeting button...")
+		console.log("\nStep 5: Clicking Request Council Meeting button...")
 
 		// Listen for console errors
 		const consoleErrors = []
