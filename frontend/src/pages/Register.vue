@@ -128,17 +128,7 @@
             </div>
           </div>
 
-          <!-- Council Selection (Optional) -->
-          <div>
-            <CouncilSelector
-              v-model="selectedCouncil"
-              label="Default Council (Optional)"
-              description="Select your preferred council for submitting requests. You can change this later."
-              display-mode="dropdown"
-              :required="false"
-              :show-clear-button="true"
-            />
-          </div>
+          <!-- Council Selection removed in single-tenant mode -->
 
           <!-- Personal Information -->
           <div class="grid md:grid-cols-2 gap-4">
@@ -524,8 +514,6 @@ import { Button, Input } from "frappe-ui"
 import { computed, onMounted, ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import AddressLookup from "../components/AddressLookup.vue"
-import CouncilSelector from "../components/CouncilSelector.vue"
-import { useCouncilStore } from "../stores/councilStore"
 import {
 	validateEmail,
 	validateNZPhoneNumber,
@@ -534,10 +522,8 @@ import {
 
 const router = useRouter()
 const route = useRoute()
-const councilStore = useCouncilStore()
 
 const requesterType = ref("Individual")
-const selectedCouncil = ref(null)
 const selectedAddress = ref(null)
 const isLoading = ref(false)
 const errorMessage = ref("")
@@ -655,12 +641,7 @@ const setDefaultProperty = (index) => {
 	})
 }
 
-onMounted(() => {
-	// Check if council was preselected via URL
-	if (councilStore.preselectedFromUrl) {
-		selectedCouncil.value = councilStore.preselectedFromUrl
-	}
-})
+// onMounted removed - no longer needed in single-tenant mode
 
 // Validation functions
 const validatePhoneField = () => {
@@ -781,10 +762,7 @@ function submit() {
 		userData.trust_name = formData.value.trust_name
 	}
 
-	// Add council_code if selected
-	if (selectedCouncil.value) {
-		userData.council_code = selectedCouncil.value
-	}
+	// Single-tenant: no council selection needed
 
 	// Call registration API
 	fetch("/api/method/lodgeick.api.register_user", {
