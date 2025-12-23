@@ -1,7 +1,6 @@
 import { userResource } from "@/data/user"
 import { createRouter, createWebHistory } from "vue-router"
 import { session } from "./data/session"
-import { useCouncilStore } from "./stores/councilStore"
 
 const routes = [
 	{
@@ -14,26 +13,6 @@ const routes = [
 		path: "/dashboard",
 		name: "Dashboard",
 		component: () => import("@/pages/Dashboard.vue"),
-		beforeEnter: async (to, from, next) => {
-			const councilStore = useCouncilStore()
-
-			// Check if user has a locked/preferred council
-			if (councilStore.lockedCouncil || councilStore.selectedCouncil) {
-				const councilCode =
-					councilStore.lockedCouncil || councilStore.selectedCouncil
-
-				// Check council settings
-				const shouldRedirect =
-					await councilStore.shouldRedirectToCouncilDashboard(councilCode)
-
-				if (shouldRedirect) {
-					next({ name: "CouncilDashboard", params: { councilCode } })
-					return
-				}
-			}
-
-			next()
-		},
 	},
 	{
 		path: "/home",
@@ -107,102 +86,6 @@ const routes = [
 		component: () => import("@/pages/CompanyRegistration.vue"),
 		meta: { public: true },
 	},
-	// Council-specific landing page
-	{
-		path: "/council/:councilCode",
-		name: "CouncilLanding",
-		component: () => import("@/pages/CouncilLandingPage.vue"),
-		meta: { public: true },
-		beforeEnter: async (to, from, next) => {
-			const councilStore = useCouncilStore()
-			const success = await councilStore.setLockedCouncil(
-				to.params.councilCode.toUpperCase(),
-			)
-			if (success) {
-				next()
-			} else {
-				// Invalid council code - redirect to home
-				next({ name: "Landing" })
-			}
-		},
-	},
-	// Deep linking - council + request type
-	{
-		path: "/council/:councilCode/request-type/:requestType",
-		name: "CouncilRequestType",
-		component: () => import("@/pages/NewRequest.vue"),
-		meta: { public: true },
-		beforeEnter: async (to, from, next) => {
-			const councilStore = useCouncilStore()
-			await councilStore.setLockedCouncil(to.params.councilCode.toUpperCase())
-			next({
-				name: "NewRequest",
-				query: {
-					council: to.params.councilCode.toUpperCase(),
-					type: to.params.requestType,
-					locked: "true",
-				},
-			})
-		},
-	},
-	// Council-specific login
-	{
-		path: "/council/:councilCode/login",
-		name: "CouncilLogin",
-		component: () => import("@/pages/CouncilLogin.vue"),
-		meta: { public: true },
-		beforeEnter: async (to, from, next) => {
-			const councilStore = useCouncilStore()
-			await councilStore.setLockedCouncil(to.params.councilCode.toUpperCase())
-			next()
-		},
-	},
-	// Council-specific registration
-	{
-		path: "/council/:councilCode/register",
-		name: "CouncilRegister",
-		component: () => import("@/pages/CouncilRegister.vue"),
-		meta: { public: true },
-		beforeEnter: async (to, from, next) => {
-			const councilStore = useCouncilStore()
-			await councilStore.setLockedCouncil(to.params.councilCode.toUpperCase())
-			next()
-		},
-	},
-	// Council-specific forgot password
-	{
-		path: "/council/:councilCode/forgot-password",
-		name: "CouncilForgotPassword",
-		component: () => import("@/pages/CouncilForgotPassword.vue"),
-		meta: { public: true },
-		beforeEnter: async (to, from, next) => {
-			const councilStore = useCouncilStore()
-			await councilStore.setLockedCouncil(to.params.councilCode.toUpperCase())
-			next()
-		},
-	},
-	// Council-specific dashboard
-	{
-		path: "/council/:councilCode/dashboard",
-		name: "CouncilDashboard",
-		component: () => import("@/pages/CouncilDashboard.vue"),
-		beforeEnter: async (to, from, next) => {
-			const councilStore = useCouncilStore()
-			await councilStore.setLockedCouncil(to.params.councilCode.toUpperCase())
-			next()
-		},
-	},
-	// Council-specific account page
-	{
-		path: "/council/:councilCode/account",
-		name: "CouncilAccount",
-		component: () => import("@/pages/CouncilAccount.vue"),
-		beforeEnter: async (to, from, next) => {
-			const councilStore = useCouncilStore()
-			await councilStore.setLockedCouncil(to.params.councilCode.toUpperCase())
-			next()
-		},
-	},
 ]
 
 const router = createRouter({
@@ -211,21 +94,6 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-	const councilStore = useCouncilStore()
-
-	// Load locked council state on first navigation
-	if (!councilStore.isCouncilLocked && !to.meta.skipCouncilCheck) {
-		await councilStore.loadLockedCouncil()
-	}
-
-	// Handle council URL parameter
-	if (to.query.council) {
-		councilStore.setPreselectedFromUrl(to.query.council)
-
-		// Optionally load council data immediately
-		await councilStore.loadCouncilByCode(to.query.council)
-	}
-
 	// Allow public pages without authentication
 	if (to.meta.public) {
 		next()

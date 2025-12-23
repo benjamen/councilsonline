@@ -2,7 +2,6 @@ import router from "@/router"
 import { call, createResource } from "frappe-ui"
 import { computed, reactive } from "vue"
 
-import { useCouncilStore } from "@/stores/councilStore"
 import { userResource } from "./user"
 
 export function sessionUser() {
@@ -28,31 +27,18 @@ export const session = reactive({
 			session.user = sessionUser()
 			session.login.reset()
 
-			// Check if coming from council-specific login page
-			const councilStore = useCouncilStore()
-
 			// Track login event for analytics
-			const source = councilStore.lockedCouncil
-				? "council-specific"
-				: "system-wide"
 			try {
 				await call("lodgeick.api.track_login_event", {
-					source: source,
-					council_code: councilStore.lockedCouncil || null,
+					source: "web",
 				})
 			} catch (error) {
 				console.error("Failed to track login event:", error)
 				// Don't block login if tracking fails
 			}
 
-			if (councilStore.lockedCouncil) {
-				router.replace({
-					name: "CouncilDashboard",
-					params: { councilCode: councilStore.lockedCouncil },
-				})
-			} else {
-				router.replace({ name: "Dashboard" })
-			}
+			// Always redirect to main dashboard (single-tenant)
+			router.replace({ name: "Dashboard" })
 		},
 	}),
 	logout: createResource({
