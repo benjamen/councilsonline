@@ -35,14 +35,8 @@
 
         <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-                <div v-if="getCurrentStepTitle() === 'Council'">
-                    <Step1CouncilSelection
-                        v-model="store.formData"
-                        @council-change="onCouncilChange"
-                    />
-                </div>
-
-                <div v-else-if="getCurrentStepTitle() === 'Type'">
+                <!-- Skip Council step in single-tenant mode -->
+                <div v-if="getCurrentStepTitle() === 'Type'">
                     <Step2RequestType
                         v-model="store.formData"
                         :request-types="requestTypes"
@@ -165,7 +159,7 @@ import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router"
 
 import { useStepValidation } from "../composables/useStepValidation"
 import { useUserProfile } from "../composables/useUserProfile"
-import { useCouncilStore } from "../stores/councilStore"
+import { useSiteCouncilStore } from "../stores/siteCouncil"
 // Store and composables
 import { useRequestStore } from "../stores/requestStore"
 
@@ -188,7 +182,6 @@ const SubmissionSuccessModal = defineAsyncComponent(
 )
 
 // Step components
-import Step1CouncilSelection from "../components/request-steps/Step1CouncilSelection.vue"
 import Step2RequestType from "../components/request-steps/Step2RequestType.vue"
 import Step3ProcessInfo from "../components/request-steps/Step3ProcessInfo.vue"
 // Lazy-load DynamicStepRenderer (large component with complex logic)
@@ -202,7 +195,7 @@ const router = useRouter()
 
 // Stores
 const store = useRequestStore()
-const councilStore = useCouncilStore()
+const councilStore = useSiteCouncilStore()
 
 // Validation
 const { errors: validationErrors, validateStep } = useStepValidation()
@@ -219,14 +212,15 @@ const selectedRequestTypeDetails = ref(null)
 // Computed
 const totalSteps = computed(() => {
 	if (store.requestTypeConfig?.steps) {
-		// Council (0) + Type (1) + Process Info (2) + Dynamic Steps + Review (Last)
-		return store.requestTypeConfig.steps.length + 4
+		// Single-tenant: Type (0) + Process Info (1) + Dynamic Steps + Review (Last)
+		return store.requestTypeConfig.steps.length + 3
 	}
-	return 4 // Default: Council, Type, Process Info, Review
+	return 3 // Default: Type, Process Info, Review (no Council step)
 })
 
 const stepTitles = computed(() => {
-	const titles = ["Council", "Type", "Process Info"]
+	// Single-tenant: Skip "Council" step
+	const titles = ["Type", "Process Info"]
 	if (store.requestTypeConfig?.steps) {
 		titles.push(...store.requestTypeConfig.steps.map((s) => s.step_title))
 	}
@@ -323,22 +317,17 @@ function getCurrentStepConfig() {
 }
 
 function getCouncilName() {
-	const councilCode = store.formData.council
-	if (!councilCode) return ""
-
-	const council = councilStore.councils.find(
-		(c) => c.council_code === councilCode,
-	)
-	return council?.council_name || councilCode
+	// Single-tenant: always return the one council's name
+	return councilStore.councilData?.council_name || "Council"
 }
 
-async function onCouncilChange(councilCode) {
-	// Load request types for selected council
+async function loadRequestTypes() {
+	// Single-tenant: load request types for the site's council
 	requestTypes.value.loading = true
-	await councilStore.loadRequestTypesForCouncil(councilCode)
+	await councilStore.loadCouncil()
 	requestTypes.value = {
 		loading: false,
-		data: councilStore.requestTypes || [],
+		data: councilStore.availableRequestTypes || [],
 	}
 }
 
@@ -540,16 +529,12 @@ watch(
 onMounted(async () => {
 	const requestTypeCode = route.query.type
 	const draftId = route.query.draft
-	const councilCode = route.query.council
-	const isLocked = route.query.locked === "true"
 
 	console.log(
-		"[NewRequest] Initialization - locked:",
-		isLocked,
-		"council:",
-		councilCode,
-		"type:",
+		"[NewRequest] Initialization - type:",
 		requestTypeCode,
+		"draft:",
+		draftId,
 	)
 
 	// If starting fresh request (no draft ID), ensure clean state
@@ -581,52 +566,21 @@ onMounted(async () => {
 		return
 	}
 
-	// Handle locked request flow from council website (council + type both locked)
-	if (isLocked && councilCode && requestTypeCode && !draftId) {
-		console.log("[NewRequest] Locked flow detected - skipping to step 2")
+	// Single-tenant: Load council and request types once
+	await loadRequestTypes()
 
-		// Set council (locked)
-		store.updateField("council", councilCode)
-
-		// Pre-load request types for this council
-		await onCouncilChange(councilCode)
+	// Handle request type pre-selection from URL
+	if (requestTypeCode && !draftId) {
+		console.log("[NewRequest] Request type provided in URL:", requestTypeCode)
 
 		// Initialize request type config
 		await store.initialize(requestTypeCode)
 		selectedRequestTypeDetails.value = store.requestTypeConfig
 		store.updateField("request_type", requestTypeCode)
 
-		// Skip directly to step 2 (Process Info)
-		store.currentStep = 2
-		console.log(
-			"[NewRequest] Locked flow complete - currentStep:",
-			store.currentStep,
-		)
-		return
-	}
-
-	// Handle council pre-selection from URL (not locked, just pre-selected)
-	if (councilCode && !draftId && !isLocked) {
-		store.updateField("council", councilCode)
-
-		// Pre-load request types for this council
-		await onCouncilChange(councilCode)
-
-		// If request type is also provided, advance to step 2
-		if (requestTypeCode) {
-			await store.initialize(requestTypeCode)
-			selectedRequestTypeDetails.value = store.requestTypeConfig
-			store.updateField("request_type", requestTypeCode)
-			store.currentStep = 2
-		} else {
-			// Just council provided, advance to step 1 (Type selection)
-			store.currentStep = 1
-		}
-	} else if (requestTypeCode && !draftId && !councilCode) {
-		// Just request type provided (unusual case, but handle it)
-		await store.initialize(requestTypeCode)
-		selectedRequestTypeDetails.value = store.requestTypeConfig
-		store.updateField("request_type", requestTypeCode)
+		// Skip directly to step 1 (Process Info) since we don't have Council step
+		store.currentStep = 1
+		console.log("[NewRequest] Advanced to step 1 (Process Info)")
 	}
 })
 
