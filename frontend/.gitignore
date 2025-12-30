@@ -6,3 +6,5 @@ dist-ssr
 coverage
 ../<app-name>
 sites
+playwright-report
+test-results
