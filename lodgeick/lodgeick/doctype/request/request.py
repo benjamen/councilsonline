@@ -31,20 +31,15 @@ class Request(Document):
         if not self.workflow_state:
             self.workflow_state = "Draft"
 
-        # 2. Validate council and request type association (skip for drafts)
-        if self.workflow_state != "Draft":
-            self.validate_council_license()
-            self.validate_request_type_for_council()
-
-        # 3. Validate brief description length
+        # 2. Validate brief description length
         if self.brief_description and len(self.brief_description) > 200:
             frappe.throw("Brief description must be 200 characters or less")
 
-        # 4. Set default payment status
+        # 3. Set default payment status
         if not self.payment_status:
             self.payment_status = "Pending"
 
-        # 5. Calculate target completion date
+        # 4. Calculate target completion date
         if self.request_type and self.submitted_date and not self.target_completion_date:
             self.calculate_target_completion_date()
 
@@ -188,11 +183,6 @@ class Request(Document):
         if not self.target_completion_date:
             return False
         return getdate() > getdate(self.target_completion_date)
-
-    @property
-    def status(self):
-        """Backward compatibility property - returns workflow_state"""
-        return self.workflow_state
 
     def add_status_history(self, from_status, to_status, reason=None):
         """Add entry to status history"""

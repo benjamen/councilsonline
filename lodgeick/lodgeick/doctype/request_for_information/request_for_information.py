@@ -68,12 +68,12 @@ class RequestForInformation(Document):
     def stop_statutory_clock(self):
         """Stop the statutory clock on parent Request"""
         request = frappe.get_doc("Request", self.request)
-        if request.status not in ["Closed", "Withdrawn", "Declined"]:
+        if request.workflow_state not in ["Closed", "Withdrawn", "Declined"]:
             # Delegate to child DocType
             request.stop_statutory_clock()
 
             # Update parent status
-            request.status = "RFI Issued"
+            request.workflow_state = "RFI Issued"
             request.save(ignore_permissions=True)
 
             self.clock_stopped_date = now()
@@ -94,7 +94,7 @@ class RequestForInformation(Document):
     def restart_statutory_clock(self):
         """Restart the statutory clock on parent Request"""
         request = frappe.get_doc("Request", self.request)
-        if request.status == "RFI Issued":
+        if request.workflow_state == "RFI Issued":
             # Check if there are other outstanding RFIs
             outstanding_rfis = frappe.db.count(
                 "Request For Information",
@@ -110,8 +110,8 @@ class RequestForInformation(Document):
                 # Delegate to child DocType
                 request.restart_statutory_clock()
 
-                # Update parent status
-                request.status = "Under Review"
+                # Update parent status to Processing (not Under Review)
+                request.workflow_state = "Processing"
                 request.save(ignore_permissions=True)
 
                 self.clock_restarted_date = now()
@@ -174,8 +174,8 @@ class RequestForInformation(Document):
     def update_request_status(self):
         """Update parent Request status"""
         request = frappe.get_doc("Request", self.request)
-        if request.status not in ["Closed", "Withdrawn", "Declined"]:
-            request.status = "RFI Issued"
+        if request.workflow_state not in ["Closed", "Withdrawn", "Declined"]:
+            request.workflow_state = "RFI Issued"
             request.save(ignore_permissions=True)
 
 

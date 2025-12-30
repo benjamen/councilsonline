@@ -18,7 +18,7 @@ def create_lodgeick_custom_fields():
 				"insert_after": "amended_from",
 				"collapsible": 1,
 				"hidden": 0,
-				"depends_on": "eval:doc.status=='Draft'"
+				"depends_on": "eval:doc.workflow_state=='Draft'"
 			},
 			{
 				"fieldname": "draft_current_step",

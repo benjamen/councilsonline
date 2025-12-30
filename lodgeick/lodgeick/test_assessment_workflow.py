@@ -107,30 +107,30 @@ def test_complete_workflow():
     frappe.db.commit()
 
     print(f"✓ Created Request: {request.name}")
-    print(f"  Status: {request.status}")
+    print(f"  Workflow State: {request.workflow_state}")
     print(f"  Type: {request.request_type}")
     print("✓ TEST 4 PASSED\n")
 
     # Test 5: Submit Request
     print("TEST 5: Submitting Request...")
-    request.status = "Submitted"
+    request.workflow_state = "Submitted"
     request.submitted_date = getdate()
     request.submit()
     frappe.db.commit()
     print(f"✓ Request submitted: {request.name}")
-    print(f"  Status: {request.status}")
+    print(f"  Workflow State: {request.workflow_state}")
     print("✓ TEST 5 PASSED\n")
 
     # Test 6: Acknowledge Request (should auto-create Assessment Project)
     print("TEST 6: Acknowledging Request (triggers Assessment Project creation)...")
     request.reload()
-    request.status = "Acknowledged"
+    request.workflow_state = "Acknowledged"
     request.assigned_to = frappe.session.user
     request.save()
     frappe.db.commit()
 
     print(f"✓ Request acknowledged: {request.name}")
-    print(f"  Status: {request.status}")
+    print(f"  Workflow State: {request.workflow_state}")
     print(f"  Statutory Clock Started: {request.statutory_clock_started}")
 
     # Check if assessment project was created

@@ -170,14 +170,12 @@ def create_test_applications():
             if workflow_state != 'Draft':
                 # Submit
                 request.workflow_state = 'Submitted'
-                request.status = 'Submitted'
                 request.save(ignore_permissions=True)
                 frappe.db.commit()
 
             if workflow_state == 'Acknowledged':
                 # Acknowledge
                 request.workflow_state = 'Acknowledged'
-                request.status = 'Acknowledged'
                 request.acknowledged_date = now_datetime()
                 request.save(ignore_permissions=True)
                 frappe.db.commit()
@@ -204,7 +202,6 @@ def create_test_applications():
 
                 # Then move to Processing
                 request.workflow_state = 'Processing'
-                request.status = 'Processing'
                 request.save(ignore_permissions=True)
                 frappe.db.commit()
 

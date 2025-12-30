@@ -1,0 +1,49 @@
+{
+ "doctype": "Kanban Board",
+ "name": "Request",
+ "reference_doctype": "Request",
+ "field_name": "workflow_state",
+ "columns": [
+  {
+   "column_name": "Draft",
+   "indicator": "gray"
+  },
+  {
+   "column_name": "Submitted",
+   "indicator": "blue"
+  },
+  {
+   "column_name": "Acknowledged",
+   "indicator": "cyan"
+  },
+  {
+   "column_name": "Processing",
+   "indicator": "orange"
+  },
+  {
+   "column_name": "RFI Issued",
+   "indicator": "purple"
+  },
+  {
+   "column_name": "Pending Decision",
+   "indicator": "yellow"
+  },
+  {
+   "column_name": "Approved",
+   "indicator": "green"
+  },
+  {
+   "column_name": "Approved with Conditions",
+   "indicator": "light-green"
+  },
+  {
+   "column_name": "Declined",
+   "indicator": "red"
+  },
+  {
+   "column_name": "Completed",
+   "indicator": "darkgreen"
+  }
+ ],
+ "private": 0
+}

@@ -1157,7 +1157,7 @@ def load_draft_request(request_id):
             "created_at": request_doc.creation,
             "updated_at": request_doc.modified,
             "form_data": form_data,
-            "status": request_doc.status
+            "workflow_state": request_doc.workflow_state
         }
 
     except Exception as e:
@@ -1875,7 +1875,7 @@ def get_meeting_details(meeting_id):
                 "name": request_doc.name,
                 "request_number": request_doc.request_number,
                 "request_type": request_doc.request_type,
-                "status": request_doc.status
+                "workflow_state": request_doc.workflow_state
             }
         }
 
@@ -2359,18 +2359,17 @@ def get_user_requests(status=None):
             "docstatus": ["<", 2]  # Not cancelled documents
         }
 
-        # Add status filter if provided
+        # Add workflow_state filter if provided (status parameter maps to workflow_state)
         if status:
-            filters["status"] = status
+            filters["workflow_state"] = status
 
         requests = frappe.get_all(
             "Request",
             filters=filters,
             fields=[
-                "name", "request_number", "request_type", "status",
+                "name", "request_number", "request_type", "workflow_state",
                 "requester_name", "requester_email", "requester_phone",
-                "brief_description", "creation", "modified",
-                "workflow_state"
+                "brief_description", "creation", "modified"
             ],
             order_by="modified desc"
         )
@@ -2449,70 +2448,32 @@ def get_request_types():
     return enabled_types
 
 
-# REMOVED: set_user_default_council - no longer needed in single-tenant
-# REMOVED: get_locked_council - no longer needed in single-tenant
-# REMOVED: set_locked_council - no longer needed in single-tenant
-# REMOVED: clear_locked_council - no longer needed in single-tenant
-
-@frappe.whitelist(allow_guest=True)
-def get_council_landing_page():
-    """
-    Set default council for current user
-
-    Args:
-        council_code: Council code to set as default
-
-    Returns:
-        dict: Success status and default council
-    """
-    user = frappe.session.user
-
-    # Validate council exists and is active
-    if not frappe.db.exists("Council", {"council_code": council_code, "is_active": 1}):
-        frappe.throw(_("Invalid or inactive council"))
-
-    # Only set if field exists
-    if frappe.db.has_column("User", "default_council"):
-        frappe.db.set_value("User", user, "default_council", council_code)
-        frappe.db.commit()
-    else:
-        frappe.log_error(
-            title="User DocType Missing default_council Field",
-            message="The default_council field needs to be added to the User DocType"
-        )
-
-    return {
-        "success": True,
-        "default_council": council_code
-    }
-
-
 @frappe.whitelist()
-def get_council_stats(council_code):
+def get_council_stats(council_code=None):
     """
-    Get statistics for a council (for admin dashboards)
+    Get statistics for the council (single-tenant)
 
     Args:
-        council_code: Council code
+        council_code: Deprecated, kept for backwards compatibility
 
     Returns:
         dict: Council statistics
     """
-    council = frappe.get_doc("Council", council_code)
+    # Single-tenant: Get the single Council instance
+    council = frappe.get_single("Council")
 
     # Get monthly request count
     monthly_count = council.get_monthly_request_count()
 
-    # Get total requests all time
-    total_requests = frappe.db.count("Request", {"council": council_code})
+    # Get total requests all time (single-tenant: no council filter)
+    total_requests = frappe.db.count("Request")
 
-    # Get requests by status
+    # Get requests by workflow_state (single-tenant)
     requests_by_status = frappe.db.sql("""
-        SELECT status, COUNT(*) as count
+        SELECT workflow_state as status, COUNT(*) as count
         FROM `tabRequest`
-        WHERE council = %s
-        GROUP BY status
-    """, council_code, as_dict=True)
+        GROUP BY workflow_state
+    """, as_dict=True)
 
     return {
         "council_name": council.council_name,
@@ -2524,123 +2485,6 @@ def get_council_stats(council_code):
         "requests_by_status": requests_by_status,
         "enabled_request_types_count": len([rt for rt in council.enabled_request_types if rt.is_enabled])
     }
-
-
-@frappe.whitelist(allow_guest=True)
-def get_locked_council():
-    """
-    Returns the locked council from session, if any.
-    Used by frontend to determine if council is locked for the request flow.
-
-    Returns:
-        dict: Locked council info or {"is_locked": False}
-    """
-    try:
-        # Get session ID - check if it exists
-        session_id = getattr(frappe.session, 'sid', None)
-        if not session_id:
-            return {"is_locked": False}
-
-        # Get from cache using session ID
-        locked_data = frappe.cache().hget("locked_council", session_id)
-
-        if locked_data:
-            try:
-                data = frappe.parse_json(locked_data)
-                locked_council = data.get("locked_council_code")
-                council = frappe.get_doc("Council", locked_council)
-                return {
-                    "council_code": locked_council,
-                    "council_name": data.get("locked_council_name"),
-                    "locked_at": data.get("locked_at"),
-                    "source_url": data.get("source_url"),
-                    "is_locked": True,
-                    "council": council.as_dict(),
-                    # Add portal settings for frontend routing
-                    "redirect_dashboard_to_council": int(council.redirect_dashboard_to_council or 1),
-                    "allow_system_wide_dashboard": int(council.allow_system_wide_dashboard or 0),
-                    "show_council_switcher": int(council.show_council_switcher or 0)
-                }
-            except (frappe.DoesNotExistError, ValueError, KeyError) as e:
-                # Council was deleted or data corrupted - clear session
-                frappe.log_error(f"Error loading locked council: {str(e)}")
-                clear_locked_council()
-                return {"is_locked": False}
-
-        return {"is_locked": False}
-    except Exception as e:
-        # Log error but don't fail
-        frappe.log_error(f"Error in get_locked_council: {str(e)}")
-        return {"is_locked": False}
-
-
-@frappe.whitelist(allow_guest=True)
-def set_locked_council(council_code):
-    """
-    Manually lock a council in session.
-    Used when user navigates to /{council_code} via Vue Router.
-
-    Args:
-        council_code: Council code to lock
-
-    Returns:
-        dict: Success status and council info
-    """
-    try:
-        council_code = council_code.upper()
-
-        # Verify council exists and is active
-        try:
-            council = frappe.get_doc("Council", council_code)
-            if not council.is_active:
-                frappe.throw(_("Council is not active"))
-        except frappe.DoesNotExistError:
-            frappe.throw(_("Council not found: {0}").format(council_code))
-
-        # Get session ID - check if it exists
-        session_id = getattr(frappe.session, 'sid', None)
-        if not session_id:
-            frappe.log_error("No session ID available for set_locked_council")
-            return {"success": False, "error": "No session available"}
-
-        # Set in session using Frappe's session cache (persists across requests)
-        frappe.cache().hset("locked_council", session_id, frappe.as_json({
-            "locked_council_code": council_code,
-            "locked_council_name": council.council_name,
-            "locked_at": frappe.utils.now(),
-            "source_url": frappe.request.headers.get("Referer", "")
-        }))
-
-        return {
-            "success": True,
-            "council_code": council_code,
-            "council_name": council.council_name
-        }
-    except Exception as e:
-        frappe.log_error(f"Error in set_locked_council: {str(e)}")
-        return {"success": False, "error": str(e)}
-
-
-@frappe.whitelist(allow_guest=True)
-def clear_locked_council():
-    """
-    Clear locked council from session.
-    Used when user explicitly wants to change council or session expires.
-
-    Returns:
-        dict: Success status
-    """
-    try:
-        # Get session ID - check if it exists
-        session_id = getattr(frappe.session, 'sid', None)
-        if session_id:
-            # Remove from cache
-            frappe.cache().hdel("locked_council", session_id)
-
-        return {"success": True}
-    except Exception as e:
-        frappe.log_error(f"Error in clear_locked_council: {str(e)}")
-        return {"success": False, "error": str(e)}
 
 
 @frappe.whitelist(allow_guest=True)
@@ -4374,7 +4218,7 @@ def create_payout(request_id, payout_amount, payment_method, payout_date=None,
 	try:
 		# Validate request is approved
 		request = frappe.get_doc("Request", request_id)
-		if request.status not in ["Approved", "Active"]:
+		if request.workflow_state not in ["Approved", "Approved with Conditions"]:
 			frappe.throw(_("Request must be approved before creating payout"))
 
 		# Check eligibility
@@ -4613,14 +4457,14 @@ def check_duplicate_application(user_email, request_type):
 		dict: Duplicate check results
 	"""
 	try:
-		# Check for active requests
+		# Check for active requests (using workflow_state)
 		active_requests = frappe.get_all("Request",
 										filters={
 											"requester_email": user_email,
 											"request_type": request_type,
-											"status": ["in", ["Submitted", "Under Review", "Approved", "Active"]]
+											"workflow_state": ["in", ["Submitted", "Acknowledged", "Processing", "Approved", "Approved with Conditions"]]
 										},
-										fields=["name", "status", "creation"])
+										fields=["name", "workflow_state", "creation"])
 
 		has_duplicate = len(active_requests) > 0
 

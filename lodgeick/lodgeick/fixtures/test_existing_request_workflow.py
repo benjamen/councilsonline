@@ -26,7 +26,6 @@ def test():
     print(f"Testing with: {doc.name}")
     print(f"  Request Type: {doc.request_type}")
     print(f"  Current Workflow State: {doc.workflow_state}")
-    print(f"  Current Status: {doc.status}")
     print(f"  Docstatus: {doc.docstatus}")
     print(f"  Statutory Clock: {doc.statutory_clock_started or 'Not started'}")
 

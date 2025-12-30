@@ -185,7 +185,6 @@ def test():
 
     print(f"\nFinal Request State ({doc.name}):")
     print(f"  Workflow State: {doc.workflow_state}")
-    print(f"  Status: {doc.status}")
     print(f"  Clock Started: {doc.statutory_clock_started}")
     print(f"  Clock Stopped: {doc.statutory_clock_stopped or 'No (running)'}")
     print(f"  Acknowledged: {doc.acknowledged_date}")

@@ -66,12 +66,12 @@ def test_create_request(request_type, property_id):
         "brief_description": "New 3-bedroom residential dwelling",
         "detailed_description": "<p>Construction of a new single-storey residential dwelling with 3 bedrooms, 2 bathrooms, open-plan kitchen/living, double garage, and deck.</p><p>Timber frame construction on concrete slab foundation with Colorsteel roof.</p>",
         "project_description": "Test building consent application for a new dwelling",
-        "status": "Draft"
+        "workflow_state": "Draft"
     })
 
     request.insert()
     print(f"\n✓ Created Request: {request.request_number}")
-    print(f"  - Status: {request.status}")
+    print(f"  - Workflow State: {request.workflow_state}")
     print(f"  - Type: {request.request_type}")
     print(f"  - Property: {request.property}")
     print(f"  - Applicant: {request.requester_name}")
