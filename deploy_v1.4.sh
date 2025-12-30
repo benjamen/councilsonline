@@ -259,16 +259,16 @@ else:
     print("⚠ Some roles missing")
 
 # Check workflow
-workflow = frappe.db.exists("Workflow", "Request Workflow")
+workflow = frappe.db.exists("Workflow", "Request Processing Workflow")
 if workflow:
-    print("✓ Request Workflow installed")
-    wf = frappe.get_doc("Workflow", "Request Workflow")
+    print("✓ Request Processing Workflow installed")
+    wf = frappe.get_doc("Workflow", "Request Processing Workflow")
     state_count = len(wf.states or [])
     transition_count = len(wf.transitions or [])
     print(f"  - {state_count} workflow states")
     print(f"  - {transition_count} transitions")
 else:
-    print("⚠ Request Workflow missing")
+    print("⚠ Request Processing Workflow missing")
 
 frappe.destroy()
 EOF
