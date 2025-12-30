@@ -193,6 +193,11 @@ class AssessmentProject(Document):
 				# Render task description with context
 				task_description = self.render_task_description(template, stage_instance)
 
+				# Calculate start date (same as due date - estimated hours converted to days)
+				from datetime import timedelta
+				estimated_days = template.estimated_hours / 8 if template.estimated_hours else 0
+				task_start_date = task_due_date - timedelta(days=estimated_days)
+
 				# Create Project Task
 				task = frappe.get_doc({
 					"doctype": "Project Task",
@@ -206,6 +211,7 @@ class AssessmentProject(Document):
 					"assigned_role": template.required_role,
 					"estimated_hours": template.estimated_hours,
 					"priority": template.priority,
+					"start_date": task_start_date.date() if hasattr(task_start_date, 'date') else task_start_date,
 					"due_date": task_due_date,
 					"checklist_template": template.checklist_template,
 					"task_type": "Auto",  # Mark as auto-generated

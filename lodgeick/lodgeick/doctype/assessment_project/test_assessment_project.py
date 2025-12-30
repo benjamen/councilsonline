@@ -18,25 +18,22 @@ class TestAssessmentProject(FrappeTestCase):
 		frappe.flags.in_test = True
 		frappe.flags.mute_emails = True
 
-		# Create test council if it doesn't exist (council_code becomes the name)
+		# Use test helper instead to handle duplicates gracefully
+		from lodgeick.tests.test_helpers import create_test_council, create_test_organization
+		
 		council_code = "TST"
-		if not frappe.db.exists("Council", council_code):
-			council = frappe.get_doc({
-				"doctype": "Council",
-				"council_name": "Test Council",
-				"council_code": council_code,
-				"council_type": "Territorial Authority",
-				"contact_email": "test@testcouncil.govt.nz"
-			})
-			council.insert(ignore_permissions=True, ignore_if_duplicate=True)
-			frappe.db.commit()
+		# Create council using helper which handles duplicates
+		self.council = create_test_council(council_code)
+		
+		# Create test organization
+		create_test_organization(council_code)
 
 		# Create test request if it doesn't exist
 		if not frappe.db.exists("Request", "TEST-REQ-001"):
 			request = frappe.get_doc({
 				"doctype": "Request",
 				"name": "TEST-REQ-001",
-				"council": council_code,  # Use council_code which is the name
+				"organization": council_code,
 				"request_type": "Resource Consent",
 				"requester": "Administrator",
 				"brief_description": "Test request for assessment project testing",
