@@ -446,7 +446,7 @@ class TestBug003SpiscApplicationFetchFrom(FrappeTestCase):
         """Cleanup after each test."""
         # Cleanup SPISC Applications and Requests
         cleanup_test_data("SPISC Application", {})
-        cleanup_test_data("Request", {"council": self.council.council_code})
+        cleanup_test_data("Request", {})
         super().tearDown()
 
     def test_bug_003_spisc_application_draft_save(self):
