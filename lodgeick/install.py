@@ -53,6 +53,21 @@ def install_default_data(force=False):
 	frappe.log("Linking Assessment Templates to Request Types...")
 	link_assessment_templates_to_request_types(force=force)
 
+	# Install SPISC and Taytay Council
+	frappe.log("Installing SPISC Request Type and Taytay Council...")
+	from lodgeick.lodgeick.fixtures.taytay.import_taytay_fixtures import import_fixtures as import_taytay
+	import_taytay()
+
+	# Create roles
+	frappe.log("Creating Lodgeick roles...")
+	from lodgeick.lodgeick.fixtures.create_roles import create_roles
+	create_roles()
+
+	# Create workflow
+	frappe.log("Creating Request workflow...")
+	from lodgeick.lodgeick.fixtures.create_unified_workflow import create_workflow
+	create_workflow()
+
 	# Note: Condition template linking skipped - Request Type schema doesn't support it yet
 	# This feature may be added in a future version
 

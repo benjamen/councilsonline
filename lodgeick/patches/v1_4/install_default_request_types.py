@@ -39,6 +39,22 @@ def execute():
 		frappe.log(f"✓ Installed {rt_count} request types")
 		frappe.log(f"✓ Installed {assessment_count} assessment templates")
 		frappe.log(f"✓ Linked {link_count} assessment templates to request types")
+
+		# Ensure SPISC and Taytay Council exist
+		frappe.log("Ensuring SPISC Request Type and Taytay Council exist...")
+		from lodgeick.lodgeick.fixtures.taytay.import_taytay_fixtures import import_fixtures as import_taytay
+		import_taytay()
+
+		# Ensure roles exist
+		frappe.log("Ensuring Lodgeick roles exist...")
+		from lodgeick.lodgeick.fixtures.create_roles import create_roles
+		create_roles()
+
+		# Ensure workflow exists
+		frappe.log("Ensuring Request workflow exists...")
+		from lodgeick.lodgeick.fixtures.create_unified_workflow import create_workflow
+		create_workflow()
+
 		frappe.log("✓ Default request types installation completed")
 
 	except Exception as e:

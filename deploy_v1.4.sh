@@ -226,8 +226,58 @@ EOF
     print_success "Request types verified"
 }
 
+verify_spisc_and_roles() {
+    print_header "Step 5: Verifying SPISC, Roles & Workflow"
+
+    print_info "Checking SPISC, roles, and workflow..."
+
+    bench --site "$SITE_NAME" console <<EOF
+import frappe
+frappe.init(site="$SITE_NAME")
+frappe.connect()
+
+# Check SPISC exists
+spisc_exists = frappe.db.exists("Request Type", "Social Pension for Indigent Senior Citizens (SPISC)")
+if spisc_exists:
+    print("✓ SPISC Request Type installed")
+    spisc = frappe.get_doc("Request Type", "Social Pension for Indigent Senior Citizens (SPISC)")
+    step_count = len(spisc.step_configs or [])
+    field_count = len(spisc.step_fields or [])
+    print(f"  - {step_count} steps configured")
+    print(f"  - {field_count} fields configured")
+else:
+    print("⚠ SPISC Request Type missing")
+
+# Check roles
+user_role = frappe.db.exists("Role", "Lodgeick User")
+admin_role = frappe.db.exists("Role", "Lodgeick Admin")
+if user_role and admin_role:
+    print("✓ Lodgeick roles installed")
+    print("  - Lodgeick User")
+    print("  - Lodgeick Admin")
+else:
+    print("⚠ Some roles missing")
+
+# Check workflow
+workflow = frappe.db.exists("Workflow", "Request Workflow")
+if workflow:
+    print("✓ Request Workflow installed")
+    wf = frappe.get_doc("Workflow", "Request Workflow")
+    state_count = len(wf.states or [])
+    transition_count = len(wf.transitions or [])
+    print(f"  - {state_count} workflow states")
+    print(f"  - {transition_count} transitions")
+else:
+    print("⚠ Request Workflow missing")
+
+frappe.destroy()
+EOF
+
+    print_success "SPISC, roles, and workflow verified"
+}
+
 build_frontend() {
-    print_header "Step 5: Building Frontend Assets"
+    print_header "Step 6: Building Frontend Assets"
 
     print_info "Clearing asset cache..."
     bench clear-cache
@@ -362,6 +412,7 @@ main() {
     pull_latest_code
     run_migrations
     verify_request_types
+    verify_spisc_and_roles
     build_frontend
     restart_services
     verify_deployment
