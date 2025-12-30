@@ -65,8 +65,7 @@ def register_user(
     address_id=None,
     organization_name=None,
     company_number=None,
-    trust_name=None,
-    council_code=None
+    trust_name=None
 ):
     """
     Register a new REQUESTER for Lodgeick (requesters can submit on behalf of themselves or organizations)
@@ -89,7 +88,6 @@ def register_user(
         organization_name: Company or Organisation name
         company_number: Company registration number
         trust_name: Trust name
-        council_code: Default council code
 
     Returns:
         dict: Success message and user info
@@ -162,18 +160,6 @@ def register_user(
         except Exception as e:
             frappe.log_error(f"Error creating user profile: {str(e)}")
 
-        # Set default council if provided
-        if council_code:
-            council = frappe.db.get_value(
-                "Council",
-                {"council_code": council_code, "is_active": 1},
-                ["name", "council_name"],
-                as_dict=True
-            )
-            if council:
-                user.default_council = council.name
-                user.save(ignore_permissions=True)
-
         # Create organization record for Company/Organisation/Trust requesters
         if applicant_type in ["Company", "Organisation", "Trust"]:
             org_name = organization_name or trust_name
@@ -227,8 +213,7 @@ def register_agent(
     business_street=None,
     business_suburb=None,
     business_city=None,
-    business_postcode=None,
-    council_code=None
+    business_postcode=None
 ):
     """
     Register a new AGENT (Planning Consultant) for Lodgeick
@@ -250,7 +235,6 @@ def register_agent(
         business_suburb: Business suburb
         business_city: Business city
         business_postcode: Business postcode
-        council_code: Default council code
 
     Returns:
         dict: Success message and user info
@@ -326,18 +310,6 @@ def register_agent(
             profile.insert()
         except Exception as e:
             frappe.log_error(f"Error creating agent profile: {str(e)}")
-
-        # Set default council if provided
-        if council_code:
-            council = frappe.db.get_value(
-                "Council",
-                {"council_code": council_code, "is_active": 1},
-                ["name", "council_name"],
-                as_dict=True
-            )
-            if council:
-                user.default_council = council.name
-                user.save(ignore_permissions=True)
 
         # Create organization record for Company agents
         if agent_type == "Company" and company_name:
