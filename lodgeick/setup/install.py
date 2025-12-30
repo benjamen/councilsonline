@@ -395,6 +395,179 @@ def install_request_types(force=False):
 	return installed_count
 
 
+def install_assessment_templates(force=False):
+	"""Install default assessment templates"""
+
+	templates = [
+		{
+			"template_name": "Resource Consent - Non-Notified",
+			"request_type": "Resource Consent",
+			"is_active": 1,
+			"default_budget_hours": 40,
+			"description": "<p>Standard assessment workflow for non-notified resource consent applications processed under RMA. Includes vetting, technical assessment, decision, and implementation stages with 20 working day statutory timeframe.</p>",
+			"stages": [
+				{
+					"stage_number": 1,
+					"stage_name": "Vetting & S88 Compliance",
+					"stage_type": "Vetting",
+					"required": 1,
+					"estimated_hours": 4
+				},
+				{
+					"stage_number": 2,
+					"stage_name": "Technical Assessment",
+					"stage_type": "Technical Assessment",
+					"required": 1,
+					"estimated_hours": 20
+				},
+				{
+					"stage_number": 3,
+					"stage_name": "Decision Preparation",
+					"stage_type": "Decision",
+					"required": 1,
+					"estimated_hours": 10
+				},
+				{
+					"stage_number": 4,
+					"stage_name": "Implementation & Issuance",
+					"stage_type": "Implementation",
+					"required": 1,
+					"estimated_hours": 6
+				}
+			]
+		},
+		{
+			"template_name": "Building Consent - Standard",
+			"request_type": "Building Consent",
+			"is_active": 1,
+			"default_budget_hours": 30,
+			"description": "<p>Standard building consent assessment workflow for residential and commercial buildings. Includes plan vetting, technical assessment, and decision within 20 working days.</p>",
+			"stages": [
+				{
+					"stage_number": 1,
+					"stage_name": "Plan Vetting",
+					"stage_type": "Vetting",
+					"required": 1,
+					"estimated_hours": 6
+				},
+				{
+					"stage_number": 2,
+					"stage_name": "Technical Assessment",
+					"stage_type": "Technical Assessment",
+					"required": 1,
+					"estimated_hours": 16
+				},
+				{
+					"stage_number": 3,
+					"stage_name": "Decision & Issuance",
+					"stage_type": "Decision",
+					"required": 1,
+					"estimated_hours": 8
+				}
+			]
+		},
+		{
+			"template_name": "LIM Assessment",
+			"request_type": "LIM",
+			"is_active": 1,
+			"default_budget_hours": 12,
+			"description": "<p>Land Information Memorandum assessment workflow. Comprehensive property information gathering and report preparation within 10 working days.</p>",
+			"stages": [
+				{
+					"stage_number": 1,
+					"stage_name": "Information Gathering",
+					"stage_type": "Vetting",
+					"required": 1,
+					"estimated_hours": 6
+				},
+				{
+					"stage_number": 2,
+					"stage_name": "Report Compilation",
+					"stage_type": "Technical Assessment",
+					"required": 1,
+					"estimated_hours": 4
+				},
+				{
+					"stage_number": 3,
+					"stage_name": "Quality Check & Issuance",
+					"stage_type": "Decision",
+					"required": 1,
+					"estimated_hours": 2
+				}
+			]
+		}
+	]
+
+	installed_count = 0
+	for template_data in templates:
+		template_name = template_data["template_name"]
+
+		# Check if already exists
+		if frappe.db.exists("Assessment Template", template_name):
+			if not force:
+				frappe.log(f"Assessment Template '{template_name}' already exists, skipping...")
+				continue
+			else:
+				# Update existing
+				doc = frappe.get_doc("Assessment Template", template_name)
+				doc.update(template_data)
+				doc.save()
+				frappe.log(f"Updated: {template_name}")
+		else:
+			# Create new
+			doc = frappe.get_doc({
+				"doctype": "Assessment Template",
+				**template_data
+			})
+			doc.insert()
+			frappe.log(f"Created: {template_name}")
+
+		installed_count += 1
+
+	frappe.log(f"✓ Installed {installed_count} Assessment Templates")
+	return installed_count
+
+
+def link_assessment_templates_to_request_types(force=False):
+	"""Link assessment templates to request types as default_assessment_template"""
+
+	# Define which assessment template is default for which request type
+	template_links = {
+		"Land Use Consent - Residential": "Resource Consent - Non-Notified",
+		"Land Use Consent - Commercial": "Resource Consent - Non-Notified",
+		"Land Use Consent - Industrial": "Resource Consent - Non-Notified",
+		"Subdivision Consent - Standard": "Resource Consent - Non-Notified",
+		"Discharge Permit - Stormwater": "Resource Consent - Non-Notified",
+		"Water Permit - Groundwater Take": "Resource Consent - Non-Notified",
+		"Building Consent - Residential New Build": "Building Consent - Standard",
+		"Building Consent - Alterations & Additions": "Building Consent - Standard",
+	}
+
+	linked_count = 0
+	for request_type_name, assessment_template_name in template_links.items():
+		if not frappe.db.exists("Request Type", request_type_name):
+			frappe.log(f"Request Type '{request_type_name}' not found, skipping...")
+			continue
+
+		if not frappe.db.exists("Assessment Template", assessment_template_name):
+			frappe.log(f"Assessment Template '{assessment_template_name}' not found, skipping...")
+			continue
+
+		# Update request type with default assessment template
+		rt_doc = frappe.get_doc("Request Type", request_type_name)
+
+		if force or not rt_doc.default_assessment_template:
+			rt_doc.default_assessment_template = assessment_template_name
+			rt_doc.save()
+			linked_count += 1
+			frappe.log(f"✓ Linked '{assessment_template_name}' to '{request_type_name}'")
+		else:
+			frappe.log(f"Request Type '{request_type_name}' already has a default template, skipping...")
+
+	frappe.log(f"✓ Linked {linked_count} assessment template connections")
+	return linked_count
+
+
 def link_templates_to_request_types(force=False):
 	"""Link condition templates to request types"""
 

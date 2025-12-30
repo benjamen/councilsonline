@@ -20,19 +20,25 @@ def execute():
 		from lodgeick.setup.install import (
 			install_consent_condition_templates,
 			install_request_types,
-			link_templates_to_request_types
+			install_assessment_templates,
+			link_assessment_templates_to_request_types
 		)
 
-		# Install/update with force=True to ensure latest configurations
+		# Install/update with force=False to avoid overwriting customizations
 		template_count = install_consent_condition_templates(force=False)
 		rt_count = install_request_types(force=False)
-		link_count = link_templates_to_request_types(force=False)
+		assessment_count = install_assessment_templates(force=False)
+		link_count = link_assessment_templates_to_request_types(force=False)
+
+		# Note: Condition template linking skipped - Request Type doesn't have condition_templates child table yet
+		# This feature may be added in a future version
 
 		frappe.db.commit()
 
 		frappe.log(f"✓ Installed {template_count} consent condition templates")
 		frappe.log(f"✓ Installed {rt_count} request types")
-		frappe.log(f"✓ Created {link_count} template links")
+		frappe.log(f"✓ Installed {assessment_count} assessment templates")
+		frappe.log(f"✓ Linked {link_count} assessment templates to request types")
 		frappe.log("✓ Default request types installation completed")
 
 	except Exception as e:

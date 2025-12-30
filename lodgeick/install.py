@@ -37,7 +37,8 @@ def install_default_data(force=False):
 	from lodgeick.setup.install import (
 		install_consent_condition_templates,
 		install_request_types,
-		link_templates_to_request_types
+		install_assessment_templates,
+		link_assessment_templates_to_request_types
 	)
 
 	frappe.log("Installing Consent Condition Templates...")
@@ -46,8 +47,14 @@ def install_default_data(force=False):
 	frappe.log("Installing Request Types...")
 	install_request_types(force=force)
 
-	frappe.log("Linking Templates to Request Types...")
-	link_templates_to_request_types(force=force)
+	frappe.log("Installing Assessment Templates...")
+	install_assessment_templates(force=force)
+
+	frappe.log("Linking Assessment Templates to Request Types...")
+	link_assessment_templates_to_request_types(force=force)
+
+	# Note: Condition template linking skipped - Request Type schema doesn't support it yet
+	# This feature may be added in a future version
 
 	frappe.msgprint(
 		_("Default configuration data has been installed successfully!"),
