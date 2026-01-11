@@ -127,8 +127,76 @@ def send_rfq_to_agent(rfq_id, agent_id):
 
 	rfq.save(ignore_permissions=True)
 
-	# TODO: Send actual email notification to agent
-	# This would integrate with your notification system
+	# Send email notification to agent
+	try:
+		agent_email = frappe.db.get_value("User", agent_id, "email")
+
+		if agent_email:
+			# Get request details for context
+			request = frappe.get_doc("Request", rfq.request)
+
+			# Compose email
+			subject = f"New RFQ: Request for Quote - {rfq.request}"
+
+			message = f"""
+			<div style="font-family: Arial, sans-serif; max-width: 600px;">
+				<h2>New Request for Quote</h2>
+
+				<p>Dear {frappe.db.get_value("User", agent_id, "full_name")},</p>
+
+				<p>You have been selected to provide a quote for the following request:</p>
+
+				<div style="background: #f8f9fa; padding: 15px; border-left: 4px solid #007bff; margin: 20px 0;">
+					<p style="margin: 5px 0;"><strong>Request Number:</strong> {rfq.request}</p>
+					<p style="margin: 5px 0;"><strong>Applicant:</strong> {rfq.applicant or 'N/A'}</p>
+					<p style="margin: 5px 0;"><strong>Status:</strong> {rfq.status}</p>
+					<p style="margin: 5px 0;"><strong>Sent Date:</strong> {rfq.sent_date}</p>
+				</div>
+
+				<div style="background: #fff; padding: 15px; border: 1px solid #ddd; margin: 20px 0;">
+					<h3 style="margin-top: 0;">RFQ Details:</h3>
+					<p>{rfq.rfq_message or 'No additional details provided.'}</p>
+				</div>
+
+				<p><strong>Next Steps:</strong></p>
+				<ul>
+					<li>Review the request details carefully</li>
+					<li>Prepare your quote with pricing and timeline</li>
+					<li>Submit your quote through the portal</li>
+				</ul>
+
+				<p style="margin-top: 30px;">
+					<a href="{frappe.utils.get_url()}/app/rfq-agent-details/{rfq.name}"
+					   style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
+						View RFQ in Portal
+					</a>
+				</p>
+
+				<p style="margin-top: 30px; font-size: 12px; color: #666;">
+					This is an automated notification from Lodgeick. Please do not reply to this email.
+				</p>
+			</div>
+			"""
+
+			frappe.sendmail(
+				recipients=[agent_email],
+				subject=subject,
+				message=message,
+				reference_doctype="RFQ Agent Details",
+				reference_name=rfq.name
+			)
+
+			# Update notification log
+			log_entry = f"{now_datetime()}: Email sent to {agent_email}\n"
+			rfq.notification_log = (rfq.notification_log or "") + log_entry
+			rfq.save(ignore_permissions=True)
+
+	except Exception as e:
+		# Log error but don't fail the RFQ send operation
+		frappe.log_error(f"RFQ Email Error: {str(e)}", "RFQ Agent Notification")
+		log_entry = f"{now_datetime()}: Email failed - {str(e)}\n"
+		rfq.notification_log = (rfq.notification_log or "") + log_entry
+		rfq.save(ignore_permissions=True)
 
 	frappe.db.commit()
 

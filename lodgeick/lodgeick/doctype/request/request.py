@@ -398,11 +398,55 @@ def calculate_working_days_between(start_date, end_date):
     return working_days
 
 
-def is_public_holiday(date):
-    """Check if a date is a public holiday"""
-    # TODO: Implement proper holiday checking against Holiday List DocType
-    # For now, return False (no holidays considered)
-    return False
+def is_public_holiday(date, holiday_list=None):
+    """
+    Check if a date is a public holiday
+
+    Args:
+        date: Date to check (datetime.date or string)
+        holiday_list: Optional holiday list name. If not provided, uses default.
+
+    Returns:
+        bool: True if date is a public holiday
+    """
+    try:
+        from frappe.utils import getdate
+
+        # Convert string to date if needed
+        check_date = getdate(date)
+
+        # Get holiday list name
+        if not holiday_list:
+            # Try to get default holiday list from Lodgeick settings or use NZ default
+            holiday_list = frappe.db.get_single_value("System Settings", "default_holiday_list")
+
+            if not holiday_list:
+                # Look for NZ public holidays list
+                holiday_list = frappe.db.get_value(
+                    "Holiday List",
+                    {"country": "New Zealand"},
+                    "name"
+                )
+
+        if not holiday_list:
+            # No holiday list configured, assume no holidays
+            return False
+
+        # Check if date exists in Holiday List
+        holiday = frappe.db.exists(
+            "Holiday",
+            {
+                "parent": holiday_list,
+                "holiday_date": check_date
+            }
+        )
+
+        return bool(holiday)
+
+    except Exception as e:
+        # Log error but don't fail - assume not a holiday
+        frappe.log_error(f"Holiday check error: {str(e)}", "Holiday Check Error")
+        return False
 
 
 @frappe.whitelist()

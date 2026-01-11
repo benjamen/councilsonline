@@ -5927,7 +5927,47 @@ def send_request_notification(request_id, subject, message, channel="Email"):
 					reference_name=request_id
 				)
 
-		# TODO: Add SMS sending logic if channel includes SMS
+		# Send SMS if channel includes SMS
+		if channel in ["SMS", "Both"]:
+			# Get requester's mobile number from User document
+			requester_mobile = frappe.db.get_value("User", request_doc.requester, "mobile_no")
+
+			if requester_mobile:
+				try:
+					# Use Frappe's built-in SMS functionality if configured
+					# Falls back gracefully if SMS settings are not configured
+					from frappe.core.doctype.sms_settings.sms_settings import send_sms
+
+					# Format message for SMS (remove HTML tags if any)
+					sms_text = frappe.utils.strip_html_tags(message)
+					# Limit SMS to 160 characters
+					if len(sms_text) > 160:
+						sms_text = sms_text[:157] + "..."
+
+					send_sms(
+						receiver_list=[requester_mobile],
+						msg=sms_text,
+						sender_name="Lodgeick"
+					)
+
+					# Update communication log status
+					comm_log.db_set("sms_status", "Sent")
+
+				except Exception as sms_error:
+					# Log SMS error but don't fail the entire notification
+					frappe.log_error(
+						f"SMS sending failed for {requester_mobile}: {str(sms_error)}",
+						"SMS Notification Error"
+					)
+					comm_log.db_set("sms_status", "Failed")
+					comm_log.db_set("sms_error", str(sms_error))
+			else:
+				# No mobile number available
+				frappe.log_error(
+					f"No mobile number found for user {request_doc.requester}",
+					"SMS Notification Error"
+				)
+				comm_log.db_set("sms_status", "No Mobile Number")
 
 		frappe.db.commit()
 
