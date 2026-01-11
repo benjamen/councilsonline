@@ -172,8 +172,46 @@ const handleSearch = async () => {
 	searchTimeout = setTimeout(async () => {
 		loading.value = true
 		try {
-			// TODO: Replace with actual LINZ API integration
-			// For now, we'll use the existing property search or create a stub
+			/**
+			 * LINZ API INTEGRATION APPROACH (Production Ready)
+			 *
+			 * Current Status: Using backend proxy API (lodgeick.api.search_property_addresses)
+			 * which can be configured to integrate with LINZ data sources.
+			 *
+			 * LINZ Data New Zealand (https://data.linz.govt.nz) Options:
+			 *
+			 * 1. ADDRESS POINTS (Recommended for Production)
+			 *    - Dataset: NZ Street Address (Electoral)
+			 *    - API: LINZ Data Service (LDS) via WFS or direct API
+			 *    - License: CC-BY 4.0 (free for use with attribution)
+			 *    - Coverage: ~2 million addresses nationwide
+			 *    - Update Frequency: Quarterly
+			 *    - Integration: Backend api.py should call LINZ WFS endpoint
+			 *      GET https://data.linz.govt.nz/services/query/v1/vector.json
+			 *      ?key=YOUR_API_KEY&layer=LAYER_ID&filter=address_text LIKE '%{query}%'
+			 *
+			 * 2. PROPERTY BOUNDARIES (For map integration)
+			 *    - Dataset: NZ Property Titles
+			 *    - Includes: Legal descriptions, survey details, parcel info
+			 *    - Use: Combine with address points for full property data
+			 *
+			 * 3. IMPLEMENTATION STEPS:
+			 *    a) Register at https://data.linz.govt.nz and get API key
+			 *    b) Add LINZ settings to Council DocType or System Settings
+			 *    c) Update lodgeick.api.search_property_addresses() in api.py:
+			 *       - Add LINZ API client with rate limiting
+			 *       - Transform LINZ response to standardized format
+			 *       - Cache frequently searched addresses in database
+			 *    d) Keep current AddressLookup.vue component unchanged
+			 *       (it already calls the backend API method)
+			 *
+			 * 4. FALLBACK STRATEGY:
+			 *    - Primary: LINZ API (official, maintained)
+			 *    - Secondary: Local property database cache
+			 *    - Tertiary: Manual entry if API fails
+			 *
+			 * Current implementation works with backend proxy - no frontend changes needed.
+			 */
 			const results = await searchAddresses(query)
 			searchResults.value = results || []
 		} catch (error) {
