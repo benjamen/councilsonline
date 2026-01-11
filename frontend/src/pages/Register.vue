@@ -47,391 +47,61 @@
       <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
         <form @submit.prevent="submit" class="space-y-6">
           <!-- Account Type Selection -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-3">
-              Account Type <span class="text-red-500">*</span>
-            </label>
-            <p class="text-xs text-gray-500 mb-3">Select the entity type you're registering as</p>
-            <div class="grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                @click="requesterType = 'Individual'"
-                :class="[
-                  'p-4 border-2 rounded-lg text-center transition',
-                  requesterType === 'Individual'
-                    ? 'border-blue-600 bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300'
-                ]"
-              >
-                <svg class="w-8 h-8 mx-auto mb-2" :class="requesterType === 'Individual' ? 'text-blue-600' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-                <div class="text-sm font-medium" :class="requesterType === 'Individual' ? 'text-blue-900' : 'text-gray-700'">
-                  Individual
-                </div>
-                <div class="text-xs text-gray-500 mt-1">Person/Civilian</div>
-              </button>
-              <button
-                type="button"
-                @click="requesterType = 'Company'"
-                :class="[
-                  'p-4 border-2 rounded-lg text-center transition',
-                  requesterType === 'Company'
-                    ? 'border-blue-600 bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300'
-                ]"
-              >
-                <svg class="w-8 h-8 mx-auto mb-2" :class="requesterType === 'Company' ? 'text-blue-600' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
-                <div class="text-sm font-medium" :class="requesterType === 'Company' ? 'text-blue-900' : 'text-gray-700'">
-                  Company
-                </div>
-                <div class="text-xs text-gray-500 mt-1">NZ Registered</div>
-              </button>
-              <button
-                type="button"
-                @click="requesterType = 'Trust'"
-                :class="[
-                  'p-4 border-2 rounded-lg text-center transition',
-                  requesterType === 'Trust'
-                    ? 'border-blue-600 bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300'
-                ]"
-              >
-                <svg class="w-8 h-8 mx-auto mb-2" :class="requesterType === 'Trust' ? 'text-blue-600' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-                <div class="text-sm font-medium" :class="requesterType === 'Trust' ? 'text-blue-900' : 'text-gray-700'">
-                  Trust
-                </div>
-                <div class="text-xs text-gray-500 mt-1">Trust Entity</div>
-              </button>
-              <button
-                type="button"
-                @click="requesterType = 'Organisation'"
-                :class="[
-                  'p-4 border-2 rounded-lg text-center transition',
-                  requesterType === 'Organisation'
-                    ? 'border-blue-600 bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300'
-                ]"
-              >
-                <svg class="w-8 h-8 mx-auto mb-2" :class="requesterType === 'Organisation' ? 'text-blue-600' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-                <div class="text-sm font-medium" :class="requesterType === 'Organisation' ? 'text-blue-900' : 'text-gray-700'">
-                  Organisation
-                </div>
-                <div class="text-xs text-gray-500 mt-1">Charity/NPO</div>
-              </button>
-            </div>
-          </div>
-
-          <!-- Council Selection removed in single-tenant mode -->
+          <AccountTypeSelector v-model="requesterType" />
 
           <!-- Personal Information -->
-          <div class="grid md:grid-cols-2 gap-4">
-            <div>
-              <label for="first_name" class="block text-sm font-medium text-gray-700 mb-2">
-                First Name <span class="text-red-500">*</span>
-              </label>
-              <Input
-                id="first_name"
-                v-model="formData.first_name"
-                type="text"
-                required
-                placeholder="John"
-                class="w-full"
-              />
-            </div>
-            <div>
-              <label for="last_name" class="block text-sm font-medium text-gray-700 mb-2">
-                Last Name <span class="text-red-500">*</span>
-              </label>
-              <Input
-                id="last_name"
-                v-model="formData.last_name"
-                type="text"
-                required
-                placeholder="Doe"
-                class="w-full"
-              />
-            </div>
-          </div>
-
-          <!-- Contact Information -->
-          <div>
-            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-              Email Address <span class="text-red-500">*</span>
-            </label>
-            <Input
-              id="email"
-              v-model="formData.email"
-              type="email"
-              required
-              placeholder="you@example.com"
-              class="w-full"
-              @blur="validateEmailField"
-            />
-            <p v-if="emailError" class="mt-1 text-xs text-red-600">{{ emailError }}</p>
-          </div>
-
-          <div>
-            <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
-              Phone Number <span class="text-red-500">*</span>
-            </label>
-            <input
-              id="phone"
-              v-model="formData.phone"
-              type="tel"
-              required
-              placeholder="021 234 5678 or 09 123 4567"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              @blur="validatePhoneField"
-            />
-            <p v-if="phoneError" class="mt-1 text-xs text-red-600">{{ phoneError }}</p>
-            <p v-else class="mt-1 text-xs text-gray-500">NZ mobile (02x) or landline (03-09)</p>
-          </div>
+          <PersonalInfoFields
+            v-model:first-name="formData.first_name"
+            v-model:last-name="formData.last_name"
+            v-model:email="formData.email"
+            v-model:phone="formData.phone"
+            :email-error="emailError"
+            :phone-error="phoneError"
+            @validate-email="validateEmailField"
+            @validate-phone="validatePhoneField"
+          />
 
           <!-- Properties Section -->
-          <div class="space-y-4">
-            <div class="flex items-center justify-between">
-              <div>
-                <h3 class="text-sm font-medium text-gray-900">Properties</h3>
-                <p class="text-xs text-gray-500 mt-1">
-                  {{ requesterType === 'Individual' ? 'Add your properties (at least one required)' : 'Add your properties (optional)' }}
-                </p>
-              </div>
-              <button
-                type="button"
-                @click="openAddPropertyModal"
-                class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                </svg>
-                Add Address
-              </button>
-            </div>
-
-            <!-- Properties List -->
-            <div v-if="properties.length > 0" class="space-y-2">
-              <div
-                v-for="(property, index) in properties"
-                :key="index"
-                class="border border-gray-200 rounded-lg p-4 bg-gray-50 hover:bg-gray-100 transition"
-              >
-                <div class="flex items-start justify-between">
-                  <div class="flex-1">
-                    <div class="flex items-center gap-2">
-                      <h4 class="text-sm font-semibold text-gray-900">{{ property.property_name }}</h4>
-                      <span v-if="property.is_default" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                        Default
-                      </span>
-                    </div>
-                    <p class="text-sm text-gray-600 mt-1">{{ property.street }}</p>
-                    <p class="text-xs text-gray-500">{{ property.suburb }}{{ property.suburb && property.city ? ', ' : '' }}{{ property.city }} {{ property.postcode }}</p>
-                  </div>
-                  <div class="flex items-center gap-2 ml-4">
-                    <button
-                      v-if="!property.is_default"
-                      type="button"
-                      @click="setDefaultProperty(index)"
-                      class="text-xs text-blue-600 hover:text-blue-800"
-                    >
-                      Set as Default
-                    </button>
-                    <button
-                      type="button"
-                      @click="removeProperty(index)"
-                      class="text-red-600 hover:text-red-800"
-                    >
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div v-else class="text-center py-6 border-2 border-dashed border-gray-300 rounded-lg">
-              <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-              </svg>
-              <p class="mt-2 text-sm text-gray-500">No properties added yet</p>
-            </div>
-          </div>
+          <PropertySection
+            :requester-type="requesterType"
+            :properties="properties"
+            @open-add-property="openAddPropertyModal"
+            @remove-property="removeProperty"
+            @set-default-property="setDefaultProperty"
+          />
 
           <!-- Add Property Modal -->
-          <div v-if="showAddPropertyModal" class="fixed inset-0 z-50 overflow-y-auto">
-            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-              <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" @click="closeAddPropertyModal"></div>
+          <AddPropertyModal
+            :show="showAddPropertyModal"
+            v-model:property-name="currentProperty.property_name"
+            :selected-property-address="selectedAddress"
+            v-model:is-default="currentProperty.is_default"
+            @close="closeAddPropertyModal"
+            @property-address-selected="handleAddressSelected"
+            @add-property="addProperty"
+          />
 
-              <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                  <h3 class="text-lg font-medium text-gray-900 mb-4">Add Property</h3>
-
-                  <div class="space-y-4">
-                    <div>
-                      <label for="property_name" class="block text-sm font-medium text-gray-700 mb-2">
-                        Property Name <span class="text-red-500">*</span>
-                      </label>
-                      <input
-                        id="property_name"
-                        v-model="currentProperty.property_name"
-                        type="text"
-                        required
-                        placeholder="e.g., Home, Investment Property, Beach House"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      />
-                    </div>
-
-                    <div>
-                      <AddressLookup
-                        v-model="selectedAddress"
-                        id="property_address_modal"
-                        label="Property Address"
-                        placeholder="Start typing the property address..."
-                        description="Search for the property address in New Zealand"
-                        :required="true"
-                        @address-selected="handleAddressSelected"
-                      />
-                    </div>
-
-                    <div>
-                      <label class="flex items-center">
-                        <input
-                          v-model="currentProperty.is_default"
-                          type="checkbox"
-                          class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                        />
-                        <span class="ml-2 text-sm text-gray-700">Set as default property</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
-                  <button
-                    type="button"
-                    @click="addProperty"
-                    class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
-                  >
-                    Add Property
-                  </button>
-                  <button
-                    type="button"
-                    @click="closeAddPropertyModal"
-                    class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:w-auto sm:text-sm"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Company/Organisation Details -->
-          <div v-if="requesterType === 'Company' || requesterType === 'Organisation'" class="space-y-4">
-            <div>
-              <label for="organization_name" class="block text-sm font-medium text-gray-700 mb-2">
-                {{ requesterType === 'Company' ? 'Company Name' : 'Organisation Name' }} <span class="text-red-500">*</span>
-              </label>
-              <Input
-                id="organization_name"
-                v-model="formData.organization_name"
-                type="text"
-                required
-                :placeholder="requesterType === 'Company' ? 'ABC Construction Ltd' : 'Community Trust'"
-                class="w-full"
-              />
-            </div>
-            <div v-if="requesterType === 'Company'">
-              <label for="company_number" class="block text-sm font-medium text-gray-700 mb-2">
-                Company Number (Optional)
-              </label>
-              <Input
-                id="company_number"
-                v-model="formData.company_number"
-                type="text"
-                placeholder="1234567"
-                class="w-full"
-              />
-            </div>
-          </div>
-
-          <!-- Trust Details -->
-          <div v-if="requesterType === 'Trust'" class="space-y-4">
-            <div>
-              <label for="trust_name" class="block text-sm font-medium text-gray-700 mb-2">
-                Trust Name <span class="text-red-500">*</span>
-              </label>
-              <Input
-                id="trust_name"
-                v-model="formData.trust_name"
-                type="text"
-                required
-                placeholder="Smith Family Trust"
-                class="w-full"
-              />
-            </div>
-          </div>
+          <!-- Company/Organisation/Trust Details -->
+          <EntityDetailsFields
+            :requester-type="requesterType"
+            v-model:organization-name="formData.organization_name"
+            v-model:company-number="formData.company_number"
+            v-model:trust-name="formData.trust_name"
+          />
 
           <!-- Password -->
-          <div class="grid md:grid-cols-2 gap-4">
-            <div>
-              <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
-                Password <span class="text-red-500">*</span>
-              </label>
-              <Input
-                id="password"
-                v-model="formData.password"
-                type="password"
-                required
-                placeholder="Min. 8 characters"
-                class="w-full"
-                @input="validatePasswordField"
-              />
-              <p v-if="passwordError" class="mt-1 text-xs text-red-600">{{ passwordError }}</p>
-              <p v-else-if="passwordStrength" class="mt-1 text-xs" :class="passwordStrengthClass">
-                Password strength: {{ passwordStrength }}
-              </p>
-            </div>
-            <div>
-              <label for="confirm_password" class="block text-sm font-medium text-gray-700 mb-2">
-                Confirm Password <span class="text-red-500">*</span>
-              </label>
-              <Input
-                id="confirm_password"
-                v-model="formData.confirm_password"
-                type="password"
-                required
-                placeholder="Repeat password"
-                class="w-full"
-                @blur="validatePasswordMatch"
-              />
-              <p v-if="confirmPasswordError" class="mt-1 text-xs text-red-600">{{ confirmPasswordError }}</p>
-            </div>
-          </div>
+          <PasswordFields
+            v-model:password="formData.password"
+            v-model:confirm-password="formData.confirm_password"
+            :password-error="passwordError"
+            :confirm-password-error="confirmPasswordError"
+            :password-strength="passwordStrength"
+            @validate-password="validatePasswordField"
+            @validate-password-match="validatePasswordMatch"
+          />
 
           <!-- Terms and Conditions -->
-          <div class="flex items-start">
-            <input
-              id="terms"
-              v-model="formData.terms"
-              type="checkbox"
-              required
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mt-1"
-            />
-            <label for="terms" class="ml-2 block text-sm text-gray-700">
-              I agree to the
-              <a href="#" class="text-blue-600 hover:text-blue-700 font-medium">Terms of Service</a>
-              and
-              <a href="#" class="text-blue-600 hover:text-blue-700 font-medium">Privacy Policy</a>
-            </label>
-          </div>
+          <TermsCheckbox v-model="formData.terms" />
 
           <!-- Error Message -->
           <div v-if="errorMessage" class="p-3 bg-red-50 border border-red-200 rounded-lg">
@@ -514,6 +184,13 @@ import { Button, Input } from "frappe-ui"
 import { computed, onMounted, ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import AddressLookup from "../components/AddressLookup.vue"
+import AccountTypeSelector from "../components/register/AccountTypeSelector.vue"
+import PersonalInfoFields from "../components/register/PersonalInfoFields.vue"
+import PropertySection from "../components/register/PropertySection.vue"
+import AddPropertyModal from "../components/company/AddPropertyModal.vue"
+import EntityDetailsFields from "../components/register/EntityDetailsFields.vue"
+import PasswordFields from "../components/register/PasswordFields.vue"
+import TermsCheckbox from "../components/register/TermsCheckbox.vue"
 import {
 	validateEmail,
 	validateNZPhoneNumber,
