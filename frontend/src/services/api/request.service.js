@@ -44,10 +44,22 @@ export class RequestService {
 			url: "lodgeick.api.get_request_type_config",
 			params: { request_type_code: requestTypeCode },
 			auto: true,
-			// TEMP: Removed caching to ensure latest config is always loaded
-			// TODO: Re-enable cache with proper invalidation strategy
-			// cache: ["request-type-config", requestTypeCode],
+			// Cache config data per request type for performance
+			// Cache invalidates on browser refresh or can be cleared via localStorage
+			cache: ["request-type-config", requestTypeCode],
 		})
+	}
+
+	/**
+	 * Clear request type config cache
+	 * Call this after updating request type configuration in admin
+	 */
+	clearRequestTypeConfigCache() {
+		// Clear all request-type-config cache entries
+		const cacheKeys = Object.keys(localStorage).filter(key =>
+			key.startsWith('request-type-config')
+		)
+		cacheKeys.forEach(key => localStorage.removeItem(key))
 	}
 
 	/**

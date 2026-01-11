@@ -19,6 +19,10 @@ const props = defineProps({
 		type: String,
 		default: null,
 	},
+	meeting: {
+		type: Object,
+		default: null, // Optional: For editing existing meeting
+	},
 })
 
 const emit = defineEmits(["update:show", "booked"])
@@ -65,6 +69,35 @@ watch(
 	() => props.show,
 	(newVal) => {
 		if (newVal && props.councilCode) {
+			// Pre-fill form if editing existing meeting
+			if (props.meeting) {
+				meetingType.value = props.meeting.meeting_type || "Pre-Application Meeting"
+				meetingPurpose.value = props.meeting.meeting_purpose || ""
+				discussionPoints.value = props.meeting.discussion_points || ""
+
+				// Pre-fill preferred times if available
+				if (props.meeting.preferred_meeting_times) {
+					const times = Array.isArray(props.meeting.preferred_meeting_times)
+						? props.meeting.preferred_meeting_times
+						: []
+
+					preferredTimes.value = [
+						{
+							preference_order: 1,
+							preferred_start: times[0]?.preferred_start || "",
+						},
+						{
+							preference_order: 2,
+							preferred_start: times[1]?.preferred_start || "",
+						},
+						{
+							preference_order: 3,
+							preferred_start: times[2]?.preferred_start || "",
+						},
+					]
+				}
+			}
+
 			// Pass params directly to fetch() to avoid circular JSON reference
 			meetingConfig.fetch({
 				council_code: props.councilCode,

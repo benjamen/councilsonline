@@ -23,6 +23,7 @@ declare module 'vue' {
     FormSection: typeof import('./src/components/FormSection.vue')['default']
     NZAddressInput: typeof import('./src/components/NZAddressInput.vue')['default']
     PaginatedList: typeof import('./src/components/PaginatedList.vue')['default']
+    PaymentModal: typeof import('./src/components/modals/PaymentModal.vue')['default']
     PersonalInfoForm: typeof import('./src/components/PersonalInfoForm.vue')['default']
     PhilippinesAddressInput: typeof import('./src/components/PhilippinesAddressInput.vue')['default']
     ProcessStep: typeof import('./src/components/ProcessStep.vue')['default']

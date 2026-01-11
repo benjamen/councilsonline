@@ -650,6 +650,7 @@
       :request-id="route.params.id"
       :request-type-code="requestTypeConfig.data?.type_code"
       :council-code="request.data?.council"
+      :meeting="editingMeeting"
       @booked="handleMeetingBooked"
     />
 
@@ -1194,18 +1195,17 @@ const handleMeetingBooked = async (meetingData) => {
 	alert(
 		`Meeting request submitted successfully!\n\nMeeting ID: ${meetingData.meeting_id}\nStatus: ${meetingData.status}\n\nA council planner will contact you within 2 business days.`,
 	)
-	// Reload meetings list
+	// Clear editing state and reload meetings list
+	editingMeeting.value = null
 	await meetings.reload()
 }
 
+const editingMeeting = ref(null)
+
 const handleEditMeeting = (meeting) => {
-	// Re-open the booking modal with existing meeting data
-	// The modal should be enhanced to accept a meeting prop for editing
+	// Store meeting data for pre-filling the modal
+	editingMeeting.value = meeting
 	showBookMeetingModal.value = true
-	// TODO: Pass meeting data to modal for pre-filling
-	alert(
-		"Edit meeting functionality - opening booking modal.\n\nNote: You can submit a new request with updated time slots. The previous request will be updated.",
-	)
 }
 
 const handleCancelMeeting = async (meeting) => {
