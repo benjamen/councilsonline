@@ -228,119 +228,14 @@
           </div>
 
           <!-- Council Meeting Section -->
-          <div v-if="requestTypeConfig.data?.council_meeting_available" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div class="flex justify-between items-start mb-4">
-              <div>
-                <h2 class="text-lg font-semibold text-gray-900">Council Meeting</h2>
-                <p class="text-sm text-gray-600 mt-1">
-                  Schedule a meeting with council planners to discuss your application
-                </p>
-              </div>
-
-              <!-- Status Badge if meeting exists -->
-              <span
-                v-if="meetings.data && meetings.data.length > 0"
-                class="px-3 py-1 rounded-full text-sm font-medium"
-                :class="{
-                  'bg-yellow-100 text-yellow-800': meetings.data[0].status === 'Requested',
-                  'bg-blue-100 text-blue-800': meetings.data[0].status === 'Scheduled' || meetings.data[0].status === 'Confirmed',
-                  'bg-green-100 text-green-800': meetings.data[0].status === 'Completed',
-                  'bg-gray-100 text-gray-800': meetings.data[0].status === 'Cancelled'
-                }"
-              >
-                {{ meetings.data[0].status }}
-              </span>
-            </div>
-
-            <!-- Meeting Details (if exists) -->
-            <div v-if="meetings.data && meetings.data.length > 0" class="space-y-4">
-              <div v-for="meeting in meetings.data" :key="meeting.name" class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded">
-                <div class="grid grid-cols-2 gap-3 text-sm">
-                  <div>
-                    <span class="font-medium text-gray-700">Type:</span>
-                    <span class="ml-2 text-gray-900">{{ meeting.meeting_type }}</span>
-                  </div>
-                  <div>
-                    <span class="font-medium text-gray-700">Status:</span>
-                    <span class="ml-2 text-gray-900">{{ meeting.status }}</span>
-                  </div>
-                  <div v-if="meeting.scheduled_start" class="col-span-2">
-                    <span class="font-medium text-gray-700">Scheduled:</span>
-                    <span class="ml-2 text-gray-900">{{ formatMeetingDate(meeting.scheduled_start) }}</span>
-                  </div>
-                  <div v-if="meeting.meeting_format" class="col-span-2">
-                    <span class="font-medium text-gray-700">Format:</span>
-                    <span class="ml-2 text-gray-900">{{ meeting.meeting_format }}</span>
-                  </div>
-                  <div v-if="meeting.meeting_location" class="col-span-2">
-                    <span class="font-medium text-gray-700">Location:</span>
-                    <span class="ml-2 text-gray-900">{{ meeting.meeting_location }}</span>
-                  </div>
-                  <div v-if="meeting.google_meet_link" class="col-span-2">
-                    <span class="font-medium text-gray-700">Meeting Link:</span>
-                    <a :href="meeting.google_meet_link" target="_blank" class="ml-2 text-blue-600 hover:underline">Join Meeting</a>
-                  </div>
-                </div>
-
-                <div v-if="meeting.meeting_purpose" class="mt-3 pt-3 border-t border-blue-200">
-                  <span class="font-medium text-gray-700 text-sm">Purpose:</span>
-                  <p class="mt-1 text-sm text-gray-900">{{ meeting.meeting_purpose }}</p>
-                </div>
-
-                <!-- Proposed Time Slots (if status is Requested and slots exist) -->
-                <div v-if="meeting.status === 'Requested' && meeting.proposed_slots && meeting.proposed_slots.length > 0" class="mt-3 pt-3 border-t border-blue-200">
-                  <span class="font-medium text-gray-700 text-sm">Proposed Time Slots:</span>
-                  <ul class="mt-2 space-y-1">
-                    <li v-for="(slot, index) in meeting.proposed_slots" :key="index" class="text-sm text-gray-900 flex items-center">
-                      <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      {{ formatMeetingDate(slot) }}
-                    </li>
-                  </ul>
-                </div>
-
-                <!-- Action Buttons (Edit/Cancel) - only show if meeting is Requested or Scheduled -->
-                <div v-if="meeting.status === 'Requested' || meeting.status === 'Scheduled'" class="mt-4 pt-3 border-t border-blue-200 flex space-x-3">
-                  <button
-                    @click="handleEditMeeting(meeting)"
-                    class="flex-1 px-4 py-2 bg-white border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors text-sm font-medium"
-                  >
-                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                    Edit Request
-                  </button>
-                  <button
-                    @click="handleCancelMeeting(meeting)"
-                    :disabled="cancellingMeeting"
-                    class="flex-1 px-4 py-2 bg-white border border-red-600 text-red-600 rounded-lg hover:bg-red-50 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                    Cancel Meeting
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Request Meeting Button (if no meeting) -->
-            <div v-else class="text-center py-6">
-              <svg class="mx-auto h-12 w-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              <p class="text-sm text-gray-600 mb-4">
-                No meeting scheduled yet. Book a meeting to discuss your application with council planners.
-              </p>
-              <button
-                @click="handleBookMeeting"
-                class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Request Council Meeting
-              </button>
-            </div>
-          </div>
+          <RequestMeetingsSection
+            :show="requestTypeConfig.data?.council_meeting_available"
+            :meetings="meetings.data"
+            :cancelling="cancellingMeeting"
+            @book-meeting="handleBookMeeting"
+            @edit-meeting="handleEditMeeting"
+            @cancel-meeting="handleCancelMeeting"
+          />
 
           <!-- Dynamic Application Data (using step configuration OR fallback to raw data) -->
           <template v-if="reviewSections.length > 0">
@@ -387,84 +282,17 @@
             </div>
           </div>
 
-          <!-- Fees & Payments -->
-          <div v-if="requestTypeConfig.data?.collect_payment" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div class="flex justify-between items-center mb-4">
-              <h2 class="text-lg font-semibold text-gray-900">Fees & Payments</h2>
-              <span class="text-sm font-medium" :class="request.data.payment_status === 'Paid' ? 'text-green-600' : 'text-orange-600'">
-                {{ request.data.payment_status || 'Unpaid' }}
-              </span>
-            </div>
-
-            <div class="space-y-3">
-              <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                <span class="text-sm text-gray-600">Total Fees</span>
-                <span class="text-sm font-semibold text-gray-900">${{ (request.data.total_fees || 0).toFixed(2) }}</span>
-              </div>
-              <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                <span class="text-sm text-gray-600">Total Paid</span>
-                <span class="text-sm font-semibold text-green-600">${{ (request.data.total_paid || 0).toFixed(2) }}</span>
-              </div>
-              <div class="flex justify-between items-center py-2">
-                <span class="text-sm font-medium text-gray-900">Outstanding</span>
-                <span class="text-sm font-bold text-orange-600">${{ ((request.data.total_fees || 0) - (request.data.total_paid || 0)).toFixed(2) }}</span>
-              </div>
-            </div>
-
-            <Button
-              v-if="(request.data.total_fees || 0) > (request.data.total_paid || 0)"
-              @click="handleMakePayment"
-              variant="solid"
-              theme="blue"
-              class="w-full mt-4"
-            >
-              Make Payment
-            </Button>
-          </div>
-
-          <!-- Payment to be Received (for social services / benefits) -->
-          <div v-if="requestTypeConfig.data?.make_payment" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div class="flex justify-between items-center mb-4">
-              <h2 class="text-lg font-semibold text-gray-900">Payment to be Received</h2>
-              <span class="text-sm font-medium" :class="request.data.payment_status === 'Paid' ? 'text-green-600' : 'text-orange-600'">
-                {{ request.data.payment_status || 'Pending' }}
-              </span>
-            </div>
-
-            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-              <div class="flex items-start">
-                <svg class="h-5 w-5 text-blue-600 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <div class="flex-1">
-                  <p class="text-sm font-medium text-blue-900">Benefit Payment Information</p>
-                  <p class="text-sm text-blue-700 mt-1">
-                    Once your application is approved, you will receive payment from the council.
-                    Please ensure your bank details are up to date.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div class="space-y-3">
-              <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                <span class="text-sm text-gray-600">Benefit Amount</span>
-                <span class="text-sm font-semibold text-gray-900">
-                  ${{ requestTypeConfig.data?.base_fee ? requestTypeConfig.data.base_fee.toFixed(2) : '0.00' }}
-                </span>
-              </div>
-              <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                <span class="text-sm text-gray-600">Payment Status</span>
-                <span class="text-sm font-semibold" :class="request.data.payment_status === 'Paid' ? 'text-green-600' : 'text-orange-600'">
-                  {{ request.data.payment_status || 'Pending Approval' }}
-                </span>
-              </div>
-              <div v-if="request.data.selected_bank_account" class="flex justify-between items-center py-2">
-                <span class="text-sm text-gray-600">Payment Method</span>
-                <span class="text-sm font-medium text-gray-900">Bank Transfer</span>
-              </div>
-            </div>
-          </div>
+          <!-- Fees & Payments Section -->
+          <RequestFeesSection
+            :collect-payment="requestTypeConfig.data?.collect_payment"
+            :make-payment="requestTypeConfig.data?.make_payment"
+            :payment-status="request.data.payment_status"
+            :total-fees="request.data.total_fees || 0"
+            :total-paid="request.data.total_paid || 0"
+            :benefit-amount="requestTypeConfig.data?.base_fee || 0"
+            :selected-bank-account="request.data.selected_bank_account"
+            @make-payment="handleMakePayment"
+          />
 
           <!-- Documents -->
           <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -497,143 +325,23 @@
         <!-- Sidebar Column -->
         <div class="space-y-6">
           <!-- Timeline -->
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Processing Timeline</h2>
-
-            <!-- SLA / Statutory Clock -->
-            <div v-if="clockData.statutory_clock_started" class="mb-6 p-4 bg-blue-50 rounded-lg">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-sm font-medium text-blue-900">SLA / Statutory Clock</span>
-                <span class="text-xs text-blue-700">{{ clockData.working_days_elapsed }} of 20 days</span>
-              </div>
-              <div class="w-full bg-blue-200 rounded-full h-2">
-                <div
-                  class="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                  :style="{ width: `${progressPercent}%` }"
-                ></div>
-              </div>
-              <p class="mt-2 text-xs text-blue-700">
-                {{ clockData.statutory_clock_stopped ? 'Clock stopped (RFI issued)' : `${clockData.working_days_remaining} days remaining` }}
-              </p>
-            </div>
-
-            <!-- Status History -->
-            <div class="space-y-4">
-              <div class="flex items-start space-x-3">
-                <div class="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                  <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                  </svg>
-                </div>
-                <div class="flex-1">
-                  <p class="text-sm font-medium text-gray-900">Application Created</p>
-                  <p class="text-xs text-gray-500">{{ formatDate(request.data.creation) }}</p>
-                </div>
-              </div>
-
-              <div v-if="request.data.modified !== request.data.creation" class="flex items-start space-x-3">
-                <div class="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                  </svg>
-                </div>
-                <div class="flex-1">
-                  <p class="text-sm font-medium text-gray-900">Last Updated</p>
-                  <p class="text-xs text-gray-500">{{ formatDate(request.data.modified) }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <RequestTimelineCard
+            :clock-data="clockData"
+            :progress-percent="progressPercent"
+            :creation="request.data.creation"
+            :modified="request.data.modified"
+          />
 
           <!-- Quick Actions -->
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
-
-            <div class="space-y-3">
-              <Button
-                v-if="request.data.workflow_state === 'Draft'"
-                @click="handleEditDraft"
-                variant="solid"
-                theme="blue"
-                class="w-full justify-start"
-              >
-                <template #prefix>
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
-                </template>
-                Edit Draft
-              </Button>
-
-              <Button
-                @click="handleSendMessage"
-                variant="outline"
-                class="w-full justify-start"
-              >
-                <template #prefix>
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                  </svg>
-                </template>
-                Send Message
-              </Button>
-
-              <Button
-                @click="handlePrintApplication"
-                variant="outline"
-                class="w-full justify-start"
-              >
-                <template #prefix>
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                  </svg>
-                </template>
-                Print Application
-              </Button>
-
-              <Button
-                v-if="request.data.workflow_state === 'Draft'"
-                @click="handleDeleteDraft"
-                variant="outline"
-                class="w-full justify-start text-red-600 hover:text-red-700"
-                :loading="deleting"
-              >
-                <template #prefix>
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 1 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </template>
-                Delete Draft
-              </Button>
-            </div>
-          </div>
-
-          <!-- Contact Info -->
-          <div class="bg-blue-50 rounded-lg border border-blue-200 p-6">
-            <h3 class="text-sm font-semibold text-blue-900 mb-3">Need Help?</h3>
-            <p class="text-xs text-blue-800 mb-4">Contact {{ councilDetails.data?.council_name || 'the council' }} for assistance with your application.</p>
-            <div v-if="councilDetails.loading" class="text-xs text-blue-800">
-              Loading contact information...
-            </div>
-            <div v-else-if="councilDetails.data" class="space-y-2 text-xs text-blue-900">
-              <div v-if="councilDetails.data.contact_email" class="flex items-center space-x-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-                <a :href="`mailto:${councilDetails.data.contact_email}`" class="hover:underline">
-                  {{ councilDetails.data.contact_email }}
-                </a>
-              </div>
-              <div v-if="councilDetails.data.contact_phone" class="flex items-center space-x-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                </svg>
-                <a :href="`tel:${councilDetails.data.contact_phone}`" class="hover:underline">
-                  {{ councilDetails.data.contact_phone }}
-                </a>
-              </div>
-            </div>
-          </div>
+          <RequestActionsCard
+            :workflow-state="request.data.workflow_state"
+            :council-details="councilDetails"
+            :deleting="deleting"
+            @edit-draft="handleEditDraft"
+            @send-message="handleSendMessage"
+            @print-application="handlePrintApplication"
+            @delete-draft="handleDeleteDraft"
+          />
         </div>
       </div>
     </div>
@@ -672,6 +380,10 @@ import { computed, defineAsyncComponent, ref, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import StatusBadge from "../components/StatusBadge.vue"
 import RequestHeader from "../components/request/RequestHeader.vue"
+import RequestMeetingsSection from "../components/request/RequestMeetingsSection.vue"
+import RequestTimelineCard from "../components/request/RequestTimelineCard.vue"
+import RequestActionsCard from "../components/request/RequestActionsCard.vue"
+import RequestFeesSection from "../components/request/RequestFeesSection.vue"
 // Lazy-loaded modals (load on demand to reduce bundle size)
 const SendMessageModal = defineAsyncComponent(
 	() => import("../components/modals/SendMessageModal.vue"),
