@@ -67,17 +67,37 @@
                     v-model="store.formData"
                 />
 
-                <div v-else>
-                    <h2 class="text-xl font-bold text-red-600">ERROR: Step {{ store.currentStep }} Fallback Hit!</h2>
-                    <p class="mt-2">The dynamic step condition failed to render. Check the following values:</p>
-                    <ul class="list-disc list-inside mt-2 space-y-1 text-sm text-gray-700">
-                        <li><strong>Current Step Title:</strong> {{ getCurrentStepTitle() }}</li>
-                        <li><strong>Request Config Loaded:</strong> {{ !!store.requestTypeConfig }}</li>
-                        <li><strong>Calculated Total Steps:</strong> {{ totalSteps }}</li>
-                        <li><strong>Uses Configurable Steps:</strong> {{ usesConfigurableSteps }}</li>
-                        <li><strong>Current Step Config:</strong> {{ JSON.stringify(getCurrentStepConfig()) }}</li>
-                    </ul>
-                    <p class="mt-4 text-sm text-gray-500">If 'Current Step Config' is not null, the issue is likely within DynamicStepRenderer or component registration.</p>
+                <div v-else class="text-center py-12">
+                    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-yellow-100 mb-4">
+                        <svg class="h-8 w-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Unable to Load This Step</h3>
+                    <p class="text-sm text-gray-600 mb-6">
+                        We're having trouble loading this step. Please try refreshing or go back to continue your application.
+                    </p>
+                    <div class="flex gap-3 justify-center">
+                        <button
+                            @click="location.reload()"
+                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                        >
+                            Refresh Page
+                        </button>
+                        <button
+                            @click="handlePrevious"
+                            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
+                        >
+                            Go Back
+                        </button>
+                        <button
+                            @click="router.push('/dashboard')"
+                            class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
+                        >
+                            Return to Dashboard
+                        </button>
+                    </div>
                 </div>
             </div>
 

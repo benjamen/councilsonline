@@ -78,12 +78,45 @@ export const useRequestStore = defineStore("request", {
 		// ... (initialize, loadDraft, saveProgress, saveDraft, submitRequest actions remain unchanged)
 
 		/**
-		 * Navigate to next step
+		 * Navigate to next step with validation
 		 */
 		nextStep() {
-			if (!this.isLastStep) {
-				this.currentStep++
+			const newStep = this.currentStep + 1
+			const maxStep = this.totalSteps - 1
+
+			// Bounds check
+			if (newStep > maxStep) {
+				console.error('[Store] Navigation beyond bounds prevented', {
+					currentStep: this.currentStep,
+					newStep,
+					maxStep
+				})
+				return
 			}
+
+			// Config validation for dynamic steps (steps 2 to totalSteps-2)
+			// Dynamic steps need configuration from backend
+			const isDynamicStep = newStep >= 2 && newStep < maxStep
+			if (isDynamicStep && this.requestTypeConfig?.steps) {
+				// Calculate actual step index in requestTypeConfig.steps array
+				// Dynamic steps: step 2 = steps[0], step 3 = steps[1], etc.
+				const configIndex = newStep - 2
+				const config = this.requestTypeConfig.steps[configIndex]
+
+				if (!config) {
+					console.error('[Store] Missing step config, redirecting to review', {
+						currentStep: this.currentStep,
+						newStep,
+						configIndex,
+						totalConfigSteps: this.requestTypeConfig.steps.length
+					})
+					// Jump to final review step instead of showing error
+					this.currentStep = maxStep
+					return
+				}
+			}
+
+			this.currentStep = newStep
 		},
 
 		/**
