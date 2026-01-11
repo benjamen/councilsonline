@@ -36,10 +36,11 @@ class BuildingConsentApplication(Document):
         """Check if building triggers resource consent"""
         # Get property details
         request = frappe.get_doc("Request", self.request)
-        if not request.property:
+        property_id = getattr(request, 'property', None) or request.get('property')
+        if not property_id:
             return
 
-        property_doc = frappe.get_doc("Property", request.property)
+        property_doc = frappe.get_doc("Property", property_id)
 
         # Example triggers for resource consent
         triggers = []
