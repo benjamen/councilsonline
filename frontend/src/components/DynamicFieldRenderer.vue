@@ -11,254 +11,85 @@
       </div>
 
       <!-- Data / Text Input -->
-      <div v-else-if="field.field_type === 'Data'" class="form-group">
-        <label :for="field.field_name" class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-          <span>{{ field.field_label }}</span>
-          <span v-if="field.is_required" class="text-red-500 ml-1">*</span>
-          <Tooltip v-if="field.help_text || field.description" :text="field.help_text || field.description" />
-        </label>
-        <div class="relative">
-          <input
-            :id="field.field_name"
-            :name="field.field_name"
-            type="text"
-            v-model="localData[field.field_name]"
-            @blur="handleFieldValidation(field)"
-            :required="field.is_required"
-            class="block w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-            :class="{
-              'border-blue-500 ring-2 ring-blue-100': localData[field.field_name] && !getValidationError(field.field_name),
-              'border-red-500 ring-2 ring-red-100': getValidationError(field.field_name)
-            }"
-            :placeholder="getPlaceholder(field)"
-          />
-          <div v-if="getFieldIcon(field)" class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-            <span v-html="getFieldIcon(field)" class="text-gray-400"></span>
-          </div>
-        </div>
-        <p v-if="getValidationError(field.field_name)" class="mt-1 text-xs text-red-600">
-          {{ getValidationError(field.field_name) }}
-        </p>
-        <p v-else-if="field.description" class="mt-1 text-xs text-gray-500">{{ field.description }}</p>
-      </div>
+      <TextField
+        v-else-if="field.field_type === 'Data'"
+        :field="field"
+        v-model="localData[field.field_name]"
+        :validation-error="getValidationError(field.field_name)"
+        :placeholder="getPlaceholder(field)"
+        :icon="getFieldIcon(field)"
+        @validate="handleFieldValidation(field)"
+      />
 
       <!-- Select Dropdown -->
-      <div v-else-if="field.field_type === 'Select'" class="form-group">
-        <label :for="field.field_name" class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-          <span>{{ field.field_label }}</span>
-          <span v-if="field.is_required" class="text-red-500 ml-1">*</span>
-          <Tooltip v-if="field.help_text || field.description" :text="field.help_text || field.description" />
-        </label>
-        <div class="relative">
-          <select
-            :id="field.field_name"
-            :name="field.field_name"
-            v-model="localData[field.field_name]"
-            @blur="handleFieldValidation(field)"
-            :required="field.is_required"
-            class="block w-full pl-4 pr-10 py-3 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 rounded-lg transition-all appearance-none bg-white"
-            :class="{
-              'border-blue-500 ring-2 ring-blue-100': localData[field.field_name] && !getValidationError(field.field_name),
-              'border-red-500 ring-2 ring-red-100': getValidationError(field.field_name)
-            }"
-          >
-            <option value="">Select {{ field.field_label }}</option>
-            <option
-              v-for="option in getSelectOptions(field.options)"
-              :key="option"
-              :value="option"
-            >
-              {{ option }}
-            </option>
-          </select>
-          <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </div>
-        </div>
-        <p v-if="getValidationError(field.field_name)" class="mt-1 text-xs text-red-600">
-          {{ getValidationError(field.field_name) }}
-        </p>
-        <p v-else-if="field.description" class="mt-1 text-xs text-gray-500">{{ field.description }}</p>
-      </div>
+      <SelectField
+        v-else-if="field.field_type === 'Select'"
+        :field="field"
+        v-model="localData[field.field_name]"
+        :validation-error="getValidationError(field.field_name)"
+        :options="getSelectOptions(field.options)"
+        @validate="handleFieldValidation(field)"
+      />
 
       <!-- Checkbox -->
-      <div v-else-if="field.field_type === 'Check'" class="form-group">
-        <div class="flex items-start p-4 border rounded-lg hover:border-blue-300 transition-colors"
-          :class="{
-            'border-gray-200': !getValidationError(field.field_name),
-            'border-red-500 bg-red-50': getValidationError(field.field_name)
-          }">
-          <div class="flex items-center h-5">
-            <input
-              :id="field.field_name"
-              :name="field.field_name"
-              type="checkbox"
-              v-model="localData[field.field_name]"
-              @change="handleFieldValidation(field)"
-              :required="field.is_required"
-              class="focus:ring-blue-500 h-5 w-5 text-blue-600 border-gray-300 rounded cursor-pointer"
-            />
-          </div>
-          <div class="ml-3 text-sm">
-            <label :for="field.field_name" class="font-medium text-gray-700 cursor-pointer">
-              {{ field.field_label }}
-              <span v-if="field.is_required" class="text-red-500 ml-1">*</span>
-            </label>
-            <p v-if="getValidationError(field.field_name)" class="mt-1 text-xs text-red-600">
-              {{ getValidationError(field.field_name) }}
-            </p>
-            <p v-else-if="field.description" class="mt-1 text-xs text-gray-500">{{ field.description }}</p>
-          </div>
-        </div>
-      </div>
+      <CheckboxField
+        v-else-if="field.field_type === 'Check'"
+        :field="field"
+        v-model="localData[field.field_name]"
+        :validation-error="getValidationError(field.field_name)"
+        @validate="handleFieldValidation(field)"
+      />
 
       <!-- Text / Textarea -->
-      <div v-else-if="field.field_type === 'Text'" class="form-group">
-        <label :for="field.field_name" class="block text-sm font-medium text-gray-700 mb-2">
-          {{ field.field_label }}
-          <span v-if="field.is_required" class="text-red-500 ml-1">*</span>
-        </label>
-        <textarea
-          :id="field.field_name"
-          :name="field.field_name"
-          v-model="localData[field.field_name]"
-          @blur="handleFieldValidation(field)"
-          :required="field.is_required"
-          rows="4"
-          class="block w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-y"
-          :class="{
-            'border-blue-500 ring-2 ring-blue-100': localData[field.field_name] && !getValidationError(field.field_name),
-            'border-red-500 ring-2 ring-red-100': getValidationError(field.field_name)
-          }"
-          :placeholder="getPlaceholder(field)"
-        ></textarea>
-        <p v-if="getValidationError(field.field_name)" class="mt-1 text-xs text-red-600">
-          {{ getValidationError(field.field_name) }}
-        </p>
-        <p v-else-if="field.description" class="mt-1 text-xs text-gray-500">{{ field.description }}</p>
-      </div>
+      <TextareaField
+        v-else-if="field.field_type === 'Text'"
+        :field="field"
+        v-model="localData[field.field_name]"
+        :validation-error="getValidationError(field.field_name)"
+        :placeholder="getPlaceholder(field)"
+        @validate="handleFieldValidation(field)"
+      />
 
       <!-- Date -->
-      <div v-else-if="field.field_type === 'Date'" class="form-group">
-        <label :for="field.field_name" class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-          <span>{{ field.field_label }}</span>
-          <span v-if="field.is_required" class="text-red-500 ml-1">*</span>
-          <Tooltip v-if="field.help_text || field.description" :text="field.help_text || field.description" />
-        </label>
-        <div class="relative">
-          <input
-            :id="field.field_name"
-            :name="field.field_name"
-            type="date"
-            v-model="localData[field.field_name]"
-            @blur="handleFieldValidation(field)"
-            :required="field.is_required"
-            class="block w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-            :class="{
-              'border-blue-500 ring-2 ring-blue-100': localData[field.field_name] && !getValidationError(field.field_name),
-              'border-red-500 ring-2 ring-red-100': getValidationError(field.field_name)
-            }"
-          />
-          <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-            </svg>
-          </div>
-        </div>
-        <p v-if="getValidationError(field.field_name)" class="mt-1 text-xs text-red-600">
-          {{ getValidationError(field.field_name) }}
-        </p>
-        <p v-else-if="field.description" class="mt-1 text-xs text-gray-500">{{ field.description }}</p>
-      </div>
+      <DateField
+        v-else-if="field.field_type === 'Date'"
+        :field="field"
+        v-model="localData[field.field_name]"
+        :validation-error="getValidationError(field.field_name)"
+        @validate="handleFieldValidation(field)"
+      />
 
       <!-- Integer -->
-      <div v-else-if="field.field_type === 'Int'" class="form-group">
-        <label :for="field.field_name" class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-          <span>{{ field.field_label }}</span>
-          <span v-if="field.is_required" class="text-red-500 ml-1">*</span>
-          <Tooltip v-if="field.help_text || field.description" :text="field.help_text || field.description" />
-        </label>
-        <div class="relative">
-          <input
-            :id="field.field_name"
-            :name="field.field_name"
-            type="number"
-            v-model.number="localData[field.field_name]"
-            :required="field.is_required"
-            step="1"
-            class="block w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-            :class="{'border-blue-500 ring-2 ring-blue-100': localData[field.field_name]}"
-            :placeholder="getPlaceholder(field)"
-          />
-          <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
-            </svg>
-          </div>
-        </div>
-        <p v-if="field.description" class="mt-1 text-xs text-gray-500">{{ field.description }}</p>
-      </div>
+      <NumberField
+        v-else-if="field.field_type === 'Int'"
+        :field="field"
+        v-model="localData[field.field_name]"
+        :validation-error="getValidationError(field.field_name)"
+        :placeholder="getPlaceholder(field)"
+        variant="int"
+        @validate="handleFieldValidation(field)"
+      />
 
       <!-- Float -->
-      <div v-else-if="field.field_type === 'Float'" class="form-group">
-        <label :for="field.field_name" class="block text-sm font-medium text-gray-700 mb-2">
-          {{ field.field_label }}
-          <span v-if="field.is_required" class="text-red-500 ml-1">*</span>
-        </label>
-        <div class="relative">
-          <input
-            :id="field.field_name"
-            :name="field.field_name"
-            type="number"
-            v-model.number="localData[field.field_name]"
-            :required="field.is_required"
-            step="0.01"
-            class="block w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-            :class="{'border-blue-500 ring-2 ring-blue-100': localData[field.field_name]}"
-            :placeholder="getPlaceholder(field)"
-          />
-          <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
-            </svg>
-          </div>
-        </div>
-        <p v-if="field.description" class="mt-1 text-xs text-gray-500">{{ field.description }}</p>
-      </div>
+      <NumberField
+        v-else-if="field.field_type === 'Float'"
+        :field="field"
+        v-model="localData[field.field_name]"
+        :validation-error="getValidationError(field.field_name)"
+        :placeholder="getPlaceholder(field)"
+        variant="float"
+        @validate="handleFieldValidation(field)"
+      />
 
       <!-- Currency -->
-      <div v-else-if="field.field_type === 'Currency'" class="form-group">
-        <label :for="field.field_name" class="block text-sm font-medium text-gray-700 mb-2">
-          {{ field.field_label }}
-          <span v-if="field.is_required" class="text-red-500 ml-1">*</span>
-        </label>
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <span class="text-gray-500 text-base font-medium">₱</span>
-          </div>
-          <input
-            :id="field.field_name"
-            :name="field.field_name"
-            type="number"
-            v-model.number="localData[field.field_name]"
-            @blur="handleFieldValidation(field)"
-            :required="field.is_required"
-            step="0.01"
-            class="block w-full pl-10 pr-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-            :class="{
-              'border-blue-500 ring-2 ring-blue-100': localData[field.field_name] && !getValidationError(field.field_name),
-              'border-red-500 ring-2 ring-red-100': getValidationError(field.field_name)
-            }"
-            placeholder="0.00"
-          />
-        </div>
-        <p v-if="getValidationError(field.field_name)" class="mt-1 text-xs text-red-600">
-          {{ getValidationError(field.field_name) }}
-        </p>
-        <p v-else-if="field.description" class="mt-1 text-xs text-gray-500">{{ field.description }}</p>
-      </div>
+      <NumberField
+        v-else-if="field.field_type === 'Currency'"
+        :field="field"
+        v-model="localData[field.field_name]"
+        :validation-error="getValidationError(field.field_name)"
+        variant="currency"
+        @validate="handleFieldValidation(field)"
+      />
 
       <!-- Attach / File Upload with Camera Support -->
       <div v-else-if="field.field_type === 'Attach' || field.field_type === 'Attach Image'" class="form-group">
@@ -291,6 +122,12 @@ import CameraUpload from "./CameraUpload.vue"
 import PhilippinesAddressInput from "./PhilippinesAddressInput.vue"
 import PropertyAddressSelector from "./PropertyAddressSelector.vue"
 import Tooltip from "./Tooltip.vue"
+import TextField from "./fields/TextField.vue"
+import SelectField from "./fields/SelectField.vue"
+import CheckboxField from "./fields/CheckboxField.vue"
+import TextareaField from "./fields/TextareaField.vue"
+import DateField from "./fields/DateField.vue"
+import NumberField from "./fields/NumberField.vue"
 
 const props = defineProps({
 	fields: {
