@@ -24,6 +24,23 @@ export default defineConfig({
 		emptyOutDir: true,
 		target: "es2015",
 		sourcemap: true,
+		// Production optimizations
+		minify: "esbuild",
+		rollupOptions: {
+			output: {
+				manualChunks: {
+					// Split vendor chunks for better caching
+					'frappe-ui': ['frappe-ui'],
+					'vue-vendor': ['vue', 'vue-router', 'pinia'],
+					'ui-components': ['@headlessui/vue']
+				}
+			}
+		},
+		// Remove console.log in production builds (keep error and warn)
+		esbuild: {
+			drop: ['console'],
+			pure: ['console.log', 'console.debug', 'console.trace']
+		}
 	},
 	resolve: {
 		alias: {

@@ -88,16 +88,6 @@
             </div>
         </div>
     </div>
-
-    <div class="mt-8 pt-4 border-t border-gray-200">
-        <button
-            @click="logCurrentData"
-            class="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition"
-        >
-            🚨 Log Current Data (Debug)
-        </button>
-        <p class="text-xs text-gray-500 mt-2">Use this button to check if data is being saved correctly to localData/formData.</p>
-    </div>
     </div>
 </template>
 
@@ -163,21 +153,6 @@ const getTabsForSection = (section) => {
 	// In future, could parse section structure for multiple tabs
 	return [section.section_title]
 }
-
-// === DEBUG CHANGE 2: Add Debug Function ===
-const logCurrentData = () => {
-	// Stringify and parse to clone the object and ensure reactivity is not confusing the log
-	console.log("--- DYNAMIC STEP DATA LOG ---")
-	console.log(
-		"Full Form Data (localData):",
-		JSON.parse(JSON.stringify(localData.value)),
-	)
-	console.log("-----------------------------")
-	alert(
-		"Data logged to console. Check browser console (F12) for the Full Form Data.",
-	)
-}
-// ===========================================
 
 // Initialize default values
 watch(
