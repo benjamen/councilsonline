@@ -71,429 +71,62 @@
       <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
         <form @submit.prevent="handleSubmit">
           <!-- Step 1: Agent Type & Personal Details -->
-          <div v-show="currentStep === 0" class="space-y-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">Agent Type & Your Details</h2>
-
-            <!-- Agent Business Type -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-3">
-                Agent Type <span class="text-red-500">*</span>
-              </label>
-              <div class="grid grid-cols-2 gap-4">
-                <button
-                  type="button"
-                  @click="formData.agent_type = 'Sole Trader'"
-                  :class="[
-                    'p-4 border-2 rounded-lg text-center transition',
-                    formData.agent_type === 'Sole Trader'
-                      ? 'border-blue-600 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  ]"
-                >
-                  <svg class="w-8 h-8 mx-auto mb-2" :class="formData.agent_type === 'Sole Trader' ? 'text-blue-600' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                  <div class="text-sm font-medium" :class="formData.agent_type === 'Sole Trader' ? 'text-blue-900' : 'text-gray-700'">
-                    Sole Trader
-                  </div>
-                  <div class="text-xs text-gray-500 mt-1">Individual consultant</div>
-                </button>
-                <button
-                  type="button"
-                  @click="formData.agent_type = 'Company'"
-                  :class="[
-                    'p-4 border-2 rounded-lg text-center transition',
-                    formData.agent_type === 'Company'
-                      ? 'border-blue-600 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  ]"
-                >
-                  <svg class="w-8 h-8 mx-auto mb-2" :class="formData.agent_type === 'Company' ? 'text-blue-600' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                  </svg>
-                  <div class="text-sm font-medium" :class="formData.agent_type === 'Company' ? 'text-blue-900' : 'text-gray-700'">
-                    Company
-                  </div>
-                  <div class="text-xs text-gray-500 mt-1">Consulting firm</div>
-                </button>
-              </div>
-            </div>
-
-            <!-- Personal Information -->
-            <div class="grid md:grid-cols-2 gap-4">
-              <div>
-                <label for="first_name" class="block text-sm font-medium text-gray-700 mb-2">
-                  First Name <span class="text-red-500">*</span>
-                </label>
-                <Input
-                  id="first_name"
-                  v-model="formData.first_name"
-                  type="text"
-                  required
-                  placeholder="John"
-                  class="w-full"
-                />
-              </div>
-              <div>
-                <label for="last_name" class="block text-sm font-medium text-gray-700 mb-2">
-                  Last Name <span class="text-red-500">*</span>
-                </label>
-                <Input
-                  id="last_name"
-                  v-model="formData.last_name"
-                  type="text"
-                  required
-                  placeholder="Doe"
-                  class="w-full"
-                />
-              </div>
-            </div>
-
-            <!-- Contact Information -->
-            <div class="grid md:grid-cols-2 gap-4">
-              <div>
-                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address <span class="text-red-500">*</span>
-                </label>
-                <Input
-                  id="email"
-                  v-model="formData.email"
-                  type="email"
-                  required
-                  placeholder="you@example.com"
-                  class="w-full"
-                  @blur="validateEmailField"
-                />
-                <p v-if="emailError" class="mt-1 text-xs text-red-600">{{ emailError }}</p>
-              </div>
-              <div>
-                <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
-                  Phone Number <span class="text-red-500">*</span>
-                </label>
-                <input
-                  id="phone"
-                  v-model="formData.phone"
-                  type="tel"
-                  required
-                  placeholder="021 234 5678"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  @blur="validatePhoneField"
-                />
-                <p v-if="phoneError" class="mt-1 text-xs text-red-600">{{ phoneError }}</p>
-                <p v-else class="mt-1 text-xs text-gray-500">NZ mobile (02x) or landline (03-09)</p>
-              </div>
-            </div>
-
-            <!-- Password -->
-            <div class="grid md:grid-cols-2 gap-4">
-              <div>
-                <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
-                  Password <span class="text-red-500">*</span>
-                </label>
-                <Input
-                  id="password"
-                  v-model="formData.password"
-                  type="password"
-                  required
-                  placeholder="Min. 8 characters"
-                  class="w-full"
-                  @input="validatePasswordField"
-                />
-                <p v-if="passwordError" class="mt-1 text-xs text-red-600">{{ passwordError }}</p>
-                <p v-else-if="passwordStrength" class="mt-1 text-xs" :class="passwordStrengthClass">
-                  Password strength: {{ passwordStrength }}
-                </p>
-              </div>
-              <div>
-                <label for="confirm_password" class="block text-sm font-medium text-gray-700 mb-2">
-                  Confirm Password <span class="text-red-500">*</span>
-                </label>
-                <Input
-                  id="confirm_password"
-                  v-model="formData.confirm_password"
-                  type="password"
-                  required
-                  placeholder="Repeat password"
-                  class="w-full"
-                  @blur="validatePasswordMatch"
-                />
-                <p v-if="confirmPasswordError" class="mt-1 text-xs text-red-600">{{ confirmPasswordError }}</p>
-              </div>
-            </div>
+          <div v-show="currentStep === 0">
+            <AgentPersonalDetailsStep
+              v-model:agent-type="formData.agent_type"
+              v-model:first-name="formData.first_name"
+              v-model:last-name="formData.last_name"
+              v-model:email="formData.email"
+              v-model:phone="formData.phone"
+              v-model:password="formData.password"
+              v-model:confirm-password="formData.confirm_password"
+              :email-error="emailError"
+              :phone-error="phoneError"
+              :password-error="passwordError"
+              :confirm-password-error="confirmPasswordError"
+              :password-strength="passwordStrength"
+              @validate-email="validateEmailField"
+              @validate-phone="validatePhoneField"
+              @validate-password="validatePasswordField"
+              @validate-password-match="validatePasswordMatch"
+            />
           </div>
 
-          <!-- Step 2: Business Details (if Company) -->
-          <div v-show="currentStep === 1" class="space-y-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">
-              {{ formData.agent_type === 'Company' ? 'Company Details' : 'Business Details' }}
-            </h2>
-
-            <div v-if="formData.agent_type === 'Company'" class="space-y-4">
-              <div class="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label for="company_name" class="block text-sm font-medium text-gray-700 mb-2">
-                    Company Name <span class="text-red-500">*</span>
-                  </label>
-                  <Input
-                    id="company_name"
-                    v-model="formData.company_name"
-                    type="text"
-                    :required="formData.agent_type === 'Company'"
-                    placeholder="ABC Planning Consultants Ltd"
-                    class="w-full"
-                  />
-                </div>
-                <div>
-                  <label for="company_number" class="block text-sm font-medium text-gray-700 mb-2">
-                    Company Number (Optional)
-                  </label>
-                  <Input
-                    id="company_number"
-                    v-model="formData.company_number"
-                    type="text"
-                    placeholder="1234567"
-                    class="w-full"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label for="nzbn" class="block text-sm font-medium text-gray-700 mb-2">
-                  NZBN (Optional)
-                </label>
-                <Input
-                  id="nzbn"
-                  v-model="formData.nzbn"
-                  type="text"
-                  maxlength="13"
-                  placeholder="1234567890123"
-                  class="w-full"
-                  @blur="validateNZBNField"
-                />
-                <p v-if="nzbnError" class="mt-1 text-xs text-red-600">{{ nzbnError }}</p>
-                <p v-else class="mt-1 text-xs text-gray-500">New Zealand Business Number (13 digits)</p>
-              </div>
-            </div>
-
-            <div v-else>
-              <div>
-                <label for="trading_name" class="block text-sm font-medium text-gray-700 mb-2">
-                  Trading Name (Optional)
-                </label>
-                <Input
-                  id="trading_name"
-                  v-model="formData.trading_name"
-                  type="text"
-                  placeholder="e.g., Smith Planning Services"
-                  class="w-full"
-                />
-                <p class="mt-1 text-xs text-gray-500">If you trade under a business name</p>
-              </div>
-            </div>
-
-            <!-- Business Address -->
-            <div>
-              <AddressLookup
-                v-model="selectedBusinessAddress"
-                id="business_address"
-                label="Business Address"
-                placeholder="Start typing your business address..."
-                description="Your business/office address"
-                :required="false"
-                @address-selected="handleBusinessAddressSelected"
-              />
-            </div>
-
-            <!-- Properties Section -->
-            <div class="space-y-4 mt-6">
-              <div class="flex items-center justify-between">
-                <div>
-                  <h3 class="text-sm font-medium text-gray-900">Properties</h3>
-                  <p class="text-xs text-gray-500 mt-1">Add properties you own or manage (optional)</p>
-                </div>
-                <button
-                  type="button"
-                  @click="openAddPropertyModal"
-                  class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                  </svg>
-                  Add Property
-                </button>
-              </div>
-
-              <!-- Properties List -->
-              <div v-if="properties.length > 0" class="space-y-2">
-                <div
-                  v-for="(property, index) in properties"
-                  :key="index"
-                  class="border border-gray-200 rounded-lg p-4 bg-gray-50 hover:bg-gray-100 transition"
-                >
-                  <div class="flex items-start justify-between">
-                    <div class="flex-1">
-                      <div class="flex items-center gap-2">
-                        <h4 class="text-sm font-semibold text-gray-900">{{ property.property_name }}</h4>
-                        <span v-if="property.is_default" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                          Default
-                        </span>
-                      </div>
-                      <p class="text-sm text-gray-600 mt-1">{{ property.street }}</p>
-                      <p class="text-xs text-gray-500">{{ property.suburb }}{{ property.suburb && property.city ? ', ' : '' }}{{ property.city }} {{ property.postcode }}</p>
-                    </div>
-                    <div class="flex items-center gap-2 ml-4">
-                      <button
-                        v-if="!property.is_default && properties.length > 1"
-                        type="button"
-                        @click="setDefaultProperty(index)"
-                        class="text-xs text-blue-600 hover:text-blue-800"
-                      >
-                        Set as Default
-                      </button>
-                      <button
-                        type="button"
-                        @click="removeProperty(index)"
-                        class="text-red-600 hover:text-red-800"
-                      >
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div v-else class="text-center py-6 border-2 border-dashed border-gray-300 rounded-lg">
-                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>
-                <p class="mt-2 text-sm text-gray-500">No properties added yet</p>
-              </div>
-            </div>
+          <!-- Step 2: Business Details -->
+          <div v-show="currentStep === 1">
+            <AgentBusinessDetailsStep
+              :agent-type="formData.agent_type"
+              v-model:company-name="formData.company_name"
+              v-model:company-number="formData.company_number"
+              v-model:nzbn="formData.nzbn"
+              v-model:trading-name="formData.trading_name"
+              :selected-business-address="selectedBusinessAddress"
+              :properties="properties"
+              :nzbn-error="nzbnError"
+              @validate-nzbn="validateNZBNField"
+              @business-address-selected="handleBusinessAddressSelected"
+              @open-add-property="openAddPropertyModal"
+              @remove-property="removeProperty"
+              @set-default-property="setDefaultProperty"
+            />
           </div>
 
           <!-- Add Property Modal -->
-          <div v-if="showAddPropertyModal" class="fixed inset-0 z-50 overflow-y-auto">
-            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-              <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" @click="closeAddPropertyModal"></div>
-
-              <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                  <h3 class="text-lg font-medium text-gray-900 mb-4">Add Property</h3>
-
-                  <div class="space-y-4">
-                    <div>
-                      <label for="property_name_agent" class="block text-sm font-medium text-gray-700 mb-2">
-                        Property Name <span class="text-red-500">*</span>
-                      </label>
-                      <input
-                        id="property_name_agent"
-                        v-model="currentProperty.property_name"
-                        type="text"
-                        required
-                        placeholder="e.g., Office, Client Property A, Development Site"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      />
-                    </div>
-
-                    <div>
-                      <AddressLookup
-                        v-model="selectedPropertyAddress"
-                        id="property_address_modal_agent"
-                        label="Property Address"
-                        placeholder="Start typing the property address..."
-                        description="Search for the property address in New Zealand"
-                        :required="true"
-                        @address-selected="handlePropertyAddressSelected"
-                      />
-                    </div>
-
-                    <div>
-                      <label class="flex items-center">
-                        <input
-                          v-model="currentProperty.is_default"
-                          type="checkbox"
-                          class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                        />
-                        <span class="ml-2 text-sm text-gray-700">Set as default property</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
-                  <button
-                    type="button"
-                    @click="addProperty"
-                    class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
-                  >
-                    Add Property
-                  </button>
-                  <button
-                    type="button"
-                    @click="closeAddPropertyModal"
-                    class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:w-auto sm:text-sm"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <AddPropertyModal
+            :show="showAddPropertyModal"
+            v-model:property-name="currentProperty.property_name"
+            :selected-property-address="selectedPropertyAddress"
+            v-model:is-default="currentProperty.is_default"
+            @close="closeAddPropertyModal"
+            @property-address-selected="handlePropertyAddressSelected"
+            @add-property="addProperty"
+          />
 
           <!-- Step 3: Default Settings -->
-          <div v-show="currentStep === 2" class="space-y-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">Default Settings</h2>
-
-            <!-- Single-tenant: No council selection needed -->
-
-            <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <h3 class="text-sm font-medium text-blue-900 mb-2">Agent Permissions</h3>
-              <ul class="text-sm text-blue-800 space-y-1">
-                <li class="flex items-start">
-                  <svg class="w-4 h-4 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                  </svg>
-                  Create and submit applications on behalf of clients
-                </li>
-                <li class="flex items-start">
-                  <svg class="w-4 h-4 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                  </svg>
-                  Manage multiple client applications
-                </li>
-                <li class="flex items-start">
-                  <svg class="w-4 h-4 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                  </svg>
-                  Receive notifications on application progress
-                </li>
-                <li class="flex items-start">
-                  <svg class="w-4 h-4 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                  </svg>
-                  Professional dashboard for tracking all applications
-                </li>
-              </ul>
-            </div>
-
-            <!-- Terms and Conditions -->
-            <div class="flex items-start">
-              <input
-                id="terms"
-                v-model="formData.terms"
-                type="checkbox"
-                required
-                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mt-1"
-              />
-              <label for="terms" class="ml-2 block text-sm text-gray-700">
-                I agree to the
-                <a href="#" class="text-blue-600 hover:text-blue-700 font-medium">Terms of Service</a>
-                and
-                <a href="#" class="text-blue-600 hover:text-blue-700 font-medium">Privacy Policy</a>
-              </label>
-            </div>
+          <div v-show="currentStep === 2">
+            <AgentSettingsStep
+              v-model:terms="formData.terms"
+            />
           </div>
 
           <!-- Error Message -->
@@ -580,6 +213,10 @@ import { Button, Input } from "frappe-ui"
 import { computed, ref } from "vue"
 import { useRouter } from "vue-router"
 import AddressLookup from "../components/AddressLookup.vue"
+import AgentPersonalDetailsStep from "../components/company/AgentPersonalDetailsStep.vue"
+import AgentBusinessDetailsStep from "../components/company/AgentBusinessDetailsStep.vue"
+import AddPropertyModal from "../components/company/AddPropertyModal.vue"
+import AgentSettingsStep from "../components/company/AgentSettingsStep.vue"
 import {
 	validateEmail,
 	validateNZBN,
