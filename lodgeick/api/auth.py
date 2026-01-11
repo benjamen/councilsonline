@@ -8,7 +8,6 @@ Authentication & User Management API - Handles user registration, profile manage
 import frappe
 from frappe import _
 import re
-from frappe.utils import check_password, update_password
 from lodgeick.utils.rate_limit import rate_limit
 
 
