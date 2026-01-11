@@ -652,6 +652,16 @@
       :council-code="request.data?.council"
       @booked="handleMeetingBooked"
     />
+
+    <PaymentModal
+      v-model:show="showPaymentModal"
+      :request-id="route.params.id"
+      :total-amount="resource.data?.total_fees_incl_gst || 0"
+      :fees-excl-gst="resource.data?.total_fees_excl_gst || 0"
+      :gst="resource.data?.gst_amount || 0"
+      :stripe-enabled="false"
+      @invoice-requested="handleInvoiceRequested"
+    />
   </div>
 </template>
 
@@ -667,6 +677,9 @@ const SendMessageModal = defineAsyncComponent(
 )
 const BookMeetingModal = defineAsyncComponent(
 	() => import("../components/modals/BookMeetingModal.vue"),
+)
+const PaymentModal = defineAsyncComponent(
+	() => import("../components/modals/PaymentModal.vue"),
 )
 import { useStatutoryClock } from "../composables/useStatutoryClock"
 
@@ -1156,11 +1169,21 @@ const handleSubmitApplication = async () => {
 	}
 }
 
+const showPaymentModal = ref(false)
+
 const handleMakePayment = () => {
-	// TODO: Implement payment integration
-	alert(
-		"Payment feature - Coming soon!\n\nYou will receive an invoice via email.",
-	)
+	showPaymentModal.value = true
+}
+
+const handleInvoiceRequested = (invoiceData) => {
+	// Show success message
+	const message = invoiceData.warning ||
+		`Invoice requested successfully!\n\nInvoice #${invoiceData.invoice_number}\nAn email has been sent to ${invoiceData.email}`
+
+	alert(message)
+
+	// Reload request to show updated payment status
+	resource.reload()
 }
 
 const handleBookMeeting = () => {

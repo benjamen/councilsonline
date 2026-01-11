@@ -5984,3 +5984,93 @@ def add_internal_note(request_id, note, visibility="Internal Only"):
 			"success": False,
 			"error": str(e)
 		}
+
+
+@frappe.whitelist()
+def request_invoice(request_id):
+	"""
+	Create invoice request and send to user email
+
+	Args:
+		request_id: Name of the Request document
+
+	Returns:
+		dict: Success status with invoice details
+	"""
+	try:
+		request = frappe.get_doc("Request", request_id)
+
+		# Validate request has fees
+		if not request.total_fees_incl_gst or request.total_fees_incl_gst <= 0:
+			return {
+				"success": False,
+				"error": "No fees to invoice for this request"
+			}
+
+		# Check if payment record already exists
+		existing_payment = frappe.db.get_value("Payment",
+			{"request": request_id, "payment_status": ["in", ["Pending", "Processing", "Completed"]]},
+			"name"
+		)
+
+		if existing_payment:
+			# Invoice already requested, just resend email
+			from lodgeick.lodgeick.doctype.request.request import email_invoice
+			email_result = email_invoice(request_id)
+
+			if email_result.get("success"):
+				return {
+					"success": True,
+					"invoice_number": existing_payment,
+					"email": request.requester_email or frappe.db.get_value("User", request.requester, "email"),
+					"message": "Invoice resent successfully"
+				}
+			else:
+				return email_result
+
+		# Create new Payment record
+		payment = frappe.get_doc({
+			"doctype": "Payment",
+			"request": request_id,
+			"payment_type": "Application Fee",
+			"payment_method": "Bank Transfer",
+			"payment_status": "Pending",
+			"amount": request.total_fees_excl_gst or 0,
+			"gst": request.gst_amount or 0,
+			"total_amount": request.total_fees_incl_gst,
+			"currency": "NZD",
+			"notes": f"Invoice requested for {request.request_type} application"
+		})
+		payment.insert(ignore_permissions=True)
+		frappe.db.commit()
+
+		# Update request payment status
+		request.payment_status = "Invoice Requested"
+		request.save(ignore_permissions=True)
+		frappe.db.commit()
+
+		# Send email with invoice
+		from lodgeick.lodgeick.doctype.request.request import email_invoice
+		email_result = email_invoice(request_id)
+
+		if not email_result.get("success"):
+			# Payment created but email failed - still return success with warning
+			return {
+				"success": True,
+				"invoice_number": payment.name,
+				"email": request.requester_email or frappe.db.get_value("User", request.requester, "email"),
+				"warning": "Invoice created but email sending failed. Please contact support."
+			}
+
+		return {
+			"success": True,
+			"invoice_number": payment.name,
+			"email": request.requester_email or frappe.db.get_value("User", request.requester, "email")
+		}
+
+	except Exception as e:
+		frappe.log_error(f"Request Invoice Error: {str(e)}", "Payment API Error")
+		return {
+			"success": False,
+			"error": str(e)
+		}
