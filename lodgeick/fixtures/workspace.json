@@ -62,7 +62,7 @@
     "parent": "Easy Council - Planner",
     "parentfield": "quick_lists",
     "parenttype": "Workspace",
-    "quick_list_filter": "[[\"Request\",\"status\",\"in\",[\"Submitted\",\"Acknowledged\",\"Processing\"],false]]"
+    "quick_list_filter": "[[\"Request\",\"workflow_state\",\"in\",[\"Submitted\",\"Acknowledged\",\"Processing\"],false]]"
    },
    {
     "document_type": "Request",
@@ -70,7 +70,7 @@
     "parent": "Easy Council - Planner",
     "parentfield": "quick_lists",
     "parenttype": "Workspace",
-    "quick_list_filter": "[[\"Request\",\"status\",\"in\",[\"Approved\",\"Approved with Conditions\"],false]]"
+    "quick_list_filter": "[[\"Request\",\"workflow_state\",\"in\",[\"Approved\",\"Approved with Conditions\"],false]]"
    }
   ],
   "restrict_to_domain": null,
@@ -266,7 +266,7 @@
     "parent": "Easy Council - Manager",
     "parentfield": "quick_lists",
     "parenttype": "Workspace",
-    "quick_list_filter": "[[\"Request\",\"status\",\"in\",[\"Submitted\",\"Acknowledged\",\"Processing\"],false]]"
+    "quick_list_filter": "[[\"Request\",\"workflow_state\",\"in\",[\"Submitted\",\"Acknowledged\",\"Processing\"],false]]"
    },
    {
     "document_type": "Request",
@@ -274,7 +274,7 @@
     "parent": "Easy Council - Manager",
     "parentfield": "quick_lists",
     "parenttype": "Workspace",
-    "quick_list_filter": "[[\"Request\",\"status\",\"=\",\"Draft\",false]]"
+    "quick_list_filter": "[[\"Request\",\"workflow_state\",\"=\",\"Draft\",false]]"
    },
    {
     "document_type": "Request",
@@ -282,7 +282,7 @@
     "parent": "Easy Council - Manager",
     "parentfield": "quick_lists",
     "parenttype": "Workspace",
-    "quick_list_filter": "[[\"Request\",\"status\",\"in\",[\"Submitted\",\"Acknowledged\",\"Processing\",\"RFI Issued\",\"Pending Decision\"],false]]"
+    "quick_list_filter": "[[\"Request\",\"workflow_state\",\"in\",[\"Submitted\",\"Acknowledged\",\"Processing\",\"RFI Issued\",\"Pending Decision\"],false]]"
    },
    {
     "document_type": "Request",
@@ -290,7 +290,7 @@
     "parent": "Easy Council - Manager",
     "parentfield": "quick_lists",
     "parenttype": "Workspace",
-    "quick_list_filter": "[[\"Request\",\"status\",\"in\",[\"Approved\",\"Approved with Conditions\"],false]]"
+    "quick_list_filter": "[[\"Request\",\"workflow_state\",\"in\",[\"Approved\",\"Approved with Conditions\"],false]]"
    }
   ],
   "restrict_to_domain": null,
@@ -655,7 +655,7 @@
     "parent": "Easy Council",
     "parentfield": "quick_lists",
     "parenttype": "Workspace",
-    "quick_list_filter": "[[\"Request\",\"status\",\"=\",\"Open\",false]]"
+    "quick_list_filter": "[[\"Request\",\"workflow_state\",\"=\",\"Open\",false]]"
    },
    {
     "document_type": "Request",
@@ -663,7 +663,7 @@
     "parent": "Easy Council",
     "parentfield": "quick_lists",
     "parenttype": "Workspace",
-    "quick_list_filter": "[[\"Request\",\"status\",\"=\",\"Draft\",false]]"
+    "quick_list_filter": "[[\"Request\",\"workflow_state\",\"=\",\"Draft\",false]]"
    },
    {
     "document_type": "Request",
@@ -671,7 +671,7 @@
     "parent": "Easy Council",
     "parentfield": "quick_lists",
     "parenttype": "Workspace",
-    "quick_list_filter": "[[\"Request\",\"status\",\"=\",\"Completed\",false]]"
+    "quick_list_filter": "[[\"Request\",\"workflow_state\",\"=\",\"Completed\",false]]"
    }
   ],
   "restrict_to_domain": null,
