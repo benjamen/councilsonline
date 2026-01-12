@@ -655,7 +655,7 @@
     "parent": "Easy Council",
     "parentfield": "quick_lists",
     "parenttype": "Workspace",
-    "quick_list_filter": "[[\"Request\",\"workflow_state\",\"=\",\"Open\",false]]"
+    "quick_list_filter": "[[\"Request\",\"workflow_state\",\"in\",[\"Submitted\",\"Acknowledged\",\"Processing\"],false]]"
    },
    {
     "document_type": "Request",
