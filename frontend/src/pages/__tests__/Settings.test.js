@@ -1,4 +1,4 @@
-import { mount } from '@vue/test-utils'
+import { mount, flushPromises } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Mock vue-router
@@ -10,6 +10,24 @@ vi.mock('vue-router', () => ({
     back: mockBack
   })
 }))
+
+// Default mock profile data
+const mockProfileData = {
+  full_name: 'John Doe',
+  email: 'john@example.com',
+  first_name: 'John',
+  last_name: 'Doe',
+  creation: '2025-01-01',
+  user_image: null,
+  mobile_no: '',
+  phone: '',
+  location: '',
+  bio: '',
+  organization_data: null
+}
+
+// Mock call function
+const mockCall = vi.fn().mockResolvedValue(mockProfileData)
 
 // Mock frappe-ui
 vi.mock('frappe-ui', () => ({
@@ -23,29 +41,24 @@ vi.mock('frappe-ui', () => ({
     props: ['modelValue', 'type', 'placeholder', 'required'],
     template: '<input :type="type" :value="modelValue" :placeholder="placeholder" :required="required" @input="$emit(\'update:modelValue\', $event.target.value)" />'
   },
-  call: vi.fn()
+  call: (...args) => mockCall(...args)
 }))
 
 import Settings from '../Settings.vue'
 
 describe('Settings', () => {
-  // Helper function to mount with initial profile data
-  const mountSettings = async (profileData = {}) => {
+  // Helper function to mount with profile data loaded
+  const mountSettings = async (profileOverrides = {}) => {
+    // Update mock to return custom profile data if provided
+    if (Object.keys(profileOverrides).length > 0) {
+      mockCall.mockResolvedValueOnce({ ...mockProfileData, ...profileOverrides })
+    }
+
     const wrapper = mount(Settings)
 
-    // Set profile data if provided
-    if (Object.keys(profileData).length > 0) {
-      wrapper.vm.profile = {
-        full_name: 'John Doe',
-        email: 'john@example.com',
-        first_name: 'John',
-        last_name: 'Doe',
-        creation: '2025-01-01',
-        ...profileData
-      }
-      wrapper.vm.profileLoading = false
-      await wrapper.vm.$nextTick()
-    }
+    // Wait for async profile loading to complete
+    await flushPromises()
+    await wrapper.vm.$nextTick()
 
     return wrapper
   }
@@ -53,6 +66,8 @@ describe('Settings', () => {
   beforeEach(() => {
     mockPush.mockClear()
     mockBack.mockClear()
+    mockCall.mockClear()
+    mockCall.mockResolvedValue(mockProfileData)
   })
 
   // ========== Header Tests ==========
