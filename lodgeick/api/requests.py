@@ -116,17 +116,138 @@ def create_rc_application(request_name, data):
         # Project Details (Step 3)
         "consent_term_requested": data.get("construction_duration"),
 
-        # AEE Completion Method
-        "aee_completion_method": "inline",  # Using inline form completion
-        "aee_inline_confirmed": 1,
+        # AEE Completion Method (fixed - no longer hardcoded)
+        "aee_completion_method": data.get("aee_completion_method", "inline"),
+        "aee_inline_confirmed": cint(data.get("aee_inline_confirmed", 0)),
+        "aee_document_confirmed": cint(data.get("aee_document_confirmed", 0)),
+        "aee_alternatives_considered": data.get("aee_alternatives_considered"),
+        "aee_monitoring_proposed": data.get("aee_monitoring_proposed"),
 
         # Consultation Details (Step 5)
-        "no_consultation_reason": data.get("consultation_summary") if data.get("consultation_undertaken") == "No" else None,
+        "consultation_undertaken": cint(data.get("consultation_undertaken", 0)),
+        "no_consultation_reason": data.get("no_consultation_reason") or (data.get("consultation_summary") if data.get("consultation_undertaken") == "No" else None),
+
+        # Soil Investigation Fields (Step 3)
+        "soil_investigation_completed": cint(data.get("soil_investigation_completed", 0)),
+        "soil_investigation_summary": data.get("soil_investigation_summary"),
+        "soil_investigation_document": data.get("soil_investigation_document"),
+        "no_nes_confirmed": cint(data.get("no_nes_confirmed", 0)),
+
+        # Inundation Advice (Step 2)
+        "inundation_advice_document": data.get("inundation_advice_document"),
+
+        # Permitted Boundary Activity Fields (Step 4)
+        "pba_approval_required": cint(data.get("pba_approval_required", 0)),
+        "pba_status": data.get("pba_status"),
+        "pba_details": data.get("pba_details"),
+        "pba_documents": data.get("pba_documents"),
+        "boundary_description": data.get("boundary_description"),
+        "boundary_activity_description": data.get("boundary_activity_description"),
+        "boundary_owner_approval_obtained": cint(data.get("boundary_owner_approval_obtained", 0)),
+        "boundary_approval_date": getdate(data.get("boundary_approval_date")) if data.get("boundary_approval_date") else None,
+        "boundary_approval_document": data.get("boundary_approval_document"),
+
+        # Confidential Information (Step 1)
+        "confidential_information_claimed": cint(data.get("confidential_information_claimed", 0)),
+        "confidential_information_reason": data.get("confidential_information_reason"),
+
+        # Lodgement Fees (Step 9)
+        "lodgement_fees_paid": cint(data.get("lodgement_fees_paid", 0)),
+
+        # Signature Fields (Step 9)
+        "requester_signature_last_name": data.get("applicant_signature_last_name") or data.get("requester_signature_last_name"),
+        "agent_signature_first_name": data.get("agent_signature_first_name"),
+        "agent_signature_last_name": data.get("agent_signature_last_name"),
+        "agent_signature_date": getdate(data.get("agent_signature_date")) if data.get("agent_signature_date") else None,
+
+        # Natural Hazards confirmation
+        "no_natural_hazards_confirmed": cint(data.get("no_natural_hazards_confirmed", 0)),
 
         # Default to applicant as correspondence recipient
         "correspondence_recipient": "Applicant",
         "invoice_responsible_party": "Applicant"
     })
+
+    # Add natural_hazards child table (Step 2)
+    if data.get("natural_hazards"):
+        for hazard in data.get("natural_hazards", []):
+            rc_app.append("natural_hazards", {
+                "hazard_type": hazard.get("hazard_type"),
+                "present": cint(hazard.get("present", 0)),
+                "risk_level": hazard.get("risk_level"),
+                "assessment_notes": hazard.get("assessment_notes"),
+                "mitigation_required": cint(hazard.get("mitigation_required", 0))
+            })
+
+    # Add HAIL activities child table (Step 3)
+    if data.get("hail_activities"):
+        for activity in data.get("hail_activities", []):
+            rc_app.append("hail_activities", {
+                "activity_description": activity.get("activity_description"),
+                "hail_category": activity.get("hail_category"),
+                "currently_undertaken": cint(activity.get("currently_undertaken", 0)),
+                "previously_undertaken": cint(activity.get("previously_undertaken", 0)),
+                "likely_undertaken": cint(activity.get("likely_undertaken", 0)),
+                "preliminary_investigation_done": cint(activity.get("preliminary_investigation_done", 0)),
+                "proposed_fuel_storage": activity.get("proposed_fuel_storage"),
+                "proposed_effluent": activity.get("proposed_effluent"),
+                "proposed_waste_disposal": activity.get("proposed_waste_disposal"),
+                "investigation_completed": cint(activity.get("investigation_completed", 0)),
+                "investigation_summary": activity.get("investigation_summary")
+            })
+
+    # Add application_documents child table (Step 6)
+    if data.get("application_documents"):
+        for doc in data.get("application_documents", []):
+            rc_app.append("application_documents", {
+                "document_type": doc.get("document_type"),
+                "document_name": doc.get("document_name"),
+                "document_file": doc.get("document_file")
+            })
+
+    # Add consulted_organizations child table (Step 5)
+    if data.get("consulted_organizations"):
+        for org in data.get("consulted_organizations", []):
+            rc_app.append("consulted_organizations", {
+                "organization_name": org.get("organization_name"),
+                "contact_name": org.get("contact_name"),
+                "email": org.get("email"),
+                "phone": org.get("phone"),
+                "consultation_date": getdate(org.get("consultation_date")) if org.get("consultation_date") else None,
+                "consultation_method": org.get("consultation_method"),
+                "key_issues_raised": org.get("key_issues_raised")
+            })
+
+    # Add additional_consents child table (Step 1)
+    if data.get("additional_consents"):
+        for consent in data.get("additional_consents", []):
+            rc_app.append("additional_consents", {
+                "consent_type": consent.get("consent_type"),
+                "consent_status": consent.get("consent_status"),
+                "reference_number": consent.get("reference_number")
+            })
+
+    # Add pba_contacts child table (Step 4)
+    if data.get("pba_contacts"):
+        for contact in data.get("pba_contacts", []):
+            rc_app.append("pba_contacts", {
+                "neighbor_name": contact.get("neighbor_name"),
+                "neighbor_address": contact.get("neighbor_address"),
+                "neighbor_email": contact.get("neighbor_email"),
+                "approval_obtained": cint(contact.get("approval_obtained", 0)),
+                "approval_date": getdate(contact.get("approval_date")) if contact.get("approval_date") else None,
+                "approval_document": contact.get("approval_document")
+            })
+
+    # Add lodgement_payments child table (Step 9)
+    if data.get("lodgement_payments"):
+        for payment in data.get("lodgement_payments", []):
+            rc_app.append("lodgement_payments", {
+                "payment_method": payment.get("payment_method"),
+                "payment_reference": payment.get("payment_reference"),
+                "payment_amount": flt(payment.get("payment_amount")),
+                "payment_date": getdate(payment.get("payment_date")) if payment.get("payment_date") else None
+            })
 
     # Add affected parties if provided (Step 5)
     if data.get("affected_parties_details"):
@@ -162,6 +283,179 @@ def create_rc_application(request_name, data):
     # Alternatively, could fix the "Fetch From" configuration in RC Application DocType
 
     return rc_app
+
+
+def update_rc_application(request_name, data):
+    """
+    Update existing Resource Consent Application with new data
+
+    Args:
+        request_name: Name of the parent Request (which is also the RC Application name)
+        data: Form data dictionary with updated values
+
+    Returns:
+        Updated Resource Consent Application document
+    """
+    from frappe.utils import cint, flt, getdate
+
+    try:
+        rc_app = frappe.get_doc("Resource Consent Application", request_name)
+
+        # Update single-value fields
+        single_fields = [
+            # Activity Status
+            ("activity_status", None),
+            ("aee_activity_status", None),
+            ("aee_activity_description", None),
+
+            # Agent
+            ("agent_required", "cint"),
+
+            # Site Information
+            ("site_topography", None),
+            ("existing_vegetation_description", None),
+            ("natural_hazards_identified", None),
+            ("existing_infrastructure", None),
+
+            # AEE Fields
+            ("assessment_of_effects", None),
+            ("aee_positive_effects", None),
+            ("physical_effects", None),
+            ("effects_on_people", None),
+            ("mitigation_proposed", None),
+            ("alternatives_considered", None),
+            ("planning_assessment", None),
+            ("aee_completion_method", None),
+            ("aee_inline_confirmed", "cint"),
+            ("aee_document_confirmed", "cint"),
+            ("aee_alternatives_considered", None),
+            ("aee_monitoring_proposed", None),
+
+            # Consultation
+            ("iwi_consultation_undertaken", "cint"),
+            ("consultation_undertaken", "cint"),
+            ("consultation_summary", None),
+            ("no_consultation_reason", None),
+            ("written_approvals_obtained", "cint"),
+
+            # Conditions
+            ("proposed_conditions", None),
+
+            # Declarations
+            ("declaration_rma_compliance", "cint"),
+            ("declaration_authorized", "cint"),
+            ("declaration_public_information", "cint"),
+
+            # Signatures
+            ("applicant_signature_first_name", None),
+            ("requester_signature_last_name", None),
+            ("applicant_signature_date", "date"),
+            ("agent_signature_first_name", None),
+            ("agent_signature_last_name", None),
+            ("agent_signature_date", "date"),
+
+            # Property Info
+            ("aee_site_area", "flt"),
+            ("aee_zoning", None),
+            ("aee_overlays", None),
+
+            # Consent Term
+            ("consent_term_requested", None),
+
+            # Soil Investigation
+            ("soil_investigation_completed", "cint"),
+            ("soil_investigation_summary", None),
+            ("soil_investigation_document", None),
+            ("no_nes_confirmed", "cint"),
+
+            # Inundation
+            ("inundation_advice_document", None),
+
+            # PBA Fields
+            ("pba_approval_required", "cint"),
+            ("pba_status", None),
+            ("pba_details", None),
+            ("pba_documents", None),
+            ("boundary_description", None),
+            ("boundary_activity_description", None),
+            ("boundary_owner_approval_obtained", "cint"),
+            ("boundary_approval_date", "date"),
+            ("boundary_approval_document", None),
+
+            # Confidential Information
+            ("confidential_information_claimed", "cint"),
+            ("confidential_information_reason", None),
+
+            # Lodgement
+            ("lodgement_fees_paid", "cint"),
+
+            # Natural Hazards confirmation
+            ("no_natural_hazards_confirmed", "cint"),
+        ]
+
+        for field_name, field_type in single_fields:
+            if field_name in data:
+                value = data.get(field_name)
+                if field_type == "cint":
+                    value = cint(value)
+                elif field_type == "flt":
+                    value = flt(value)
+                elif field_type == "date" and value:
+                    value = getdate(value)
+                setattr(rc_app, field_name, value)
+
+        # Update child tables (clear and re-add)
+        child_table_mappings = {
+            "consent_types": ["consent_type"],
+            "natural_hazards": ["hazard_type", "present", "risk_level", "assessment_notes", "mitigation_required"],
+            "hail_activities": ["activity_description", "hail_category", "currently_undertaken", "previously_undertaken",
+                               "likely_undertaken", "preliminary_investigation_done", "proposed_fuel_storage",
+                               "proposed_effluent", "proposed_waste_disposal", "investigation_completed", "investigation_summary"],
+            "application_documents": ["document_type", "document_name", "document_file"],
+            "consulted_organizations": ["organization_name", "contact_name", "email", "phone",
+                                        "consultation_date", "consultation_method", "key_issues_raised"],
+            "additional_consents": ["consent_type", "consent_status", "reference_number"],
+            "pba_contacts": ["neighbor_name", "neighbor_address", "neighbor_email",
+                            "approval_obtained", "approval_date", "approval_document"],
+            "lodgement_payments": ["payment_method", "payment_reference", "payment_amount", "payment_date"],
+        }
+
+        for table_name, fields in child_table_mappings.items():
+            if table_name in data and data.get(table_name) is not None:
+                # Clear existing rows
+                rc_app.set(table_name, [])
+                # Add new rows
+                for item in data.get(table_name, []):
+                    row_data = {}
+                    for field in fields:
+                        if field in item:
+                            value = item.get(field)
+                            # Convert date fields
+                            if "date" in field.lower() and value:
+                                value = getdate(value)
+                            # Convert check fields
+                            elif field in ["present", "mitigation_required", "currently_undertaken", "previously_undertaken",
+                                          "likely_undertaken", "preliminary_investigation_done", "investigation_completed",
+                                          "approval_obtained"]:
+                                value = cint(value)
+                            # Convert amount fields
+                            elif field == "payment_amount":
+                                value = flt(value)
+                            row_data[field] = value
+                    rc_app.append(table_name, row_data)
+
+        rc_app.flags.ignore_permissions = True
+        rc_app.flags.ignore_mandatory = True
+        rc_app.save()
+
+        return rc_app
+
+    except frappe.DoesNotExistError:
+        # RC Application doesn't exist yet, create it
+        return create_rc_application(request_name, data)
+    except Exception as e:
+        frappe.log_error(f"Failed to update RC Application {request_name}: {str(e)}", "Update RC Application Error")
+        raise
 
 
 def create_spisc_application(request_name, data):
@@ -613,6 +907,29 @@ def create_draft_request(data=None, current_step=None, total_steps=None):
             "acting_on_behalf": acting_on_behalf,  # Track if agent workflow
             "status": "Draft",
             "priority": data.get("priority", "Standard"),
+
+            # Owner Details (when applicant is not the owner)
+            "applicant_is_not_owner": cint(data.get("applicant_is_not_owner", 0)),
+            "owner_name": data.get("owner_name"),
+            "owner_email": data.get("owner_email"),
+            "owner_phone": data.get("owner_phone"),
+            "owner_address": data.get("owner_address"),
+
+            # Invoice Fields
+            "invoice_to": data.get("invoice_to"),
+            "invoice_name": data.get("invoice_name"),
+            "invoice_email": data.get("invoice_email"),
+            "invoice_address": data.get("invoice_address"),
+            "purchase_order_number": data.get("purchase_order_number"),
+
+            # Delivery & Deposit Fields
+            "delivery_preference": data.get("delivery_preference"),
+            "transfer_deposit_required": cint(data.get("transfer_deposit_required", 0)),
+            "transfer_deposit_consent_number": data.get("transfer_deposit_consent_number"),
+
+            # Certificate of Title
+            "certificate_of_title_document": data.get("certificate_of_title_document"),
+
             # Draft metadata - store in draft_full_data JSON
             "draft_full_data": full_data_json
         })
@@ -720,9 +1037,9 @@ def update_draft_request(request_id, data, current_step=None, total_steps=None):
                 app_doc.flags.ignore_permissions = True
                 app_doc.flags.ignore_validate = True
                 app_doc.save()
-            elif request_doc.application_doctype == "RC Application":
-                # Similar update for RC if needed
-                pass
+            elif request_doc.application_doctype == "Resource Consent Application":
+                # Update Resource Consent Application with all field mappings
+                update_rc_application(request_doc.application_name, data)
         else:
             # Create application if it doesn't exist yet
             application = None

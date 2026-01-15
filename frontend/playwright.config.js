@@ -1,5 +1,8 @@
 import { defineConfig, devices } from "@playwright/test"
 
+// Auth file path for storing authenticated session state
+const AUTH_FILE = "playwright/.auth/user.json"
+
 export default defineConfig({
 	testDir: "./tests",
 	timeout: 60 * 1000,
@@ -30,19 +33,40 @@ export default defineConfig({
 	},
 
 	projects: [
+		// Setup project - authenticates once before all tests
+		{
+			name: "setup",
+			testMatch: /auth\.setup\.js/,
+		},
+		// Desktop tests - depend on setup for authentication
 		{
 			name: "chromium-desktop",
 			use: {
 				...devices["Desktop Chrome"],
 				viewport: { width: 1280, height: 720 },
+				storageState: AUTH_FILE,
 			},
+			dependencies: ["setup"],
 		},
+		// Mobile tests - depend on setup for authentication
 		{
 			name: "chromium-mobile",
 			use: {
 				...devices["iPhone 12"],
 				viewport: { width: 390, height: 844 },
+				storageState: AUTH_FILE,
 			},
+			dependencies: ["setup"],
+		},
+		// No-auth tests for guest flows (registration, public pages)
+		{
+			name: "chromium-guest",
+			use: {
+				...devices["Desktop Chrome"],
+				viewport: { width: 1280, height: 720 },
+				// No storageState - runs as unauthenticated guest
+			},
+			testMatch: /(registration|guest|public).*\.spec\.js/,
 		},
 	],
 
