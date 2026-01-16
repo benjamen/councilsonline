@@ -71,30 +71,17 @@ watch(
 		if (newVal && props.councilCode) {
 			// Pre-fill form if editing existing meeting
 			if (props.meeting) {
-				meetingType.value = props.meeting.meeting_type || "Pre-Application Meeting"
+				meetingType.value =
+					props.meeting.meeting_type || "Pre-Application Meeting"
 				meetingPurpose.value = props.meeting.meeting_purpose || ""
 				discussionPoints.value = props.meeting.discussion_points || ""
 
-				// Pre-fill preferred times if available
+				// Pre-fill preferred time if available
 				if (props.meeting.preferred_meeting_times) {
 					const times = Array.isArray(props.meeting.preferred_meeting_times)
 						? props.meeting.preferred_meeting_times
 						: []
-
-					preferredTimes.value = [
-						{
-							preference_order: 1,
-							preferred_start: times[0]?.preferred_start || "",
-						},
-						{
-							preference_order: 2,
-							preferred_start: times[1]?.preferred_start || "",
-						},
-						{
-							preference_order: 3,
-							preferred_start: times[2]?.preferred_start || "",
-						},
-					]
+					preferredTime.value = times[0]?.preferred_start || ""
 				}
 			}
 
@@ -118,12 +105,8 @@ watch(
 	},
 )
 
-// Preferred Time Slots (3 options)
-const preferredTimes = ref([
-	{ preference_order: 1, preferred_start: "" },
-	{ preference_order: 2, preferred_start: "" },
-	{ preference_order: 3, preferred_start: "" },
-])
+// Preferred Time Slot (single selection)
+const preferredTime = ref("")
 
 // Auto-calculate end time (1 hour after start time)
 const calculateEndTime = (startTime) => {
@@ -159,12 +142,8 @@ const isValid = computed(() => {
 	// Meeting type and purpose are required
 	if (!meetingType.value || !meetingPurpose.value.trim()) return false
 
-	// At least one preferred time slot must have a start time (end time is auto-calculated)
-	const hasAtLeastOneTimeSlot = preferredTimes.value.some((slot) => {
-		return slot.preferred_start && slot.preferred_start.trim() !== ""
-	})
-
-	return hasAtLeastOneTimeSlot
+	// Preferred time must be selected
+	return preferredTime.value && preferredTime.value.trim() !== ""
 })
 
 const addAttendee = () => {
@@ -194,11 +173,9 @@ const removeAttendee = (index) => {
 	attendees.value.splice(index, 1)
 }
 
-const selectAvailableSlot = (slotIndex, slot) => {
-	// Set the specified preferred time slot to this slot
-	if (slotIndex >= 0 && slotIndex < preferredTimes.value.length) {
-		preferredTimes.value[slotIndex].preferred_start = slot.start.slice(0, 16) // Format for datetime-local
-	}
+const selectAvailableSlot = (slot) => {
+	// Set the preferred time to this slot
+	preferredTime.value = slot.start.slice(0, 16) // Format for datetime-local
 }
 
 const toggleAvailableSlotsView = () => {
@@ -223,11 +200,7 @@ const handleClose = () => {
 		meetingPurpose.value = ""
 		discussionPoints.value = ""
 		attendees.value = []
-		preferredTimes.value = [
-			{ preference_order: 1, preferred_start: "" },
-			{ preference_order: 2, preferred_start: "" },
-			{ preference_order: 3, preferred_start: "" },
-		]
+		preferredTime.value = ""
 		error.value = null
 		success.value = false
 		emit("update:show", false)
@@ -241,15 +214,12 @@ const handleBook = async () => {
 	error.value = null
 
 	try {
-		// Filter out empty time slots and add calculated end times
-		const filledTimeSlots = preferredTimes.value
-			.filter(
-				(slot) => slot.preferred_start && slot.preferred_start.trim() !== "",
-			)
-			.map((slot) => ({
-				...slot,
-				preferred_end: calculateEndTime(slot.preferred_start),
-			}))
+		// Build single time slot with calculated end time
+		const timeSlot = {
+			preference_order: 1,
+			preferred_start: preferredTime.value,
+			preferred_end: calculateEndTime(preferredTime.value),
+		}
 
 		const response = await fetch(
 			"/api/method/lodgeick.api.book_council_meeting",
@@ -266,7 +236,7 @@ const handleBook = async () => {
 					meeting_purpose: meetingPurpose.value,
 					discussion_points: discussionPoints.value,
 					attendees: attendees.value,
-					preferred_time_slots: filledTimeSlots,
+					preferred_time_slots: [timeSlot],
 				}),
 			},
 		)
@@ -344,10 +314,10 @@ const handleBook = async () => {
 						></textarea>
 					</div>
 
-					<!-- Preferred Time Slots -->
+					<!-- Preferred Time Slot -->
 					<div>
 						<div class="flex items-center justify-between mb-2">
-							<label class="block text-sm font-medium text-gray-700">Preferred Meeting Times *</label>
+							<label class="block text-sm font-medium text-gray-700">Preferred Meeting Time *</label>
 							<button
 								v-if="councilCode && !availableSlots.loading"
 								type="button"
@@ -358,7 +328,7 @@ const handleBook = async () => {
 								{{ availableSlots.data ? 'Refresh Available Slots' : 'Load Available Slots' }}
 							</button>
 						</div>
-						<p class="text-xs text-gray-500 mb-3">Select up to 3 preferred time slots (each meeting is 1 hour). The council will confirm or propose alternatives.</p>
+						<p class="text-xs text-gray-500 mb-3">Select your preferred time slot (1 hour meeting). The council will confirm or propose an alternative.</p>
 
 						<!-- Loading State -->
 						<div v-if="availableSlots.loading" class="mb-4 border border-blue-200 rounded-lg p-4 bg-blue-50">
@@ -370,69 +340,58 @@ const handleBook = async () => {
 
 						<!-- Error State -->
 						<div v-else-if="availableSlots.error" class="mb-4 border border-red-200 rounded-lg p-4 bg-red-50">
-							<p class="text-sm text-red-600">Failed to load available slots. Please enter your preferred times manually below.</p>
+							<p class="text-sm text-red-600">Failed to load available slots. Please enter your preferred time manually below.</p>
 						</div>
 
 						<!-- Time Slot Selection -->
-						<div class="space-y-3">
-							<div v-for="(slot, index) in preferredTimes" :key="index" class="border border-gray-200 rounded-lg p-4 bg-gray-50">
-								<div class="flex items-center justify-between mb-2">
-									<div class="flex items-center">
-										<span class="text-sm font-medium text-gray-700">Option {{ slot.preference_order }}</span>
-										<span v-if="index === 0" class="ml-2 text-xs text-red-600">*</span>
-									</div>
-									<span v-if="slot.preferred_start" class="text-xs text-gray-500">1 hour duration</span>
-								</div>
-								<div>
-									<label class="block text-xs text-gray-600 mb-1">
-										{{ availableSlots.data?.slots?.length > 0 ? 'Select Time Slot' : 'Enter Time' }}
-									</label>
-
-									<!-- Dropdown if slots are available -->
-									<select
-										v-if="availableSlots.data?.slots?.length > 0"
-										v-model="slot.preferred_start"
-										@change="(e) => selectAvailableSlot(index, availableSlots.data.slots.find(s => s.start.slice(0, 16) === e.target.value))"
-										class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-										:disabled="booking"
+						<div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+							<div class="flex items-center justify-between mb-2">
+								<span class="text-sm font-medium text-gray-700">Select Time</span>
+								<span v-if="preferredTime" class="text-xs text-gray-500">1 hour duration</span>
+							</div>
+							<div>
+								<!-- Dropdown if slots are available -->
+								<select
+									v-if="availableSlots.data?.slots?.length > 0"
+									v-model="preferredTime"
+									class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+									:disabled="booking"
+								>
+									<option value="">-- Select an available time slot --</option>
+									<option
+										v-for="(availSlot, idx) in availableSlots.data.slots.slice(0, 30)"
+										:key="idx"
+										:value="availSlot.start.slice(0, 16)"
 									>
-										<option value="">-- Select a time slot --</option>
-										<option
-											v-for="(availSlot, idx) in availableSlots.data.slots.slice(0, 30)"
-											:key="idx"
-											:value="availSlot.start.slice(0, 16)"
-											:disabled="preferredTimes.some((pt, ptIdx) => ptIdx !== index && pt.preferred_start === availSlot.start.slice(0, 16))"
-										>
-											{{ availSlot.start_display }} - {{ availSlot.end_display }} ({{ availSlot.day }})
-										</option>
-									</select>
+										{{ availSlot.start_display }} - {{ availSlot.end_display }} ({{ availSlot.day }})
+									</option>
+								</select>
 
-									<!-- Manual input if no slots available -->
-									<input
-										v-else
-										type="datetime-local"
-										v-model="slot.preferred_start"
-										class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-										:disabled="booking"
-									/>
+								<!-- Manual input if no slots available -->
+								<input
+									v-else
+									type="datetime-local"
+									v-model="preferredTime"
+									class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+									:disabled="booking"
+								/>
 
-									<p v-if="slot.preferred_start" class="text-xs text-gray-500 mt-1">
-										Meeting will end at {{ formatEndTime(slot.preferred_start) }}
-									</p>
-								</div>
+								<p v-if="preferredTime" class="text-xs text-gray-500 mt-1">
+									Meeting will end at {{ formatEndTime(preferredTime) }}
+								</p>
 							</div>
 
 							<!-- Message when no slots loaded yet -->
-							<div v-if="!availableSlots.data && !availableSlots.loading && !availableSlots.error" class="text-center py-2">
+							<div v-if="!availableSlots.data && !availableSlots.loading && !availableSlots.error" class="mt-3 text-center">
 								<p class="text-xs text-gray-500">
-									Click "Load Available Slots" above to see available meeting times, or manually enter your preferred times.
+									Click "Load Available Slots" above to see available meeting times.
 								</p>
 							</div>
 
 							<!-- Message when no slots available -->
-							<div v-if="availableSlots.data?.slots?.length === 0" class="text-center py-2">
+							<div v-if="availableSlots.data?.slots?.length === 0" class="mt-3 text-center">
 								<p class="text-xs text-gray-600">
-									No available slots found in the next 30 days. Please enter your preferred times manually above.
+									No available slots found in the next 30 days. Please enter your preferred time manually.
 								</p>
 							</div>
 						</div>
@@ -516,10 +475,9 @@ const handleBook = async () => {
 					<div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
 						<h4 class="text-sm font-semibold text-blue-900 mb-2">What happens next?</h4>
 						<ul class="text-sm text-blue-800 space-y-1 list-disc list-inside">
-							<li>Your meeting request will be sent to the council processing team</li>
-							<li>A council planner will contact you within 2 business days</li>
-							<li>They will confirm one of your preferred times or propose alternatives</li>
-							<li>A calendar invitation will be sent once confirmed</li>
+							<li>Your meeting request will be sent to the council</li>
+							<li>The council will review and confirm your selected time</li>
+							<li>You'll receive a calendar invitation once confirmed</li>
 						</ul>
 					</div>
 
@@ -529,7 +487,7 @@ const handleBook = async () => {
 							<svg class="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
 							</svg>
-							<p class="text-sm text-green-800 font-medium">Meeting request submitted successfully! The council will review and confirm your preferred time slots.</p>
+							<p class="text-sm text-green-800 font-medium">Meeting request submitted! The council will confirm your selected time.</p>
 						</div>
 					</div>
 
