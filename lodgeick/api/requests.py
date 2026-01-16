@@ -1019,10 +1019,21 @@ def update_draft_request(request_id, data, current_step=None, total_steps=None):
         import json
         full_data_json = json.dumps(data, default=str)
 
+        # Computed properties that cannot be set directly (read-only)
+        computed_properties = [
+            "name", "creation", "modified", "owner",
+            "requester_name", "requester_email", "requester_phone",  # Computed from User
+            "computed_total_fees_excl_gst", "computed_gst_amount", "total_fees_incl_gst",  # Computed fees
+        ]
+
         # Update fields
         for key, value in data.items():
-            if hasattr(request_doc, key) and key not in ["name", "creation", "modified", "owner"]:
-                setattr(request_doc, key, value)
+            if hasattr(request_doc, key) and key not in computed_properties:
+                try:
+                    setattr(request_doc, key, value)
+                except AttributeError:
+                    # Skip properties without setters
+                    pass
 
         # Update draft metadata - only store in draft_full_data JSON
         request_doc.draft_full_data = full_data_json
