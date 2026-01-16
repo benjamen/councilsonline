@@ -63,6 +63,52 @@ def setup_taytay_admin_user():
 	frappe.log(f"Taytay admin user configured with {len(user.roles)} roles")
 
 
+def setup_taytay_demo_user():
+	"""
+	Create or update Taytay demo user with limited roles.
+	This user has access to dashboard and request management only.
+	"""
+	user_email = "taytay-demo@lodgeick.localhost"
+
+	if not frappe.db.exists("User", user_email):
+		user = frappe.get_doc({
+			"doctype": "User",
+			"email": user_email,
+			"first_name": "Taytay",
+			"last_name": "Demo",
+			"enabled": 1,
+			"user_type": "System User",
+			"send_welcome_email": 0
+		})
+		user.insert(ignore_permissions=True)
+		frappe.log(f"Created user: {user_email}")
+	else:
+		user = frappe.get_doc("User", user_email)
+		user.enabled = 1
+		frappe.log(f"User {user_email} already exists, updating roles")
+
+	# Limited roles for demo user - dashboard and request management only
+	roles = [
+		"Council Staff",
+		"Lodgeick User",
+		"Desk User"
+	]
+
+	# Clear existing roles and add new ones
+	user.roles = []
+	for role in roles:
+		if frappe.db.exists("Role", role):
+			user.append("roles", {"role": role})
+
+	user.save(ignore_permissions=True)
+
+	# Set default password
+	from frappe.utils.password import update_password
+	update_password(user_email, "TaytayDemo2025")
+
+	frappe.log(f"Taytay demo user configured with {len(user.roles)} roles")
+
+
 def after_install():
 	"""
 	Called automatically after app installation.
@@ -124,6 +170,10 @@ def install_default_data(force=False):
 	# Setup Taytay admin user
 	frappe.log("Setting up Taytay admin user...")
 	setup_taytay_admin_user()
+
+	# Setup Taytay demo user (limited access)
+	frappe.log("Setting up Taytay demo user...")
+	setup_taytay_demo_user()
 
 	# Note: Condition template linking skipped - Request Type schema doesn't support it yet
 	# This feature may be added in a future version
