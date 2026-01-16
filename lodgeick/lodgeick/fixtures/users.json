@@ -20,5 +20,20 @@
       {"role": "System Manager"},
       {"role": "Workspace Manager"}
     ]
+  },
+  {
+    "doctype": "User",
+    "name": "taytay-demo@lodgeick.localhost",
+    "email": "taytay-demo@lodgeick.localhost",
+    "first_name": "Taytay",
+    "last_name": "Demo",
+    "enabled": 1,
+    "user_type": "System User",
+    "send_welcome_email": 0,
+    "roles": [
+      {"role": "Council Staff"},
+      {"role": "Lodgeick User"},
+      {"role": "Desk User"}
+    ]
   }
 ]
