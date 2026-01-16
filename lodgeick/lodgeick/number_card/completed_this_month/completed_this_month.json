@@ -5,7 +5,7 @@
  "document_type": "Request",
  "function": "Count",
  "filters_json": "[[\"Request\",\"workflow_state\",\"in\",[\"Approved\",\"Approved with Conditions\",\"Completed\"],false]]",
- "dynamic_filters_json": "[[\"Request\",\"submitted_date\",\"Timespan\",\"this month\",false]]",
+ "dynamic_filters_json": "[]",
  "is_public": 1,
  "is_standard": 1,
  "module": "Lodgeick",

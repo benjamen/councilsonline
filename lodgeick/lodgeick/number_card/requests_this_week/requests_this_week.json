@@ -5,7 +5,7 @@
  "document_type": "Request",
  "function": "Count",
  "filters_json": "[]",
- "dynamic_filters_json": "[[\"Request\",\"submitted_date\",\"Timespan\",\"this week\",false]]",
+ "dynamic_filters_json": "[]",
  "is_public": 1,
  "is_standard": 1,
  "module": "Lodgeick",
