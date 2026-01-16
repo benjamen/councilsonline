@@ -88,8 +88,8 @@ test.describe("Resource Consent Application - E2E Flow", () => {
 	})
 
 	test("should load the frontend application", async ({ page }) => {
-		// Check that the page loads
-		await expect(page).toHaveTitle(/Lodgeick/)
+		// Check that the page loads - title may vary (Lodgeick in prod, Frappe UI Starter in dev)
+		await expect(page).toHaveTitle(/Lodgeick|Frappe UI/)
 
 		// Check for main navigation or header
 		const header = page.locator('header, nav, [role="banner"]').first()

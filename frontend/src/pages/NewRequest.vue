@@ -180,9 +180,10 @@ import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router"
 
 import { useStepValidation } from "../composables/useStepValidation"
 import { useUserProfile } from "../composables/useUserProfile"
-import { useSiteCouncilStore } from "../stores/siteCouncil"
+import { useRequestModals } from "../composables/useRequestModals"
 // Store and composables
 import { useRequestStore } from "../stores/requestStore"
+import { useSiteCouncilStore } from "../stores/siteCouncil"
 
 // Components
 import RequestHeader from "../components/request/RequestHeader.vue"
@@ -221,12 +222,23 @@ const councilStore = useSiteCouncilStore()
 // Validation
 const { errors: validationErrors, validateStep } = useStepValidation()
 
+// Modal management (refactored to composable)
+const {
+	showSaveDraftModal,
+	showValidationModal,
+	showMeetingModal,
+	showSubmissionSuccessModal,
+	submissionResult,
+	handleBookMeeting,
+	handleMeetingBooked,
+	handleSaveDraft,
+	handleSaveAndClose,
+	handleSubmit,
+	handleViewRequestFromModal,
+	handleGoToDashboardFromModal,
+} = useRequestModals()
+
 // UI state
-const showSaveDraftModal = ref(false)
-const showValidationModal = ref(false)
-const showMeetingModal = ref(false)
-const showSubmissionSuccessModal = ref(false)
-const submissionResult = ref(null)
 const requestTypes = ref({ loading: false, data: [] })
 const selectedRequestTypeDetails = ref(null)
 
@@ -298,15 +310,6 @@ const shouldShowMeetingBanner = computed(() => {
 })
 
 // Methods
-function handleBookMeeting() {
-	showMeetingModal.value = true
-}
-
-function handleMeetingBooked(meetingData) {
-	console.log("Meeting booked:", meetingData)
-	// Optionally show a success message or refresh data
-}
-
 function getCurrentStepTitle() {
 	const index = store.currentStep
 	if (index >= 0 && index < stepTitles.value.length) {
@@ -435,73 +438,9 @@ function handlePrevious() {
 	store.previousStep()
 }
 
-async function handleSaveDraft() {
-	try {
-		await store.saveDraft()
-		// Redirect to request detail page to show Send Message and Book Meeting buttons
-		if (store.currentRequestId) {
-			router.push(`/request/${store.currentRequestId}`)
-		} else {
-			showSaveDraftModal.value = true
-		}
-	} catch (error) {
-		console.error("Failed to save draft:", error)
-	}
-}
-
-async function handleSaveAndClose() {
-	try {
-		await store.saveDraft()
-		store.reset() // Clear state after successful save
-		// Redirect to dashboard
-		router.push({ name: "Dashboard" })
-	} catch (error) {
-		console.error("Failed to save draft:", error)
-		// Don't reset on error - preserve state for retry
-	}
-}
-
-async function handleSubmit() {
-	// Validation logic (omitted for brevity)
-
-	try {
-		const result = await store.submitRequest()
-
-		// Store submission result for modal
-		submissionResult.value = result
-
-		// Show success modal with SLA info
-		showSubmissionSuccessModal.value = true
-	} catch (error) {
-		console.error("Failed to submit request:", error)
-	}
-}
-
 function goBack() {
 	store.reset() // Clear all state before navigation
 	router.push("/dashboard")
-}
-
-/**
- * Handle view request from success modal
- */
-function handleViewRequestFromModal(requestId) {
-	showSubmissionSuccessModal.value = false
-	router.push(`/request/${requestId}`)
-}
-
-/**
- * Handle go to dashboard from success modal
- */
-function handleGoToDashboardFromModal() {
-	showSubmissionSuccessModal.value = false
-	// Redirect to council-specific dashboard if available
-	const councilCode = store.formData.council
-	if (councilCode) {
-		router.push(`/council/${councilCode}/dashboard`)
-	} else {
-		router.push("/dashboard")
-	}
 }
 
 // Watch block for step changes

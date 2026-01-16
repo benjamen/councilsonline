@@ -4,12 +4,13 @@ import { expect, test as setup } from "@playwright/test"
 const AUTH_FILE = "playwright/.auth/user.json"
 
 // Environment configuration
-const FRAPPE_URL = process.env.FRAPPE_URL || "http://localhost:8000"
+// Note: When running `bench serve --port 8090`, both Frappe and frontend are on same port
+const FRAPPE_URL = process.env.FRAPPE_URL || "http://localhost:8090"
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:8090"
 
 // Test credentials - can be overridden via environment variables
 const TEST_USER = process.env.TEST_USER || "Administrator"
-const TEST_PASSWORD = process.env.TEST_PASSWORD || "admin"
+const TEST_PASSWORD = process.env.TEST_PASSWORD || "testpass123"
 
 setup("authenticate", async ({ page, context }) => {
 	console.log(`[Auth Setup] Starting authentication against ${FRAPPE_URL}`)
@@ -17,15 +18,18 @@ setup("authenticate", async ({ page, context }) => {
 	// Step 1: Login via Frappe desk to get session cookie
 	await page.goto(`${FRAPPE_URL}/login`)
 
-	// Fill in credentials
-	await page.fill("#login_email", TEST_USER)
-	await page.fill("#login_password", TEST_PASSWORD)
+	// Wait for login form to render (Frappe SPA)
+	await page.waitForLoadState("networkidle")
 
-	// Click login
-	await page.click('button[type="submit"]')
+	// Fill in credentials using getByPlaceholder for modern Frappe UI
+	await page.getByPlaceholder("jane@example.com").fill(TEST_USER)
+	await page.getByPlaceholder("•••••").fill(TEST_PASSWORD)
 
-	// Wait for successful Frappe login
-	await page.waitForURL(`${FRAPPE_URL}/app**`, { timeout: 15000 })
+	// Click login button
+	await page.getByRole("button", { name: "Login" }).click()
+
+	// Wait for successful Frappe login - could redirect to app or workspace
+	await page.waitForURL(/\/(app|workspace)/, { timeout: 15000 })
 	console.log("[Auth Setup] Frappe login successful")
 
 	// Step 2: Navigate to Vue frontend to verify session carries over
