@@ -10,6 +10,59 @@ import frappe
 from frappe import _
 
 
+def setup_taytay_admin_user():
+	"""
+	Create or update Taytay admin user with appropriate roles.
+	This user has access to council management features but not full admin access.
+	"""
+	user_email = "taytay-admin@lodgeick.localhost"
+
+	if not frappe.db.exists("User", user_email):
+		user = frappe.get_doc({
+			"doctype": "User",
+			"email": user_email,
+			"first_name": "Taytay",
+			"last_name": "Admin",
+			"enabled": 1,
+			"user_type": "System User",
+			"send_welcome_email": 0
+		})
+		user.insert(ignore_permissions=True)
+		frappe.log(f"Created user: {user_email}")
+	else:
+		user = frappe.get_doc("User", user_email)
+		user.enabled = 1
+		frappe.log(f"User {user_email} already exists, updating roles")
+
+	# Define roles for Taytay admin
+	roles = [
+		"Council Admin",
+		"Council Manager",
+		"Council Staff",
+		"Lodgeick Admin",
+		"Lodgeick Manager",
+		"Lodgeick User",
+		"Desk User",
+		"Report Manager",
+		"System Manager",
+		"Workspace Manager"
+	]
+
+	# Clear existing roles and add new ones
+	user.roles = []
+	for role in roles:
+		if frappe.db.exists("Role", role):
+			user.append("roles", {"role": role})
+
+	user.save(ignore_permissions=True)
+
+	# Set default password (user should change on first login)
+	from frappe.utils.password import update_password
+	update_password(user_email, "Taytay@Council2025!")
+
+	frappe.log(f"Taytay admin user configured with {len(user.roles)} roles")
+
+
 def after_install():
 	"""
 	Called automatically after app installation.
@@ -67,6 +120,10 @@ def install_default_data(force=False):
 	frappe.log("Creating Request workflow...")
 	from lodgeick.lodgeick.fixtures.create_unified_workflow import create_workflow
 	create_workflow()
+
+	# Setup Taytay admin user
+	frappe.log("Setting up Taytay admin user...")
+	setup_taytay_admin_user()
 
 	# Note: Condition template linking skipped - Request Type schema doesn't support it yet
 	# This feature may be added in a future version

@@ -1,0 +1,24 @@
+[
+  {
+    "doctype": "User",
+    "name": "taytay-admin@lodgeick.localhost",
+    "email": "taytay-admin@lodgeick.localhost",
+    "first_name": "Taytay",
+    "last_name": "Admin",
+    "enabled": 1,
+    "user_type": "System User",
+    "send_welcome_email": 0,
+    "roles": [
+      {"role": "Council Admin"},
+      {"role": "Council Manager"},
+      {"role": "Council Staff"},
+      {"role": "Lodgeick Admin"},
+      {"role": "Lodgeick Manager"},
+      {"role": "Lodgeick User"},
+      {"role": "Desk User"},
+      {"role": "Report Manager"},
+      {"role": "System Manager"},
+      {"role": "Workspace Manager"}
+    ]
+  }
+]

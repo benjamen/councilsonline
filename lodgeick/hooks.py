@@ -107,13 +107,21 @@ after_install = "lodgeick.install.after_install"
 # --------
 # Load fixtures from JSON files on migrate/install
 fixtures = [
+	# Core Frappe fixtures
 	{"dt": "Print Format", "filters": [["module", "=", "Lodgeick"]]},
 	{"dt": "Workspace", "filters": [["module", "=", "Lodgeick"]]},
 	{"dt": "Number Card", "filters": [["module", "=", "Lodgeick"]]},
 	{"dt": "Dashboard Chart", "filters": [["module", "=", "Lodgeick"]]},
+	{"dt": "Role", "filters": [["name", "in", [
+		"Lodgeick Admin", "Lodgeick Manager", "Lodgeick User",
+		"Council Admin", "Council Manager", "Council Staff", "Council Planner",
+		"Applicant", "Requester", "Agent"
+	]]]},
+	{"dt": "Workflow", "filters": [["document_type", "in", ["Request", "SPISC Application", "Resource Consent Application"]]]},
+	# Users (Taytay admin)
+	"lodgeick.lodgeick.lodgeick.fixtures.users",
+	# Lodgeick configuration
 	"lodgeick.lodgeick.lodgeick.fixtures.request_types",
-	# REMOVED: Multi-instance councils fixture (now using Single DocType)
-	# "lodgeick.lodgeick.lodgeick.fixtures.councils",
 	"lodgeick.lodgeick.lodgeick.fixtures.taytay.taytay_council",  # Single DocType Council
 	"lodgeick.lodgeick.lodgeick.fixtures.council_request_types",
 	"lodgeick.lodgeick.lodgeick.fixtures.assessment_stage_types",
