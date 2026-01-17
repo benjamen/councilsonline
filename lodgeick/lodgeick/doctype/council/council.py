@@ -38,6 +38,9 @@ class Council(Document):
 		if not self.secondary_color:
 			self.secondary_color = "#1E40AF"  # Darker blue
 
+		if not self.accent_color:
+			self.accent_color = "#059669"  # Emerald green for highlights
+
 	def is_license_valid(self):
 		"""Check if council license is currently valid"""
 		if not self.is_active:

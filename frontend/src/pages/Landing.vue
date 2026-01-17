@@ -1,18 +1,21 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100">
+  <div class="min-h-screen bg-gradient-to-br from-brand-light to-slate-100">
     <!-- Header -->
     <header class="bg-white shadow-sm">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div class="flex justify-between items-center">
           <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+            <div v-if="logo" class="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden">
+              <img :src="logo" :alt="displayName" class="w-full h-full object-contain" />
+            </div>
+            <div v-else class="w-10 h-10 bg-brand rounded-lg flex items-center justify-center">
               <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
             <div>
-              <h1 class="text-xl font-bold text-gray-900">Councils Online</h1>
-              <p class="text-xs text-gray-500">Council Request Management</p>
+              <h1 class="text-xl font-bold text-gray-900">{{ displayName }}</h1>
+              <p class="text-xs text-gray-500">{{ displayTagline }}</p>
             </div>
           </div>
           <nav class="hidden md:flex items-center space-x-6">
@@ -40,15 +43,15 @@
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
       <div class="grid md:grid-cols-2 gap-12 items-center">
         <div>
-          <div class="inline-block mb-4 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+          <div class="inline-block mb-4 px-3 py-1 bg-brand-light text-brand rounded-full text-sm font-medium">
             Modern Council Request Management
           </div>
           <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
             Request Council Services
-            <span class="text-blue-600">Online</span>
+            <span class="text-brand">Online</span>
           </h2>
           <p class="text-xl text-gray-600 mb-8 leading-relaxed">
-            Councils Online is a comprehensive platform for ratepayers, civilians, and suppliers to request
+            {{ displayName }} is a comprehensive platform for ratepayers, civilians, and suppliers to request
             council services digitally. Submit consents, service requests, and applications online.
             Track progress and manage all your council interactions in one place.
           </p>
@@ -138,7 +141,7 @@
                 <span class="text-xs font-medium text-gray-900">12 days average</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-2">
-                <div class="bg-blue-600 h-2 rounded-full" style="width: 60%"></div>
+                <div class="bg-brand h-2 rounded-full" style="width: 60%"></div>
               </div>
             </div>
           </div>
@@ -234,18 +237,18 @@
     </section>
 
     <!-- CTA Section -->
-    <section class="bg-gradient-to-r from-blue-600 to-blue-700 py-16">
+    <section class="bg-gradient-to-r from-brand to-brand-dark py-16">
       <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h3 class="text-3xl md:text-4xl font-bold text-white mb-4">
           Ready to Get Started?
         </h3>
-        <p class="text-xl text-blue-100 mb-8">
-          Join thousands of ratepayers and suppliers using Councils Online for faster, easier council service requests
+        <p class="text-xl text-white/80 mb-8">
+          Join thousands of ratepayers and suppliers using {{ displayName }} for faster, easier council service requests
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
           <button
             @click="goToRegister"
-            class="inline-flex items-center justify-center gap-2 h-12 px-6 text-lg font-medium rounded-md transition-colors bg-white text-blue-600 hover:bg-gray-100 focus:outline-none focus-visible:ring focus-visible:ring-blue-300"
+            class="inline-flex items-center justify-center gap-2 h-12 px-6 text-lg font-medium rounded-md transition-colors bg-white text-brand hover:bg-gray-100 focus:outline-none focus-visible:ring focus-visible:ring-white/50"
           >
             Create Free Account
           </button>
@@ -264,7 +267,7 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid md:grid-cols-4 gap-8">
           <div>
-            <h4 class="text-white font-bold mb-4">Councils Online</h4>
+            <h4 class="text-white font-bold mb-4">{{ displayName }}</h4>
             <p class="text-sm text-gray-400">
               Modern request management platform connecting ratepayers, civilians, and suppliers with their councils
             </p>
@@ -295,7 +298,7 @@
           </div>
         </div>
         <div class="border-t border-gray-800 mt-12 pt-8 text-center text-sm text-gray-500">
-          <p>&copy; 2025 Councils Online. All rights reserved. Built with ❤️ in Aotearoa.</p>
+          <p>&copy; {{ new Date().getFullYear() }} {{ displayName }}. All rights reserved.</p>
         </div>
       </div>
     </footer>
@@ -305,10 +308,17 @@
 <script setup>
 import { Button } from "frappe-ui"
 import { useRouter } from "vue-router"
+import { computed } from "vue"
 import FeatureCard from "../components/FeatureCard.vue"
 import ProcessStep from "../components/ProcessStep.vue"
+import { useTheme } from "@/composables/useTheme"
 
 const router = useRouter()
+const { appName, tagline, logo, branding } = useTheme()
+
+// Dynamic text based on branding
+const displayName = computed(() => appName.value || "Councils Online")
+const displayTagline = computed(() => tagline.value || "Council Request Management")
 
 const goToLogin = () => {
 	router.push({ name: "Login" })

@@ -37,10 +37,17 @@ export const useSiteCouncilStore = defineStore("siteCouncil", {
 		 * Get council branding/theme colors
 		 */
 		branding: (state) => ({
-			primaryColor: state.council?.primary_color || "#0066CC",
+			// Colors
+			primaryColor: state.council?.primary_color || "#2563EB",
 			secondaryColor: state.council?.secondary_color || "#1E40AF",
-			logo: state.council?.logo,
+			accentColor: state.council?.accent_color || "#059669",
+			// Identity
+			appName: state.council?.app_name || null,
 			councilName: state.council?.council_name || "Council",
+			tagline: state.council?.tagline || null,
+			// Assets
+			logo: state.council?.logo || null,
+			favicon: state.council?.favicon || null,
 		}),
 
 		/**
@@ -48,7 +55,9 @@ export const useSiteCouncilStore = defineStore("siteCouncil", {
 		 */
 		meetingConfig: (state) => ({
 			defaultDuration: state.council?.default_meeting_duration || 60,
-			availableDurations: state.council?.available_meeting_durations?.split(',').map(d => parseInt(d.trim())) || [30, 60, 90],
+			availableDurations: state.council?.available_meeting_durations
+				?.split(",")
+				.map((d) => Number.parseInt(d.trim())) || [30, 60, 90],
 			bufferTime: state.council?.meeting_buffer_time || 15,
 		}),
 	},

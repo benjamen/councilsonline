@@ -21,10 +21,14 @@
   "physical_address",
   "website",
   "branding_section",
+  "app_name",
+  "tagline",
   "logo",
   "column_break_3",
   "primary_color",
   "secondary_color",
+  "accent_color",
+  "favicon",
   "letterhead",
   "website_portal_section",
   "redirect_dashboard_to_council",
@@ -143,6 +147,18 @@
    "label": "Branding"
   },
   {
+   "description": "Display name for the portal (e.g., CouncilsOnline, Auckland Planning Portal)",
+   "fieldname": "app_name",
+   "fieldtype": "Data",
+   "label": "App Name"
+  },
+  {
+   "description": "Optional tagline displayed on landing page",
+   "fieldname": "tagline",
+   "fieldtype": "Small Text",
+   "label": "Tagline"
+  },
+  {
    "fieldname": "logo",
    "fieldtype": "Attach Image",
    "label": "Logo"
@@ -162,6 +178,18 @@
    "fieldname": "secondary_color",
    "fieldtype": "Color",
    "label": "Secondary Color"
+  },
+  {
+   "description": "Accent color for highlights, badges, and alerts",
+   "fieldname": "accent_color",
+   "fieldtype": "Color",
+   "label": "Accent Color"
+  },
+  {
+   "description": "Browser favicon (recommended: 32x32 PNG)",
+   "fieldname": "favicon",
+   "fieldtype": "Attach Image",
+   "label": "Favicon"
   },
   {
    "description": "Optional letterhead for official documents",

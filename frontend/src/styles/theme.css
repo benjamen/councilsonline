@@ -1,0 +1,93 @@
+/**
+ * Dynamic Theming CSS Variables
+ * These variables are updated at runtime by useTheme composable
+ * based on Council branding settings.
+ */
+
+:root {
+  /* Primary colors - main brand color */
+  --color-primary: #2563EB;
+  --color-primary-hover: #1D4ED8;
+  --color-primary-light: #DBEAFE;
+  --color-primary-dark: #1E40AF;
+
+  /* Secondary colors */
+  --color-secondary: #1E40AF;
+  --color-secondary-hover: #1E3A8A;
+  --color-secondary-light: #E0E7FF;
+
+  /* Accent colors - for highlights, badges, success states */
+  --color-accent: #059669;
+  --color-accent-hover: #047857;
+  --color-accent-light: #D1FAE5;
+
+  /* Text colors using primary */
+  --color-text-primary: var(--color-primary);
+  --color-text-primary-hover: var(--color-primary-hover);
+
+  /* Background colors using primary */
+  --color-bg-primary: var(--color-primary);
+  --color-bg-primary-light: var(--color-primary-light);
+  --color-bg-primary-hover: var(--color-primary-hover);
+
+  /* Border colors */
+  --color-border-primary: var(--color-primary);
+  --color-border-primary-light: var(--color-primary-light);
+
+  /* Ring/focus colors */
+  --color-ring-primary: var(--color-primary);
+}
+
+/* Utility classes that use CSS variables */
+.bg-primary {
+  background-color: var(--color-primary) !important;
+}
+
+.bg-primary-hover:hover {
+  background-color: var(--color-primary-hover) !important;
+}
+
+.bg-primary-light {
+  background-color: var(--color-primary-light) !important;
+}
+
+.text-primary {
+  color: var(--color-primary) !important;
+}
+
+.text-primary-hover:hover {
+  color: var(--color-primary-hover) !important;
+}
+
+.border-primary {
+  border-color: var(--color-primary) !important;
+}
+
+.ring-primary {
+  --tw-ring-color: var(--color-primary) !important;
+}
+
+/* Accent utility classes */
+.bg-accent {
+  background-color: var(--color-accent) !important;
+}
+
+.text-accent {
+  color: var(--color-accent) !important;
+}
+
+/* Button overrides for dynamic theming */
+.btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-hover);
+}
+
+/* Focus ring override */
+.focus-primary:focus {
+  --tw-ring-color: var(--color-primary);
+  --tw-ring-opacity: 0.5;
+}

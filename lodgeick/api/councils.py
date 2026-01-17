@@ -63,12 +63,19 @@ def get_council():
         "council_code": council.council_code,
         "council_name": council.council_name,
         "official_name": council.official_name,
+        # Branding
+        "app_name": council.app_name,
+        "tagline": council.tagline,
         "logo": council.logo,
+        "favicon": council.favicon,
         "primary_color": council.primary_color,
         "secondary_color": council.secondary_color,
+        "accent_color": council.accent_color,
+        # Contact
         "website": council.website,
         "contact_email": council.contact_email,
         "contact_phone": council.contact_phone,
+        # Portal settings
         "redirect_dashboard_to_council": council.redirect_dashboard_to_council,
         "allow_system_wide_dashboard": council.allow_system_wide_dashboard,
         "show_council_switcher": council.show_council_switcher,

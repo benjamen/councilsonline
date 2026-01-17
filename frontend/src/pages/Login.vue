@@ -1,15 +1,18 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100 flex items-center justify-center p-4">
+  <div class="min-h-screen bg-gradient-to-br from-brand-light to-slate-100 flex items-center justify-center p-4">
     <div class="w-full max-w-md">
       <!-- Logo & Header -->
       <div class="text-center mb-8">
-        <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4 shadow-lg">
+        <div v-if="logo" class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4 shadow-lg overflow-hidden">
+          <img :src="logo" :alt="displayName" class="w-full h-full object-contain" />
+        </div>
+        <div v-else class="inline-flex items-center justify-center w-16 h-16 bg-brand rounded-2xl mb-4 shadow-lg">
           <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
         </div>
         <h1 class="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
-        <p class="text-gray-600">Sign in to your Lodgeick account</p>
+        <p class="text-gray-600">Sign in to your {{ displayName }} account</p>
       </div>
 
       <!-- Login Card -->
@@ -36,7 +39,7 @@
               <label for="password" class="block text-sm font-medium text-gray-700">
                 Password
               </label>
-              <a href="#" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
+              <a href="#" class="text-sm text-brand hover:text-brand-hover font-medium">
                 Forgot password?
               </a>
             </div>
@@ -56,7 +59,7 @@
               id="remember-me"
               name="remember-me"
               type="checkbox"
-              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              class="h-4 w-4 text-brand focus:ring-brand border-gray-300 rounded"
             />
             <label for="remember-me" class="ml-2 block text-sm text-gray-700">
               Remember me for 30 days
@@ -78,7 +81,7 @@
             type="submit"
             :loading="session.login.loading"
             variant="solid"
-            class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-base font-medium"
+            class="w-full bg-brand hover:bg-brand-hover text-white py-3 text-base font-medium"
           >
             <template v-if="!session.login.loading">
               Sign In
@@ -120,7 +123,7 @@
       <div class="text-center mt-6">
         <p class="text-sm text-gray-600">
           Don't have an account?
-          <router-link :to="{ name: 'Register' }" class="font-medium text-blue-600 hover:text-blue-700">
+          <router-link :to="{ name: 'Register' }" class="font-medium text-brand hover:text-brand-hover">
             Create one now
           </router-link>
         </p>
@@ -141,11 +144,15 @@
 
 <script setup>
 import { Button, Input } from "frappe-ui"
-import { watch } from "vue"
+import { watch, computed } from "vue"
 import { useRouter } from "vue-router"
 import { session } from "../data/session"
+import { useTheme } from "@/composables/useTheme"
 
 const router = useRouter()
+const { appName, logo, branding } = useTheme()
+
+const displayName = computed(() => appName.value || "Councils Online")
 
 function submit(e) {
 	const formData = new FormData(e.target)
