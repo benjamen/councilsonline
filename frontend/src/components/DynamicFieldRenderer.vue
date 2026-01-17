@@ -40,9 +40,9 @@
         @validate="handleFieldValidation(field)"
       />
 
-      <!-- Text / Textarea -->
+      <!-- Text / Textarea / Text Editor / Small Text / Long Text -->
       <TextareaField
-        v-else-if="field.field_type === 'Text'"
+        v-else-if="['Text', 'Text Editor', 'Small Text', 'Long Text'].includes(field.field_type)"
         :field="field"
         v-model="localData[field.field_name]"
         :validation-error="getValidationError(field.field_name)"
@@ -122,12 +122,12 @@ import CameraUpload from "./CameraUpload.vue"
 import PhilippinesAddressInput from "./PhilippinesAddressInput.vue"
 import PropertyAddressSelector from "./PropertyAddressSelector.vue"
 import Tooltip from "./Tooltip.vue"
-import TextField from "./fields/TextField.vue"
-import SelectField from "./fields/SelectField.vue"
 import CheckboxField from "./fields/CheckboxField.vue"
-import TextareaField from "./fields/TextareaField.vue"
 import DateField from "./fields/DateField.vue"
 import NumberField from "./fields/NumberField.vue"
+import SelectField from "./fields/SelectField.vue"
+import TextField from "./fields/TextField.vue"
+import TextareaField from "./fields/TextareaField.vue"
 
 const props = defineProps({
 	fields: {
@@ -329,28 +329,37 @@ const getFileArray = (fieldName) => {
 	// If it's undefined or null, return empty array
 	if (!value) return []
 	// If it's a string (file URL), convert to file object format
-	if (typeof value === 'string') {
-		return [{
-			file_url: value,
-			name: value.split('/').pop(),
-			preview: value
-		}]
+	if (typeof value === "string") {
+		return [
+			{
+				file_url: value,
+				name: value.split("/").pop(),
+				preview: value,
+			},
+		]
 	}
 	return []
 }
 
 // Update file field when CameraUpload emits update
 const updateFileField = (fieldName, fileArray) => {
-	console.log('[DynamicFieldRenderer] updateFileField called:', fieldName, fileArray)
+	console.log(
+		"[DynamicFieldRenderer] updateFileField called:",
+		fieldName,
+		fileArray,
+	)
 
 	// Immediately convert file array to URL string to avoid timing issues
 	if (Array.isArray(fileArray) && fileArray.length > 0) {
 		// Check if files have been uploaded (have file_url)
-		const uploadedFiles = fileArray.filter(f => f.file_url)
+		const uploadedFiles = fileArray.filter((f) => f.file_url)
 		if (uploadedFiles.length > 0) {
 			// For single file uploads, store just the URL string
 			const fileUrl = uploadedFiles[0].file_url
-			console.log('[DynamicFieldRenderer] Converting uploaded file to URL:', fileUrl)
+			console.log(
+				"[DynamicFieldRenderer] Converting uploaded file to URL:",
+				fileUrl,
+			)
 			localData.value[fieldName] = fileUrl
 			return
 		}
@@ -362,61 +371,72 @@ const updateFileField = (fieldName, fileArray) => {
 
 // Handle file upload to Frappe
 const handleFileUploadToFrappe = async (fileData, resolveCallback) => {
-	console.log('[DynamicFieldRenderer] handleFileUploadToFrappe called with:', fileData)
+	console.log(
+		"[DynamicFieldRenderer] handleFileUploadToFrappe called with:",
+		fileData,
+	)
 
 	try {
-		console.log('[DynamicFieldRenderer] Starting file upload:', fileData.name)
+		console.log("[DynamicFieldRenderer] Starting file upload:", fileData.name)
 
 		const formData = new FormData()
-		formData.append('file', fileData.file)
-		formData.append('is_private', '0')
-		formData.append('folder', 'Home/Attachments')
+		formData.append("file", fileData.file)
+		formData.append("is_private", "0")
+		formData.append("folder", "Home/Attachments")
 
-		console.log('[DynamicFieldRenderer] Uploading to /api/method/upload_file...')
+		console.log(
+			"[DynamicFieldRenderer] Uploading to /api/method/upload_file...",
+		)
 
 		// Upload file to Frappe
-		const response = await fetch('/api/method/upload_file', {
-			method: 'POST',
-			credentials: 'include',
+		const response = await fetch("/api/method/upload_file", {
+			method: "POST",
+			credentials: "include",
 			headers: {
-				'X-Frappe-CSRF-Token': window.csrf_token
+				"X-Frappe-CSRF-Token": window.csrf_token,
 			},
-			body: formData
+			body: formData,
 		})
 
-		console.log('[DynamicFieldRenderer] Upload response status:', response.status)
+		console.log(
+			"[DynamicFieldRenderer] Upload response status:",
+			response.status,
+		)
 
 		if (!response.ok) {
 			const errorText = await response.text()
-			console.error('[DynamicFieldRenderer] Upload failed:', errorText)
+			console.error("[DynamicFieldRenderer] Upload failed:", errorText)
 			throw new Error(`Upload failed (${response.status}): ${errorText}`)
 		}
 
 		const result = await response.json()
-		console.log('[DynamicFieldRenderer] Upload response:', result)
+		console.log("[DynamicFieldRenderer] Upload response:", result)
 
 		if (result.message && result.message.file_url) {
 			// Store the file URL in form data
-			console.log('[DynamicFieldRenderer] File uploaded successfully:', result.message.file_url)
+			console.log(
+				"[DynamicFieldRenderer] File uploaded successfully:",
+				result.message.file_url,
+			)
 
 			// Update the file data with the uploaded URL
 			fileData.file_url = result.message.file_url
 			fileData.file_name = result.message.file_name
 
-			console.log('[DynamicFieldRenderer] Updated fileData:', fileData)
+			console.log("[DynamicFieldRenderer] Updated fileData:", fileData)
 		}
 
 		// Resolve the upload promise to clear loading state
-		console.log('[DynamicFieldRenderer] Calling resolveCallback()')
+		console.log("[DynamicFieldRenderer] Calling resolveCallback()")
 		resolveCallback()
 
-		console.log('[DynamicFieldRenderer] File upload completed successfully')
+		console.log("[DynamicFieldRenderer] File upload completed successfully")
 	} catch (error) {
-		console.error('[DynamicFieldRenderer] File upload error:', error)
+		console.error("[DynamicFieldRenderer] File upload error:", error)
 		alert(`Failed to upload file: ${error.message}`)
 
 		// Still resolve to clear loading state even on error
-		console.log('[DynamicFieldRenderer] Calling resolveCallback() after error')
+		console.log("[DynamicFieldRenderer] Calling resolveCallback() after error")
 		resolveCallback()
 	}
 }
@@ -430,17 +450,20 @@ watch(
 			if (Array.isArray(value) && value.length > 0 && value[0].file_url) {
 				// This is a file upload array with uploaded files
 				// Extract just the file URLs for storage
-				const fileUrls = value.map(f => f.file_url).filter(Boolean)
+				const fileUrls = value.map((f) => f.file_url).filter(Boolean)
 				if (fileUrls.length > 0) {
 					// For single file uploads, store just the URL string
 					// For multiple files, store as array
 					localData.value[key] = fileUrls.length === 1 ? fileUrls[0] : fileUrls
-					console.log(`[DynamicFieldRenderer] Converted file array to URL for ${key}:`, localData.value[key])
+					console.log(
+						`[DynamicFieldRenderer] Converted file array to URL for ${key}:`,
+						localData.value[key],
+					)
 				}
 			}
 		})
 	},
-	{ deep: true }
+	{ deep: true },
 )
 
 // Set default values on mount
