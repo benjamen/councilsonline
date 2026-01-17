@@ -5,14 +5,17 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center py-4">
           <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+            <div v-if="logo" class="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden">
+              <img :src="logo" :alt="displayName" class="w-full h-full object-contain" />
+            </div>
+            <div v-else class="w-10 h-10 bg-brand rounded-lg flex items-center justify-center">
               <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
             <div>
-              <h1 class="text-xl font-bold text-gray-900">Councils Online</h1>
-              <p class="text-xs text-gray-500">Council Request Management</p>
+              <h1 class="text-xl font-bold text-gray-900">{{ displayName }}</h1>
+              <p class="text-xs text-gray-500">{{ displayTagline }}</p>
             </div>
           </div>
 
@@ -22,7 +25,7 @@
               href="https://taytay.gov.ph"
               target="_blank"
               rel="noopener noreferrer"
-              class="hidden md:flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors px-3 py-2 rounded-md hover:bg-blue-50"
+              class="hidden md:flex items-center space-x-2 text-gray-600 hover:text-brand transition-colors px-3 py-2 rounded-md hover:bg-brand-light"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -45,8 +48,8 @@
             <Dropdown :options="userMenuOptions">
               <template v-slot="{ open }">
                 <button class="flex items-center space-x-2 text-gray-700 hover:text-gray-900">
-                  <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                    <span class="text-sm font-medium text-blue-600">{{ userInitials }}</span>
+                  <div class="w-8 h-8 bg-brand-light rounded-full flex items-center justify-center">
+                    <span class="text-sm font-medium text-brand">{{ userInitials }}</span>
                   </div>
                   <span class="text-sm font-medium">{{ userName }}</span>
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -116,7 +119,7 @@
 
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Type</label>
-            <select v-model="filterType" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <select v-model="filterType" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand">
               <option value="">All Types</option>
               <option value="Resource Consent">Resource Consent</option>
               <option value="Building Consent">Building Consent</option>
@@ -128,12 +131,12 @@
       <!-- Requests List -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-200">
         <div class="px-6 py-4 border-b border-gray-200">
-          <h3 class="text-lg font-semibold text-gray-900">Councils Online</h3>
+          <h3 class="text-lg font-semibold text-gray-900">Your Requests</h3>
         </div>
 
         <!-- Loading State -->
         <div v-if="requests.loading" class="p-12 text-center">
-          <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-brand"></div>
           <p class="mt-4 text-gray-500">Loading applications...</p>
         </div>
 
@@ -167,7 +170,7 @@
             <tbody class="bg-white divide-y divide-gray-200">
               <tr v-for="request in filteredRequests" :key="request.name" class="hover:bg-gray-50 transition cursor-pointer" @click="viewRequest(request.name)">
                 <td class="px-4 py-3 whitespace-nowrap">
-                  <div class="text-sm font-medium text-blue-600">{{ request.request_number }}</div>
+                  <div class="text-sm font-medium text-brand">{{ request.request_number }}</div>
                 </td>
                 <td class="px-4 py-3 max-w-xs">
                   <div class="text-sm text-gray-900 truncate" :title="request.request_type">
@@ -184,7 +187,7 @@
                   <div class="text-sm font-medium text-gray-900">{{ request.working_days_elapsed || 0 }} days</div>
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
-                  <button @click.stop="viewRequest(request.name)" class="text-blue-600 hover:text-blue-900 mr-3">
+                  <button @click.stop="viewRequest(request.name)" class="text-brand hover:text-brand-hover mr-3">
                     View
                   </button>
                   <button v-if="request.status === 'Draft'" @click.stop="editRequest(request.name)" class="text-gray-600 hover:text-gray-900">
@@ -208,8 +211,13 @@ import StatCard from "../components/StatCard.vue"
 import StatusBadge from "../components/StatusBadge.vue"
 import { session } from "../data/session"
 import { requestService } from "../services"
+import { useTheme } from "@/composables/useTheme"
 
 const router = useRouter()
+const { appName, tagline, logo } = useTheme()
+
+const displayName = computed(() => appName.value || "Councils Online")
+const displayTagline = computed(() => tagline.value || "Council Request Management")
 
 // User info
 const userName = computed(() => {

@@ -1,35 +1,38 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100 flex items-center justify-center p-4">
+  <div class="min-h-screen bg-gradient-to-br from-brand-light to-slate-100 flex items-center justify-center p-4">
     <div class="w-full max-w-2xl">
       <!-- Logo & Header -->
       <div class="text-center mb-8">
-        <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4 shadow-lg">
+        <div v-if="logo" class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4 shadow-lg overflow-hidden">
+          <img :src="logo" :alt="displayName" class="w-full h-full object-contain" />
+        </div>
+        <div v-else class="inline-flex items-center justify-center w-16 h-16 bg-brand rounded-2xl mb-4 shadow-lg">
           <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
         </div>
         <h1 class="text-3xl font-bold text-gray-900 mb-2">Create Your Account</h1>
-        <p class="text-gray-600">Join thousands using Lodgeick for council requests</p>
+        <p class="text-gray-600">Join thousands using {{ displayName }} for council requests</p>
       </div>
 
       <!-- Requester vs Agent Selection -->
       <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100 mb-6">
         <h2 class="text-lg font-semibold text-gray-900 mb-4 text-center">Choose Account Type</h2>
         <div class="grid grid-cols-2 gap-4">
-          <div class="p-6 border-2 border-blue-600 bg-blue-50 rounded-lg">
+          <div class="p-6 border-2 border-brand bg-brand-light rounded-lg">
             <div class="text-center">
-              <svg class="w-12 h-12 mx-auto mb-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-12 h-12 mx-auto mb-3 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
               <h3 class="text-lg font-semibold text-gray-900 mb-2">Register as Requester</h3>
               <p class="text-sm text-gray-600 mb-4">Submit requests for yourself or on behalf of an organization</p>
-              <div class="text-sm text-blue-900 font-medium">✓ Currently selected</div>
+              <div class="text-sm text-brand-dark font-medium">✓ Currently selected</div>
             </div>
           </div>
           <button
             type="button"
             @click="$router.push({ name: 'CompanyRegistration' })"
-            class="p-6 border-2 border-gray-200 hover:border-blue-300 hover:bg-blue-50 rounded-lg transition text-left"
+            class="p-6 border-2 border-gray-200 hover:border-brand hover:bg-brand-light rounded-lg transition text-left"
           >
             <div class="text-center">
               <svg class="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -37,7 +40,7 @@
               </svg>
               <h3 class="text-lg font-semibold text-gray-900 mb-2">Register as Agent</h3>
               <p class="text-sm text-gray-600 mb-4">Consultants or representatives submitting on behalf of clients</p>
-              <div class="text-sm text-blue-600 font-medium">Click to register as agent →</div>
+              <div class="text-sm text-brand font-medium">Click to register as agent →</div>
             </div>
           </button>
         </div>
@@ -118,7 +121,7 @@
             type="submit"
             :loading="isLoading"
             variant="solid"
-            class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-base font-medium"
+            class="w-full bg-brand hover:bg-brand-hover text-white py-3 text-base font-medium"
           >
             <template v-if="!isLoading">
               Create Account
@@ -160,7 +163,7 @@
       <div class="text-center mt-6">
         <p class="text-sm text-gray-600">
           Already have an account?
-          <router-link :to="{ name: 'Login' }" class="font-medium text-blue-600 hover:text-blue-700">
+          <router-link :to="{ name: 'Login' }" class="font-medium text-brand hover:text-brand-hover">
             Sign in
           </router-link>
         </p>
@@ -184,21 +187,25 @@ import { Button, Input } from "frappe-ui"
 import { computed, onMounted, ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import AddressLookup from "../components/AddressLookup.vue"
-import AccountTypeSelector from "../components/register/AccountTypeSelector.vue"
-import PersonalInfoFields from "../components/register/PersonalInfoFields.vue"
-import PropertySection from "../components/register/PropertySection.vue"
 import AddPropertyModal from "../components/company/AddPropertyModal.vue"
+import AccountTypeSelector from "../components/register/AccountTypeSelector.vue"
 import EntityDetailsFields from "../components/register/EntityDetailsFields.vue"
 import PasswordFields from "../components/register/PasswordFields.vue"
+import PersonalInfoFields from "../components/register/PersonalInfoFields.vue"
+import PropertySection from "../components/register/PropertySection.vue"
 import TermsCheckbox from "../components/register/TermsCheckbox.vue"
 import {
 	validateEmail,
 	validateNZPhoneNumber,
 	validatePassword,
 } from "../utils/validation"
+import { useTheme } from "@/composables/useTheme"
 
 const router = useRouter()
 const route = useRoute()
+const { appName, logo } = useTheme()
+
+const displayName = computed(() => appName.value || "Councils Online")
 
 const requesterType = ref("Individual")
 const selectedAddress = ref(null)
