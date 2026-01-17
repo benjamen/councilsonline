@@ -48,6 +48,31 @@ export const useSiteCouncilStore = defineStore("siteCouncil", {
 			// Assets
 			logo: state.council?.logo || null,
 			favicon: state.council?.favicon || null,
+			// Landing Page - Hero
+			heroTitle: state.council?.hero_title || null,
+			heroSubtitle: state.council?.hero_subtitle || null,
+			heroDescription: state.council?.hero_description || null,
+			heroImage: state.council?.hero_image || null,
+			ctaPrimaryText: state.council?.cta_primary_text || "Get Started",
+			ctaSecondaryText: state.council?.cta_secondary_text || "Learn More",
+			// Landing Page - Features
+			feature1Title: state.council?.feature_1_title || null,
+			feature1Description: state.council?.feature_1_description || null,
+			feature2Title: state.council?.feature_2_title || null,
+			feature2Description: state.council?.feature_2_description || null,
+			feature3Title: state.council?.feature_3_title || null,
+			feature3Description: state.council?.feature_3_description || null,
+			feature4Title: state.council?.feature_4_title || null,
+			feature4Description: state.council?.feature_4_description || null,
+			// Footer Content
+			footerTagline: state.council?.footer_tagline || null,
+			supportEmail: state.council?.support_email || null,
+			supportPhone: state.council?.support_phone || null,
+			footerAddress: state.council?.footer_address || null,
+			// Contact (existing)
+			website: state.council?.website || null,
+			contactEmail: state.council?.contact_email || null,
+			contactPhone: state.council?.contact_phone || null,
 		}),
 
 		/**

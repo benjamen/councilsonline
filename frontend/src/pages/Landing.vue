@@ -44,16 +44,14 @@
       <div class="grid md:grid-cols-2 gap-12 items-center">
         <div>
           <div class="inline-block mb-4 px-3 py-1 bg-brand-light text-brand rounded-full text-sm font-medium">
-            Modern Council Request Management
+            {{ displayHeroSubtitle }}
           </div>
           <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-            Request Council Services
+            {{ displayHeroTitle }}
             <span class="text-brand">Online</span>
           </h2>
           <p class="text-xl text-gray-600 mb-8 leading-relaxed">
-            {{ displayName }} is a comprehensive platform for ratepayers, civilians, and suppliers to request
-            council services digitally. Submit consents, service requests, and applications online.
-            Track progress and manage all your council interactions in one place.
+            {{ displayHeroDescription }}
           </p>
           <div class="flex flex-col sm:flex-row gap-4">
             <Button @click="goToRegister" size="lg" variant="solid" theme="blue">
@@ -62,7 +60,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                 </svg>
               </template>
-              Create Account
+              {{ displayCtaPrimary }}
             </Button>
             <Button @click="goToLogin" size="lg" variant="outline" theme="gray">
               <template #prefix>
@@ -70,7 +68,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
                 </svg>
               </template>
-              Sign In
+              {{ displayCtaSecondary }}
             </Button>
           </div>
 
@@ -169,23 +167,23 @@
         <div class="grid md:grid-cols-3 gap-8">
           <FeatureCard
             icon="file-text"
-            title="Digital Requests"
-            description="Submit consents, service requests, and applications online with guided forms and instant validation"
+            :title="displayFeature1Title"
+            :description="displayFeature1Description"
           />
           <FeatureCard
             icon="clock"
-            title="Real-time Tracking"
-            description="Monitor your request status, processing timeline, and receive instant notifications"
+            :title="displayFeature2Title"
+            :description="displayFeature2Description"
           />
           <FeatureCard
             icon="credit-card"
-            title="Secure Payments"
-            description="Pay fees and invoices online with credit card or bank transfer, with instant receipt generation"
+            :title="displayFeature3Title"
+            :description="displayFeature3Description"
           />
           <FeatureCard
             icon="message-circle"
-            title="Direct Communication"
-            description="Communicate directly with council staff, respond to information requests, and manage all correspondence"
+            :title="displayFeature4Title"
+            :description="displayFeature4Description"
           />
           <FeatureCard
             icon="upload-cloud"
@@ -269,7 +267,7 @@
           <div>
             <h4 class="text-white font-bold mb-4">{{ displayName }}</h4>
             <p class="text-sm text-gray-400">
-              Modern request management platform connecting ratepayers, civilians, and suppliers with their councils
+              {{ displayFooterTagline }}
             </p>
           </div>
           <div>
@@ -291,9 +289,9 @@
           <div>
             <h4 class="text-white font-semibold mb-4">Contact</h4>
             <ul class="space-y-2 text-sm text-gray-400">
-              <li>support@councilsonline.com</li>
-              <li>0800 COUNCILS</li>
-              <li>Wellington, New Zealand</li>
+              <li>{{ displaySupportEmail }}</li>
+              <li>{{ displaySupportPhone }}</li>
+              <li>{{ displayFooterAddress }}</li>
             </ul>
           </div>
         </div>
@@ -314,11 +312,72 @@ import ProcessStep from "../components/ProcessStep.vue"
 import { useTheme } from "@/composables/useTheme"
 
 const router = useRouter()
-const { appName, tagline, logo, branding } = useTheme()
+const {
+	appName,
+	tagline,
+	logo,
+	// Landing Page - Hero
+	heroTitle,
+	heroSubtitle,
+	heroDescription,
+	ctaPrimaryText,
+	ctaSecondaryText,
+	// Landing Page - Features
+	feature1Title,
+	feature1Description,
+	feature2Title,
+	feature2Description,
+	feature3Title,
+	feature3Description,
+	feature4Title,
+	feature4Description,
+	// Footer Content
+	footerTagline,
+	supportEmail,
+	supportPhone,
+	footerAddress,
+} = useTheme()
 
-// Dynamic text based on branding
+// Dynamic text based on branding with fallbacks
 const displayName = computed(() => appName.value || "Councils Online")
 const displayTagline = computed(() => tagline.value || "Council Request Management")
+
+// Hero section with fallbacks
+const displayHeroTitle = computed(() => heroTitle.value || "Request Council Services")
+const displayHeroSubtitle = computed(() => heroSubtitle.value || "Modern Council Request Management")
+const displayHeroDescription = computed(
+	() =>
+		heroDescription.value ||
+		`${displayName.value} is a comprehensive platform for ratepayers, civilians, and suppliers to request council services digitally. Submit consents, service requests, and applications online. Track progress and manage all your council interactions in one place.`
+)
+const displayCtaPrimary = computed(() => ctaPrimaryText.value || "Create Account")
+const displayCtaSecondary = computed(() => ctaSecondaryText.value || "Sign In")
+
+// Features with fallbacks
+const displayFeature1Title = computed(() => feature1Title.value || "Digital Requests")
+const displayFeature1Description = computed(
+	() => feature1Description.value || "Submit consents, service requests, and applications online with guided forms and instant validation"
+)
+const displayFeature2Title = computed(() => feature2Title.value || "Real-time Tracking")
+const displayFeature2Description = computed(
+	() => feature2Description.value || "Monitor your request status, processing timeline, and receive instant notifications"
+)
+const displayFeature3Title = computed(() => feature3Title.value || "Secure Payments")
+const displayFeature3Description = computed(
+	() => feature3Description.value || "Pay fees and invoices online with credit card or bank transfer, with instant receipt generation"
+)
+const displayFeature4Title = computed(() => feature4Title.value || "Direct Communication")
+const displayFeature4Description = computed(
+	() => feature4Description.value || "Communicate directly with council staff, respond to information requests, and manage all correspondence"
+)
+
+// Footer with fallbacks
+const displayFooterTagline = computed(
+	() => footerTagline.value || "Modern request management platform connecting ratepayers, civilians, and suppliers with their councils"
+)
+const displaySupportEmail = computed(() => supportEmail.value || "support@councilsonline.com")
+const displaySupportPhone = computed(() => supportPhone.value || "0800 COUNCILS")
+const displayFooterAddress = computed(() => footerAddress.value || "Wellington, New Zealand")
 
 const goToLogin = () => {
 	router.push({ name: "Login" })

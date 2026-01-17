@@ -75,6 +75,27 @@ def get_council():
         "website": council.website,
         "contact_email": council.contact_email,
         "contact_phone": council.contact_phone,
+        # Landing Page Content
+        "hero_title": council.hero_title,
+        "hero_subtitle": council.hero_subtitle,
+        "hero_description": council.hero_description,
+        "hero_image": council.hero_image,
+        "cta_primary_text": council.cta_primary_text,
+        "cta_secondary_text": council.cta_secondary_text,
+        # Feature Cards
+        "feature_1_title": council.feature_1_title,
+        "feature_1_description": council.feature_1_description,
+        "feature_2_title": council.feature_2_title,
+        "feature_2_description": council.feature_2_description,
+        "feature_3_title": council.feature_3_title,
+        "feature_3_description": council.feature_3_description,
+        "feature_4_title": council.feature_4_title,
+        "feature_4_description": council.feature_4_description,
+        # Footer Content
+        "footer_tagline": council.footer_tagline,
+        "support_email": council.support_email,
+        "support_phone": council.support_phone,
+        "footer_address": council.footer_address,
         # Portal settings
         "redirect_dashboard_to_council": council.redirect_dashboard_to_council,
         "allow_system_wide_dashboard": council.allow_system_wide_dashboard,

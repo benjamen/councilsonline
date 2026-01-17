@@ -124,14 +124,46 @@ export function useTheme() {
   // Computed branding object with all theme values
   const branding = computed(() => councilStore.branding)
 
-  // Computed values for easy template access
+  // Computed values for easy template access - Identity
   const appName = computed(() => branding.value.appName || branding.value.councilName || 'CouncilsOnline')
+  const councilName = computed(() => branding.value.councilName || 'Council')
   const tagline = computed(() => branding.value.tagline || '')
   const logo = computed(() => branding.value.logo || null)
+  const favicon = computed(() => branding.value.favicon || null)
+
+  // Colors
   const primaryColor = computed(() => branding.value.primaryColor)
   const secondaryColor = computed(() => branding.value.secondaryColor)
   const accentColor = computed(() => branding.value.accentColor)
-  const favicon = computed(() => branding.value.favicon || null)
+
+  // Landing Page - Hero
+  const heroTitle = computed(() => branding.value.heroTitle || null)
+  const heroSubtitle = computed(() => branding.value.heroSubtitle || null)
+  const heroDescription = computed(() => branding.value.heroDescription || null)
+  const heroImage = computed(() => branding.value.heroImage || null)
+  const ctaPrimaryText = computed(() => branding.value.ctaPrimaryText || 'Get Started')
+  const ctaSecondaryText = computed(() => branding.value.ctaSecondaryText || 'Learn More')
+
+  // Landing Page - Features
+  const feature1Title = computed(() => branding.value.feature1Title || null)
+  const feature1Description = computed(() => branding.value.feature1Description || null)
+  const feature2Title = computed(() => branding.value.feature2Title || null)
+  const feature2Description = computed(() => branding.value.feature2Description || null)
+  const feature3Title = computed(() => branding.value.feature3Title || null)
+  const feature3Description = computed(() => branding.value.feature3Description || null)
+  const feature4Title = computed(() => branding.value.feature4Title || null)
+  const feature4Description = computed(() => branding.value.feature4Description || null)
+
+  // Footer Content
+  const footerTagline = computed(() => branding.value.footerTagline || null)
+  const supportEmail = computed(() => branding.value.supportEmail || branding.value.contactEmail || null)
+  const supportPhone = computed(() => branding.value.supportPhone || branding.value.contactPhone || null)
+  const footerAddress = computed(() => branding.value.footerAddress || null)
+
+  // Contact
+  const website = computed(() => branding.value.website || null)
+  const contactEmail = computed(() => branding.value.contactEmail || null)
+  const contactPhone = computed(() => branding.value.contactPhone || null)
 
   // Watch for branding changes and apply CSS variables
   watch(branding, (newBranding) => {
@@ -158,15 +190,47 @@ export function useTheme() {
   }
 
   return {
-    // State
+    // State - Identity
     branding,
     appName,
+    councilName,
     tagline,
     logo,
+    favicon,
+
+    // Colors
     primaryColor,
     secondaryColor,
     accentColor,
-    favicon,
+
+    // Landing Page - Hero
+    heroTitle,
+    heroSubtitle,
+    heroDescription,
+    heroImage,
+    ctaPrimaryText,
+    ctaSecondaryText,
+
+    // Landing Page - Features
+    feature1Title,
+    feature1Description,
+    feature2Title,
+    feature2Description,
+    feature3Title,
+    feature3Description,
+    feature4Title,
+    feature4Description,
+
+    // Footer Content
+    footerTagline,
+    supportEmail,
+    supportPhone,
+    footerAddress,
+
+    // Contact
+    website,
+    contactEmail,
+    contactPhone,
 
     // Methods
     initTheme,

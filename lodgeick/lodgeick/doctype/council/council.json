@@ -30,6 +30,32 @@
   "accent_color",
   "favicon",
   "letterhead",
+  "landing_page_section",
+  "hero_title",
+  "hero_subtitle",
+  "hero_description",
+  "column_break_landing_1",
+  "cta_primary_text",
+  "cta_secondary_text",
+  "hero_image",
+  "features_section",
+  "feature_1_title",
+  "feature_1_description",
+  "column_break_feature_1",
+  "feature_2_title",
+  "feature_2_description",
+  "feature_3_section",
+  "feature_3_title",
+  "feature_3_description",
+  "column_break_feature_2",
+  "feature_4_title",
+  "feature_4_description",
+  "footer_section",
+  "footer_tagline",
+  "support_email",
+  "support_phone",
+  "column_break_footer",
+  "footer_address",
   "website_portal_section",
   "redirect_dashboard_to_council",
   "allow_system_wide_dashboard",
@@ -197,6 +223,156 @@
    "fieldtype": "Link",
    "label": "Letterhead",
    "options": "Letter Head"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "landing_page_section",
+   "fieldtype": "Section Break",
+   "label": "Landing Page Content"
+  },
+  {
+   "description": "Main headline for the landing page hero section",
+   "fieldname": "hero_title",
+   "fieldtype": "Data",
+   "label": "Hero Title"
+  },
+  {
+   "description": "Subheading text below the main headline",
+   "fieldname": "hero_subtitle",
+   "fieldtype": "Small Text",
+   "label": "Hero Subtitle"
+  },
+  {
+   "description": "Longer description paragraph for the hero section",
+   "fieldname": "hero_description",
+   "fieldtype": "Text",
+   "label": "Hero Description"
+  },
+  {
+   "fieldname": "column_break_landing_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Get Started",
+   "description": "Primary call-to-action button text",
+   "fieldname": "cta_primary_text",
+   "fieldtype": "Data",
+   "label": "Primary CTA Text"
+  },
+  {
+   "default": "Learn More",
+   "description": "Secondary call-to-action button text",
+   "fieldname": "cta_secondary_text",
+   "fieldtype": "Data",
+   "label": "Secondary CTA Text"
+  },
+  {
+   "description": "Hero section background or illustration image",
+   "fieldname": "hero_image",
+   "fieldtype": "Attach Image",
+   "label": "Hero Image"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "features_section",
+   "fieldtype": "Section Break",
+   "label": "Feature Cards"
+  },
+  {
+   "description": "Title for feature card 1",
+   "fieldname": "feature_1_title",
+   "fieldtype": "Data",
+   "label": "Feature 1 Title"
+  },
+  {
+   "description": "Description for feature card 1",
+   "fieldname": "feature_1_description",
+   "fieldtype": "Small Text",
+   "label": "Feature 1 Description"
+  },
+  {
+   "fieldname": "column_break_feature_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Title for feature card 2",
+   "fieldname": "feature_2_title",
+   "fieldtype": "Data",
+   "label": "Feature 2 Title"
+  },
+  {
+   "description": "Description for feature card 2",
+   "fieldname": "feature_2_description",
+   "fieldtype": "Small Text",
+   "label": "Feature 2 Description"
+  },
+  {
+   "fieldname": "feature_3_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "description": "Title for feature card 3",
+   "fieldname": "feature_3_title",
+   "fieldtype": "Data",
+   "label": "Feature 3 Title"
+  },
+  {
+   "description": "Description for feature card 3",
+   "fieldname": "feature_3_description",
+   "fieldtype": "Small Text",
+   "label": "Feature 3 Description"
+  },
+  {
+   "fieldname": "column_break_feature_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Title for feature card 4",
+   "fieldname": "feature_4_title",
+   "fieldtype": "Data",
+   "label": "Feature 4 Title"
+  },
+  {
+   "description": "Description for feature card 4",
+   "fieldname": "feature_4_description",
+   "fieldtype": "Small Text",
+   "label": "Feature 4 Description"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "footer_section",
+   "fieldtype": "Section Break",
+   "label": "Footer Content"
+  },
+  {
+   "description": "Short description shown in footer",
+   "fieldname": "footer_tagline",
+   "fieldtype": "Small Text",
+   "label": "Footer Tagline"
+  },
+  {
+   "description": "Support email displayed in footer",
+   "fieldname": "support_email",
+   "fieldtype": "Data",
+   "label": "Support Email",
+   "options": "Email"
+  },
+  {
+   "description": "Support phone displayed in footer",
+   "fieldname": "support_phone",
+   "fieldtype": "Data",
+   "label": "Support Phone",
+   "options": "Phone"
+  },
+  {
+   "fieldname": "column_break_footer",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Address displayed in footer",
+   "fieldname": "footer_address",
+   "fieldtype": "Small Text",
+   "label": "Footer Address"
   },
   {
    "fieldname": "website_portal_section",
