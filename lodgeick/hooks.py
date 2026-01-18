@@ -126,7 +126,8 @@ fixtures = [
 	"lodgeick.lodgeick.lodgeick.fixtures.council_request_types",
 	"lodgeick.lodgeick.lodgeick.fixtures.assessment_stage_types",
 	"lodgeick.lodgeick.lodgeick.fixtures.assessment_templates",
-	"lodgeick.lodgeick.lodgeick.fixtures.task_templates_spisc"
+	"lodgeick.lodgeick.lodgeick.fixtures.task_templates_spisc",
+	"lodgeick.lodgeick.lodgeick.fixtures.council_team"
 ]
 
 # Uninstallation

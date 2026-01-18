@@ -1,0 +1,197 @@
+{
+ "actions": [],
+ "autoname": "field:team_code",
+ "creation": "2026-01-18 00:00:00",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "team_name",
+  "team_code",
+  "description",
+  "is_active",
+  "column_break_1",
+  "council",
+  "team_email",
+  "team_phone",
+  "scheduling_section",
+  "enable_scheduling",
+  "default_appointment_duration",
+  "available_appointment_durations",
+  "appointment_buffer_time",
+  "max_daily_appointments",
+  "column_break_2",
+  "advance_booking_days",
+  "min_notice_hours",
+  "business_hours_section",
+  "business_hours",
+  "location_section",
+  "default_location",
+  "available_locations"
+ ],
+ "fields": [
+  {
+   "fieldname": "team_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Team Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "team_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Team Code",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Active"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "council",
+   "fieldtype": "Link",
+   "label": "Council",
+   "options": "Council"
+  },
+  {
+   "fieldname": "team_email",
+   "fieldtype": "Data",
+   "label": "Team Email",
+   "options": "Email"
+  },
+  {
+   "fieldname": "team_phone",
+   "fieldtype": "Data",
+   "label": "Team Phone"
+  },
+  {
+   "fieldname": "scheduling_section",
+   "fieldtype": "Section Break",
+   "label": "Scheduling Configuration"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_scheduling",
+   "fieldtype": "Check",
+   "label": "Enable Appointment Scheduling"
+  },
+  {
+   "default": "30",
+   "depends_on": "enable_scheduling",
+   "fieldname": "default_appointment_duration",
+   "fieldtype": "Int",
+   "label": "Default Appointment Duration (minutes)"
+  },
+  {
+   "default": "15,30,60",
+   "depends_on": "enable_scheduling",
+   "fieldname": "available_appointment_durations",
+   "fieldtype": "Data",
+   "label": "Available Durations (comma-separated)"
+  },
+  {
+   "default": "15",
+   "depends_on": "enable_scheduling",
+   "fieldname": "appointment_buffer_time",
+   "fieldtype": "Int",
+   "label": "Buffer Time Between Appointments (minutes)"
+  },
+  {
+   "default": "20",
+   "depends_on": "enable_scheduling",
+   "fieldname": "max_daily_appointments",
+   "fieldtype": "Int",
+   "label": "Max Daily Appointments"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "30",
+   "depends_on": "enable_scheduling",
+   "fieldname": "advance_booking_days",
+   "fieldtype": "Int",
+   "label": "Advance Booking Days"
+  },
+  {
+   "default": "24",
+   "depends_on": "enable_scheduling",
+   "fieldname": "min_notice_hours",
+   "fieldtype": "Int",
+   "label": "Minimum Notice Hours"
+  },
+  {
+   "depends_on": "enable_scheduling",
+   "fieldname": "business_hours_section",
+   "fieldtype": "Section Break",
+   "label": "Business Hours"
+  },
+  {
+   "depends_on": "enable_scheduling",
+   "fieldname": "business_hours",
+   "fieldtype": "Table",
+   "label": "Business Hours",
+   "options": "Council Team Business Hours"
+  },
+  {
+   "fieldname": "location_section",
+   "fieldtype": "Section Break",
+   "label": "Locations"
+  },
+  {
+   "fieldname": "default_location",
+   "fieldtype": "Data",
+   "label": "Default Location"
+  },
+  {
+   "fieldname": "available_locations",
+   "fieldtype": "Small Text",
+   "label": "Available Locations (one per line)"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-01-18 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Lodgeick",
+ "name": "Council Team",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "All"
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

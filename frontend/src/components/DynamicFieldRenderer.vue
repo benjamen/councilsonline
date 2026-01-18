@@ -104,6 +104,17 @@
         />
       </div>
 
+      <!-- Pickup Schedule (special field for scheduling pickup appointments) -->
+      <PickupScheduleField
+        v-else-if="field.field_type === 'Pickup Schedule'"
+        :field="field"
+        v-model="localData[field.field_name]"
+        :team-code="field.team_code || 'PAYMENTS'"
+        :appointment-type="field.appointment_type || 'Pickup'"
+        :validation-error="getValidationError(field.field_name)"
+        @validate="handleFieldValidation(field)"
+      />
+
       <!-- Unsupported field type -->
       <div v-else class="form-group">
         <div class="text-sm text-gray-500 italic">
@@ -125,6 +136,7 @@ import Tooltip from "./Tooltip.vue"
 import CheckboxField from "./fields/CheckboxField.vue"
 import DateField from "./fields/DateField.vue"
 import NumberField from "./fields/NumberField.vue"
+import PickupScheduleField from "./fields/PickupScheduleField.vue"
 import SelectField from "./fields/SelectField.vue"
 import TextField from "./fields/TextField.vue"
 import TextareaField from "./fields/TextareaField.vue"

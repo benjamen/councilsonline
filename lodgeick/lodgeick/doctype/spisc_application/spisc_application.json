@@ -70,6 +70,8 @@
   "bank_name",
   "bank_account_number",
   "pickup_location",
+  "pickup_appointment",
+  "pickup_scheduled_date",
   "section_declarations",
   "declaration_truth",
   "declaration_consent",
@@ -458,6 +460,20 @@
    "fieldname": "pickup_location",
    "fieldtype": "Data",
    "label": "Pickup Location"
+  },
+  {
+   "depends_on": "eval:doc.payment_method=='Cash Pickup'",
+   "fieldname": "pickup_appointment",
+   "fieldtype": "Link",
+   "label": "Pickup Appointment",
+   "options": "Scheduled Appointment"
+  },
+  {
+   "depends_on": "eval:doc.payment_method=='Cash Pickup'",
+   "fieldname": "pickup_scheduled_date",
+   "fieldtype": "Datetime",
+   "label": "Pickup Scheduled Date",
+   "read_only": 1
   },
   {
    "fieldname": "section_declarations",
