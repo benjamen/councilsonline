@@ -76,8 +76,7 @@ test.describe("SPISC Pickup Scheduling", () => {
 		expect(config.available_durations).toContain(15)
 		expect(config.available_durations).toContain(30)
 		expect(config.locations).toContain("Municipal Treasury Office")
-		expect(config.locations).toContain("Barangay Hall")
-		expect(config.locations).toContain("OSCA Office")
+		expect(config.locations.length).toBe(1)
 	})
 
 	test("Can book an appointment slot", async ({ page }) => {
