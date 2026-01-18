@@ -287,14 +287,34 @@ def book_appointment(team_code, scheduled_start, scheduled_end, appointment_type
 		start_dt = get_datetime(scheduled_start)
 		end_dt = get_datetime(scheduled_end)
 
-		# Validate the slot is still available
-		existing = frappe.db.exists("Scheduled Appointment", {
-			"team": team_code,
-			"scheduled_start": scheduled_start,
-			"status": ["in", ["Scheduled", "Confirmed"]]
-		})
+		# Validate minimum notice period
+		min_notice = timedelta(hours=cint(team.min_notice_hours or 24))
+		if start_dt < datetime.now() + min_notice:
+			frappe.throw(_("Appointments must be booked at least {0} hours in advance").format(
+				team.min_notice_hours or 24
+			))
 
-		if existing:
+		# Use database lock to prevent race conditions
+		# Lock the team row while we check and create the appointment
+		frappe.db.sql(
+			"SELECT name FROM `tabCouncil Team` WHERE name = %s FOR UPDATE",
+			(team_code,)
+		)
+
+		# Validate the slot is still available (with overlap check)
+		overlapping = frappe.db.sql("""
+			SELECT name FROM `tabScheduled Appointment`
+			WHERE team = %s
+			AND status IN ('Scheduled', 'Confirmed')
+			AND (
+				(scheduled_start <= %s AND scheduled_end > %s)
+				OR (scheduled_start < %s AND scheduled_end >= %s)
+				OR (scheduled_start >= %s AND scheduled_end <= %s)
+			)
+		""", (team_code, scheduled_start, scheduled_start, scheduled_end, scheduled_end,
+			  scheduled_start, scheduled_end))
+
+		if overlapping:
 			frappe.throw(_("This time slot is no longer available. Please select another slot."))
 
 		# Get council if provided

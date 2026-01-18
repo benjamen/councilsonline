@@ -101,12 +101,17 @@ watch(
 	},
 )
 
-// Watch for location default when config loads
+// Watch for location default when config loads - auto-select if only one option
 watch(
 	() => teamConfig.data,
 	(data) => {
-		if (data?.success && data.config?.default_location && !location.value) {
-			location.value = data.config.default_location
+		if (data?.success && data.config?.locations) {
+			// Auto-select if only one location available
+			if (data.config.locations.length === 1) {
+				location.value = data.config.locations[0]
+			} else if (data.config.default_location && !location.value) {
+				location.value = data.config.default_location
+			}
 		}
 	},
 )
@@ -140,6 +145,23 @@ const isValid = computed(() => {
 
 const formatSlotTime = (slot) => {
 	return `${slot.start_display} - ${slot.end_display}`
+}
+
+const formatDateShort = (dateStr) => {
+	const date = new Date(dateStr)
+	const day = date.getDate()
+	const month = date.toLocaleDateString("en-US", { month: "short" })
+	return `${month} ${day}`
+}
+
+const formatDateFull = (dateStr) => {
+	const date = new Date(dateStr)
+	return date.toLocaleDateString("en-US", {
+		weekday: "long",
+		month: "long",
+		day: "numeric",
+		year: "numeric",
+	})
 }
 
 const selectDate = (date) => {
@@ -252,7 +274,7 @@ const handleBook = async () => {
 								:disabled="booking"
 							>
 								<div class="font-medium">{{ dateInfo.day }}</div>
-								<div class="text-xs opacity-80">{{ dateInfo.date }}</div>
+								<div class="text-xs opacity-80">{{ formatDateShort(dateInfo.date) }}</div>
 								<div class="text-xs opacity-60">{{ dateInfo.slots.length }} slots</div>
 							</button>
 						</div>
@@ -285,8 +307,8 @@ const handleBook = async () => {
 						</p>
 					</div>
 
-					<!-- Step 3: Select Location -->
-					<div v-if="selectedSlot && locations.length > 0">
+					<!-- Step 3: Select Location (skip if only one option) -->
+					<div v-if="selectedSlot && locations.length > 1">
 						<label class="block text-sm font-medium text-gray-700 mb-2">3. Select Location</label>
 						<select
 							v-model="location"
@@ -298,6 +320,12 @@ const handleBook = async () => {
 								{{ loc }}
 							</option>
 						</select>
+					</div>
+					<!-- Show location as info when only one option (auto-selected) -->
+					<div v-else-if="selectedSlot && locations.length === 1" class="bg-gray-50 rounded-lg p-3">
+						<p class="text-sm text-gray-600">
+							<span class="font-medium">Location:</span> {{ locations[0] }}
+						</p>
 					</div>
 
 					<!-- Purpose (optional) -->
@@ -344,7 +372,7 @@ const handleBook = async () => {
 					<div v-if="selectedSlot && location" class="bg-blue-50 border border-blue-200 rounded-lg p-4">
 						<h4 class="text-sm font-semibold text-blue-900 mb-2">Appointment Summary</h4>
 						<div class="text-sm text-blue-800 space-y-1">
-							<p><span class="font-medium">Date:</span> {{ selectedDate }}</p>
+							<p><span class="font-medium">Date:</span> {{ formatDateFull(selectedDate) }}</p>
 							<p><span class="font-medium">Time:</span> {{ formatSlotTime(selectedSlot) }}</p>
 							<p><span class="font-medium">Location:</span> {{ location }}</p>
 							<p><span class="font-medium">Duration:</span> {{ selectedSlot.duration_minutes }} minutes</p>

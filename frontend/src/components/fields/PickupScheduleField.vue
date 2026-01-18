@@ -149,7 +149,10 @@ const clearAppointment = () => {
 					</div>
 					<div>
 						<p class="text-sm font-medium text-green-900">Pickup Scheduled</p>
-						<p class="text-sm text-green-800 mt-1">
+						<p v-if="appointmentData.appointment_id" class="text-xs text-green-700 mb-1">
+							Ref: {{ appointmentData.appointment_id }}
+						</p>
+						<p class="text-sm text-green-800">
 							<span class="font-medium">{{ formattedDate }}</span>
 						</p>
 						<p class="text-sm text-green-800">
@@ -165,7 +168,7 @@ const clearAppointment = () => {
 					@click="clearAppointment"
 					class="text-sm text-green-700 hover:text-green-900 underline"
 				>
-					Change
+					Reschedule
 				</button>
 			</div>
 		</div>
