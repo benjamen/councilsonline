@@ -2,6 +2,18 @@
 
 import frappe
 
+def update_locations():
+    """Update PAYMENTS team to only have Municipal Treasury Office"""
+    if frappe.db.exists('Council Team', 'PAYMENTS'):
+        team = frappe.get_doc('Council Team', 'PAYMENTS')
+        team.available_locations = 'Municipal Treasury Office'
+        team.default_location = 'Municipal Treasury Office'
+        team.save()
+        frappe.db.commit()
+        print(f'Updated locations to: {team.available_locations}')
+    else:
+        print('PAYMENTS team not found')
+
 def create_payments_team():
     """Create PAYMENTS team if it doesn't exist"""
     if not frappe.db.exists('Council Team', 'PAYMENTS'):

@@ -280,7 +280,7 @@
    "field_name": "pickup_location",
    "field_type": "Select",
    "is_required": 1,
-   "options": "Barangay Hall\nMunicipal Treasury Office\nOSCA Office",
+   "options": "Municipal Treasury Office",
    "parent_section_code": "payment_information",
    "show_on_review": 1
   },

@@ -13,7 +13,7 @@
     "advance_booking_days": 30,
     "min_notice_hours": 24,
     "default_location": "Municipal Treasury Office",
-    "available_locations": "Barangay Hall\nMunicipal Treasury Office\nOSCA Office",
+    "available_locations": "Municipal Treasury Office",
     "business_hours": [
       {
         "day_of_week": "Monday",
