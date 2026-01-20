@@ -1,9 +1,9 @@
 [project]
-name = "lodgeick"
+name = "councilsonline"
 authors = [
     { name = "Optified", email = "contact@optified.nz"}
 ]
-description = "Lodgeick"
+description = "CouncilsOnline"
 requires-python = ">=3.10"
 readme = "README.md"
 dynamic = ["version"]

@@ -3,9 +3,9 @@ import { requestService } from "../services"
 
 export const useRequestStore = defineStore("request", {
 	persist: {
-		key: 'requestStore',
+		key: "requestStore",
 		storage: localStorage,
-		paths: ['currentRequestId', 'formData', 'currentStep', 'requestTypeCode']
+		paths: ["currentRequestId", "formData", "currentStep", "requestTypeCode"],
 	},
 	state: () => ({
 		// Current request being edited
@@ -86,10 +86,10 @@ export const useRequestStore = defineStore("request", {
 
 			// Bounds check
 			if (newStep > maxStep) {
-				console.error('[Store] Navigation beyond bounds prevented', {
+				console.error("[Store] Navigation beyond bounds prevented", {
 					currentStep: this.currentStep,
 					newStep,
-					maxStep
+					maxStep,
 				})
 				return
 			}
@@ -104,11 +104,11 @@ export const useRequestStore = defineStore("request", {
 				const config = this.requestTypeConfig.steps[configIndex]
 
 				if (!config) {
-					console.error('[Store] Missing step config, redirecting to review', {
+					console.error("[Store] Missing step config, redirecting to review", {
 						currentStep: this.currentStep,
 						newStep,
 						configIndex,
-						totalConfigSteps: this.requestTypeConfig.steps.length
+						totalConfigSteps: this.requestTypeConfig.steps.length,
 					})
 					// Jump to final review step instead of showing error
 					this.currentStep = maxStep
@@ -212,7 +212,9 @@ export const useRequestStore = defineStore("request", {
 				this.currentStep = Math.min(Math.max(0, draftStep), maxStep)
 
 				if (draftStep !== this.currentStep) {
-					console.warn(`[RequestStore] Draft had invalid step ${draftStep}, clamped to ${this.currentStep} (max: ${maxStep})`)
+					console.warn(
+						`[RequestStore] Draft had invalid step ${draftStep}, clamped to ${this.currentStep} (max: ${maxStep})`,
+					)
 				}
 			} catch (error) {
 				console.error("Failed to load draft:", error)
@@ -256,16 +258,23 @@ export const useRequestStore = defineStore("request", {
 					// Convert file arrays to URL strings (Bug #6 fix)
 					if (Array.isArray(value) && value.length > 0) {
 						// Check if this is a file upload array (has file_url property)
-						const isFileArray = value.some(item => item && typeof item === 'object' && item.file_url)
+						const isFileArray = value.some(
+							(item) => item && typeof item === "object" && item.file_url,
+						)
 						if (isFileArray) {
 							// Extract the file_url from the first item
 							const fileUrl = value[0].file_url
-							if (fileUrl && typeof fileUrl === 'string') {
-								console.log(`[RequestStore] Converting file array to URL string for ${key}:`, fileUrl)
+							if (fileUrl && typeof fileUrl === "string") {
+								console.log(
+									`[RequestStore] Converting file array to URL string for ${key}:`,
+									fileUrl,
+								)
 								sanitizedData[key] = fileUrl
 								continue
 							} else {
-								console.warn(`[RequestStore] File array for ${key} does not have valid file_url, skipping`)
+								console.warn(
+									`[RequestStore] File array for ${key} does not have valid file_url, skipping`,
+								)
 								continue
 							}
 						}
@@ -289,8 +298,14 @@ export const useRequestStore = defineStore("request", {
 					Object.keys(sanitizedData).length,
 					"fields",
 				)
-				console.log("[RequestStore] Sanitized data keys:", Object.keys(sanitizedData))
-				console.log("[RequestStore] Sanitized data:", JSON.stringify(sanitizedData, null, 2))
+				console.log(
+					"[RequestStore] Sanitized data keys:",
+					Object.keys(sanitizedData),
+				)
+				console.log(
+					"[RequestStore] Sanitized data:",
+					JSON.stringify(sanitizedData, null, 2),
+				)
 
 				const result = await requestService.createDraft(
 					sanitizedData,

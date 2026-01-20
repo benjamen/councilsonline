@@ -11,7 +11,7 @@ export default defineConfig({
 			jinjaBootData: true,
 			lucideIcons: true,
 			buildConfig: {
-				indexHtmlPath: "../lodgeick/www/frontend.html",
+				indexHtmlPath: "../councilsonline/www/frontend.html",
 				emptyOutDir: true,
 				sourcemap: true,
 			},
@@ -20,7 +20,7 @@ export default defineConfig({
 	],
 	build: {
 		chunkSizeWarningLimit: 1500,
-		outDir: "../lodgeick/public/frontend",
+		outDir: "../councilsonline/public/frontend",
 		emptyOutDir: true,
 		target: "es2015",
 		sourcemap: true,
@@ -30,17 +30,17 @@ export default defineConfig({
 			output: {
 				manualChunks: {
 					// Split vendor chunks for better caching
-					'frappe-ui': ['frappe-ui'],
-					'vue-vendor': ['vue', 'vue-router', 'pinia'],
-					'ui-components': ['@headlessui/vue']
-				}
-			}
+					"frappe-ui": ["frappe-ui"],
+					"vue-vendor": ["vue", "vue-router", "pinia"],
+					"ui-components": ["@headlessui/vue"],
+				},
+			},
 		},
 		// Remove console.log in production builds (keep error and warn)
 		esbuild: {
-			drop: ['console'],
-			pure: ['console.log', 'console.debug', 'console.trace']
-		}
+			drop: ["console"],
+			pure: ["console.log", "console.debug", "console.trace"],
+		},
 	},
 	resolve: {
 		alias: {
@@ -68,10 +68,10 @@ export default defineConfig({
 				secure: false,
 				configure: (proxy, options) => {
 					proxy.on("proxyReq", (proxyReq, req, res) => {
-						// Set the Host header to lodgeick.localhost for Frappe site routing
-						proxyReq.setHeader("Host", "lodgeick.localhost")
+						// Set the Host header to councilsonline.localhost for Frappe site routing
+						proxyReq.setHeader("Host", "councilsonline.localhost")
 						// Forward cookies properly
-						proxyReq.setHeader("X-Frappe-Site-Name", "lodgeick.localhost")
+						proxyReq.setHeader("X-Frappe-Site-Name", "councilsonline.localhost")
 					})
 				},
 			},

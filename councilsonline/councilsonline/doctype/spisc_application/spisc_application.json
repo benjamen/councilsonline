@@ -1,0 +1,575 @@
+{
+ "actions": [],
+ "autoname": "field:request",
+ "creation": "2025-12-06 00:00:00",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "request",
+  "section_summary",
+  "request_number",
+  "workflow_state",
+  "column_break_summary",
+  "submitted_date",
+  "target_completion_date",
+  "section_applicant",
+  "applicant_name",
+  "applicant_age_display",
+  "column_break_applicant",
+  "applicant_email",
+  "applicant_phone",
+  "section_address_display",
+  "full_address_display",
+  "section_personal",
+  "birth_date",
+  "age",
+  "column_break_personal",
+  "sex",
+  "civil_status",
+  "section_address",
+  "address_line",
+  "barangay",
+  "column_break_address",
+  "municipality",
+  "province",
+  "section_household",
+  "household_size",
+  "column_break_household",
+  "living_arrangement",
+  "section_economic",
+  "monthly_income",
+  "income_source",
+  "column_break_economic",
+  "is_4ps_beneficiary",
+  "section_identity",
+  "philsys_id",
+  "sss_number",
+  "column_break_identity",
+  "osca_id",
+  "other_id",
+  "section_documents",
+  "barangay_cert_indigency",
+  "birth_certificate",
+  "valid_id_copy",
+  "recent_photo",
+  "medical_certificate",
+  "indigency_certificate",
+  "section_eligibility",
+  "eligibility_status",
+  "eligibility_notes",
+  "column_break_eligibility",
+  "poverty_score",
+  "assessed_by",
+  "assessed_date",
+  "section_payment",
+  "monthly_pension_amount",
+  "payment_method",
+  "payment_status",
+  "column_break_payment",
+  "bank_name",
+  "bank_account_number",
+  "pickup_location",
+  "pickup_appointment",
+  "pickup_scheduled_date",
+  "section_declarations",
+  "declaration_truth",
+  "declaration_consent",
+  "column_break_declarations",
+  "signature",
+  "signature_date"
+ ],
+ "fields": [
+  {
+   "description": "Link to parent Request document",
+   "fieldname": "request",
+   "fieldtype": "Link",
+   "label": "Request",
+   "options": "Request",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "section_summary",
+   "fieldtype": "Section Break",
+   "label": "Application Summary"
+  },
+  {
+   "fetch_from": "request.request_number",
+   "fieldname": "request_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Application Number",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "request.workflow_state",
+   "fieldname": "workflow_state",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Workflow State",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_summary",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "request.submitted_date",
+   "fieldname": "submitted_date",
+   "fieldtype": "Date",
+   "label": "Date Submitted",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "request.target_completion_date",
+   "fieldname": "target_completion_date",
+   "fieldtype": "Date",
+   "label": "Target Completion",
+   "read_only": 1
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "section_applicant",
+   "fieldtype": "Section Break",
+   "label": "Requester Information"
+  },
+  {
+   "bold": 1,
+   "fieldname": "applicant_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Full Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "applicant_age_display",
+   "fieldtype": "Data",
+   "label": "Age",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_applicant",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "applicant_email",
+   "fieldtype": "Data",
+   "label": "Email",
+   "read_only": 1
+  },
+  {
+   "fieldname": "applicant_phone",
+   "fieldtype": "Data",
+   "label": "Mobile Number",
+   "read_only": 1
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "section_address_display",
+   "fieldtype": "Section Break",
+   "label": "Residential Address"
+  },
+  {
+   "description": "Street, Barangay, Municipality, Province",
+   "fieldname": "full_address_display",
+   "fieldtype": "Small Text",
+   "label": "Complete Address",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_personal",
+   "fieldtype": "Section Break",
+   "label": "Personal Information"
+  },
+  {
+   "fieldname": "birth_date",
+   "fieldtype": "Date",
+   "label": "Date of Birth",
+   "reqd": 1
+  },
+  {
+   "description": "Auto-calculated from date of birth",
+   "fieldname": "age",
+   "fieldtype": "Int",
+   "label": "Age",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_personal",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sex",
+   "fieldtype": "Select",
+   "label": "Sex",
+   "options": "Male\nFemale",
+   "reqd": 1
+  },
+  {
+   "fieldname": "civil_status",
+   "fieldtype": "Select",
+   "label": "Civil Status",
+   "options": "Single\nMarried\nWidowed\nSeparated",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_address",
+   "fieldtype": "Section Break",
+   "label": "Residential Address"
+  },
+  {
+   "fieldname": "address_line",
+   "fieldtype": "Data",
+   "label": "Street / House Number",
+   "reqd": 1
+  },
+  {
+   "fieldname": "barangay",
+   "fieldtype": "Data",
+   "label": "Barangay",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_address",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Taytay",
+   "fieldname": "municipality",
+   "fieldtype": "Data",
+   "label": "Municipality",
+   "reqd": 1
+  },
+  {
+   "default": "Rizal",
+   "fieldname": "province",
+   "fieldtype": "Data",
+   "label": "Province",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_household",
+   "fieldtype": "Section Break",
+   "label": "Household Information"
+  },
+  {
+   "fieldname": "household_size",
+   "fieldtype": "Int",
+   "label": "Number of Household Members",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_household",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "living_arrangement",
+   "fieldtype": "Select",
+   "label": "Living Arrangement",
+   "options": "Living alone\nLiving with spouse\nLiving with children\nLiving with relatives\nOther",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_economic",
+   "fieldtype": "Section Break",
+   "label": "Economic Status"
+  },
+  {
+   "fieldname": "monthly_income",
+   "fieldtype": "Currency",
+   "label": "Monthly Income (PHP)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "income_source",
+   "fieldtype": "Select",
+   "label": "Source of Income",
+   "options": "No income\nFamily support\nPension\nSmall business\nOther",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_economic",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_4ps_beneficiary",
+   "fieldtype": "Check",
+   "label": "Are you a 4Ps beneficiary?"
+  },
+  {
+   "fieldname": "section_identity",
+   "fieldtype": "Section Break",
+   "label": "Identity Documents"
+  },
+  {
+   "fieldname": "philsys_id",
+   "fieldtype": "Data",
+   "label": "PhilSys ID Number (National ID)"
+  },
+  {
+   "fieldname": "sss_number",
+   "fieldtype": "Data",
+   "label": "SSS/GSIS Number"
+  },
+  {
+   "fieldname": "column_break_identity",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "osca_id",
+   "fieldtype": "Data",
+   "label": "OSCA ID Number"
+  },
+  {
+   "fieldname": "other_id",
+   "fieldtype": "Data",
+   "label": "Other Valid ID"
+  },
+  {
+   "fieldname": "section_documents",
+   "fieldtype": "Section Break",
+   "label": "Supporting Documents"
+  },
+  {
+   "fieldname": "barangay_cert_indigency",
+   "fieldtype": "Attach",
+   "label": "Barangay Certificate of Indigency",
+   "reqd": 1
+  },
+  {
+   "fieldname": "birth_certificate",
+   "fieldtype": "Attach",
+   "label": "Birth Certificate or Baptismal Certificate",
+   "reqd": 1
+  },
+  {
+   "fieldname": "valid_id_copy",
+   "fieldtype": "Attach",
+   "label": "Photocopy of Valid ID",
+   "reqd": 1
+  },
+  {
+   "fieldname": "recent_photo",
+   "fieldtype": "Attach Image",
+   "label": "Recent 2x2 Photo",
+   "reqd": 1
+  },
+  {
+   "fieldname": "medical_certificate",
+   "fieldtype": "Attach",
+   "label": "Medical Certificate (if frail/sickly/disabled)"
+  },
+  {
+   "fieldname": "indigency_certificate",
+   "fieldtype": "Attach",
+   "label": "Certificate of Indigency"
+  },
+  {
+   "collapsible": 1,
+   "description": "Council staff use only",
+   "fieldname": "section_eligibility",
+   "fieldtype": "Section Break",
+   "label": "Eligibility Assessment"
+  },
+  {
+   "default": "Pending",
+   "fieldname": "eligibility_status",
+   "fieldtype": "Select",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Eligibility Status",
+   "options": "Pending\nEligible\nIneligible"
+  },
+  {
+   "fieldname": "eligibility_notes",
+   "fieldtype": "Text",
+   "label": "Eligibility Notes"
+  },
+  {
+   "fieldname": "column_break_eligibility",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "poverty_score",
+   "fieldtype": "Float",
+   "label": "Poverty Score"
+  },
+  {
+   "fieldname": "assessed_by",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Assessed By",
+   "options": "User"
+  },
+  {
+   "fieldname": "assessed_date",
+   "fieldtype": "Date",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Assessment Date"
+  },
+  {
+   "collapsible": 1,
+   "description": "Bank account or pickup details for pension payment",
+   "fieldname": "section_payment",
+   "fieldtype": "Section Break",
+   "label": "Payment Information"
+  },
+  {
+   "default": "500",
+   "fieldname": "monthly_pension_amount",
+   "fieldtype": "Currency",
+   "label": "Monthly Pension Amount (PHP)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "payment_method",
+   "fieldtype": "Select",
+   "label": "Payment Method",
+   "options": "\nBank Deposit\nCash Pickup"
+  },
+  {
+   "fieldname": "column_break_payment",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.payment_method=='Bank Deposit'",
+   "fieldname": "bank_name",
+   "fieldtype": "Data",
+   "label": "Bank Name"
+  },
+  {
+   "depends_on": "eval:doc.payment_method=='Bank Deposit'",
+   "fieldname": "bank_account_number",
+   "fieldtype": "Data",
+   "label": "Bank Account Number"
+  },
+  {
+   "depends_on": "eval:doc.payment_method=='Cash Pickup'",
+   "fieldname": "pickup_location",
+   "fieldtype": "Data",
+   "label": "Pickup Location"
+  },
+  {
+   "depends_on": "eval:doc.payment_method=='Cash Pickup'",
+   "fieldname": "pickup_appointment",
+   "fieldtype": "Link",
+   "label": "Pickup Appointment",
+   "options": "Scheduled Appointment"
+  },
+  {
+   "depends_on": "eval:doc.payment_method=='Cash Pickup'",
+   "fieldname": "pickup_scheduled_date",
+   "fieldtype": "Datetime",
+   "label": "Pickup Scheduled Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_declarations",
+   "fieldtype": "Section Break",
+   "label": "Declarations"
+  },
+  {
+   "default": "0",
+   "fieldname": "declaration_truth",
+   "fieldtype": "Check",
+   "label": "I declare that all information provided in this application is true and correct",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "declaration_consent",
+   "fieldtype": "Check",
+   "label": "I consent to the collection, processing, and verification of my personal information in accordance with RA 10173 (Data Privacy Act)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_declarations",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "signature",
+   "fieldtype": "Attach Image",
+   "label": "Signature or Thumbmark",
+   "reqd": 1
+  },
+  {
+   "fieldname": "signature_date",
+   "fieldtype": "Date",
+   "label": "Date Signed",
+   "reqd": 1
+  },
+  {
+   "default": "Pending",
+   "fieldname": "payment_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Payment Status",
+   "options": "Pending\nRejected\nApproved\nPaid"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-12-15 18:00:17.663657",
+ "modified_by": "Administrator",
+ "module": "CouncilsOnline",
+ "name": "SPISC Application",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Requester",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Council Staff",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Applicant",
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

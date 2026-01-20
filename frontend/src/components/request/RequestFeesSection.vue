@@ -88,37 +88,37 @@ const props = defineProps({
 	// Show collect payment section
 	collectPayment: {
 		type: Boolean,
-		default: false
+		default: false,
 	},
 	// Show make payment section (benefits)
 	makePayment: {
 		type: Boolean,
-		default: false
+		default: false,
 	},
 	// Payment status
 	paymentStatus: {
 		type: String,
-		default: null
+		default: null,
 	},
 	// For collect payment section
 	totalFees: {
 		type: Number,
-		default: 0
+		default: 0,
 	},
 	totalPaid: {
 		type: Number,
-		default: 0
+		default: 0,
 	},
 	// For make payment section (benefits)
 	benefitAmount: {
 		type: Number,
-		default: 0
+		default: 0,
 	},
 	selectedBankAccount: {
 		type: String,
-		default: null
-	}
+		default: null,
+	},
 })
 
-defineEmits(['make-payment'])
+defineEmits(["make-payment"])
 </script>

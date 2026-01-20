@@ -122,7 +122,7 @@ const props = defineProps({
 	},
 	apiMethod: {
 		type: String,
-		default: "lodgeick.api.search_property_addresses",
+		default: "councilsonline.api.search_property_addresses",
 	},
 })
 
@@ -175,7 +175,7 @@ const handleSearch = async () => {
 			/**
 			 * LINZ API INTEGRATION APPROACH (Production Ready)
 			 *
-			 * Current Status: Using backend proxy API (lodgeick.api.search_property_addresses)
+			 * Current Status: Using backend proxy API (councilsonline.api.search_property_addresses)
 			 * which can be configured to integrate with LINZ data sources.
 			 *
 			 * LINZ Data New Zealand (https://data.linz.govt.nz) Options:
@@ -198,7 +198,7 @@ const handleSearch = async () => {
 			 * 3. IMPLEMENTATION STEPS:
 			 *    a) Register at https://data.linz.govt.nz and get API key
 			 *    b) Add LINZ settings to Council DocType or System Settings
-			 *    c) Update lodgeick.api.search_property_addresses() in api.py:
+			 *    c) Update councilsonline.api.search_property_addresses() in api.py:
 			 *       - Add LINZ API client with rate limiting
 			 *       - Transform LINZ response to standardized format
 			 *       - Cache frequently searched addresses in database

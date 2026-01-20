@@ -1,4 +1,4 @@
-name: Deploy Lodgeick to Production
+name: Deploy CouncilsOnline to Production
 
 on:
   push:
@@ -10,8 +10,8 @@ env:
   SERVER_HOST: 77.37.87.141
   SERVER_USER: frappe-user
   BENCH_PATH: /home/frappe-user/frappe-bench
-  SITE_NAME: lodgeick.com
-  APP_NAME: lodgeick
+  SITE_NAME: councilsonline.com
+  APP_NAME: councilsonline
 
 jobs:
   deploy:
@@ -75,7 +75,7 @@ jobs:
           fi
 
           # Original checks
-          if ! grep -q "Check if SPISC Application already exists" lodgeick/api.py; then
+          if ! grep -q "Check if SPISC Application already exists" councilsonline/api.py; then
             echo "❌ SPISC idempotency check missing"
             exit 1
           fi
@@ -91,7 +91,7 @@ jobs:
         run: |
           ssh ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "
             set -e
-            echo '🚀 Starting Lodgeick deployment (v1.2 - Bug Fixes)...'
+            echo '🚀 Starting CouncilsOnline deployment (v1.2 - Bug Fixes)...'
 
             # Mark repo as safe
             git config --global --add safe.directory ${{ env.BENCH_PATH }}/apps/${{ env.APP_NAME }}
@@ -163,7 +163,7 @@ jobs:
             echo '🔁 Reloading nginx...'
             sudo systemctl reload nginx
 
-            echo '✅ Lodgeick deployment completed successfully!'
+            echo '✅ CouncilsOnline deployment completed successfully!'
             echo '🌐 Site: https://${{ env.SITE_NAME }}'
           "
 
@@ -205,7 +205,7 @@ jobs:
 
           # Test 4: NewRequest Bundle Exists
           check_endpoint "NewRequest Bundle Available" \
-            "curl -s $SITE_URL/assets/lodgeick/frontend/ | grep -q 'NewRequest-.*\.js' || curl -f -s -o /dev/null $SITE_URL/frontend"
+            "curl -s $SITE_URL/assets/councilsonline/frontend/ | grep -q 'NewRequest-.*\.js' || curl -f -s -o /dev/null $SITE_URL/frontend"
 
           # Test 5: API Responds to Auth Check (accepts 200, 401, 403 as valid)
           check_endpoint "Auth API Responding" \

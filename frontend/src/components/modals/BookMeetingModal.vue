@@ -54,13 +54,13 @@ const showAvailableSlots = ref(false)
 
 // Fetch meeting configuration
 const meetingConfig = createResource({
-	url: "lodgeick.api.get_meeting_config",
+	url: "councilsonline.api.get_meeting_config",
 	auto: false,
 })
 
 // Fetch available slots
 const availableSlots = createResource({
-	url: "lodgeick.api.get_available_meeting_slots",
+	url: "councilsonline.api.get_available_meeting_slots",
 	auto: false,
 })
 
@@ -222,7 +222,7 @@ const handleBook = async () => {
 		}
 
 		const response = await fetch(
-			"/api/method/lodgeick.api.book_council_meeting",
+			"/api/method/councilsonline.api.book_council_meeting",
 			{
 				method: "POST",
 				headers: {

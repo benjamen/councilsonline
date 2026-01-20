@@ -5,7 +5,7 @@ Comprehensive end-to-end tests for SPISC application using Playwright.
 ## 🚀 Quick Start - Run After Every Code Change
 
 ```bash
-cd /workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e
+cd /workspace/development/frappe-bench/apps/councilsonline/frontend/tests/e2e
 ./run-all-spisc-tests.sh
 ```
 
@@ -272,7 +272,7 @@ cd /workspace/development/frappe-bench
 bench start
 
 # Start frontend (in another terminal)
-cd apps/lodgeick/frontend
+cd apps/councilsonline/frontend
 npm run dev
 ```
 

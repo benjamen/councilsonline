@@ -32,18 +32,18 @@
 import FieldError from "./FieldError.vue"
 
 defineProps({
-  field: {
-    type: Object,
-    required: true
-  },
-  modelValue: {
-    type: Boolean,
-    default: false
-  },
-  validationError: {
-    type: String,
-    default: ""
-  }
+	field: {
+		type: Object,
+		required: true,
+	},
+	modelValue: {
+		type: Boolean,
+		default: false,
+	},
+	validationError: {
+		type: String,
+		default: "",
+	},
 })
 
 defineEmits(["update:modelValue", "validate"])

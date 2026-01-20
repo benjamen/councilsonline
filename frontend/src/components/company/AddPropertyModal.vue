@@ -74,29 +74,29 @@
 import AddressLookup from "../AddressLookup.vue"
 
 defineProps({
-  show: {
-    type: Boolean,
-    required: true
-  },
-  propertyName: {
-    type: String,
-    default: ""
-  },
-  selectedPropertyAddress: {
-    type: Object,
-    default: null
-  },
-  isDefault: {
-    type: Boolean,
-    default: false
-  }
+	show: {
+		type: Boolean,
+		required: true,
+	},
+	propertyName: {
+		type: String,
+		default: "",
+	},
+	selectedPropertyAddress: {
+		type: Object,
+		default: null,
+	},
+	isDefault: {
+		type: Boolean,
+		default: false,
+	},
 })
 
 defineEmits([
-  'close',
-  'update:propertyName',
-  'update:isDefault',
-  'property-address-selected',
-  'add-property'
+	"close",
+	"update:propertyName",
+	"update:isDefault",
+	"property-address-selected",
+	"add-property",
 ])
 </script>

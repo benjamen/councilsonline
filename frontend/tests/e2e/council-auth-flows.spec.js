@@ -233,7 +233,7 @@ test.describe("Dual Login Flow - System-Wide vs Council-Specific", () => {
 	}) => {
 		await page.goto(`/frontend/council/${TEST_COUNCIL_CODE}`)
 
-		// Should not contain generic "Lodgeick" branding in hero
+		// Should not contain generic "CouncilsOnline" branding in hero
 		// Should show council-specific content
 		const heroSection = page.locator(".hero-section")
 		await expect(heroSection).toBeVisible()

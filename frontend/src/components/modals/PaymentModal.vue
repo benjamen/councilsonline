@@ -96,8 +96,8 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { Dialog, Button, createResource } from 'frappe-ui'
+import { Button, Dialog, createResource } from "frappe-ui"
+import { computed, ref } from "vue"
 
 const props = defineProps({
 	show: Boolean,
@@ -105,12 +105,16 @@ const props = defineProps({
 	totalAmount: Number,
 	feesExclGst: Number,
 	gst: Number,
-	stripeEnabled: { type: Boolean, default: false }
+	stripeEnabled: { type: Boolean, default: false },
 })
 
-const emit = defineEmits(['update:show', 'invoice-requested', 'payment-initiated'])
+const emit = defineEmits([
+	"update:show",
+	"invoice-requested",
+	"payment-initiated",
+])
 
-const selectedMethod = ref('invoice')
+const selectedMethod = ref("invoice")
 const processing = ref(false)
 const error = ref(null)
 
@@ -120,31 +124,31 @@ const isOpen = computed({
 		return props.show
 	},
 	set(value) {
-		emit('update:show', value)
-	}
+		emit("update:show", value)
+	},
 })
 
 // Create resource for invoice request
 const invoiceResource = createResource({
-	url: 'lodgeick.api.request_invoice',
+	url: "councilsonline.api.request_invoice",
 	makeParams(values) {
 		return {
-			request_id: values.requestId
+			request_id: values.requestId,
 		}
 	},
 	onSuccess(data) {
 		if (data.success) {
-			emit('invoice-requested', data)
-			emit('update:show', false)
+			emit("invoice-requested", data)
+			emit("update:show", false)
 		} else {
-			error.value = data.error || 'Failed to request invoice'
+			error.value = data.error || "Failed to request invoice"
 		}
 		processing.value = false
 	},
 	onError(err) {
-		error.value = err.message || 'An error occurred while requesting invoice'
+		error.value = err.message || "An error occurred while requesting invoice"
 		processing.value = false
-	}
+	},
 })
 
 const handleProceed = async () => {
@@ -152,13 +156,13 @@ const handleProceed = async () => {
 	processing.value = true
 
 	try {
-		if (selectedMethod.value === 'invoice') {
+		if (selectedMethod.value === "invoice") {
 			await requestInvoice()
-		} else if (selectedMethod.value === 'card') {
+		} else if (selectedMethod.value === "card") {
 			await initiateStripePayment()
 		}
 	} catch (err) {
-		error.value = err.message || 'An unexpected error occurred'
+		error.value = err.message || "An unexpected error occurred"
 		processing.value = false
 	}
 }
@@ -169,16 +173,16 @@ const requestInvoice = async () => {
 
 const initiateStripePayment = async () => {
 	// Phase 2: Stripe integration
-	emit('payment-initiated')
+	emit("payment-initiated")
 	processing.value = false
-	alert('Stripe integration coming soon!')
+	alert("Stripe integration coming soon!")
 }
 
 const formatCurrency = (amount) => {
-	if (!amount) return '0.00'
-	return new Intl.NumberFormat('en-NZ', {
+	if (!amount) return "0.00"
+	return new Intl.NumberFormat("en-NZ", {
 		minimumFractionDigits: 2,
-		maximumFractionDigits: 2
+		maximumFractionDigits: 2,
 	}).format(amount)
 }
 </script>

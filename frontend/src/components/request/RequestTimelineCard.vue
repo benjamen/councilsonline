@@ -57,21 +57,21 @@ const props = defineProps({
 			statutory_clock_started: false,
 			working_days_elapsed: 0,
 			working_days_remaining: 20,
-			statutory_clock_stopped: false
-		})
+			statutory_clock_stopped: false,
+		}),
 	},
 	progressPercent: {
 		type: Number,
-		default: 0
+		default: 0,
 	},
 	creation: {
 		type: String,
-		required: true
+		required: true,
 	},
 	modified: {
 		type: String,
-		required: true
-	}
+		required: true,
+	},
 })
 
 /**

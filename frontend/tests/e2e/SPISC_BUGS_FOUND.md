@@ -69,7 +69,7 @@ Tests have hardcoded `const BASE_URL = 'http://localhost:8080'` in the spec file
 10. `Cross-linking > should navigate SPISC → request`
 
 **Location**:
-- File: `/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-entry-points.spec.js`
+- File: `/workspace/development/frappe-bench/apps/councilsonline/frontend/tests/e2e/spisc-entry-points.spec.js`
 - Lines: ~6-8 (BASE_URL constant definition)
 
 **Steps to Reproduce**:
@@ -77,7 +77,7 @@ Tests have hardcoded `const BASE_URL = 'http://localhost:8080'` in the spec file
 2. Observe connection refused errors on port 8080
 
 **Expected Behavior**:
-Tests should connect to Lodgeick server on port 8090
+Tests should connect to CouncilsOnline server on port 8090
 
 **Actual Behavior**:
 Tests attempt to connect to port 8080, which is not running
@@ -123,7 +123,7 @@ browserContext.newPage: Target page, context or browser has been closed
 6. `Manual Payment Testing > should complete full payment flow`
 
 **Location**:
-- File: `/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-payment-manual-test.spec.js`
+- File: `/workspace/development/frappe-bench/apps/councilsonline/frontend/tests/e2e/spisc-payment-manual-test.spec.js`
 - Lines: ~6-8
 
 **Proposed Fix**: Same as BUG-001 - change BASE_URL to 8090 or import from helpers
@@ -139,7 +139,7 @@ browserContext.newPage: Target page, context or browser has been closed
 **Status**: Tests are currently skipped, but would fail with same port issue if enabled
 
 **Location**:
-- File: `/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-address-field.spec.js`
+- File: `/workspace/development/frappe-bench/apps/councilsonline/frontend/tests/e2e/spisc-address-field.spec.js`
 
 **Proposed Fix**: Same as BUG-001 - change BASE_URL to 8090 before un-skipping tests
 
@@ -166,7 +166,7 @@ Despite creating workflow transitions for SPISC payment flow (Approved → Payme
 
 **Possible Causes**:
 1. Request not in correct starting state (e.g., not properly Approved)
-2. Permission issues (test user may not have Lodgeick User role)
+2. Permission issues (test user may not have CouncilsOnline User role)
 3. Workflow not applied to the specific request document
 4. Workflow condition not evaluating correctly
 
@@ -176,7 +176,7 @@ Despite creating workflow transitions for SPISC payment flow (Approved → Payme
 3. Tests expecting state transitions from Approved → Payment Pending
 
 **Location**:
-- Workflow Definition: `/workspace/development/frappe-bench/apps/lodgeick/lodgeick/lodgeick/fixtures/create_unified_workflow.py` (lines 342-370)
+- Workflow Definition: `/workspace/development/frappe-bench/apps/councilsonline/councilsonline/councilsonline/fixtures/create_unified_workflow.py` (lines 342-370)
 - Tests: Various payment-related spec files
 
 **Steps to Reproduce**:
@@ -233,12 +233,12 @@ Test expects to find existing SPISC applications in the list view, but either:
 - Test may be filtering for specific state not matching test data
 
 **Location**:
-- Test File: `/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-backend-complete-assessment-flow.spec.js`
+- Test File: `/workspace/development/frappe-bench/apps/councilsonline/frontend/tests/e2e/spisc-backend-complete-assessment-flow.spec.js`
 - Line: ~47
-- Test Data Script: `/workspace/development/frappe-bench/apps/lodgeick/lodgeick/lodgeick/fixtures/spisc_test_data.py`
+- Test Data Script: `/workspace/development/frappe-bench/apps/councilsonline/councilsonline/councilsonline/fixtures/spisc_test_data.py`
 
 **Steps to Reproduce**:
-1. Run test data creation: `bench --site lodgeick.localhost execute lodgeick.lodgeick.fixtures.spisc_test_data.create_test_applications`
+1. Run test data creation: `bench --site councilsonline.localhost execute councilsonline.councilsonline.fixtures.spisc_test_data.create_test_applications`
 2. Verify applications exist: Check Request list for SPISC-2025-257, 258, 259, 260
 3. Run test: `npx playwright test tests/e2e/spisc-backend-complete-assessment-flow.spec.js`
 4. Observe error at step "Navigate to SPISC list"
@@ -291,7 +291,7 @@ Playwright configuration includes a `chromium-mobile` project that uses webkit b
 - All 165 tests from chromium-mobile project (same tests as chromium-desktop, just mobile viewport)
 
 **Location**:
-- Config: `/workspace/development/frappe-bench/apps/lodgeick/frontend/playwright.config.js`
+- Config: `/workspace/development/frappe-bench/apps/councilsonline/frontend/playwright.config.js`
 - Project: chromium-mobile configuration
 
 **Impact Assessment**:
@@ -542,18 +542,18 @@ Specific UI elements (labels, indicators, badges) not found with expected select
 
 ### HTML Report Location
 ```
-/workspace/development/frappe-bench/apps/lodgeick/frontend/playwright-report/index.html
+/workspace/development/frappe-bench/apps/councilsonline/frontend/playwright-report/index.html
 ```
 
 View with:
 ```bash
-cd /workspace/development/frappe-bench/apps/lodgeick/frontend
+cd /workspace/development/frappe-bench/apps/councilsonline/frontend
 npx playwright show-report
 ```
 
 ### Test Results Directory
 ```
-/workspace/development/frappe-bench/apps/lodgeick/frontend/test-results/
+/workspace/development/frappe-bench/apps/councilsonline/frontend/test-results/
 ```
 
 Contains:

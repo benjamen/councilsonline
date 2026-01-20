@@ -223,7 +223,7 @@ function deleteField(stepIndex, sectionIndex, fieldIndex) {
 async function loadAvailableTemplates() {
 	try {
 		loading.value = true
-		const response = await call("lodgeick.api.get_step_templates")
+		const response = await call("councilsonline.api.get_step_templates")
 		availableTemplates.value = response || []
 	} catch (error) {
 		console.error("Failed to load templates:", error)
@@ -236,7 +236,7 @@ async function loadAvailableTemplates() {
 async function applyTemplate(templateName) {
 	try {
 		loading.value = true
-		const response = await call("lodgeick.api.load_step_template", {
+		const response = await call("councilsonline.api.load_step_template", {
 			template_name: templateName,
 		})
 
@@ -312,7 +312,7 @@ function loadTemplate() {
 async function loadRequestTypeConfig(rtName) {
 	try {
 		loading.value = true
-		const response = await call("lodgeick.api.load_request_type_config", {
+		const response = await call("councilsonline.api.load_request_type_config", {
 			request_type_name: rtName,
 		})
 
@@ -423,7 +423,7 @@ async function saveRequestType() {
 			}
 		})
 
-		const response = await call("lodgeick.api.save_request_type_config", {
+		const response = await call("councilsonline.api.save_request_type_config", {
 			config: configToSave,
 		})
 

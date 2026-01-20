@@ -13,11 +13,11 @@ Successfully implemented 8 phases of fixes to address critical issues preventing
 
 ### Phase 1: Port Configuration Fix ✓ COMPLETED
 
-**Problem**: Auth fixture hardcoded to port 8080, but Lodgeick server runs on 8090
+**Problem**: Auth fixture hardcoded to port 8080, but CouncilsOnline server runs on 8090
 **Impact**: 16 tests failing with `ERR_CONNECTION_REFUSED`
 
 **Files Changed**:
-- `/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/fixtures/auth.js`
+- `/workspace/development/frappe-bench/apps/councilsonline/frontend/tests/e2e/fixtures/auth.js`
 
 **Changes**:
 ```javascript
@@ -39,8 +39,8 @@ const baseUrl = options.baseUrl || 'http://localhost:8090'  // Was: 8080
 **Impact**: Cannot transition between states (Acknowledged, Processing, Pending Decision, Approved, etc.)
 
 **Files Changed**:
-- `/workspace/development/frappe-bench/apps/lodgeick/lodgeick/lodgeick/fixtures/create_unified_workflow.py`
-- `/workspace/development/frappe-bench/apps/lodgeick/lodgeick/lodgeick/fixtures/create_spisc_workflow_states.py` (NEW)
+- `/workspace/development/frappe-bench/apps/councilsonline/councilsonline/councilsonline/fixtures/create_unified_workflow.py`
+- `/workspace/development/frappe-bench/apps/councilsonline/councilsonline/councilsonline/fixtures/create_spisc_workflow_states.py` (NEW)
 
 **Workflow States Added**:
 - Payment Pending (Warning style)
@@ -68,7 +68,7 @@ const baseUrl = options.baseUrl || 'http://localhost:8090'  // Was: 8080
        "state": "Approved",
        "action": "Setup Payment",
        "next_state": "Payment Pending",
-       "allowed": "Lodgeick User",
+       "allowed": "CouncilsOnline User",
        "allow_self_approval": 1,
        "condition": "doc.request_type == 'Social Pension for Indigent Senior Citizens (SPISC)'"
    }
@@ -80,7 +80,7 @@ const baseUrl = options.baseUrl || 'http://localhost:8090'  // Was: 8080
        "state": "Payment Pending",
        "action": "Mark as Paid",
        "next_state": "Paid",
-       "allowed": "Lodgeick User",
+       "allowed": "CouncilsOnline User",
        "allow_self_approval": 1
    }
    ```
@@ -91,15 +91,15 @@ const baseUrl = options.baseUrl || 'http://localhost:8090'  // Was: 8080
        "state": "Paid",
        "action": "Complete",
        "next_state": "Completed",
-       "allowed": "Lodgeick User",
+       "allowed": "CouncilsOnline User",
        "allow_self_approval": 1
    }
    ```
 
 **Workflow Execution**:
 ```bash
-bench --site lodgeick.localhost execute lodgeick.lodgeick.fixtures.create_spisc_workflow_states.create_states
-bench --site lodgeick.localhost execute lodgeick.lodgeick.fixtures.create_unified_workflow.create_workflow
+bench --site councilsonline.localhost execute councilsonline.councilsonline.fixtures.create_spisc_workflow_states.create_states
+bench --site councilsonline.localhost execute councilsonline.councilsonline.fixtures.create_unified_workflow.create_workflow
 ```
 
 **Result**:
@@ -119,11 +119,11 @@ bench --site lodgeick.localhost execute lodgeick.lodgeick.fixtures.create_unifie
 **Impact**: Assessment Projects not auto-creating on acknowledgment
 
 **Files Created**:
-- `/workspace/development/frappe-bench/apps/lodgeick/lodgeick/lodgeick/fixtures/check_spisc_template.py` (NEW)
+- `/workspace/development/frappe-bench/apps/councilsonline/councilsonline/councilsonline/fixtures/check_spisc_template.py` (NEW)
 
 **Verification Script**:
 ```bash
-bench --site lodgeick.localhost execute lodgeick.lodgeick.fixtures.check_spisc_template.check_template
+bench --site councilsonline.localhost execute councilsonline.councilsonline.fixtures.check_spisc_template.check_template
 ```
 
 **Results**:
@@ -192,7 +192,7 @@ const paymentStatusField = page.locator('[data-fieldname="payment_status"]').fir
 **Impact**: Tests can't verify workflow state changes
 
 **File Changed**:
-- `/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/fixtures/spisc-helpers.js`
+- `/workspace/development/frappe-bench/apps/councilsonline/frontend/tests/e2e/fixtures/spisc-helpers.js`
 
 **Original Implementation** (Line 76-81):
 ```javascript
@@ -275,7 +275,7 @@ export async function getCurrentWorkflowState(page) {
 **Impact**: Backend assessment flow tests fail at step 2 ("No SPISC applications found")
 
 **Files Created**:
-- `/workspace/development/frappe-bench/apps/lodgeick/lodgeick/lodgeick/fixtures/spisc_test_data.py` (NEW)
+- `/workspace/development/frappe-bench/apps/councilsonline/councilsonline/councilsonline/fixtures/spisc_test_data.py` (NEW)
 
 **Test Data Created**:
 
@@ -301,7 +301,7 @@ export async function getCurrentWorkflowState(page) {
 
 **Execution**:
 ```bash
-bench --site lodgeick.localhost execute lodgeick.lodgeick.fixtures.spisc_test_data.create_test_applications
+bench --site councilsonline.localhost execute councilsonline.councilsonline.fixtures.spisc_test_data.create_test_applications
 ```
 
 **Results**:
@@ -324,7 +324,7 @@ bench --site lodgeick.localhost execute lodgeick.lodgeick.fixtures.spisc_test_da
 **Impact**: All RFI workflow tests fail with "expected string, got undefined"
 
 **File Changed**:
-- `/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/fixtures/spisc-helpers.js`
+- `/workspace/development/frappe-bench/apps/councilsonline/frontend/tests/e2e/fixtures/spisc-helpers.js`
 
 **Original Implementation** (Line 453):
 ```javascript
@@ -369,7 +369,7 @@ export async function createRFI(page, requestId, questions = ['Please provide ad
 
 ### Command
 ```bash
-cd /workspace/development/frappe-bench/apps/lodgeick/frontend
+cd /workspace/development/frappe-bench/apps/councilsonline/frontend
 npx playwright test tests/e2e/spisc-*.spec.js --reporter=html
 ```
 
@@ -403,28 +403,28 @@ npx playwright show-report
 ## Files Modified Summary
 
 ### Modified Files (6)
-1. `/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/fixtures/auth.js`
+1. `/workspace/development/frappe-bench/apps/councilsonline/frontend/tests/e2e/fixtures/auth.js`
    - Fixed port configuration (8080 → 8090)
 
-2. `/workspace/development/frappe-bench/apps/lodgeick/lodgeick/lodgeick/fixtures/create_unified_workflow.py`
+2. `/workspace/development/frappe-bench/apps/councilsonline/councilsonline/councilsonline/fixtures/create_unified_workflow.py`
    - Added SPISC to workflow conditions
    - Added Payment Pending and Paid states
    - Added SPISC payment flow transitions
 
-3. `/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/fixtures/spisc-helpers.js`
+3. `/workspace/development/frappe-bench/apps/councilsonline/frontend/tests/e2e/fixtures/spisc-helpers.js`
    - Improved `getCurrentWorkflowState()` with multiple fallbacks
    - Added null check to `createRFI()`
 
 ### New Files Created (3)
-1. `/workspace/development/frappe-bench/apps/lodgeick/lodgeick/lodgeick/fixtures/create_spisc_workflow_states.py`
+1. `/workspace/development/frappe-bench/apps/councilsonline/councilsonline/councilsonline/fixtures/create_spisc_workflow_states.py`
    - Creates Payment Pending and Paid workflow states
    - Creates Setup Payment and Mark as Paid workflow actions
 
-2. `/workspace/development/frappe-bench/apps/lodgeick/lodgeick/lodgeick/fixtures/check_spisc_template.py`
+2. `/workspace/development/frappe-bench/apps/councilsonline/councilsonline/councilsonline/fixtures/check_spisc_template.py`
    - Verifies SPISC assessment template configuration
    - Lists stages and tasks
 
-3. `/workspace/development/frappe-bench/apps/lodgeick/lodgeick/lodgeick/fixtures/spisc_test_data.py`
+3. `/workspace/development/frappe-bench/apps/councilsonline/councilsonline/councilsonline/fixtures/spisc_test_data.py`
    - Creates 4 test SPISC applications in various states
    - Provides test data for backend assessment flow tests
 

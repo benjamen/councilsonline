@@ -24,7 +24,7 @@ describe("RequestService", () => {
 			const result = await requestService.createDraft(data, 0)
 
 			expect(apiClient.call).toHaveBeenCalledWith(
-				"lodgeick.api.create_draft_request",
+				"councilsonline.api.create_draft_request",
 				{ data, current_step: 0 },
 			)
 			expect(result).toEqual(mockResponse)
@@ -66,7 +66,7 @@ describe("RequestService", () => {
 			await requestService.submitRequest("REQ-001")
 
 			expect(apiClient.call).toHaveBeenCalledWith(
-				"lodgeick.api.submit_request",
+				"councilsonline.api.submit_request",
 				{ request_id: "REQ-001" },
 			)
 		})
@@ -80,7 +80,7 @@ describe("RequestService", () => {
 			const result = requestService.getUserRequests()
 
 			expect(apiClient.createResource).toHaveBeenCalledWith({
-				url: "lodgeick.api.get_user_requests",
+				url: "councilsonline.api.get_user_requests",
 				auto: true,
 				cache: ["user-requests"],
 			})

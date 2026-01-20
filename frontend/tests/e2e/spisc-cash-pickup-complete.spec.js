@@ -192,7 +192,7 @@ test.describe("SPISC Cash Pickup Complete Flow", () => {
 
 		// Verify via API that appointment was created
 		const appointmentsResponse = await page.evaluate(async () => {
-			const res = await fetch("/api/method/lodgeick.api.scheduling.get_user_appointments", {
+			const res = await fetch("/api/method/councilsonline.api.scheduling.get_user_appointments", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -223,7 +223,7 @@ test.describe("SPISC Cash Pickup Complete Flow", () => {
 
 		// Get available slots
 		const slotsResponse = await page.evaluate(async () => {
-			const res = await fetch("/api/method/lodgeick.api.scheduling.get_available_slots", {
+			const res = await fetch("/api/method/councilsonline.api.scheduling.get_available_slots", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -247,7 +247,7 @@ test.describe("SPISC Cash Pickup Complete Flow", () => {
 		const slot = slots[0]
 		const bookResponse = await page.evaluate(
 			async ({ slot }) => {
-				const res = await fetch("/api/method/lodgeick.api.scheduling.book_appointment", {
+				const res = await fetch("/api/method/councilsonline.api.scheduling.book_appointment", {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
@@ -281,7 +281,7 @@ test.describe("SPISC Cash Pickup Complete Flow", () => {
 		// Verify appointment exists
 		const getResponse = await page.evaluate(
 			async ({ appointmentId }) => {
-				const res = await fetch("/api/method/lodgeick.api.scheduling.get_appointment", {
+				const res = await fetch("/api/method/councilsonline.api.scheduling.get_appointment", {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",

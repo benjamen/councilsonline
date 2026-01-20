@@ -213,9 +213,9 @@ import { Button, Input } from "frappe-ui"
 import { computed, ref } from "vue"
 import { useRouter } from "vue-router"
 import AddressLookup from "../components/AddressLookup.vue"
-import AgentPersonalDetailsStep from "../components/company/AgentPersonalDetailsStep.vue"
-import AgentBusinessDetailsStep from "../components/company/AgentBusinessDetailsStep.vue"
 import AddPropertyModal from "../components/company/AddPropertyModal.vue"
+import AgentBusinessDetailsStep from "../components/company/AgentBusinessDetailsStep.vue"
+import AgentPersonalDetailsStep from "../components/company/AgentPersonalDetailsStep.vue"
 import AgentSettingsStep from "../components/company/AgentSettingsStep.vue"
 import {
 	validateEmail,
@@ -508,7 +508,7 @@ function handleSubmit() {
 	}
 
 	// Call registration API
-	fetch("/api/method/lodgeick.api.register_agent", {
+	fetch("/api/method/councilsonline.api.register_agent", {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",

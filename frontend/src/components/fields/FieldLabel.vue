@@ -13,21 +13,21 @@
 import Tooltip from "../Tooltip.vue"
 
 defineProps({
-  fieldName: {
-    type: String,
-    required: true
-  },
-  label: {
-    type: String,
-    required: true
-  },
-  required: {
-    type: Boolean,
-    default: false
-  },
-  helpText: {
-    type: String,
-    default: ""
-  }
+	fieldName: {
+		type: String,
+		required: true,
+	},
+	label: {
+		type: String,
+		required: true,
+	},
+	required: {
+		type: Boolean,
+		default: false,
+	},
+	helpText: {
+		type: String,
+		default: "",
+	},
 })
 </script>

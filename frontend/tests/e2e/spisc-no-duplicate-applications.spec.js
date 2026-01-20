@@ -22,7 +22,10 @@ test.describe("SPISC Application - Duplicate Prevention", () => {
 
 		// Login
 		await page.fill('input[name="email"], input[type="email"]', "Administrator")
-		await page.fill('input[name="password"], input[type="password"]', "admin123")
+		await page.fill(
+			'input[name="password"], input[type="password"]',
+			"admin123",
+		)
 		await page.click('button[type="submit"]')
 
 		// Wait for login to complete
@@ -30,7 +33,9 @@ test.describe("SPISC Application - Duplicate Prevention", () => {
 		await page.waitForTimeout(2000)
 
 		// Navigate to new request page with council pre-selected
-		await page.goto("http://localhost:8090/frontend/request/new?council=TAYTAY-PH")
+		await page.goto(
+			"http://localhost:8090/frontend/request/new?council=TAYTAY-PH",
+		)
 		await page.waitForLoadState("networkidle")
 	})
 
@@ -40,8 +45,12 @@ test.describe("SPISC Application - Duplicate Prevention", () => {
 		// Council already selected via URL parameter, skip to request type selection
 
 		// Step 1: Select Application Type (SPISC)
-		await page.waitForSelector("text=Select Application Type", { timeout: 10000 })
-		const spiscCard = page.locator('text=Social Pension for Indigent Senior Citizens').first()
+		await page.waitForSelector("text=Select Application Type", {
+			timeout: 10000,
+		})
+		const spiscCard = page
+			.locator("text=Social Pension for Indigent Senior Citizens")
+			.first()
 		await spiscCard.click()
 
 		// Click Next
@@ -50,35 +59,39 @@ test.describe("SPISC Application - Duplicate Prevention", () => {
 
 		// Click "I Understand" button if present
 		const understandButton = page.locator('button:has-text("I Understand")')
-		if (await understandButton.isVisible({ timeout: 2000 }).catch(() => false)) {
+		if (
+			await understandButton.isVisible({ timeout: 2000 }).catch(() => false)
+		) {
 			await understandButton.click()
 			await page.waitForTimeout(2000)
 		}
 
 		// Capture request_id from network or localStorage with retries
-		let requestIdFromStorage = null;
+		let requestIdFromStorage = null
 		for (let i = 0; i < 5; i++) {
 			requestIdFromStorage = await page.evaluate(() => {
 				const store = localStorage.getItem("requestStore")
-				console.log('[DEBUG] localStorage.requestStore:', store)
+				console.log("[DEBUG] localStorage.requestStore:", store)
 				if (store) {
 					const parsed = JSON.parse(store)
-					console.log('[DEBUG] Parsed requestStore:', parsed)
+					console.log("[DEBUG] Parsed requestStore:", parsed)
 					return parsed.currentRequestId || parsed.request_id
 				}
 				return null
 			})
 
-			if (requestIdFromStorage) break;
-			console.log(`[Test] Retry ${i+1}/5: Waiting for requestStore...`);
-			await page.waitForTimeout(1000);
+			if (requestIdFromStorage) break
+			console.log(`[Test] Retry ${i + 1}/5: Waiting for requestStore...`)
+			await page.waitForTimeout(1000)
 		}
 
 		requestId = requestIdFromStorage
 		console.log(`[Test] Request ID after Step 1: ${requestId}`)
 
 		if (!requestId) {
-			console.warn('[Test] ⚠ No Request ID found in localStorage - check request creation')
+			console.warn(
+				"[Test] ⚠ No Request ID found in localStorage - check request creation",
+			)
 		}
 
 		// Step 2: Process Info (read-only step)
@@ -213,19 +226,27 @@ test.describe("SPISC Application - Duplicate Prevention", () => {
 		page,
 	}) => {
 		// Navigate to new request with council pre-selected
-		await page.goto("http://localhost:8090/frontend/request/new?council=TAYTAY-PH")
+		await page.goto(
+			"http://localhost:8090/frontend/request/new?council=TAYTAY-PH",
+		)
 		await page.waitForLoadState("networkidle")
 
 		// Select application type (council already selected via URL)
-		await page.waitForSelector("text=Select Application Type", { timeout: 10000 })
-		const spiscCard = page.locator('text=Social Pension for Indigent Senior Citizens').first()
+		await page.waitForSelector("text=Select Application Type", {
+			timeout: 10000,
+		})
+		const spiscCard = page
+			.locator("text=Social Pension for Indigent Senior Citizens")
+			.first()
 		await spiscCard.click()
 		await page.click('button:has-text("Next")')
 		await page.waitForTimeout(1000)
 
 		// Click "I Understand" button if present
 		const understandButton = page.locator('button:has-text("I Understand")')
-		if (await understandButton.isVisible({ timeout: 2000 }).catch(() => false)) {
+		if (
+			await understandButton.isVisible({ timeout: 2000 }).catch(() => false)
+		) {
 			await understandButton.click()
 			await page.waitForTimeout(2000)
 		}

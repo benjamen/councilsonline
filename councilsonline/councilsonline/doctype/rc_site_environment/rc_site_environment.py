@@ -1,0 +1,10 @@
+# Copyright (c) 2025, CouncilsOnline and contributors
+# For license information, please see license.txt
+
+import frappe
+from frappe.model.document import Document
+
+
+class RCSiteEnvironment(Document):
+	"""Child table for site and environment description."""
+	pass

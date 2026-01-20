@@ -83,11 +83,11 @@
 
 <script setup>
 defineProps({
-  modelValue: {
-    type: String,
-    default: "Individual"
-  }
+	modelValue: {
+		type: String,
+		default: "Individual",
+	},
 })
 
-defineEmits(['update:modelValue'])
+defineEmits(["update:modelValue"])
 </script>

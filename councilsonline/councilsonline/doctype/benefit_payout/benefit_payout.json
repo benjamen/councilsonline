@@ -1,0 +1,361 @@
+{
+ "actions": [],
+ "autoname": "format:PAYOUT-{YYYY}-{#####}",
+ "creation": "2025-12-03 00:00:00",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "primary_section",
+  "request",
+  "request_type",
+  "beneficiary",
+  "column_break_primary",
+  "payout_batch",
+  "payout_date",
+  "payout_status",
+  "amount_section",
+  "payout_amount",
+  "currency",
+  "column_break_amount",
+  "payout_period_start",
+  "payout_period_end",
+  "payment_method_section",
+  "payment_method",
+  "bank_name",
+  "bank_account_number",
+  "account_holder_name",
+  "column_break_payment",
+  "gcash_number",
+  "pickup_location",
+  "processing_section",
+  "processed_by",
+  "processed_date",
+  "column_break_processing",
+  "approved_by",
+  "approval_date",
+  "transaction_section",
+  "transaction_reference",
+  "bank_file_generated",
+  "column_break_transaction",
+  "payment_proof",
+  "confirmation_section",
+  "confirmed_received",
+  "confirmation_date",
+  "column_break_confirmation",
+  "confirmation_method",
+  "notes_section",
+  "payout_notes",
+  "rejection_reason"
+ ],
+ "fields": [
+  {
+   "fieldname": "primary_section",
+   "fieldtype": "Section Break",
+   "label": "Primary Information"
+  },
+  {
+   "fieldname": "request",
+   "fieldtype": "Link",
+   "label": "Request",
+   "options": "Request",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "request_type",
+   "fieldtype": "Link",
+   "label": "Request Type",
+   "options": "Request Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "beneficiary",
+   "fieldtype": "Link",
+   "label": "Beneficiary",
+   "options": "User",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_primary",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "payout_batch",
+   "fieldtype": "Link",
+   "label": "Payout Batch",
+   "options": "Payout Batch",
+   "description": "Batch this payout belongs to"
+  },
+  {
+   "fieldname": "payout_date",
+   "fieldtype": "Date",
+   "label": "Payout Date",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "payout_status",
+   "fieldtype": "Select",
+   "label": "Payout Status",
+   "options": "Pending\nApproved\nProcessing\nCompleted\nFailed\nCancelled",
+   "default": "Pending",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "amount_section",
+   "fieldtype": "Section Break",
+   "label": "Amount Details"
+  },
+  {
+   "fieldname": "payout_amount",
+   "fieldtype": "Currency",
+   "label": "Payout Amount",
+   "precision": "2",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Select",
+   "label": "Currency",
+   "options": "PHP\nNZD",
+   "default": "PHP",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_amount",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "payout_period_start",
+   "fieldtype": "Date",
+   "label": "Payout Period Start",
+   "description": "For recurring payouts (e.g., monthly pension)"
+  },
+  {
+   "fieldname": "payout_period_end",
+   "fieldtype": "Date",
+   "label": "Payout Period End"
+  },
+  {
+   "fieldname": "payment_method_section",
+   "fieldtype": "Section Break",
+   "label": "Payment Method"
+  },
+  {
+   "fieldname": "payment_method",
+   "fieldtype": "Select",
+   "label": "Payment Method",
+   "options": "Bank Transfer\nGCash\nCash Pickup\nCheck",
+   "reqd": 1
+  },
+  {
+   "fieldname": "bank_name",
+   "fieldtype": "Data",
+   "label": "Bank Name",
+   "depends_on": "eval:doc.payment_method=='Bank Transfer'"
+  },
+  {
+   "fieldname": "bank_account_number",
+   "fieldtype": "Data",
+   "label": "Bank Account Number",
+   "depends_on": "eval:doc.payment_method=='Bank Transfer'"
+  },
+  {
+   "fieldname": "account_holder_name",
+   "fieldtype": "Data",
+   "label": "Account Holder Name",
+   "depends_on": "eval:doc.payment_method=='Bank Transfer'"
+  },
+  {
+   "fieldname": "column_break_payment",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "gcash_number",
+   "fieldtype": "Data",
+   "label": "GCash Number",
+   "depends_on": "eval:doc.payment_method=='GCash'"
+  },
+  {
+   "fieldname": "pickup_location",
+   "fieldtype": "Data",
+   "label": "Pickup Location",
+   "depends_on": "eval:doc.payment_method=='Cash Pickup'"
+  },
+  {
+   "fieldname": "processing_section",
+   "fieldtype": "Section Break",
+   "label": "Processing"
+  },
+  {
+   "fieldname": "processed_by",
+   "fieldtype": "Link",
+   "label": "Processed By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "processed_date",
+   "fieldtype": "Datetime",
+   "label": "Processed Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_processing",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "approved_by",
+   "fieldtype": "Link",
+   "label": "Approved By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "approval_date",
+   "fieldtype": "Datetime",
+   "label": "Approval Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "transaction_section",
+   "fieldtype": "Section Break",
+   "label": "Transaction Details"
+  },
+  {
+   "fieldname": "transaction_reference",
+   "fieldtype": "Data",
+   "label": "Transaction Reference",
+   "description": "Bank reference number or transaction ID"
+  },
+  {
+   "fieldname": "bank_file_generated",
+   "fieldtype": "Check",
+   "label": "Bank File Generated",
+   "default": "0"
+  },
+  {
+   "fieldname": "column_break_transaction",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "payment_proof",
+   "fieldtype": "Attach",
+   "label": "Payment Proof",
+   "description": "Upload payment receipt or proof"
+  },
+  {
+   "fieldname": "confirmation_section",
+   "fieldtype": "Section Break",
+   "label": "Beneficiary Confirmation"
+  },
+  {
+   "fieldname": "confirmed_received",
+   "fieldtype": "Check",
+   "label": "Confirmed Received",
+   "default": "0"
+  },
+  {
+   "fieldname": "confirmation_date",
+   "fieldtype": "Datetime",
+   "label": "Confirmation Date",
+   "depends_on": "eval:doc.confirmed_received"
+  },
+  {
+   "fieldname": "column_break_confirmation",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "confirmation_method",
+   "fieldtype": "Select",
+   "label": "Confirmation Method",
+   "options": "SMS\nEmail\nIn-Person\nPhone Call",
+   "depends_on": "eval:doc.confirmed_received"
+  },
+  {
+   "fieldname": "notes_section",
+   "fieldtype": "Section Break",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "payout_notes",
+   "fieldtype": "Text",
+   "label": "Payout Notes"
+  },
+  {
+   "fieldname": "rejection_reason",
+   "fieldtype": "Text",
+   "label": "Rejection/Failure Reason",
+   "depends_on": "eval:doc.payout_status=='Failed' || doc.payout_status=='Cancelled'"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-12-03 00:00:00",
+ "modified_by": "Administrator",
+ "module": "CouncilsOnline",
+ "name": "Benefit Payout",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Social Services Applicant",
+   "if_owner": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Social Worker",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Social Services Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Finance Officer",
+   "write": 1
+  }
+ ],
+ "search_fields": "beneficiary,payout_status,request",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "title_field": "beneficiary"
+}

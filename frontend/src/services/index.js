@@ -1,5 +1,5 @@
 /**
- * Lodgeick Service Layer
+ * CouncilsOnline Service Layer
  * Central export point for all API services
  *
  * Usage:

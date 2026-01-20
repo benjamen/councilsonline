@@ -26,21 +26,21 @@
 
 <script setup>
 import { computed } from "vue"
-import PBASection from "../approvals/PBASection.vue"
 import AffectedPartiesSection from "../approvals/AffectedPartiesSection.vue"
+import PBASection from "../approvals/PBASection.vue"
 import InfoBox from "../shared/InfoBox.vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  }
+	modelValue: {
+		type: Object,
+		required: true,
+	},
 })
 
 const emit = defineEmits(["update:modelValue"])
 
 const localData = computed({
-  get: () => props.modelValue,
-  set: (value) => emit("update:modelValue", value)
+	get: () => props.modelValue,
+	set: (value) => emit("update:modelValue", value),
 })
 </script>

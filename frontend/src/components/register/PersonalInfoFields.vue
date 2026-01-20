@@ -74,38 +74,38 @@
 import { Input } from "frappe-ui"
 
 defineProps({
-  firstName: {
-    type: String,
-    default: ""
-  },
-  lastName: {
-    type: String,
-    default: ""
-  },
-  email: {
-    type: String,
-    default: ""
-  },
-  phone: {
-    type: String,
-    default: ""
-  },
-  emailError: {
-    type: String,
-    default: ""
-  },
-  phoneError: {
-    type: String,
-    default: ""
-  }
+	firstName: {
+		type: String,
+		default: "",
+	},
+	lastName: {
+		type: String,
+		default: "",
+	},
+	email: {
+		type: String,
+		default: "",
+	},
+	phone: {
+		type: String,
+		default: "",
+	},
+	emailError: {
+		type: String,
+		default: "",
+	},
+	phoneError: {
+		type: String,
+		default: "",
+	},
 })
 
 defineEmits([
-  'update:firstName',
-  'update:lastName',
-  'update:email',
-  'update:phone',
-  'validate-email',
-  'validate-phone'
+	"update:firstName",
+	"update:lastName",
+	"update:email",
+	"update:phone",
+	"validate-email",
+	"validate-phone",
 ])
 </script>

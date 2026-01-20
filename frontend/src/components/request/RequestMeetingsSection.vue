@@ -118,30 +118,30 @@
 const props = defineProps({
 	show: {
 		type: Boolean,
-		default: false
+		default: false,
 	},
 	meetings: {
 		type: Array,
-		default: () => []
+		default: () => [],
 	},
 	cancelling: {
 		type: Boolean,
-		default: false
-	}
+		default: false,
+	},
 })
 
-defineEmits(['book-meeting', 'edit-meeting', 'cancel-meeting'])
+defineEmits(["book-meeting", "edit-meeting", "cancel-meeting"])
 
 const formatMeetingDate = (dateString) => {
-	if (!dateString) return 'N/A'
+	if (!dateString) return "N/A"
 	const date = new Date(dateString)
-	return date.toLocaleString('en-NZ', {
-		weekday: 'short',
-		year: 'numeric',
-		month: 'short',
-		day: 'numeric',
-		hour: '2-digit',
-		minute: '2-digit'
+	return date.toLocaleString("en-NZ", {
+		weekday: "short",
+		year: "numeric",
+		month: "short",
+		day: "numeric",
+		hour: "2-digit",
+		minute: "2-digit",
 	})
 }
 </script>

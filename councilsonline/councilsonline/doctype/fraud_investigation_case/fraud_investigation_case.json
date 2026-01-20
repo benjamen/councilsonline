@@ -1,0 +1,295 @@
+{
+ "actions": [],
+ "autoname": "format:FRAUD-{YYYY}-{#####}",
+ "creation": "2025-12-03 00:00:00",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "primary_section",
+  "case_title",
+  "case_type",
+  "priority",
+  "column_break_primary",
+  "case_status",
+  "opened_date",
+  "closed_date",
+  "subject_section",
+  "subject_user",
+  "subject_name",
+  "related_request",
+  "column_break_subject",
+  "related_household",
+  "related_payout",
+  "fraud_indicators_section",
+  "fraud_type",
+  "risk_score",
+  "column_break_indicators",
+  "automated_flags",
+  "findings_section",
+  "investigation_details",
+  "evidence_collected",
+  "column_break_findings",
+  "investigator",
+  "investigation_start_date",
+  "resolution_section",
+  "resolution",
+  "action_taken",
+  "column_break_resolution",
+  "resolved_by",
+  "resolution_date",
+  "notes_section",
+  "internal_notes",
+  "recommendations"
+ ],
+ "fields": [
+  {
+   "fieldname": "primary_section",
+   "fieldtype": "Section Break",
+   "label": "Case Information"
+  },
+  {
+   "fieldname": "case_title",
+   "fieldtype": "Data",
+   "label": "Case Title",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "case_type",
+   "fieldtype": "Select",
+   "label": "Case Type",
+   "options": "Duplicate Application\nIdentity Fraud\nDocument Forgery\nIneligible Applicant\nBeneficiary Deceased\nStaff Misconduct\nOther",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "priority",
+   "fieldtype": "Select",
+   "label": "Priority",
+   "options": "Low\nMedium\nHigh\nCritical",
+   "default": "Medium",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_primary",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "case_status",
+   "fieldtype": "Select",
+   "label": "Case Status",
+   "options": "Open\nUnder Investigation\nPending Review\nResolved\nClosed - No Action\nClosed - Action Taken",
+   "default": "Open",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "opened_date",
+   "fieldtype": "Date",
+   "label": "Opened Date",
+   "default": "Today",
+   "reqd": 1
+  },
+  {
+   "fieldname": "closed_date",
+   "fieldtype": "Date",
+   "label": "Closed Date",
+   "depends_on": "eval:doc.case_status.includes('Closed')"
+  },
+  {
+   "fieldname": "subject_section",
+   "fieldtype": "Section Break",
+   "label": "Subject of Investigation"
+  },
+  {
+   "fieldname": "subject_user",
+   "fieldtype": "Link",
+   "label": "Subject User",
+   "options": "User",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "subject_name",
+   "fieldtype": "Data",
+   "label": "Subject Name",
+   "fetch_from": "subject_user.full_name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "related_request",
+   "fieldtype": "Link",
+   "label": "Related Request",
+   "options": "Request"
+  },
+  {
+   "fieldname": "column_break_subject",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "related_household",
+   "fieldtype": "Link",
+   "label": "Related Household",
+   "options": "Household Record"
+  },
+  {
+   "fieldname": "related_payout",
+   "fieldtype": "Link",
+   "label": "Related Payout",
+   "options": "Benefit Payout"
+  },
+  {
+   "fieldname": "fraud_indicators_section",
+   "fieldtype": "Section Break",
+   "label": "Fraud Indicators"
+  },
+  {
+   "fieldname": "fraud_type",
+   "fieldtype": "Select",
+   "label": "Fraud Type",
+   "options": "Identity Theft\nDuplicate Benefit\nForged Documents\nFalse Information\nConflict of Interest\nMisrepresentation",
+   "reqd": 1
+  },
+  {
+   "fieldname": "risk_score",
+   "fieldtype": "Int",
+   "label": "Risk Score (0-100)",
+   "description": "Auto-calculated fraud risk score"
+  },
+  {
+   "fieldname": "column_break_indicators",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "automated_flags",
+   "fieldtype": "Text",
+   "label": "Automated Flags",
+   "description": "System-detected fraud indicators",
+   "read_only": 1
+  },
+  {
+   "fieldname": "findings_section",
+   "fieldtype": "Section Break",
+   "label": "Investigation"
+  },
+  {
+   "fieldname": "investigation_details",
+   "fieldtype": "Text Editor",
+   "label": "Investigation Details"
+  },
+  {
+   "fieldname": "evidence_collected",
+   "fieldtype": "Text Editor",
+   "label": "Evidence Collected"
+  },
+  {
+   "fieldname": "column_break_findings",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "investigator",
+   "fieldtype": "Link",
+   "label": "Investigator",
+   "options": "User"
+  },
+  {
+   "fieldname": "investigation_start_date",
+   "fieldtype": "Date",
+   "label": "Investigation Start Date"
+  },
+  {
+   "fieldname": "resolution_section",
+   "fieldtype": "Section Break",
+   "label": "Resolution"
+  },
+  {
+   "fieldname": "resolution",
+   "fieldtype": "Select",
+   "label": "Resolution",
+   "options": "Confirmed Fraud\nNo Fraud Found\nInsufficient Evidence\nAdministrative Error\nWarning Issued",
+   "depends_on": "eval:doc.case_status.includes('Closed') || doc.case_status=='Resolved'"
+  },
+  {
+   "fieldname": "action_taken",
+   "fieldtype": "Text Editor",
+   "label": "Action Taken",
+   "description": "Actions taken as a result of investigation"
+  },
+  {
+   "fieldname": "column_break_resolution",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "resolved_by",
+   "fieldtype": "Link",
+   "label": "Resolved By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "resolution_date",
+   "fieldtype": "Date",
+   "label": "Resolution Date",
+   "depends_on": "eval:doc.case_status=='Resolved'"
+  },
+  {
+   "fieldname": "notes_section",
+   "fieldtype": "Section Break",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "internal_notes",
+   "fieldtype": "Text Editor",
+   "label": "Internal Notes (Confidential)"
+  },
+  {
+   "fieldname": "recommendations",
+   "fieldtype": "Text Editor",
+   "label": "Recommendations"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-12-03 00:00:00",
+ "modified_by": "Administrator",
+ "module": "CouncilsOnline",
+ "name": "Fraud Investigation Case",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Social Services Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Social Worker"
+  }
+ ],
+ "search_fields": "case_title,subject_user,case_status,case_type",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "title_field": "case_title"
+}

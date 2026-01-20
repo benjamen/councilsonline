@@ -73,11 +73,17 @@
 import FieldCard from "./FieldCard.vue"
 
 defineProps({
-  section: {
-    type: Object,
-    required: true
-  }
+	section: {
+		type: Object,
+		required: true,
+	},
 })
 
-defineEmits(['update:section', 'delete', 'add-field', 'update-field', 'delete-field'])
+defineEmits([
+	"update:section",
+	"delete",
+	"add-field",
+	"update-field",
+	"delete-field",
+])
 </script>

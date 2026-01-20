@@ -3,22 +3,22 @@
  * Tests all critical flows and recent optimizations
  */
 
-import { test, expect } from '@playwright/test'
+import { expect, test } from "@playwright/test"
 
 // Test configuration
-const BASE_URL = process.env.BASE_URL || 'http://localhost:8090'
+const BASE_URL = process.env.BASE_URL || "http://localhost:8090"
 const TEST_USER = {
-	email: 'test@example.com',
-	password: 'test123',
-	firstName: 'Test',
-	lastName: 'User'
+	email: "test@example.com",
+	password: "test123",
+	firstName: "Test",
+	lastName: "User",
 }
 
-test.describe('Comprehensive E2E Test Suite', () => {
+test.describe("Comprehensive E2E Test Suite", () => {
 	test.setTimeout(120000) // 2 minutes for full suite
 
-	test.describe('1. Database Performance - Index Usage', () => {
-		test('should use indexes for request queries', async ({ page }) => {
+	test.describe("1. Database Performance - Index Usage", () => {
+		test("should use indexes for request queries", async ({ page }) => {
 			// This test verifies that our indexes are being used
 			// We can't directly test SQL EXPLAIN in E2E, but we can verify
 			// that queries complete quickly (under 500ms)
@@ -45,14 +45,17 @@ test.describe('Comprehensive E2E Test Suite', () => {
 		})
 	})
 
-	test.describe('2. Rate Limiting', () => {
-		test('should enforce rate limits on guest endpoints', async ({ page }) => {
-			test.skip(true, 'Requires server running - rate limiting decorator is in place')
+	test.describe("2. Rate Limiting", () => {
+		test("should enforce rate limits on guest endpoints", async ({ page }) => {
+			test.skip(
+				true,
+				"Requires server running - rate limiting decorator is in place",
+			)
 
 			// Test that would verify rate limiting
 			// const responses = []
 			// for (let i = 0; i < 12; i++) {
-			//   const response = await page.request.post(`${BASE_URL}/api/method/lodgeick.api.create_draft_request`, {
+			//   const response = await page.request.post(`${BASE_URL}/api/method/councilsonline.api.create_draft_request`, {
 			//     data: { data: { brief_description: `Test ${i}` }, current_step: 1 }
 			//   })
 			//   responses.push(response.status())
@@ -64,15 +67,15 @@ test.describe('Comprehensive E2E Test Suite', () => {
 		})
 	})
 
-	test.describe('3. Lazy Loading & Bundle Size', () => {
-		test('should lazy load modals on demand', async ({ page }) => {
+	test.describe("3. Lazy Loading & Bundle Size", () => {
+		test("should lazy load modals on demand", async ({ page }) => {
 			await page.goto(`${BASE_URL}`)
 
 			// Monitor network requests
 			const loadedChunks = []
-			page.on('response', response => {
+			page.on("response", (response) => {
 				const url = response.url()
-				if (url.includes('.js') && url.includes('chunk')) {
+				if (url.includes(".js") && url.includes("chunk")) {
 					loadedChunks.push(url)
 				}
 			})
@@ -99,9 +102,9 @@ test.describe('Comprehensive E2E Test Suite', () => {
 		})
 	})
 
-	test.describe('4. Conditional Logic (DynamicStepRenderer)', () => {
-		test('should show/hide sections based on depends_on', async ({ page }) => {
-			test.skip(true, 'Requires request type with conditional logic configured')
+	test.describe("4. Conditional Logic (DynamicStepRenderer)", () => {
+		test("should show/hide sections based on depends_on", async ({ page }) => {
+			test.skip(true, "Requires request type with conditional logic configured")
 
 			// await page.goto(`${BASE_URL}/new-request`)
 
@@ -125,9 +128,9 @@ test.describe('Comprehensive E2E Test Suite', () => {
 		})
 	})
 
-	test.describe('5. Pagination', () => {
-		test('should paginate large request lists', async ({ page }) => {
-			test.skip(true, 'Requires 100+ requests in database')
+	test.describe("5. Pagination", () => {
+		test("should paginate large request lists", async ({ page }) => {
+			test.skip(true, "Requires 100+ requests in database")
 
 			// await page.goto(`${BASE_URL}/login`)
 			// await page.fill('input[type="email"]', 'admin@example.com')
@@ -159,8 +162,8 @@ test.describe('Comprehensive E2E Test Suite', () => {
 			// await expect(page.locator('[data-testid="request-list-item"]')).toHaveCount(50)
 		})
 
-		test('should handle page size changes', async ({ page }) => {
-			test.skip(true, 'Requires PaginatedList component integrated')
+		test("should handle page size changes", async ({ page }) => {
+			test.skip(true, "Requires PaginatedList component integrated")
 
 			// await page.goto(`${BASE_URL}/requests`)
 
@@ -178,9 +181,9 @@ test.describe('Comprehensive E2E Test Suite', () => {
 		})
 	})
 
-	test.describe('6. Virtual Scrolling', () => {
-		test('should handle 1000+ items efficiently', async ({ page }) => {
-			test.skip(true, 'Requires VirtualScrollList integrated in UI')
+	test.describe("6. Virtual Scrolling", () => {
+		test("should handle 1000+ items efficiently", async ({ page }) => {
+			test.skip(true, "Requires VirtualScrollList integrated in UI")
 
 			// Create a test page with VirtualScrollList
 			// await page.goto(`${BASE_URL}/test/virtual-scroll`)
@@ -222,17 +225,17 @@ test.describe('Comprehensive E2E Test Suite', () => {
 		})
 	})
 
-	test.describe('7. Caching', () => {
-		test('should cache councils data', async ({ page }) => {
-			test.skip(true, 'Requires server running')
+	test.describe("7. Caching", () => {
+		test("should cache councils data", async ({ page }) => {
+			test.skip(true, "Requires server running")
 
 			// Monitor API calls
 			const apiCalls = []
-			page.on('request', request => {
-				if (request.url().includes('get_active_councils')) {
+			page.on("request", (request) => {
+				if (request.url().includes("get_active_councils")) {
 					apiCalls.push({
 						url: request.url(),
-						timestamp: Date.now()
+						timestamp: Date.now(),
 					})
 				}
 			})
@@ -252,8 +255,8 @@ test.describe('Comprehensive E2E Test Suite', () => {
 			// expect(apiCalls.length).toBe(1)
 		})
 
-		test('should invalidate cache with forceRefresh', async ({ page }) => {
-			test.skip(true, 'Requires server running')
+		test("should invalidate cache with forceRefresh", async ({ page }) => {
+			test.skip(true, "Requires server running")
 
 			// await page.goto(`${BASE_URL}/new-request`)
 
@@ -268,9 +271,9 @@ test.describe('Comprehensive E2E Test Suite', () => {
 		})
 	})
 
-	test.describe('8. Email Queue', () => {
-		test('should send emails asynchronously', async ({ page }) => {
-			test.skip(true, 'Requires server running and email queue monitoring')
+	test.describe("8. Email Queue", () => {
+		test("should send emails asynchronously", async ({ page }) => {
+			test.skip(true, "Requires server running and email queue monitoring")
 
 			// Submit a request (should trigger acknowledgment email)
 			// await page.goto(`${BASE_URL}/new-request`)
@@ -289,17 +292,17 @@ test.describe('Comprehensive E2E Test Suite', () => {
 		})
 	})
 
-	test.describe('9. Code Quality - Linter', () => {
-		test('should pass linting checks', async () => {
+	test.describe("9. Code Quality - Linter", () => {
+		test("should pass linting checks", async () => {
 			// This test runs the linter and checks for errors
 			// Already tested in the main test suite via npm run lint
 			expect(true).toBe(true) // Placeholder - linter runs separately
 		})
 	})
 
-	test.describe('10. N+1 Query Prevention', () => {
-		test('should use SQL JOINs instead of loops', async ({ page }) => {
-			test.skip(true, 'Backend test - verified via EXPLAIN queries')
+	test.describe("10. N+1 Query Prevention", () => {
+		test("should use SQL JOINs instead of loops", async ({ page }) => {
+			test.skip(true, "Backend test - verified via EXPLAIN queries")
 
 			// This is verified by the EXPLAIN query tests
 			// Request list queries should:
@@ -310,9 +313,9 @@ test.describe('Comprehensive E2E Test Suite', () => {
 		})
 	})
 
-	test.describe('11. Integration Tests', () => {
-		test('complete request submission flow', async ({ page }) => {
-			test.skip(true, 'Requires full server setup and test data')
+	test.describe("11. Integration Tests", () => {
+		test("complete request submission flow", async ({ page }) => {
+			test.skip(true, "Requires full server setup and test data")
 
 			// await page.goto(`${BASE_URL}/login`)
 			// await page.fill('input[type="email"]', TEST_USER.email)
@@ -360,9 +363,9 @@ test.describe('Comprehensive E2E Test Suite', () => {
 	})
 })
 
-test.describe('Performance Benchmarks', () => {
-	test('dashboard load time < 500ms', async ({ page }) => {
-		test.skip(true, 'Requires server and test data')
+test.describe("Performance Benchmarks", () => {
+	test("dashboard load time < 500ms", async ({ page }) => {
+		test.skip(true, "Requires server and test data")
 
 		// const startTime = Date.now()
 		// await page.goto(`${BASE_URL}/dashboard`)
@@ -374,8 +377,8 @@ test.describe('Performance Benchmarks', () => {
 		// expect(loadTime).toBeLessThan(500)
 	})
 
-	test('request submission < 1 second', async ({ page }) => {
-		test.skip(true, 'Requires server and test data')
+	test("request submission < 1 second", async ({ page }) => {
+		test.skip(true, "Requires server and test data")
 
 		// With async email sending, submission should be fast
 		// const startTime = Date.now()
@@ -385,7 +388,7 @@ test.describe('Performance Benchmarks', () => {
 		// expect(endTime - startTime).toBeLessThan(1000)
 	})
 
-	test('bundle size < 800KB', async ({ page }) => {
+	test("bundle size < 800KB", async ({ page }) => {
 		// This can be tested via webpack bundle analyzer
 		// Lazy loading should keep main bundle under 800KB
 		expect(true).toBe(true) // Verified via build analysis

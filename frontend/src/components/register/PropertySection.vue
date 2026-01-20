@@ -71,15 +71,15 @@
 
 <script setup>
 defineProps({
-  requesterType: {
-    type: String,
-    default: "Individual"
-  },
-  properties: {
-    type: Array,
-    default: () => []
-  }
+	requesterType: {
+		type: String,
+		default: "Individual",
+	},
+	properties: {
+		type: Array,
+		default: () => [],
+	},
 })
 
-defineEmits(['open-add-property', 'remove-property', 'set-default-property'])
+defineEmits(["open-add-property", "remove-property", "set-default-property"])
 </script>

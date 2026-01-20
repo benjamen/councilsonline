@@ -28,7 +28,7 @@ export function useUserProfile() {
 			}
 
 			const response = await fetch(
-				"/api/method/lodgeick.api.get_user_profile",
+				"/api/method/councilsonline.api.get_user_profile",
 				{
 					method: "GET",
 					headers: headers,

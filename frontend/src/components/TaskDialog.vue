@@ -307,7 +307,7 @@ watch(
 
 						// Fetch hourly rate for this role
 						const rateData = await call(
-							"lodgeick.lodgeick.doctype.role_rate.role_rate.get_hourly_rate",
+							"councilsonline.councilsonline.doctype.role_rate.role_rate.get_hourly_rate",
 							{
 								role: role.role,
 							},

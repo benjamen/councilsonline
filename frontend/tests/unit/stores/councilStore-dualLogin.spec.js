@@ -25,7 +25,7 @@ describe("CouncilStore - Dual Login Methods", () => {
 			const result = await store.shouldRedirectToCouncilDashboard("AKL")
 
 			expect(call).toHaveBeenCalledWith(
-				"lodgeick.api.should_redirect_to_council_dashboard",
+				"councilsonline.api.should_redirect_to_council_dashboard",
 				{ council_code: "AKL" },
 			)
 			expect(result).toBe(true)
@@ -88,7 +88,7 @@ describe("CouncilStore - Dual Login Methods", () => {
 
 			const result = await store.getCouncilSettings("AKL")
 
-			expect(call).toHaveBeenCalledWith("lodgeick.api.get_council_settings", {
+			expect(call).toHaveBeenCalledWith("councilsonline.api.get_council_settings", {
 				council_code: "AKL",
 			})
 			expect(result).toEqual(mockSettings)

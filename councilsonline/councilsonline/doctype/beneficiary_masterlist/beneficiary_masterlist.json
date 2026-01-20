@@ -1,0 +1,286 @@
+{
+ "actions": [],
+ "autoname": "format:BENEF-{#####}",
+ "creation": "2025-12-03 00:00:00",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "primary_section",
+  "beneficiary",
+  "beneficiary_name",
+  "beneficiary_status",
+  "column_break_primary",
+  "enrollment_date",
+  "last_payout_date",
+  "program_section",
+  "program_type",
+  "monthly_benefit_amount",
+  "column_break_program",
+  "start_date",
+  "end_date",
+  "identification_section",
+  "philsys_id",
+  "sss_number",
+  "column_break_id",
+  "household_record",
+  "barangay",
+  "statistics_section",
+  "total_payouts_received",
+  "total_amount_received",
+  "column_break_stats",
+  "last_twelve_months_payouts",
+  "last_twelve_months_amount",
+  "flags_section",
+  "flagged_for_review",
+  "flag_reason",
+  "column_break_flags",
+  "suspended",
+  "suspension_reason",
+  "notes_section",
+  "beneficiary_notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "primary_section",
+   "fieldtype": "Section Break",
+   "label": "Primary Information"
+  },
+  {
+   "fieldname": "beneficiary",
+   "fieldtype": "Link",
+   "label": "Beneficiary",
+   "options": "User",
+   "reqd": 1,
+   "unique": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "beneficiary_name",
+   "fieldtype": "Data",
+   "label": "Beneficiary Name",
+   "fetch_from": "beneficiary.full_name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "beneficiary_status",
+   "fieldtype": "Select",
+   "label": "Beneficiary Status",
+   "options": "Active\nInactive\nSuspended\nDeceased",
+   "default": "Active",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "column_break_primary",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "enrollment_date",
+   "fieldtype": "Date",
+   "label": "Enrollment Date",
+   "default": "Today",
+   "reqd": 1
+  },
+  {
+   "fieldname": "last_payout_date",
+   "fieldtype": "Date",
+   "label": "Last Payout Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "program_section",
+   "fieldtype": "Section Break",
+   "label": "Program Details"
+  },
+  {
+   "fieldname": "program_type",
+   "fieldtype": "Link",
+   "label": "Program Type",
+   "options": "Request Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "monthly_benefit_amount",
+   "fieldtype": "Currency",
+   "label": "Monthly Benefit Amount",
+   "precision": "2"
+  },
+  {
+   "fieldname": "column_break_program",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "label": "Start Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "end_date",
+   "fieldtype": "Date",
+   "label": "End Date",
+   "description": "Leave blank for indefinite benefits"
+  },
+  {
+   "fieldname": "identification_section",
+   "fieldtype": "Section Break",
+   "label": "Identification"
+  },
+  {
+   "fieldname": "philsys_id",
+   "fieldtype": "Data",
+   "label": "PhilSys ID",
+   "unique": 1
+  },
+  {
+   "fieldname": "sss_number",
+   "fieldtype": "Data",
+   "label": "SSS Number",
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_id",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "household_record",
+   "fieldtype": "Link",
+   "label": "Household Record",
+   "options": "Household Record"
+  },
+  {
+   "fieldname": "barangay",
+   "fieldtype": "Data",
+   "label": "Barangay"
+  },
+  {
+   "fieldname": "statistics_section",
+   "fieldtype": "Section Break",
+   "label": "Payout Statistics"
+  },
+  {
+   "fieldname": "total_payouts_received",
+   "fieldtype": "Int",
+   "label": "Total Payouts Received",
+   "default": "0",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_amount_received",
+   "fieldtype": "Currency",
+   "label": "Total Amount Received",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_stats",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "last_twelve_months_payouts",
+   "fieldtype": "Int",
+   "label": "Last 12 Months Payouts",
+   "default": "0",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_twelve_months_amount",
+   "fieldtype": "Currency",
+   "label": "Last 12 Months Amount",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "flags_section",
+   "fieldtype": "Section Break",
+   "label": "Flags and Suspension"
+  },
+  {
+   "fieldname": "flagged_for_review",
+   "fieldtype": "Check",
+   "label": "Flagged for Review",
+   "default": "0"
+  },
+  {
+   "fieldname": "flag_reason",
+   "fieldtype": "Text",
+   "label": "Flag Reason",
+   "depends_on": "eval:doc.flagged_for_review"
+  },
+  {
+   "fieldname": "column_break_flags",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "suspended",
+   "fieldtype": "Check",
+   "label": "Suspended",
+   "default": "0"
+  },
+  {
+   "fieldname": "suspension_reason",
+   "fieldtype": "Text",
+   "label": "Suspension Reason",
+   "depends_on": "eval:doc.suspended"
+  },
+  {
+   "fieldname": "notes_section",
+   "fieldtype": "Section Break",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "beneficiary_notes",
+   "fieldtype": "Text Editor",
+   "label": "Beneficiary Notes"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-12-03 00:00:00",
+ "modified_by": "Administrator",
+ "module": "CouncilsOnline",
+ "name": "Beneficiary Masterlist",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Social Worker"
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Social Services Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Finance Officer"
+  }
+ ],
+ "search_fields": "beneficiary,beneficiary_status,program_type,barangay",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "title_field": "beneficiary_name"
+}

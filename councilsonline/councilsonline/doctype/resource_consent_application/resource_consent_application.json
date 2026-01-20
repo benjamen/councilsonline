@@ -1,0 +1,1211 @@
+{
+ "actions": [],
+ "autoname": "field:request",
+ "creation": "2025-11-05 20:00:00",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "request",
+  "section_break_request_info",
+  "column_break_request_1",
+  "column_break_request_2",
+  "section_break_property_info",
+  "column_break_property",
+  "section_break_consent",
+  "column_break_consent_1",
+  "consent_types",
+  "activity_status",
+  "section_break_additional_consents",
+  "additional_consents",
+  "section_break_related_applications",
+  "pim_applied",
+  "pim_number",
+  "column_break_building",
+  "building_consent_applied",
+  "building_consent_number",
+  "section_break_agent",
+  "agent_required",
+  "agent_id",
+  "section_break_correspondence",
+  "column_break_invoice",
+  "invoice_responsible_party",
+  "section_break_inundation",
+  "inundation_advice_document",
+  "section_break_pba",
+  "pba_approval_required",
+  "pba_status",
+  "pba_details",
+  "pba_contacts",
+  "pba_documents",
+  "section_break_consultation",
+  "consultation_undertaken",
+  "no_consultation_reason",
+  "consulted_organizations",
+  "consultation_summary",
+  "section_break_documents",
+  "application_documents",
+  "section_break_aee_method",
+  "aee_completion_method",
+  "aee_document_confirmed",
+  "aee_inline_confirmed",
+  "aee_positive_effects",
+  "aee_alternatives_considered",
+  "aee_monitoring_proposed",
+  "section_break_soil_investigation",
+  "soil_investigation_completed",
+  "soil_investigation_summary",
+  "soil_investigation_document",
+  "no_nes_confirmed",
+  "section_break_payment",
+  "lodgement_fees_paid",
+  "lodgement_payments",
+  "section_break_signatures",
+  "requester_signature_first_name",
+  "requester_signature_last_name",
+  "requester_signature_date",
+  "column_break_agent_signature",
+  "agent_signature_first_name",
+  "agent_signature_last_name",
+  "agent_signature_date",
+  "section_break_permitted_boundary",
+  "boundary_description",
+  "column_break_pba",
+  "boundary_activity_description",
+  "boundary_owner_approval_obtained",
+  "boundary_approval_date",
+  "boundary_approval_document",
+  "section_break_statutory_clock",
+  "statutory_clock_started",
+  "statutory_clock_stopped",
+  "column_break_statutory",
+  "working_days_elapsed",
+  "working_days_remaining",
+  "amended_from",
+  "proposal_details_tab",
+  "section_break_proposal",
+  "building_height",
+  "building_floor_area",
+  "column_break_proposal_1",
+  "earthworks_volume",
+  "earthworks_vertical_alteration",
+  "section_break_traffic",
+  "vehicle_movements_daily",
+  "parking_spaces_provided",
+  "column_break_operations",
+  "hours_of_operation",
+  "consent_term_requested",
+  "site_environment_tab",
+  "section_break_site",
+  "site_topography",
+  "existing_vegetation_description",
+  "section_break_features",
+  "watercourses_present",
+  "watercourse_description",
+  "natural_hazards_identified",
+  "column_break_infrastructure",
+  "existing_infrastructure",
+  "contamination_status_hail",
+  "section_break_natural_hazards",
+  "natural_hazards",
+  "no_natural_hazards_confirmed",
+  "section_break_hail",
+  "hail_activities",
+  "assessment_of_effects_tab",
+  "section_break_assessment",
+  "aee_document",
+  "assessment_of_effects",
+  "aee_activity_description",
+  "aee_activity_status",
+  "aee_existing_environment",
+  "effects_on_people",
+  "physical_effects",
+  "earthworks_effects",
+  "discharge_contaminants_effects",
+  "ecosystem_effects",
+  "hazard_risk_assessment",
+  "cultural_effects",
+  "section_break_parties_tab",
+  "section_break_parties",
+  "affected_parties",
+  "written_approvals_obtained",
+  "aee_consultation_summary",
+  "section_break_iwi_tab",
+  "section_break_iwi",
+  "iwi_consultation_undertaken",
+  "iwi_consulted",
+  "cultural_impact_assessment",
+  "iwi_response_summary",
+  "section_break_reports_tab",
+  "section_break_reports",
+  "planning_assessment_tab",
+  "section_break_planning",
+  "alternatives_considered",
+  "mitigation_proposed",
+  "hearing",
+  "section_break_hearing",
+  "hearing_required",
+  "hearing_date",
+  "hearing_venue",
+  "hearing_commissioners",
+  "proposed_conditions_tab",
+  "section_break_conditions",
+  "proposed_conditions",
+  "section_break_declarations",
+  "declaration_rma_compliance",
+  "declaration_public_information",
+  "declaration_authorized",
+  "decision_tab",
+  "section_break_decision",
+  "decision_type",
+  "decision_date",
+  "decision_notes",
+  "conditions",
+  "column_break_decision",
+  "lapse_date",
+  "review_date",
+  "consent_duration",
+  "section_break_confidential",
+  "confidential_information_claimed",
+  "confidential_information_reason",
+  "notification_submissions_tab",
+  "section_break_notification",
+  "notification_level",
+  "notification_determined_date",
+  "notification_reason",
+  "column_break_notification",
+  "submission_period_start",
+  "submission_period_end",
+  "submissions_received"
+ ],
+ "fields": [
+  {
+   "fieldname": "request",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Request",
+   "options": "Request",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_request_info",
+   "fieldtype": "Section Break",
+   "label": "Request Information"
+  },
+  {
+   "fieldname": "column_break_request_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_request_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_property_info",
+   "fieldtype": "Section Break",
+   "label": "Property Information"
+  },
+  {
+   "fieldname": "column_break_property",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Core consent information provided by the requester",
+   "fieldname": "section_break_consent",
+   "fieldtype": "Section Break",
+   "label": "Consent Type & Activity Status"
+  },
+  {
+   "fieldname": "column_break_consent_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "consent_types",
+   "fieldtype": "Table",
+   "label": "Consent Types",
+   "options": "RC Consent Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "activity_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Activity Status",
+   "options": "Unsure\nPermitted\nControlled\nRestricted Discretionary\nDiscretionary\nNon-Complying\nProhibited\nPermitted Boundary Activity"
+  },
+  {
+   "description": "Council determination of notification requirements and public submissions",
+   "fieldname": "section_break_notification",
+   "fieldtype": "Section Break",
+   "label": "Notification & Submissions"
+  },
+  {
+   "fieldname": "notification_level",
+   "fieldtype": "Select",
+   "label": "Notification Level",
+   "options": "Not Determined\nNon-Notified\nLimited Notified\nFully Notified"
+  },
+  {
+   "fieldname": "notification_determined_date",
+   "fieldtype": "Date",
+   "label": "Determination Date"
+  },
+  {
+   "fieldname": "notification_reason",
+   "fieldtype": "Text",
+   "label": "Notification Reason"
+  },
+  {
+   "fieldname": "column_break_notification",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.notification_level!='Non-Notified'",
+   "fieldname": "submission_period_start",
+   "fieldtype": "Date",
+   "label": "Submission Period Start"
+  },
+  {
+   "depends_on": "eval:doc.notification_level!='Non-Notified'",
+   "fieldname": "submission_period_end",
+   "fieldtype": "Date",
+   "label": "Submission Period End"
+  },
+  {
+   "fieldname": "submissions_received",
+   "fieldtype": "Int",
+   "label": "Submissions Received"
+  },
+  {
+   "fieldname": "section_break_hearing",
+   "fieldtype": "Section Break",
+   "label": "Hearing"
+  },
+  {
+   "default": "0",
+   "fieldname": "hearing_required",
+   "fieldtype": "Check",
+   "label": "Hearing Required"
+  },
+  {
+   "depends_on": "hearing_required",
+   "fieldname": "hearing_date",
+   "fieldtype": "Datetime",
+   "label": "Hearing Date"
+  },
+  {
+   "depends_on": "hearing_required",
+   "fieldname": "hearing_venue",
+   "fieldtype": "Small Text",
+   "label": "Hearing Venue"
+  },
+  {
+   "depends_on": "hearing_required",
+   "fieldname": "hearing_commissioners",
+   "fieldtype": "Small Text",
+   "label": "Commissioners"
+  },
+  {
+   "description": "Assessment of Environmental Effects as per Schedule 4 of the RMA",
+   "fieldname": "section_break_assessment",
+   "fieldtype": "Section Break",
+   "label": "Assessment of Effects (AEE)"
+  },
+  {
+   "description": "Upload a completed AEE document (optional if completing structured fields below)",
+   "fieldname": "aee_document",
+   "fieldtype": "Attach",
+   "label": "AEE Document Upload"
+  },
+  {
+   "description": "Complete this field OR upload an AEE document above. Full assessment as per Schedule 4 RMA.",
+   "fieldname": "assessment_of_effects",
+   "fieldtype": "Text Editor",
+   "in_list_view": 1,
+   "label": "AEE (Schedule 4 RMA)"
+  },
+  {
+   "description": "1. Description of the activity and its purpose",
+   "fieldname": "aee_activity_description",
+   "fieldtype": "Text Editor",
+   "label": "Activity Description"
+  },
+  {
+   "description": "Overall activity status under the District/Unitary Plan",
+   "fieldname": "aee_activity_status",
+   "fieldtype": "Select",
+   "label": "Activity Status",
+   "options": "\nPermitted\nControlled\nRestricted Discretionary\nDiscretionary\nNon-Complying\nProhibited"
+  },
+  {
+   "description": "2. Description of the existing environment",
+   "fieldname": "aee_existing_environment",
+   "fieldtype": "Text Editor",
+   "label": "Existing Environment"
+  },
+  {
+   "fieldname": "effects_on_people",
+   "fieldtype": "Text Editor",
+   "label": "Effects on People"
+  },
+  {
+   "fieldname": "physical_effects",
+   "fieldtype": "Text Editor",
+   "label": "Physical Effects"
+  },
+  {
+   "fieldname": "ecosystem_effects",
+   "fieldtype": "Text Editor",
+   "label": "Ecosystem Effects"
+  },
+  {
+   "fieldname": "cultural_effects",
+   "fieldtype": "Text Editor",
+   "label": "Cultural/Heritage"
+  },
+  {
+   "description": "Planning assessment and mitigation measures proposed by requester",
+   "fieldname": "section_break_planning",
+   "fieldtype": "Section Break",
+   "label": "Planning Assessment"
+  },
+  {
+   "fieldname": "alternatives_considered",
+   "fieldtype": "Text Editor",
+   "label": "Alternatives Considered"
+  },
+  {
+   "fieldname": "mitigation_proposed",
+   "fieldtype": "Text Editor",
+   "label": "Mitigation Measures"
+  },
+  {
+   "description": "List of affected parties and written approvals obtained",
+   "fieldname": "section_break_parties",
+   "fieldtype": "Section Break",
+   "label": "Affected Parties"
+  },
+  {
+   "fieldname": "affected_parties",
+   "fieldtype": "Table",
+   "label": "Affected Parties",
+   "options": "RC Affected Party"
+  },
+  {
+   "fieldname": "written_approvals_obtained",
+   "fieldtype": "Int",
+   "label": "Approvals Obtained"
+  },
+  {
+   "description": "Summary of consultation undertaken with affected parties (optional)",
+   "fieldname": "aee_consultation_summary",
+   "fieldtype": "Text Editor",
+   "label": "Consultation Summary"
+  },
+  {
+   "description": "Details of consultation with iwi and hap\u016b",
+   "fieldname": "section_break_iwi",
+   "fieldtype": "Section Break",
+   "label": "Iwi Consultation"
+  },
+  {
+   "default": "0",
+   "fieldname": "iwi_consultation_undertaken",
+   "fieldtype": "Check",
+   "label": "Consultation Undertaken"
+  },
+  {
+   "fieldname": "iwi_consulted",
+   "fieldtype": "Small Text",
+   "label": "Iwi/Hap\u016b Consulted"
+  },
+  {
+   "fieldname": "cultural_impact_assessment",
+   "fieldtype": "Attach",
+   "label": "CIA Document"
+  },
+  {
+   "fieldname": "iwi_response_summary",
+   "fieldtype": "Text",
+   "label": "Response Summary"
+  },
+  {
+   "description": "Specialist reports and technical assessments provided by the requester",
+   "fieldname": "section_break_reports",
+   "fieldtype": "Section Break",
+   "label": "Specialist Reports"
+  },
+  {
+   "description": "Conditions proposed by the requester",
+   "fieldname": "section_break_conditions",
+   "fieldtype": "Section Break",
+   "label": "Proposed Conditions"
+  },
+  {
+   "description": "Conditions proposed by requester - select from standard templates or create custom",
+   "fieldname": "proposed_conditions",
+   "fieldtype": "Table",
+   "label": "Proposed Conditions",
+   "options": "Resource Consent Condition"
+  },
+  {
+   "description": "Required statutory declarations under the Resource Management Act 1991",
+   "fieldname": "section_break_declarations",
+   "fieldtype": "Section Break",
+   "label": "Statutory Declarations"
+  },
+  {
+   "default": "0",
+   "description": "I confirm that to the best of my knowledge, the information provided in this application is true and correct. I understand that providing false or misleading information is an offence under the Resource Management Act 1991.",
+   "fieldname": "declaration_rma_compliance",
+   "fieldtype": "Check",
+   "label": "Information True and Correct (RMA s43)",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "description": "I understand that unless confidentiality is requested under RMA s42, documents submitted as part of this application may be made publicly available.",
+   "fieldname": "declaration_public_information",
+   "fieldtype": "Check",
+   "label": "Public Availability of Information",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "description": "I confirm that I am authorised to submit this application on behalf of the requester named in this application.",
+   "fieldname": "declaration_authorized",
+   "fieldtype": "Check",
+   "label": "Authority to Submit",
+   "reqd": 1
+  },
+  {
+   "description": "Final decision and conditions imposed by the council",
+   "fieldname": "section_break_decision",
+   "fieldtype": "Section Break",
+   "label": "Decision & Consent Conditions"
+  },
+  {
+   "fieldname": "decision_type",
+   "fieldtype": "Select",
+   "label": "Decision",
+   "options": "Approve without conditions\nApprove with conditions\nDecline"
+  },
+  {
+   "fieldname": "decision_date",
+   "fieldtype": "Date",
+   "label": "Decision Date"
+  },
+  {
+   "fieldname": "decision_notes",
+   "fieldtype": "Text Editor",
+   "label": "Decision Reasoning"
+  },
+  {
+   "fieldname": "conditions",
+   "fieldtype": "Table",
+   "label": "Consent Conditions",
+   "options": "Resource Consent Condition"
+  },
+  {
+   "fieldname": "column_break_decision",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "lapse_date",
+   "fieldtype": "Date",
+   "label": "Lapse Date"
+  },
+  {
+   "fieldname": "review_date",
+   "fieldtype": "Date",
+   "label": "Review Date"
+  },
+  {
+   "fieldname": "consent_duration",
+   "fieldtype": "Data",
+   "label": "Consent Duration"
+  },
+  {
+   "description": "Statutory timeframes under RMA Sections 91-115. Clock starts when request is acknowledged and stops during RFI periods.",
+   "fieldname": "section_break_statutory_clock",
+   "fieldtype": "Section Break",
+   "label": "SLA / Statutory Clock"
+  },
+  {
+   "description": "Date and time when the RMA statutory timeframe clock begins",
+   "fieldname": "statutory_clock_started",
+   "fieldtype": "Datetime",
+   "label": "Clock Started",
+   "no_copy": 1
+  },
+  {
+   "description": "Date and time when the clock was paused (e.g., RFI issued). Cleared when clock resumes.",
+   "fieldname": "statutory_clock_stopped",
+   "fieldtype": "Datetime",
+   "label": "Clock Stopped",
+   "no_copy": 1
+  },
+  {
+   "fieldname": "column_break_statutory",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Working days elapsed on statutory clock, excluding weekends, public holidays, and RFI periods",
+   "fieldname": "working_days_elapsed",
+   "fieldtype": "Int",
+   "label": "Working Days Elapsed",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "description": "Working days remaining before statutory deadline",
+   "fieldname": "working_days_remaining",
+   "fieldtype": "Int",
+   "in_standard_filter": 1,
+   "label": "Days Remaining",
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Resource Consent Application",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "proposal_details_tab",
+   "fieldtype": "Tab Break",
+   "label": "Proposal Details"
+  },
+  {
+   "description": "Physical dimensions and characteristics of the proposal",
+   "fieldname": "section_break_proposal",
+   "fieldtype": "Section Break",
+   "label": "Building/Structure Details"
+  },
+  {
+   "fieldname": "building_height",
+   "fieldtype": "Float",
+   "label": "Building/Structure Height (m)",
+   "precision": "2"
+  },
+  {
+   "fieldname": "building_floor_area",
+   "fieldtype": "Float",
+   "label": "Total Floor Area (m\u00b2)",
+   "precision": "2"
+  },
+  {
+   "fieldname": "column_break_proposal_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "earthworks_volume",
+   "fieldtype": "Float",
+   "label": "Earthworks Volume (m\u00b3)",
+   "precision": "2"
+  },
+  {
+   "fieldname": "earthworks_vertical_alteration",
+   "fieldtype": "Float",
+   "label": "Max Vertical Alteration (m)",
+   "precision": "2"
+  },
+  {
+   "description": "Traffic generation and parking provision",
+   "fieldname": "section_break_traffic",
+   "fieldtype": "Section Break",
+   "label": "Traffic & Parking"
+  },
+  {
+   "fieldname": "vehicle_movements_daily",
+   "fieldtype": "Int",
+   "label": "Additional Vehicle Movements (per day)"
+  },
+  {
+   "fieldname": "parking_spaces_provided",
+   "fieldtype": "Int",
+   "label": "Parking Spaces Provided"
+  },
+  {
+   "fieldname": "column_break_operations",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "hours_of_operation",
+   "fieldtype": "Data",
+   "label": "Hours of Operation"
+  },
+  {
+   "fieldname": "consent_term_requested",
+   "fieldtype": "Data",
+   "label": "Consent Term Requested"
+  },
+  {
+   "fieldname": "site_environment_tab",
+   "fieldtype": "Tab Break",
+   "label": "Site & Environment"
+  },
+  {
+   "description": "Existing site characteristics and environmental features",
+   "fieldname": "section_break_site",
+   "fieldtype": "Section Break",
+   "label": "Site Characteristics"
+  },
+  {
+   "fieldname": "site_topography",
+   "fieldtype": "Small Text",
+   "label": "Site Topography"
+  },
+  {
+   "fieldname": "existing_vegetation_description",
+   "fieldtype": "Text",
+   "label": "Existing Vegetation Description"
+  },
+  {
+   "description": "Environmental features and hazards",
+   "fieldname": "section_break_features",
+   "fieldtype": "Section Break",
+   "label": "Environmental Features"
+  },
+  {
+   "default": "0",
+   "fieldname": "watercourses_present",
+   "fieldtype": "Check",
+   "label": "Watercourses/Wetlands Present"
+  },
+  {
+   "depends_on": "watercourses_present",
+   "fieldname": "watercourse_description",
+   "fieldtype": "Small Text",
+   "label": "Watercourse Description"
+  },
+  {
+   "fieldname": "natural_hazards_identified",
+   "fieldtype": "Small Text",
+   "label": "Natural Hazards Identified"
+  },
+  {
+   "fieldname": "column_break_infrastructure",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "existing_infrastructure",
+   "fieldtype": "Small Text",
+   "label": "Existing Infrastructure"
+  },
+  {
+   "fieldname": "contamination_status_hail",
+   "fieldtype": "Select",
+   "label": "HAIL Contamination Status",
+   "options": "Not Assessed\nNot HAIL\nHAIL - Not Investigated\nHAIL - Investigated (Clean)\nHAIL - Contaminated"
+  },
+  {
+   "fieldname": "earthworks_effects",
+   "fieldtype": "Text Editor",
+   "label": "Earthworks Effects"
+  },
+  {
+   "fieldname": "discharge_contaminants_effects",
+   "fieldtype": "Text Editor",
+   "label": "Discharge/Contaminants Effects"
+  },
+  {
+   "fieldname": "hazard_risk_assessment",
+   "fieldtype": "Text Editor",
+   "label": "Hazard Risk Assessment"
+  },
+  {
+   "fieldname": "assessment_of_effects_tab",
+   "fieldtype": "Tab Break",
+   "label": "Assessment of Effects"
+  },
+  {
+   "fieldname": "planning_assessment_tab",
+   "fieldtype": "Tab Break",
+   "label": "Planning Assessment"
+  },
+  {
+   "fieldname": "hearing",
+   "fieldtype": "Tab Break",
+   "label": "Hearing"
+  },
+  {
+   "fieldname": "notification_submissions_tab",
+   "fieldtype": "Tab Break",
+   "label": "Notification & Submissions"
+  },
+  {
+   "fieldname": "section_break_reports_tab",
+   "fieldtype": "Tab Break",
+   "label": "Specialist Reports"
+  },
+  {
+   "fieldname": "section_break_parties_tab",
+   "fieldtype": "Tab Break",
+   "label": "Affected Parties"
+  },
+  {
+   "fieldname": "section_break_iwi_tab",
+   "fieldtype": "Tab Break",
+   "label": "Iwi Consultation"
+  },
+  {
+   "fieldname": "proposed_conditions_tab",
+   "fieldtype": "Tab Break",
+   "label": "Proposed Conditions"
+  },
+  {
+   "fieldname": "decision_tab",
+   "fieldtype": "Tab Break",
+   "label": "Decision & Consent Conditions"
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "eval:doc.activity_status=='Permitted Boundary Activity'",
+   "description": "For applications under RMA s87BA - Permitted Boundary Activities",
+   "fieldname": "section_break_permitted_boundary",
+   "fieldtype": "Section Break",
+   "label": "Permitted Boundary Activity (s87BA)"
+  },
+  {
+   "depends_on": "permitted_boundary_activity",
+   "fieldname": "boundary_description",
+   "fieldtype": "Small Text",
+   "label": "Boundary Description"
+  },
+  {
+   "fieldname": "column_break_pba",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "permitted_boundary_activity",
+   "fieldname": "boundary_activity_description",
+   "fieldtype": "Text",
+   "label": "Activity Breaching Boundary Rules"
+  },
+  {
+   "default": "0",
+   "depends_on": "permitted_boundary_activity",
+   "fieldname": "boundary_owner_approval_obtained",
+   "fieldtype": "Check",
+   "label": "Boundary Owner Approval Obtained"
+  },
+  {
+   "depends_on": "boundary_owner_approval_obtained",
+   "fieldname": "boundary_approval_date",
+   "fieldtype": "Date",
+   "label": "Approval Date"
+  },
+  {
+   "depends_on": "boundary_owner_approval_obtained",
+   "fieldname": "boundary_approval_document",
+   "fieldtype": "Attach",
+   "label": "Approval Document"
+  },
+  {
+   "collapsible": 1,
+   "description": "Natural hazards assessment as required under RMA s104",
+   "fieldname": "section_break_natural_hazards",
+   "fieldtype": "Section Break",
+   "label": "Natural Hazards Assessment"
+  },
+  {
+   "fieldname": "natural_hazards",
+   "fieldtype": "Table",
+   "label": "Natural Hazards",
+   "options": "RC Natural Hazard"
+  },
+  {
+   "default": "0",
+   "description": "For LUC/SC - Confirmation that all potential natural hazards have been considered and none are applicable (s.106 RMA)",
+   "fieldname": "no_natural_hazards_confirmed",
+   "fieldtype": "Check",
+   "label": "No Natural Hazards Confirmed"
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "eval:doc.nes_assessments && doc.nes_assessments.some(a => a.nes_type.includes('HAIL'))",
+   "description": "Hazardous Activities and Industries List (HAIL) for NES Soils",
+   "fieldname": "section_break_hail",
+   "fieldtype": "Section Break",
+   "label": "HAIL Activities"
+  },
+  {
+   "fieldname": "hail_activities",
+   "fieldtype": "Table",
+   "label": "HAIL Activities",
+   "options": "HAIL Activity"
+  },
+  {
+   "collapsible": 1,
+   "description": "RMA s42 - Confidential information (trade secrets, commercial sensitivity)",
+   "fieldname": "section_break_confidential",
+   "fieldtype": "Section Break",
+   "label": "Confidential Information"
+  },
+  {
+   "default": "0",
+   "fieldname": "confidential_information_claimed",
+   "fieldtype": "Check",
+   "label": "Contains Confidential Information"
+  },
+  {
+   "depends_on": "confidential_information_claimed",
+   "description": "Justify why information should be withheld from public under s42 RMA",
+   "fieldname": "confidential_information_reason",
+   "fieldtype": "Text Editor",
+   "label": "Justification for Confidentiality"
+  },
+  {
+   "fieldname": "section_break_additional_consents",
+   "fieldtype": "Section Break",
+   "label": "Additional Consents (FRD 3.4)"
+  },
+  {
+   "description": "List any other consents required or applied for",
+   "fieldname": "additional_consents",
+   "fieldtype": "Table",
+   "label": "Additional Consents",
+   "options": "Resource Consent Additional Consent"
+  },
+  {
+   "fieldname": "section_break_related_applications",
+   "fieldtype": "Section Break",
+   "label": "Related Applications (FRD 3.5)"
+  },
+  {
+   "default": "0",
+   "fieldname": "pim_applied",
+   "fieldtype": "Check",
+   "label": "PIM Applied For"
+  },
+  {
+   "depends_on": "eval:doc.pim_applied",
+   "fieldname": "pim_number",
+   "fieldtype": "Data",
+   "label": "PIM Reference Number"
+  },
+  {
+   "fieldname": "column_break_building",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "building_consent_applied",
+   "fieldtype": "Check",
+   "label": "Building Consent Applied For"
+  },
+  {
+   "depends_on": "eval:doc.building_consent_applied",
+   "fieldname": "building_consent_number",
+   "fieldtype": "Data",
+   "label": "Building Consent Reference Number"
+  },
+  {
+   "fieldname": "section_break_agent",
+   "fieldtype": "Section Break",
+   "label": "Agent Details (FRD 3.7)"
+  },
+  {
+   "default": "0",
+   "fieldname": "agent_required",
+   "fieldtype": "Check",
+   "label": "Agent Engaged"
+  },
+  {
+   "depends_on": "eval:doc.agent_required",
+   "fieldname": "agent_id",
+   "fieldtype": "Link",
+   "label": "Agent",
+   "options": "User"
+  },
+  {
+   "fieldname": "section_break_correspondence",
+   "fieldtype": "Section Break",
+   "label": "Correspondence Preferences (FRD 3.9)"
+  },
+  {
+   "fieldname": "column_break_invoice",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Applicant",
+   "fieldname": "invoice_responsible_party",
+   "fieldtype": "Select",
+   "label": "Invoice To",
+   "options": "Applicant\nAgent"
+  },
+  {
+   "fieldname": "section_break_inundation",
+   "fieldtype": "Section Break",
+   "label": "Inundation Advice (FRD 4.1)"
+  },
+  {
+   "fieldname": "inundation_advice_document",
+   "fieldtype": "Attach",
+   "label": "Inundation Advice Document"
+  },
+  {
+   "fieldname": "section_break_pba",
+   "fieldtype": "Section Break",
+   "label": "Permitted Boundary Activity (FRD 6.1)"
+  },
+  {
+   "default": "0",
+   "fieldname": "pba_approval_required",
+   "fieldtype": "Check",
+   "label": "PBA Approval Required"
+  },
+  {
+   "depends_on": "eval:doc.pba_approval_required",
+   "fieldname": "pba_status",
+   "fieldtype": "Select",
+   "label": "PBA Status",
+   "options": "\nApproval sought but not obtained\nApproval obtained from some neighbors\nApproval obtained from all neighbors\nApproval not sought"
+  },
+  {
+   "depends_on": "eval:doc.pba_approval_required",
+   "fieldname": "pba_details",
+   "fieldtype": "Small Text",
+   "label": "PBA Details"
+  },
+  {
+   "depends_on": "eval:doc.pba_approval_required",
+   "fieldname": "pba_contacts",
+   "fieldtype": "Table",
+   "label": "PBA Affected Neighbors",
+   "options": "Resource Consent PBA Contact"
+  },
+  {
+   "depends_on": "eval:doc.pba_approval_required",
+   "description": "JSON array of uploaded PBA documents",
+   "fieldname": "pba_documents",
+   "fieldtype": "Small Text",
+   "label": "PBA Documents"
+  },
+  {
+   "fieldname": "section_break_consultation",
+   "fieldtype": "Section Break",
+   "label": "Consultation (FRD 7)"
+  },
+  {
+   "default": "0",
+   "fieldname": "consultation_undertaken",
+   "fieldtype": "Check",
+   "label": "Consultation Undertaken"
+  },
+  {
+   "depends_on": "eval:!doc.consultation_undertaken",
+   "fieldname": "no_consultation_reason",
+   "fieldtype": "Small Text",
+   "label": "Reason for No Consultation"
+  },
+  {
+   "depends_on": "eval:doc.consultation_undertaken",
+   "fieldname": "consulted_organizations",
+   "fieldtype": "Table",
+   "label": "Consulted Organizations",
+   "options": "Resource Consent Consulted Organization"
+  },
+  {
+   "depends_on": "eval:doc.consultation_undertaken",
+   "fieldname": "consultation_summary",
+   "fieldtype": "Text",
+   "label": "Overall Consultation Summary"
+  },
+  {
+   "fieldname": "section_break_documents",
+   "fieldtype": "Section Break",
+   "label": "Application Documents (FRD 8)"
+  },
+  {
+   "fieldname": "application_documents",
+   "fieldtype": "Table",
+   "label": "Documents",
+   "options": "Resource Consent Application Document"
+  },
+  {
+   "fieldname": "section_break_aee_method",
+   "fieldtype": "Section Break",
+   "label": "AEE Completion Method (FRD 9)"
+  },
+  {
+   "default": "inline",
+   "fieldname": "aee_completion_method",
+   "fieldtype": "Select",
+   "label": "AEE Completion Method",
+   "options": "inline\nupload"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.aee_completion_method=='upload'",
+   "fieldname": "aee_document_confirmed",
+   "fieldtype": "Check",
+   "label": "AEE Document Addresses Schedule 4"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.aee_completion_method=='inline'",
+   "fieldname": "aee_inline_confirmed",
+   "fieldtype": "Check",
+   "label": "AEE Inline Completion Confirmed"
+  },
+  {
+   "fieldname": "aee_positive_effects",
+   "fieldtype": "Text",
+   "label": "Positive Effects"
+  },
+  {
+   "fieldname": "aee_alternatives_considered",
+   "fieldtype": "Text",
+   "label": "Alternatives Considered"
+  },
+  {
+   "fieldname": "aee_monitoring_proposed",
+   "fieldtype": "Text",
+   "label": "Monitoring Proposed"
+  },
+  {
+   "fieldname": "section_break_soil_investigation",
+   "fieldtype": "Section Break",
+   "label": "Soil Investigation (FRD 5)"
+  },
+  {
+   "default": "0",
+   "fieldname": "soil_investigation_completed",
+   "fieldtype": "Check",
+   "label": "PSI/DSI Completed"
+  },
+  {
+   "depends_on": "eval:doc.soil_investigation_completed",
+   "fieldname": "soil_investigation_summary",
+   "fieldtype": "Text",
+   "label": "Investigation Summary"
+  },
+  {
+   "depends_on": "eval:doc.soil_investigation_completed",
+   "fieldname": "soil_investigation_document",
+   "fieldtype": "Attach",
+   "label": "Investigation Report"
+  },
+  {
+   "default": "0",
+   "fieldname": "no_nes_confirmed",
+   "fieldtype": "Check",
+   "label": "No NES Apply (Confirmed)"
+  },
+  {
+   "fieldname": "section_break_payment",
+   "fieldtype": "Section Break",
+   "label": "Lodgement Fees (FRD 11.1)"
+  },
+  {
+   "default": "0",
+   "fieldname": "lodgement_fees_paid",
+   "fieldtype": "Check",
+   "label": "Lodgement Fees Paid"
+  },
+  {
+   "depends_on": "eval:doc.lodgement_fees_paid",
+   "fieldname": "lodgement_payments",
+   "fieldtype": "Table",
+   "label": "Payment Records",
+   "options": "Resource Consent Lodgement Payment"
+  },
+  {
+   "fieldname": "section_break_signatures",
+   "fieldtype": "Section Break",
+   "label": "Signatures (FRD 11.2-11.4)"
+  },
+  {
+   "fieldname": "requester_signature_first_name",
+   "fieldtype": "Data",
+   "label": "Requester First Name"
+  },
+  {
+   "fieldname": "requester_signature_last_name",
+   "fieldtype": "Data",
+   "label": "Requester Last Name"
+  },
+  {
+   "fieldname": "requester_signature_date",
+   "fieldtype": "Date",
+   "label": "Signature Date"
+  },
+  {
+   "fieldname": "column_break_agent_signature",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.agent_required",
+   "fieldname": "agent_signature_first_name",
+   "fieldtype": "Data",
+   "label": "Agent First Name"
+  },
+  {
+   "depends_on": "eval:doc.agent_required",
+   "fieldname": "agent_signature_last_name",
+   "fieldtype": "Data",
+   "label": "Agent Last Name"
+  },
+  {
+   "depends_on": "eval:doc.agent_required",
+   "fieldname": "agent_signature_date",
+   "fieldtype": "Date",
+   "label": "Agent Signature Date"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [
+  {
+   "group": "Workflow",
+   "link_doctype": "Notification Decision",
+   "link_fieldname": "resource_consent_application"
+  },
+  {
+   "group": "Public Engagement",
+   "link_doctype": "Submission",
+   "link_fieldname": "resource_consent_application"
+  },
+  {
+   "group": "Decision",
+   "link_doctype": "Consent Decision",
+   "link_fieldname": "resource_consent_application"
+  }
+ ],
+ "modified": "2025-12-03 15:46:26.570131",
+ "modified_by": "Administrator",
+ "module": "CouncilsOnline",
+ "name": "Resource Consent Application",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

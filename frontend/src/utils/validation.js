@@ -1,5 +1,5 @@
 /**
- * Validation utilities for Lodgeick
+ * Validation utilities for CouncilsOnline
  */
 
 /**

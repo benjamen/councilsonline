@@ -159,49 +159,49 @@ import { Input } from "frappe-ui"
 import AddressLookup from "../AddressLookup.vue"
 
 const props = defineProps({
-  agentType: {
-    type: String,
-    required: true
-  },
-  companyName: {
-    type: String,
-    default: ""
-  },
-  companyNumber: {
-    type: String,
-    default: ""
-  },
-  nzbn: {
-    type: String,
-    default: ""
-  },
-  tradingName: {
-    type: String,
-    default: ""
-  },
-  selectedBusinessAddress: {
-    type: Object,
-    default: null
-  },
-  properties: {
-    type: Array,
-    default: () => []
-  },
-  nzbnError: {
-    type: String,
-    default: ""
-  }
+	agentType: {
+		type: String,
+		required: true,
+	},
+	companyName: {
+		type: String,
+		default: "",
+	},
+	companyNumber: {
+		type: String,
+		default: "",
+	},
+	nzbn: {
+		type: String,
+		default: "",
+	},
+	tradingName: {
+		type: String,
+		default: "",
+	},
+	selectedBusinessAddress: {
+		type: Object,
+		default: null,
+	},
+	properties: {
+		type: Array,
+		default: () => [],
+	},
+	nzbnError: {
+		type: String,
+		default: "",
+	},
 })
 
 defineEmits([
-  'update:companyName',
-  'update:companyNumber',
-  'update:nzbn',
-  'update:tradingName',
-  'validate-nzbn',
-  'business-address-selected',
-  'open-add-property',
-  'remove-property',
-  'set-default-property'
+	"update:companyName",
+	"update:companyNumber",
+	"update:nzbn",
+	"update:tradingName",
+	"validate-nzbn",
+	"business-address-selected",
+	"open-add-property",
+	"remove-property",
+	"set-default-property",
 ])
 </script>

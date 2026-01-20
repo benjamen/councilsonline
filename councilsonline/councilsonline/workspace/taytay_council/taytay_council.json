@@ -1,0 +1,38 @@
+{
+ "charts": [
+  {
+   "chart_name": "SPISC Applications by Month",
+   "label": "Application Trends"
+  },
+  {
+   "chart_name": "Beneficiaries by Barangay",
+   "label": "Geographic Distribution"
+  }
+ ],
+ "content": "[{\"hidden\": 0, \"label\": \"Social Pension (SPISC) Program\", \"type\": \"Header\"}, {\"hidden\": 0, \"label\": \"Key Metrics\", \"type\": \"Card Break\"}, {\"hidden\": 0, \"type\": \"Number Card\", \"number_card_name\": \"Total SPISC Beneficiaries\"}, {\"hidden\": 0, \"type\": \"Number Card\", \"number_card_name\": \"New Applications This Month\"}, {\"hidden\": 0, \"type\": \"Number Card\", \"number_card_name\": \"Pending Eligibility Assessment\"}, {\"hidden\": 0, \"type\": \"Number Card\", \"number_card_name\": \"Payouts This Month\"}, {\"hidden\": 0, \"label\": \"Trends & Distribution\", \"type\": \"Card Break\"}, {\"hidden\": 0, \"type\": \"Chart\", \"chart_name\": \"SPISC Applications by Month\"}, {\"hidden\": 0, \"type\": \"Chart\", \"chart_name\": \"Beneficiaries by Barangay\"}, {\"hidden\": 0, \"label\": \"SPISC Applications\", \"links\": \"[\\n {\\n  \\\"dependencies\\\": \\\"\\\",\\n  \\\"description\\\": \\\"Applications for Social Pension for Indigent Senior Citizens\\\",\\n  \\\"hidden\\\": 0,\\n  \\\"is_query_report\\\": 0,\\n  \\\"label\\\": \\\"SPISC Application\\\",\\n  \\\"link_count\\\": 0,\\n  \\\"link_to\\\": \\\"SPISC Application\\\",\\n  \\\"link_type\\\": \\\"DocType\\\",\\n  \\\"onboard\\\": 0,\\n  \\\"type\\\": \\\"Link\\\"\\n },\\n {\\n  \\\"dependencies\\\": \\\"\\\",\\n  \\\"description\\\": \\\"Payout batches for social pension benefits\\\",\\n  \\\"hidden\\\": 0,\\n  \\\"is_query_report\\\": 0,\\n  \\\"label\\\": \\\"Payout Batch\\\",\\n  \\\"link_count\\\": 0,\\n  \\\"link_to\\\": \\\"Payout Batch\\\",\\n  \\\"link_type\\\": \\\"DocType\\\",\\n  \\\"onboard\\\": 0,\\n  \\\"type\\\": \\\"Link\\\"\\n },\\n {\\n  \\\"dependencies\\\": \\\"\\\",\\n  \\\"description\\\": \\\"Individual benefit payouts to senior citizens\\\",\\n  \\\"hidden\\\": 0,\\n  \\\"is_query_report\\\": 0,\\n  \\\"label\\\": \\\"Benefit Payout\\\",\\n  \\\"link_count\\\": 0,\\n  \\\"link_to\\\": \\\"Benefit Payout\\\",\\n  \\\"link_type\\\": \\\"DocType\\\",\\n  \\\"onboard\\\": 0,\\n  \\\"type\\\": \\\"Link\\\"\\n }\\n]\", \"type\": \"Card Break\"}, {\"hidden\": 0, \"label\": \"Quick Access\", \"links\": \"[\\n {\\n  \\\"dependencies\\\": \\\"\\\",\\n  \\\"description\\\": \\\"General requests and applications\\\",\\n  \\\"hidden\\\": 0,\\n  \\\"is_query_report\\\": 0,\\n  \\\"label\\\": \\\"Request\\\",\\n  \\\"link_count\\\": 0,\\n  \\\"link_to\\\": \\\"Request\\\",\\n  \\\"link_type\\\": \\\"DocType\\\",\\n  \\\"onboard\\\": 0,\\n  \\\"type\\\": \\\"Link\\\"\\n },\\n {\\n  \\\"dependencies\\\": \\\"\\\",\\n  \\\"description\\\": \\\"Assessment projects for council processing\\\",\\n  \\\"hidden\\\": 0,\\n  \\\"is_query_report\\\": 0,\\n  \\\"label\\\": \\\"Assessment Project\\\",\\n  \\\"link_count\\\": 0,\\n  \\\"link_to\\\": \\\"Assessment Project\\\",\\n  \\\"link_type\\\": \\\"DocType\\\",\\n  \\\"onboard\\\": 0,\\n  \\\"type\\\": \\\"Link\\\"\\n },\\n {\\n  \\\"dependencies\\\": \\\"\\\",\\n  \\\"description\\\": \\\"Manage council settings and configuration\\\",\\n  \\\"hidden\\\": 0,\\n  \\\"is_query_report\\\": 0,\\n  \\\"label\\\": \\\"Council\\\",\\n  \\\"link_count\\\": 0,\\n  \\\"link_to\\\": \\\"Council\\\",\\n  \\\"link_type\\\": \\\"DocType\\\",\\n  \\\"onboard\\\": 0,\\n  \\\"type\\\": \\\"Link\\\"\\n }\\n]\", \"type\": \"Card Break\"}, {\"hidden\": 0, \"label\": \"Reports\", \"links\": \"[\\n {\\n  \\\"dependencies\\\": \\\"\\\",\\n  \\\"description\\\": \\\"View active SPISC beneficiaries\\\",\\n  \\\"hidden\\\": 0,\\n  \\\"is_query_report\\\": 1,\\n  \\\"label\\\": \\\"Active Beneficiaries\\\",\\n  \\\"link_count\\\": 0,\\n  \\\"link_to\\\": \\\"SPISC Active Beneficiaries\\\",\\n  \\\"link_type\\\": \\\"Report\\\",\\n  \\\"onboard\\\": 0,\\n  \\\"type\\\": \\\"Link\\\"\\n },\\n {\\n  \\\"dependencies\\\": \\\"\\\",\\n  \\\"description\\\": \\\"Monthly payout summary\\\",\\n  \\\"hidden\\\": 0,\\n  \\\"is_query_report\\\": 1,\\n  \\\"label\\\": \\\"Payout Summary\\\",\\n  \\\"link_count\\\": 0,\\n  \\\"link_to\\\": \\\"SPISC Payout Summary\\\",\\n  \\\"link_type\\\": \\\"Report\\\",\\n  \\\"onboard\\\": 0,\\n  \\\"type\\\": \\\"Link\\\"\\n }\\n]\", \"type\": \"Card Break\"}]",
+ "creation": "2025-01-15 12:00:00.000000",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "extends": "Easy Council",
+ "extends_another_page": 0,
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "public",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "TayTay Council",
+ "links": [],
+ "modified": "2025-01-15 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "CouncilsOnline",
+ "name": "TayTay Council",
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 10.0,
+ "shortcuts": [],
+ "title": "TayTay Council SPISC"
+}

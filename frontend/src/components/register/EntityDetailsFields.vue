@@ -55,27 +55,27 @@
 import { Input } from "frappe-ui"
 
 defineProps({
-  requesterType: {
-    type: String,
-    required: true
-  },
-  organizationName: {
-    type: String,
-    default: ""
-  },
-  companyNumber: {
-    type: String,
-    default: ""
-  },
-  trustName: {
-    type: String,
-    default: ""
-  }
+	requesterType: {
+		type: String,
+		required: true,
+	},
+	organizationName: {
+		type: String,
+		default: "",
+	},
+	companyNumber: {
+		type: String,
+		default: "",
+	},
+	trustName: {
+		type: String,
+		default: "",
+	},
 })
 
 defineEmits([
-  'update:organizationName',
-  'update:companyNumber',
-  'update:trustName'
+	"update:organizationName",
+	"update:companyNumber",
+	"update:trustName",
 ])
 </script>

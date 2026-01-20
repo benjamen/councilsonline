@@ -1,0 +1,134 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "field:organization_name",
+ "creation": "2025-11-05 19:30:00",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "organization_name",
+  "organization_type",
+  "business_number",
+  "website",
+  "section_break_contact",
+  "phone",
+  "email",
+  "physical_address",
+  "column_break_contact",
+  "postal_address",
+  "section_break_settings",
+  "billing_contact",
+  "shared_workspace_enabled",
+  "is_active"
+ ],
+ "fields": [
+  {
+   "fieldname": "organization_name",
+   "fieldtype": "Data",
+   "label": "Organization Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "organization_type",
+   "fieldtype": "Select",
+   "label": "Type",
+   "options": "Planning Firm\nArchitecture Firm\nDeveloper\nEngineering Firm\nLegal Firm\nOther",
+   "reqd": 1
+  },
+  {
+   "fieldname": "business_number",
+   "fieldtype": "Data",
+   "label": "Company Registration #"
+  },
+  {
+   "fieldname": "website",
+   "fieldtype": "Data",
+   "label": "Website"
+  },
+  {
+   "fieldname": "section_break_contact",
+   "fieldtype": "Section Break",
+   "label": "Contact"
+  },
+  {
+   "fieldname": "phone",
+   "fieldtype": "Data",
+   "label": "Phone",
+   "reqd": 1
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "Email",
+   "reqd": 1
+  },
+  {
+   "fieldname": "physical_address",
+   "fieldtype": "Small Text",
+   "label": "Physical Address",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_contact",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "postal_address",
+   "fieldtype": "Small Text",
+   "label": "Postal Address"
+  },
+  {
+   "fieldname": "section_break_settings",
+   "fieldtype": "Section Break",
+   "label": "Settings"
+  },
+  {
+   "fieldname": "billing_contact",
+   "fieldtype": "Link",
+   "label": "Billing Contact",
+   "options": "User"
+  },
+  {
+   "fieldname": "shared_workspace_enabled",
+   "fieldtype": "Check",
+   "label": "Enable Shared Workspace"
+  },
+  {
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "label": "Active",
+   "default": "1"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 0,
+ "links": [],
+ "modified": "2025-11-05 19:30:00",
+ "modified_by": "Administrator",
+ "module": "CouncilsOnline",
+ "name": "Organization",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "organization_name",
+ "track_changes": 1
+}

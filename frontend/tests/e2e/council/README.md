@@ -1,6 +1,6 @@
 # Council-Side E2E Tests
 
-Comprehensive Playwright end-to-end tests for all council staff functionality in Lodgeick.
+Comprehensive Playwright end-to-end tests for all council staff functionality in CouncilsOnline.
 
 ## 📁 Test Structure
 
@@ -604,9 +604,9 @@ await createCouncilStaffer(page, { role: STAFF_ROLES.PLANNER });
 - [Test Plan](/home/frappe/.claude/plans/stateful-spinning-honey.md)
 
 ### Related Files
-- [Request DocType](/workspace/development/frappe-bench/apps/lodgeick/lodgeick/lodgeick/doctype/request/request.py)
-- [Request Form JS](/workspace/development/frappe-bench/apps/lodgeick/lodgeick/lodgeick/doctype/request/request.js)
-- [Hooks Configuration](/workspace/development/frappe-bench/apps/lodgeick/lodgeick/hooks.py)
+- [Request DocType](/workspace/development/frappe-bench/apps/councilsonline/councilsonline/councilsonline/doctype/request/request.py)
+- [Request Form JS](/workspace/development/frappe-bench/apps/councilsonline/councilsonline/councilsonline/doctype/request/request.js)
+- [Hooks Configuration](/workspace/development/frappe-bench/apps/councilsonline/councilsonline/hooks.py)
 
 ---
 

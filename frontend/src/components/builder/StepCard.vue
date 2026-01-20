@@ -129,34 +129,34 @@
 import SectionCard from "./SectionCard.vue"
 
 defineProps({
-  step: {
-    type: Object,
-    required: true
-  },
-  stepNumber: {
-    type: Number,
-    required: true
-  },
-  isFirst: {
-    type: Boolean,
-    default: false
-  },
-  isLast: {
-    type: Boolean,
-    default: false
-  }
+	step: {
+		type: Object,
+		required: true,
+	},
+	stepNumber: {
+		type: Number,
+		required: true,
+	},
+	isFirst: {
+		type: Boolean,
+		default: false,
+	},
+	isLast: {
+		type: Boolean,
+		default: false,
+	},
 })
 
 defineEmits([
-  'update:step',
-  'delete',
-  'move',
-  'toggle',
-  'add-section',
-  'update-section',
-  'delete-section',
-  'add-field',
-  'update-field',
-  'delete-field'
+	"update:step",
+	"delete",
+	"move",
+	"toggle",
+	"add-section",
+	"update-section",
+	"delete-section",
+	"add-field",
+	"update-field",
+	"delete-field",
 ])
 </script>

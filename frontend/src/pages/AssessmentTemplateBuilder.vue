@@ -394,7 +394,7 @@ async function loadRequestTypes() {
 
 async function loadStageTypes() {
 	try {
-		const response = await call("lodgeick.api.get_assessment_stage_types")
+		const response = await call("councilsonline.api.get_assessment_stage_types")
 		if (response.success) {
 			stageTypes.value = response.stage_types
 		}
@@ -406,7 +406,7 @@ async function loadStageTypes() {
 async function loadTemplateLibrary() {
 	loadingLibrary.value = true
 	try {
-		const response = await call("lodgeick.api.get_assessment_templates")
+		const response = await call("councilsonline.api.get_assessment_templates")
 		if (response.success) {
 			templateLibrary.value = response.templates
 		}
@@ -420,7 +420,7 @@ async function loadTemplateLibrary() {
 async function loadTemplate(templateName) {
 	loading.value = true
 	try {
-		const response = await call("lodgeick.api.load_assessment_template", {
+		const response = await call("councilsonline.api.load_assessment_template", {
 			template_name: templateName,
 		})
 
@@ -462,7 +462,7 @@ async function saveTemplate() {
 
 	saving.value = true
 	try {
-		const response = await call("lodgeick.api.save_assessment_template", {
+		const response = await call("councilsonline.api.save_assessment_template", {
 			config: template,
 		})
 

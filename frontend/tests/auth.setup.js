@@ -10,7 +10,7 @@ const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:8090"
 
 // Test credentials - can be overridden via environment variables
 const TEST_USER = process.env.TEST_USER || "Administrator"
-const TEST_PASSWORD = process.env.TEST_PASSWORD || "testpass123"
+const TEST_PASSWORD = process.env.TEST_PASSWORD || "admin"
 
 setup("authenticate", async ({ page, context }) => {
 	console.log(`[Auth Setup] Starting authentication against ${FRAPPE_URL}`)

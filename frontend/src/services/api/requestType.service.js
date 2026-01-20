@@ -42,7 +42,7 @@ export class RequestTypeService {
 	 */
 	getRequestTypeByCode(requestTypeCode) {
 		return apiClient.createResource({
-			url: "lodgeick.api.get_request_type_config",
+			url: "councilsonline.api.get_request_type_config",
 			params: { request_type_code: requestTypeCode },
 			auto: true,
 			cache: ["request-type", requestTypeCode],
@@ -80,7 +80,7 @@ export class RequestTypeService {
 	 * @returns {Promise<Object>} Saved configuration
 	 */
 	async saveRequestTypeConfig(config) {
-		return apiClient.call("lodgeick.api.save_request_type_config", {
+		return apiClient.call("councilsonline.api.save_request_type_config", {
 			config,
 		})
 	}
@@ -91,7 +91,7 @@ export class RequestTypeService {
 	 * @returns {Promise<Object>} Request type configuration
 	 */
 	async loadRequestTypeConfig(requestTypeName) {
-		return apiClient.call("lodgeick.api.load_request_type_config", {
+		return apiClient.call("councilsonline.api.load_request_type_config", {
 			request_type_name: requestTypeName,
 		})
 	}
@@ -101,7 +101,7 @@ export class RequestTypeService {
 	 * @returns {Promise<Array>} Step templates
 	 */
 	async getStepTemplates() {
-		return apiClient.call("lodgeick.api.get_step_templates")
+		return apiClient.call("councilsonline.api.get_step_templates")
 	}
 
 	/**
@@ -110,7 +110,7 @@ export class RequestTypeService {
 	 * @returns {Promise<Object>} Template configuration
 	 */
 	async loadStepTemplate(templateName) {
-		return apiClient.call("lodgeick.api.load_step_template", {
+		return apiClient.call("councilsonline.api.load_step_template", {
 			template_name: templateName,
 		})
 	}
@@ -150,7 +150,7 @@ export class RequestTypeService {
 	 * @returns {Promise<Object>} Duplicated request type
 	 */
 	async duplicateRequestType(requestTypeName, newName) {
-		return apiClient.call("lodgeick.api.duplicate_request_type", {
+		return apiClient.call("councilsonline.api.duplicate_request_type", {
 			request_type_name: requestTypeName,
 			new_name: newName,
 		})
@@ -170,7 +170,7 @@ export class RequestTypeService {
 	 * @returns {Promise<Array>} Unique categories
 	 */
 	async getCategories() {
-		return apiClient.call("lodgeick.api.get_request_type_categories")
+		return apiClient.call("councilsonline.api.get_request_type_categories")
 	}
 
 	/**
@@ -179,7 +179,7 @@ export class RequestTypeService {
 	 * @returns {Promise<Object>} Validation result { valid: boolean, errors: [] }
 	 */
 	async validateRequestTypeConfig(config) {
-		return apiClient.call("lodgeick.api.validate_request_type_config", {
+		return apiClient.call("councilsonline.api.validate_request_type_config", {
 			config,
 		})
 	}

@@ -223,96 +223,98 @@ import { computed, ref } from "vue"
 import InfoBox from "../shared/InfoBox.vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  }
+	modelValue: {
+		type: Object,
+		required: true,
+	},
 })
 
 const emit = defineEmits(["update:modelValue"])
 
 const localData = computed({
-  get: () => props.modelValue,
-  set: (value) => emit("update:modelValue", value)
+	get: () => props.modelValue,
+	set: (value) => emit("update:modelValue", value),
 })
 
 const showModal = ref(false)
 const editingIndex = ref(null)
 const currentParty = ref({
-  party_name: "",
-  relationship: "",
-  contact_info: "",
-  address: "",
-  effects: "",
-  written_approval: false
+	party_name: "",
+	relationship: "",
+	contact_info: "",
+	address: "",
+	effects: "",
+	written_approval: false,
 })
 
 const writtenApprovals = computed(() => {
-  return localData.value.affected_parties?.filter(
-    (party) => party.written_approval === true
-  ) || []
+	return (
+		localData.value.affected_parties?.filter(
+			(party) => party.written_approval === true,
+		) || []
+	)
 })
 
 const updateConsultation = (value) => {
-  const updated = { ...props.modelValue, aee_consultation_summary: value }
-  emit("update:modelValue", updated)
+	const updated = { ...props.modelValue, aee_consultation_summary: value }
+	emit("update:modelValue", updated)
 }
 
 const openAddModal = () => {
-  editingIndex.value = null
-  currentParty.value = {
-    party_name: "",
-    relationship: "",
-    contact_info: "",
-    address: "",
-    effects: "",
-    written_approval: false
-  }
-  showModal.value = true
+	editingIndex.value = null
+	currentParty.value = {
+		party_name: "",
+		relationship: "",
+		contact_info: "",
+		address: "",
+		effects: "",
+		written_approval: false,
+	}
+	showModal.value = true
 }
 
 const openEditModal = (index) => {
-  editingIndex.value = index
-  currentParty.value = { ...localData.value.affected_parties[index] }
-  showModal.value = true
+	editingIndex.value = index
+	currentParty.value = { ...localData.value.affected_parties[index] }
+	showModal.value = true
 }
 
 const closeModal = () => {
-  showModal.value = false
-  editingIndex.value = null
-  currentParty.value = {
-    party_name: "",
-    relationship: "",
-    contact_info: "",
-    address: "",
-    effects: "",
-    written_approval: false
-  }
+	showModal.value = false
+	editingIndex.value = null
+	currentParty.value = {
+		party_name: "",
+		relationship: "",
+		contact_info: "",
+		address: "",
+		effects: "",
+		written_approval: false,
+	}
 }
 
 const saveParty = () => {
-  if (!currentParty.value.party_name || !currentParty.value.relationship) {
-    return
-  }
+	if (!currentParty.value.party_name || !currentParty.value.relationship) {
+		return
+	}
 
-  const updated = { ...props.modelValue }
-  if (!updated.affected_parties) updated.affected_parties = []
+	const updated = { ...props.modelValue }
+	if (!updated.affected_parties) updated.affected_parties = []
 
-  if (editingIndex.value !== null) {
-    updated.affected_parties[editingIndex.value] = { ...currentParty.value }
-  } else {
-    updated.affected_parties.push({ ...currentParty.value })
-  }
+	if (editingIndex.value !== null) {
+		updated.affected_parties[editingIndex.value] = { ...currentParty.value }
+	} else {
+		updated.affected_parties.push({ ...currentParty.value })
+	}
 
-  emit("update:modelValue", updated)
-  closeModal()
+	emit("update:modelValue", updated)
+	closeModal()
 }
 
 const removeParty = (index) => {
-  if (confirm("Are you sure you want to remove this affected party?")) {
-    const updated = { ...props.modelValue }
-    updated.affected_parties.splice(index, 1)
-    emit("update:modelValue", updated)
-  }
+	if (confirm("Are you sure you want to remove this affected party?")) {
+		const updated = { ...props.modelValue }
+		updated.affected_parties.splice(index, 1)
+		emit("update:modelValue", updated)
+	}
 }
 </script>

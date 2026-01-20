@@ -108,7 +108,7 @@ function updateDocumentTitle(appName) {
   if (appName) {
     // Only update if we're on a generic page, not overriding specific titles
     const currentTitle = document.title
-    if (currentTitle === 'Lodgeick' || currentTitle === 'Loading...') {
+    if (currentTitle === 'CouncilsOnline' || currentTitle === 'Loading...') {
       document.title = appName
     }
   }

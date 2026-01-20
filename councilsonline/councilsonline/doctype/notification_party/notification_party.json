@@ -1,0 +1,75 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-11-25 15:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "party_name",
+  "party_type",
+  "email",
+  "address",
+  "notification_sent",
+  "notification_sent_date",
+  "notification_method"
+ ],
+ "fields": [
+  {
+   "fieldname": "party_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Party Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "party_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Party Type",
+   "options": "\nAffected Person (s95E)\nIwi/Hapū\nGovernment Agency\nOther"
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "Email"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Small Text",
+   "label": "Postal Address"
+  },
+  {
+   "default": "0",
+   "fieldname": "notification_sent",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Notification Sent"
+  },
+  {
+   "depends_on": "notification_sent",
+   "fieldname": "notification_sent_date",
+   "fieldtype": "Date",
+   "label": "Notification Sent Date"
+  },
+  {
+   "depends_on": "notification_sent",
+   "fieldname": "notification_method",
+   "fieldtype": "Select",
+   "label": "Notification Method",
+   "options": "\nEmail\nPostal Mail\nBoth"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-11-25 15:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "CouncilsOnline",
+ "name": "Notification Party",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -8,7 +8,7 @@ import { createResource } from "frappe-ui"
  */
 export function createRFQ(requestId, rfqMessage = null) {
 	const resource = createResource({
-		url: "lodgeick.lodgeick.doctype.rfq_agent_details.rfq_agent_details.create_rfq_for_request",
+		url: "councilsonline.councilsonline.doctype.rfq_agent_details.rfq_agent_details.create_rfq_for_request",
 		method: "POST",
 		params: {
 			request_id: requestId,
@@ -28,7 +28,7 @@ export function createRFQ(requestId, rfqMessage = null) {
  */
 export function sendRFQToAgent(rfqId, agentId) {
 	const resource = createResource({
-		url: "lodgeick.lodgeick.doctype.rfq_agent_details.rfq_agent_details.send_rfq_to_agent",
+		url: "councilsonline.councilsonline.doctype.rfq_agent_details.rfq_agent_details.send_rfq_to_agent",
 		method: "POST",
 		params: {
 			rfq_id: rfqId,
@@ -49,7 +49,7 @@ export function sendRFQToAgent(rfqId, agentId) {
  */
 export function engageAgent(rfqId, quoteAmount = null, quoteDetails = null) {
 	const resource = createResource({
-		url: "lodgeick.lodgeick.doctype.rfq_agent_details.rfq_agent_details.engage_agent",
+		url: "councilsonline.councilsonline.doctype.rfq_agent_details.rfq_agent_details.engage_agent",
 		method: "POST",
 		params: {
 			rfq_id: rfqId,
@@ -68,7 +68,7 @@ export function engageAgent(rfqId, quoteAmount = null, quoteDetails = null) {
  */
 export function getAvailableAgents() {
 	const resource = createResource({
-		url: "lodgeick.lodgeick.doctype.rfq_agent_details.rfq_agent_details.get_available_agents",
+		url: "councilsonline.councilsonline.doctype.rfq_agent_details.rfq_agent_details.get_available_agents",
 		method: "GET",
 		auto: true,
 	})

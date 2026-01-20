@@ -278,7 +278,7 @@ const handlePropertySearch = async () => {
 	searchTimeout = setTimeout(async () => {
 		propertySearchLoading.value = true
 		try {
-			const results = await call("lodgeick.api.search_property_addresses", {
+			const results = await call("councilsonline.api.search_property_addresses", {
 				query: query,
 			})
 			propertySearchResults.value = results || []

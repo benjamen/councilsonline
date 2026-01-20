@@ -27,8 +27,14 @@ test.describe("Request Communication Features", () => {
 
 			// Fill login form
 			console.log("Filling login credentials...")
-			const usernameInput = page.locator('input[type="email"], input[type="text"], input[placeholder*="email"], input[placeholder*="username"]').first()
-			const passwordInput = page.locator('input[type="password"], input[placeholder*="password"]').first()
+			const usernameInput = page
+				.locator(
+					'input[type="email"], input[type="text"], input[placeholder*="email"], input[placeholder*="username"]',
+				)
+				.first()
+			const passwordInput = page
+				.locator('input[type="password"], input[placeholder*="password"]')
+				.first()
 
 			await usernameInput.fill("Administrator")
 			await page.waitForTimeout(300)
@@ -36,7 +42,9 @@ test.describe("Request Communication Features", () => {
 			await page.waitForTimeout(300)
 
 			// Click Sign In button on login form
-			const loginSubmit = page.locator('button:has-text("Sign In"), button[type="submit"]').first()
+			const loginSubmit = page
+				.locator('button:has-text("Sign In"), button[type="submit"]')
+				.first()
 			console.log("Clicking Sign In to submit login...")
 			await loginSubmit.click()
 			await page.waitForLoadState("networkidle")
@@ -246,7 +254,7 @@ test.describe("Request Communication Features", () => {
 			(response) =>
 				response
 					.url()
-					.includes("/api/method/lodgeick.api.send_request_message"),
+					.includes("/api/method/councilsonline.api.send_request_message"),
 			{ timeout: 15000 },
 		)
 

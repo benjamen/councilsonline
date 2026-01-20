@@ -56,11 +56,11 @@
 
 <script setup>
 defineProps({
-  terms: {
-    type: Boolean,
-    default: false
-  }
+	terms: {
+		type: Boolean,
+		default: false,
+	},
 })
 
-defineEmits(['update:terms'])
+defineEmits(["update:terms"])
 </script>

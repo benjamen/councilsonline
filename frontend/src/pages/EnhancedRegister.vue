@@ -29,7 +29,7 @@
         <!-- STEP 1: Account Creation -->
         <div v-if="currentStep === 1">
           <h2 class="text-2xl font-bold text-gray-900 mb-2">Create Your Account</h2>
-          <p class="text-gray-600 mb-8">Get started with Lodgeick</p>
+          <p class="text-gray-600 mb-8">Get started with CouncilsOnline</p>
 
           <div class="space-y-6">
             <div>
@@ -119,7 +119,7 @@
 
         <!-- STEP 2: Role Selection -->
         <div v-if="currentStep === 2">
-          <h2 class="text-2xl font-bold text-gray-900 mb-2">How will you be using Lodgeick?</h2>
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">How will you be using CouncilsOnline?</h2>
           <p class="text-gray-600 mb-8">Select your primary role</p>
 
           <div class="space-y-4">
@@ -443,7 +443,7 @@ const previousStep = () => {
 const completeRegistration = async () => {
 	try {
 		const response = await fetch(
-			"/api/method/lodgeick.api.complete_registration",
+			"/api/method/councilsonline.api.complete_registration",
 			{
 				method: "POST",
 				headers: {

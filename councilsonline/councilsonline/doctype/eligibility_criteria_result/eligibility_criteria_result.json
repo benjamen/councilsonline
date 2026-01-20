@@ -1,0 +1,288 @@
+{
+ "actions": [],
+ "autoname": "format:ELIG-{request}-{####}",
+ "creation": "2025-12-03 00:00:00",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "primary_section",
+  "request",
+  "request_type",
+  "applicant",
+  "column_break_primary",
+  "evaluation_date",
+  "evaluated_by",
+  "results_section",
+  "overall_score",
+  "max_possible_score",
+  "score_percentage",
+  "column_break_results",
+  "eligibility_status",
+  "final_decision",
+  "criteria_section",
+  "criteria_checks",
+  "flags_section",
+  "kyc_verified",
+  "household_verified",
+  "column_break_flags",
+  "has_senior_citizen",
+  "below_poverty_threshold",
+  "override_section",
+  "manual_override",
+  "override_reason",
+  "column_break_override",
+  "override_by",
+  "override_date",
+  "notes_section",
+  "eligibility_notes",
+  "recommendations"
+ ],
+ "fields": [
+  {
+   "fieldname": "primary_section",
+   "fieldtype": "Section Break",
+   "label": "Primary Information"
+  },
+  {
+   "fieldname": "request",
+   "fieldtype": "Link",
+   "label": "Request",
+   "options": "Request",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "request_type",
+   "fieldtype": "Link",
+   "label": "Request Type",
+   "options": "Request Type",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "requester",
+   "fieldtype": "Link",
+   "label": "Requester",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_primary",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "evaluation_date",
+   "fieldtype": "Datetime",
+   "label": "Evaluation Date",
+   "default": "now",
+   "reqd": 1
+  },
+  {
+   "fieldname": "evaluated_by",
+   "fieldtype": "Link",
+   "label": "Evaluated By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "results_section",
+   "fieldtype": "Section Break",
+   "label": "Eligibility Results"
+  },
+  {
+   "fieldname": "overall_score",
+   "fieldtype": "Float",
+   "label": "Overall Score",
+   "precision": "2",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "max_possible_score",
+   "fieldtype": "Float",
+   "label": "Max Possible Score",
+   "precision": "2",
+   "reqd": 1
+  },
+  {
+   "fieldname": "score_percentage",
+   "fieldtype": "Percent",
+   "label": "Score Percentage",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_results",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "eligibility_status",
+   "fieldtype": "Select",
+   "label": "Eligibility Status",
+   "options": "Eligible\nPartially Eligible\nNot Eligible\nNeeds Review",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "final_decision",
+   "fieldtype": "Select",
+   "label": "Final Decision",
+   "options": "Approved\nRejected\nPending Review",
+   "default": "Pending Review"
+  },
+  {
+   "fieldname": "criteria_section",
+   "fieldtype": "Section Break",
+   "label": "Criteria Checks"
+  },
+  {
+   "fieldname": "criteria_checks",
+   "fieldtype": "Table",
+   "label": "Criteria Check Items",
+   "options": "Criteria Check Item"
+  },
+  {
+   "fieldname": "flags_section",
+   "fieldtype": "Section Break",
+   "label": "Key Eligibility Flags"
+  },
+  {
+   "fieldname": "kyc_verified",
+   "fieldtype": "Check",
+   "label": "KYC Verified",
+   "default": "0"
+  },
+  {
+   "fieldname": "household_verified",
+   "fieldtype": "Check",
+   "label": "Household Verified by Barangay",
+   "default": "0"
+  },
+  {
+   "fieldname": "column_break_flags",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "has_senior_citizen",
+   "fieldtype": "Check",
+   "label": "Has Senior Citizen (60+)",
+   "default": "0"
+  },
+  {
+   "fieldname": "below_poverty_threshold",
+   "fieldtype": "Check",
+   "label": "Below Poverty Threshold",
+   "default": "0"
+  },
+  {
+   "fieldname": "override_section",
+   "fieldtype": "Section Break",
+   "label": "Manual Override",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "manual_override",
+   "fieldtype": "Check",
+   "label": "Manual Override Applied",
+   "default": "0"
+  },
+  {
+   "fieldname": "override_reason",
+   "fieldtype": "Text",
+   "label": "Override Reason",
+   "depends_on": "eval:doc.manual_override"
+  },
+  {
+   "fieldname": "column_break_override",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "override_by",
+   "fieldtype": "Link",
+   "label": "Override By",
+   "options": "User",
+   "depends_on": "eval:doc.manual_override",
+   "read_only": 1
+  },
+  {
+   "fieldname": "override_date",
+   "fieldtype": "Datetime",
+   "label": "Override Date",
+   "depends_on": "eval:doc.manual_override",
+   "read_only": 1
+  },
+  {
+   "fieldname": "notes_section",
+   "fieldtype": "Section Break",
+   "label": "Additional Notes"
+  },
+  {
+   "fieldname": "eligibility_notes",
+   "fieldtype": "Text Editor",
+   "label": "Eligibility Notes"
+  },
+  {
+   "fieldname": "recommendations",
+   "fieldtype": "Text Editor",
+   "label": "Recommendations"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-12-03 00:00:00",
+ "modified_by": "Administrator",
+ "module": "CouncilsOnline",
+ "name": "Eligibility Criteria Result",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Social Services Applicant",
+   "if_owner": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Social Worker",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Social Services Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "request,requester,eligibility_status",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "title_field": "request"
+}

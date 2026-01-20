@@ -299,7 +299,7 @@ const userInitials = computed(() => {
 const loadProfile = async () => {
 	profileLoading.value = true
 	try {
-		const data = await call("lodgeick.api.get_user_profile")
+		const data = await call("councilsonline.api.get_user_profile")
 		profile.value = data
 
 		// Populate forms
@@ -336,7 +336,7 @@ const updateProfile = async () => {
 	saving.value = true
 	try {
 		const result = await call(
-			"lodgeick.api.update_user_profile",
+			"councilsonline.api.update_user_profile",
 			profileForm.value,
 		)
 		profile.value = result.user
@@ -352,7 +352,7 @@ const updateProfile = async () => {
 const updateCouncil = async () => {
 	saving.value = true
 	try {
-		const result = await call("lodgeick.api.update_user_profile", {
+		const result = await call("councilsonline.api.update_user_profile", {
 			default_council: profileForm.value.default_council,
 		})
 		profile.value = result.user
@@ -369,7 +369,7 @@ const updateOrganization = async () => {
 	saving.value = true
 	try {
 		const result = await call(
-			"lodgeick.api.update_user_organization",
+			"councilsonline.api.update_user_organization",
 			orgForm.value,
 		)
 		profile.value.organization_data = result.organization
@@ -398,7 +398,7 @@ const changePassword = async () => {
 
 	changingPassword.value = true
 	try {
-		await call("lodgeick.api.change_password", {
+		await call("councilsonline.api.change_password", {
 			old_password: passwordForm.value.old_password,
 			new_password: passwordForm.value.new_password,
 		})

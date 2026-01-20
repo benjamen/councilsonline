@@ -14,152 +14,156 @@
  * @param {Page} page - Playwright page object
  */
 export async function fillPersonalInformation(page) {
-    console.log('[SPISC Data] Filling Personal Information - Step 1')
+	console.log("[SPISC Data] Filling Personal Information - Step 1")
 
-    // Wait for form to load
-    await page.waitForTimeout(1000)
+	// Wait for form to load
+	await page.waitForTimeout(1000)
 
-    // 1. Full Name - first text input
-    try {
-        const nameInput = await page.locator('input[type="text"]').first()
-        await nameInput.fill('Maria Santos Cruz')
-        console.log('  ✓ Filled: Full Name')
-    } catch (e) {
-        console.log('  ⚠ Skipped: Full Name -', e.message)
-    }
+	// 1. Full Name - first text input
+	try {
+		const nameInput = await page.locator('input[type="text"]').first()
+		await nameInput.fill("Maria Santos Cruz")
+		console.log("  ✓ Filled: Full Name")
+	} catch (e) {
+		console.log("  ⚠ Skipped: Full Name -", e.message)
+	}
 
-    // 2. Date of Birth - HTML5 date input (yyyy-MM-dd format)
-    try {
-        const dateInput = await page.locator('input[type="date"]').first()
-        await dateInput.fill('1960-01-15')
-        console.log('  ✓ Filled: Date of Birth')
-        await page.waitForTimeout(300)
-    } catch (e) {
-        console.log('  ⚠ Skipped: Date of Birth -', e.message)
-    }
+	// 2. Date of Birth - HTML5 date input (yyyy-MM-dd format)
+	try {
+		const dateInput = await page.locator('input[type="date"]').first()
+		await dateInput.fill("1960-01-15")
+		console.log("  ✓ Filled: Date of Birth")
+		await page.waitForTimeout(300)
+	} catch (e) {
+		console.log("  ⚠ Skipped: Date of Birth -", e.message)
+	}
 
-    // Get all selects for address dropdowns
-    const allSelects = await page.locator('select').all()
-    console.log(`  Found ${allSelects.length} dropdown(s) total`)
+	// Get all selects for address dropdowns
+	const allSelects = await page.locator("select").all()
+	console.log(`  Found ${allSelects.length} dropdown(s) total`)
 
-    // 3. Sex - Dropdown 1
-    if (allSelects.length > 0) {
-        try {
-            await allSelects[0].selectOption({ label: 'Female' })
-            console.log('  ✓ Selected: Sex - Female')
-            await page.waitForTimeout(300)
-        } catch (e) {
-            console.log('  ⚠ Skipped: Sex -', e.message)
-        }
-    }
+	// 3. Sex - Dropdown 1
+	if (allSelects.length > 0) {
+		try {
+			await allSelects[0].selectOption({ label: "Female" })
+			console.log("  ✓ Selected: Sex - Female")
+			await page.waitForTimeout(300)
+		} catch (e) {
+			console.log("  ⚠ Skipped: Sex -", e.message)
+		}
+	}
 
-    // 4. Civil Status - Dropdown 2
-    if (allSelects.length > 1) {
-        try {
-            await allSelects[1].selectOption({ label: 'Widowed' })
-            console.log('  ✓ Selected: Civil Status - Widowed')
-            await page.waitForTimeout(300)
-        } catch (e) {
-            console.log('  ⚠ Skipped: Civil Status -', e.message)
-        }
-    }
+	// 4. Civil Status - Dropdown 2
+	if (allSelects.length > 1) {
+		try {
+			await allSelects[1].selectOption({ label: "Widowed" })
+			console.log("  ✓ Selected: Civil Status - Widowed")
+			await page.waitForTimeout(300)
+		} catch (e) {
+			console.log("  ⚠ Skipped: Civil Status -", e.message)
+		}
+	}
 
-    // 5. Mobile Number - text input (field_name: mobile_number, field_type: Data)
-    // This appears after Date of Birth in the Contact Information section
-    try {
-        // Find inputs, skip first one (full name), look for mobile after date
-        const textInputs = await page.locator('input[type="text"]').all()
-        // Full name is index 0, mobile should be index 1 or 2
-        for (let i = 1; i < textInputs.length; i++) {
-            const value = await textInputs[i].inputValue()
-            // Skip if already filled
-            if (!value || value === '') {
-                await textInputs[i].fill('9171234567')
-                await textInputs[i].blur()
-                console.log(`  ✓ Filled: Mobile Number (input ${i})`)
-                await page.waitForTimeout(300)
-                break
-            }
-        }
-    } catch (e) {
-        console.log('  ⚠ Skipped: Mobile Number -', e.message)
-    }
+	// 5. Mobile Number - text input (field_name: mobile_number, field_type: Data)
+	// This appears after Date of Birth in the Contact Information section
+	try {
+		// Find inputs, skip first one (full name), look for mobile after date
+		const textInputs = await page.locator('input[type="text"]').all()
+		// Full name is index 0, mobile should be index 1 or 2
+		for (let i = 1; i < textInputs.length; i++) {
+			const value = await textInputs[i].inputValue()
+			// Skip if already filled
+			if (!value || value === "") {
+				await textInputs[i].fill("9171234567")
+				await textInputs[i].blur()
+				console.log(`  ✓ Filled: Mobile Number (input ${i})`)
+				await page.waitForTimeout(300)
+				break
+			}
+		}
+	} catch (e) {
+		console.log("  ⚠ Skipped: Mobile Number -", e.message)
+	}
 
-    // Re-fetch selects as page may have updated
-    const currentSelects = await page.locator('select').all()
-    console.log(`  Found ${currentSelects.length} dropdown(s) for address`)
+	// Re-fetch selects as page may have updated
+	const currentSelects = await page.locator("select").all()
+	console.log(`  Found ${currentSelects.length} dropdown(s) for address`)
 
-    // 6. Province - Dropdown 3 (from PhilippinesAddressInput)
-    if (currentSelects.length > 2) {
-        try {
-            const provinceOptions = await currentSelects[2].locator('option').all()
-            if (provinceOptions.length > 1) {
-                // Select first real option (index 1, skip "Select Province")
-                await currentSelects[2].selectOption({ index: 1 })
-                const selectedProvince = await provinceOptions[1].textContent()
-                console.log(`  ✓ Selected: Province - ${selectedProvince.trim()}`)
-                await page.waitForTimeout(800) // Wait for municipalities to load
-            }
-        } catch (e) {
-            console.log('  ⚠ Skipped: Province -', e.message)
-        }
-    }
+	// 6. Province - Dropdown 3 (from PhilippinesAddressInput)
+	if (currentSelects.length > 2) {
+		try {
+			const provinceOptions = await currentSelects[2].locator("option").all()
+			if (provinceOptions.length > 1) {
+				// Select first real option (index 1, skip "Select Province")
+				await currentSelects[2].selectOption({ index: 1 })
+				const selectedProvince = await provinceOptions[1].textContent()
+				console.log(`  ✓ Selected: Province - ${selectedProvince.trim()}`)
+				await page.waitForTimeout(800) // Wait for municipalities to load
+			}
+		} catch (e) {
+			console.log("  ⚠ Skipped: Province -", e.message)
+		}
+	}
 
-    // Re-fetch again after province selection (municipalities get populated)
-    const updatedSelects = await page.locator('select').all()
+	// Re-fetch again after province selection (municipalities get populated)
+	const updatedSelects = await page.locator("select").all()
 
-    // 7. Municipality - Dropdown 4 (from PhilippinesAddressInput, populated after province)
-    if (updatedSelects.length > 3) {
-        try {
-            const municipalityOptions = await updatedSelects[3].locator('option').all()
-            if (municipalityOptions.length > 1) {
-                await updatedSelects[3].selectOption({ index: 1 })
-                const selectedMunicipality = await municipalityOptions[1].textContent()
-                console.log(`  ✓ Selected: Municipality - ${selectedMunicipality.trim()}`)
-                await page.waitForTimeout(800) // Wait for barangays to load
-            }
-        } catch (e) {
-            console.log('  ⚠ Skipped: Municipality -', e.message)
-        }
-    }
+	// 7. Municipality - Dropdown 4 (from PhilippinesAddressInput, populated after province)
+	if (updatedSelects.length > 3) {
+		try {
+			const municipalityOptions = await updatedSelects[3]
+				.locator("option")
+				.all()
+			if (municipalityOptions.length > 1) {
+				await updatedSelects[3].selectOption({ index: 1 })
+				const selectedMunicipality = await municipalityOptions[1].textContent()
+				console.log(
+					`  ✓ Selected: Municipality - ${selectedMunicipality.trim()}`,
+				)
+				await page.waitForTimeout(800) // Wait for barangays to load
+			}
+		} catch (e) {
+			console.log("  ⚠ Skipped: Municipality -", e.message)
+		}
+	}
 
-    // Re-fetch again after municipality selection (barangays get populated)
-    const finalSelects = await page.locator('select').all()
+	// Re-fetch again after municipality selection (barangays get populated)
+	const finalSelects = await page.locator("select").all()
 
-    // 8. Barangay - Dropdown 5 (from PhilippinesAddressInput, populated after municipality)
-    if (finalSelects.length > 4) {
-        try {
-            const barangayOptions = await finalSelects[4].locator('option').all()
-            if (barangayOptions.length > 1) {
-                await finalSelects[4].selectOption({ index: 1 })
-                const selectedBarangay = await barangayOptions[1].textContent()
-                console.log(`  ✓ Selected: Barangay - ${selectedBarangay.trim()}`)
-                await page.waitForTimeout(300)
-            }
-        } catch (e) {
-            console.log('  ⚠ Skipped: Barangay -', e.message)
-        }
-    }
+	// 8. Barangay - Dropdown 5 (from PhilippinesAddressInput, populated after municipality)
+	if (finalSelects.length > 4) {
+		try {
+			const barangayOptions = await finalSelects[4].locator("option").all()
+			if (barangayOptions.length > 1) {
+				await finalSelects[4].selectOption({ index: 1 })
+				const selectedBarangay = await barangayOptions[1].textContent()
+				console.log(`  ✓ Selected: Barangay - ${selectedBarangay.trim()}`)
+				await page.waitForTimeout(300)
+			}
+		} catch (e) {
+			console.log("  ⚠ Skipped: Barangay -", e.message)
+		}
+	}
 
-    // 9. Street / House No - last text input (from PhilippinesAddressInput)
-    try {
-        const allTextInputs = await page.locator('input[type="text"]').all()
-        // Fill last empty text input (should be street)
-        for (let i = allTextInputs.length - 1; i >= 0; i--) {
-            const value = await allTextInputs[i].inputValue()
-            if (!value || value === '') {
-                await allTextInputs[i].fill('123 Rizal Street, Blk 5 Lot 10')
-                await allTextInputs[i].blur()
-                console.log('  ✓ Filled: Street / House No')
-                await page.waitForTimeout(300)
-                break
-            }
-        }
-    } catch (e) {
-        console.log('  ⚠ Skipped: Street -', e.message)
-    }
+	// 9. Street / House No - last text input (from PhilippinesAddressInput)
+	try {
+		const allTextInputs = await page.locator('input[type="text"]').all()
+		// Fill last empty text input (should be street)
+		for (let i = allTextInputs.length - 1; i >= 0; i--) {
+			const value = await allTextInputs[i].inputValue()
+			if (!value || value === "") {
+				await allTextInputs[i].fill("123 Rizal Street, Blk 5 Lot 10")
+				await allTextInputs[i].blur()
+				console.log("  ✓ Filled: Street / House No")
+				await page.waitForTimeout(300)
+				break
+			}
+		}
+	} catch (e) {
+		console.log("  ⚠ Skipped: Street -", e.message)
+	}
 
-    console.log('[SPISC Data] ✅ Personal Information Step 1 complete')
+	console.log("[SPISC Data] ✅ Personal Information Step 1 complete")
 }
 
 /**
@@ -169,76 +173,78 @@ export async function fillPersonalInformation(page) {
  * @param {Page} page - Playwright page object
  */
 export async function fillHouseholdInformation(page) {
-    console.log('[SPISC Data] Filling Household Information - Step 2')
+	console.log("[SPISC Data] Filling Household Information - Step 2")
 
-    await page.waitForTimeout(1000)
+	await page.waitForTimeout(1000)
 
-    // 1. Number of Household Members (Int input - type="number")
-    try {
-        const numberInput = await page.locator('input[type="number"]').first()
-        await numberInput.fill('3')
-        await numberInput.blur()
-        console.log('  ✓ Filled: Household Size - 3')
-        await page.waitForTimeout(300)
-    } catch (e) {
-        console.log('  ⚠ Skipped: Household Size -', e.message)
-    }
+	// 1. Number of Household Members (Int input - type="number")
+	try {
+		const numberInput = await page.locator('input[type="number"]').first()
+		await numberInput.fill("3")
+		await numberInput.blur()
+		console.log("  ✓ Filled: Household Size - 3")
+		await page.waitForTimeout(300)
+	} catch (e) {
+		console.log("  ⚠ Skipped: Household Size -", e.message)
+	}
 
-    // 2. Living Arrangement (Select dropdown)
-    try {
-        const selects = await page.locator('select').all()
-        if (selects.length > 0) {
-            await selects[0].selectOption({ label: 'Living with children' })
-            console.log('  ✓ Selected: Living Arrangement - Living with children')
-            await page.waitForTimeout(300)
-        }
-    } catch (e) {
-        console.log('  ⚠ Skipped: Living Arrangement -', e.message)
-    }
+	// 2. Living Arrangement (Select dropdown)
+	try {
+		const selects = await page.locator("select").all()
+		if (selects.length > 0) {
+			await selects[0].selectOption({ label: "Living with children" })
+			console.log("  ✓ Selected: Living Arrangement - Living with children")
+			await page.waitForTimeout(300)
+		}
+	} catch (e) {
+		console.log("  ⚠ Skipped: Living Arrangement -", e.message)
+	}
 
-    // 3. Monthly Income (Currency input - type="number" or "text")
-    try {
-        // Currency fields are usually number inputs
-        const numberInputs = await page.locator('input[type="number"], input[type="text"]').all()
-        // Skip first one (household size), find monthly income
-        for (let i = 1; i < numberInputs.length; i++) {
-            const value = await numberInputs[i].inputValue()
-            if (!value || value === '') {
-                await numberInputs[i].fill('2500')
-                await numberInputs[i].blur()
-                console.log(`  ✓ Filled: Monthly Income - 2500 (input ${i})`)
-                await page.waitForTimeout(300)
-                break
-            }
-        }
-    } catch (e) {
-        console.log('  ⚠ Skipped: Monthly Income -', e.message)
-    }
+	// 3. Monthly Income (Currency input - type="number" or "text")
+	try {
+		// Currency fields are usually number inputs
+		const numberInputs = await page
+			.locator('input[type="number"], input[type="text"]')
+			.all()
+		// Skip first one (household size), find monthly income
+		for (let i = 1; i < numberInputs.length; i++) {
+			const value = await numberInputs[i].inputValue()
+			if (!value || value === "") {
+				await numberInputs[i].fill("2500")
+				await numberInputs[i].blur()
+				console.log(`  ✓ Filled: Monthly Income - 2500 (input ${i})`)
+				await page.waitForTimeout(300)
+				break
+			}
+		}
+	} catch (e) {
+		console.log("  ⚠ Skipped: Monthly Income -", e.message)
+	}
 
-    // 4. Source of Income (Select dropdown - should be 2nd select)
-    try {
-        const selects = await page.locator('select').all()
-        if (selects.length > 1) {
-            await selects[1].selectOption({ label: 'Family support' })
-            console.log('  ✓ Selected: Income Source - Family support')
-            await page.waitForTimeout(300)
-        }
-    } catch (e) {
-        console.log('  ⚠ Skipped: Income Source -', e.message)
-    }
+	// 4. Source of Income (Select dropdown - should be 2nd select)
+	try {
+		const selects = await page.locator("select").all()
+		if (selects.length > 1) {
+			await selects[1].selectOption({ label: "Family support" })
+			console.log("  ✓ Selected: Income Source - Family support")
+			await page.waitForTimeout(300)
+		}
+	} catch (e) {
+		console.log("  ⚠ Skipped: Income Source -", e.message)
+	}
 
-    // 5. 4Ps Beneficiary (Checkbox - optional)
-    try {
-        const checkbox = await page.locator('input[type="checkbox"]').first()
-        if (await checkbox.isVisible()) {
-            // Leave unchecked (not a 4Ps beneficiary)
-            console.log('  ✓ Skipped: 4Ps Beneficiary (optional, left unchecked)')
-        }
-    } catch (e) {
-        // Optional field, ignore errors
-    }
+	// 5. 4Ps Beneficiary (Checkbox - optional)
+	try {
+		const checkbox = await page.locator('input[type="checkbox"]').first()
+		if (await checkbox.isVisible()) {
+			// Leave unchecked (not a 4Ps beneficiary)
+			console.log("  ✓ Skipped: 4Ps Beneficiary (optional, left unchecked)")
+		}
+	} catch (e) {
+		// Optional field, ignore errors
+	}
 
-    console.log('[SPISC Data] ✅ Household Information Step 2 complete')
+	console.log("[SPISC Data] ✅ Household Information Step 2 complete")
 }
 
 /**
@@ -249,50 +255,50 @@ export async function fillHouseholdInformation(page) {
  * @param {string} testImagePath - Path to test image file for signature
  */
 export async function fillDeclaration(page, testImagePath) {
-    console.log('[SPISC Data] Filling Declaration & Submission - Step 5')
+	console.log("[SPISC Data] Filling Declaration & Submission - Step 5")
 
-    await page.waitForTimeout(1000)
+	await page.waitForTimeout(1000)
 
-    // 1. Truth Declaration checkbox
-    try {
-        const checkboxes = await page.locator('input[type="checkbox"]').all()
-        if (checkboxes.length > 0) {
-            await checkboxes[0].check()
-            console.log('  ✓ Checked: Truth Declaration')
-            await page.waitForTimeout(300)
-        }
-    } catch (e) {
-        console.log('  ⚠ Skipped: Truth Declaration -', e.message)
-    }
+	// 1. Truth Declaration checkbox
+	try {
+		const checkboxes = await page.locator('input[type="checkbox"]').all()
+		if (checkboxes.length > 0) {
+			await checkboxes[0].check()
+			console.log("  ✓ Checked: Truth Declaration")
+			await page.waitForTimeout(300)
+		}
+	} catch (e) {
+		console.log("  ⚠ Skipped: Truth Declaration -", e.message)
+	}
 
-    // 2. Data Privacy Consent checkbox
-    try {
-        const checkboxes = await page.locator('input[type="checkbox"]').all()
-        if (checkboxes.length > 1) {
-            await checkboxes[1].check()
-            console.log('  ✓ Checked: Data Privacy Consent')
-            await page.waitForTimeout(300)
-        }
-    } catch (e) {
-        console.log('  ⚠ Skipped: Data Privacy Consent -', e.message)
-    }
+	// 2. Data Privacy Consent checkbox
+	try {
+		const checkboxes = await page.locator('input[type="checkbox"]').all()
+		if (checkboxes.length > 1) {
+			await checkboxes[1].check()
+			console.log("  ✓ Checked: Data Privacy Consent")
+			await page.waitForTimeout(300)
+		}
+	} catch (e) {
+		console.log("  ⚠ Skipped: Data Privacy Consent -", e.message)
+	}
 
-    // 3. Signature upload (Attach Image)
-    try {
-        const fileInputs = await page.locator('input[type="file"]').all()
-        if (fileInputs.length > 0) {
-            await fileInputs[0].setInputFiles(testImagePath)
-            console.log('  ✓ Uploaded: Signature')
-            await page.waitForTimeout(2000) // Wait for upload
-        }
-    } catch (e) {
-        console.log('  ⚠ Skipped: Signature -', e.message)
-    }
+	// 3. Signature upload (Attach Image)
+	try {
+		const fileInputs = await page.locator('input[type="file"]').all()
+		if (fileInputs.length > 0) {
+			await fileInputs[0].setInputFiles(testImagePath)
+			console.log("  ✓ Uploaded: Signature")
+			await page.waitForTimeout(2000) // Wait for upload
+		}
+	} catch (e) {
+		console.log("  ⚠ Skipped: Signature -", e.message)
+	}
 
-    // 4. Signature Date (should have default value "Today")
-    // Usually auto-filled, so we can skip it
+	// 4. Signature Date (should have default value "Today")
+	// Usually auto-filled, so we can skip it
 
-    console.log('[SPISC Data] ✅ Declaration & Submission Step 5 complete')
+	console.log("[SPISC Data] ✅ Declaration & Submission Step 5 complete")
 }
 
 /**
@@ -301,22 +307,22 @@ export async function fillDeclaration(page, testImagePath) {
  * @param {string} testImagePath - Path to test image file
  */
 export async function uploadSPISCDocuments(page, testImagePath) {
-    console.log('[SPISC Data] Uploading required documents')
+	console.log("[SPISC Data] Uploading required documents")
 
-    // Find all file inputs
-    const fileInputs = await page.locator('input[type="file"]').all()
-    console.log(`  Found ${fileInputs.length} file upload field(s)`)
+	// Find all file inputs
+	const fileInputs = await page.locator('input[type="file"]').all()
+	console.log(`  Found ${fileInputs.length} file upload field(s)`)
 
-    // Upload to each file input
-    for (let i = 0; i < fileInputs.length; i++) {
-        await fileInputs[i].setInputFiles(testImagePath)
-        console.log(`  Uploaded file to input ${i + 1}`)
-        await page.waitForTimeout(1000) // Wait for upload to process
-    }
+	// Upload to each file input
+	for (let i = 0; i < fileInputs.length; i++) {
+		await fileInputs[i].setInputFiles(testImagePath)
+		console.log(`  Uploaded file to input ${i + 1}`)
+		await page.waitForTimeout(1000) // Wait for upload to process
+	}
 
-    // Wait for all uploads to complete
-    await page.waitForTimeout(3000)
-    console.log('[SPISC Data] All documents uploaded')
+	// Wait for all uploads to complete
+	await page.waitForTimeout(3000)
+	console.log("[SPISC Data] All documents uploaded")
 }
 
 /**
@@ -325,150 +331,170 @@ export async function uploadSPISCDocuments(page, testImagePath) {
  * @param {string} testImagePath - Path to test image file for uploads
  */
 export async function fillCompleteSPISCForm(page, testImagePath) {
-    console.log('[SPISC Data] Starting complete form fill')
+	console.log("[SPISC Data] Starting complete form fill")
 
-    // Step 1: Fill Personal Information
-    await fillPersonalInformation(page)
+	// Step 1: Fill Personal Information
+	await fillPersonalInformation(page)
 
-    // Click Next
-    console.log('[SPISC Data] Clicking Next to proceed')
-    try {
-        await page.click('button:has-text("Next")')
-        await page.waitForTimeout(2000)
+	// Click Next
+	console.log("[SPISC Data] Clicking Next to proceed")
+	try {
+		await page.click('button:has-text("Next")')
+		await page.waitForTimeout(2000)
 
-        // Check if validation dialog appeared
-        const validationDialog = await page.locator('text="Validation Errors"').count()
-        if (validationDialog > 0) {
-            console.log('[SPISC Data] ⚠️ Validation errors detected!')
+		// Check if validation dialog appeared
+		const validationDialog = await page
+			.locator('text="Validation Errors"')
+			.count()
+		if (validationDialog > 0) {
+			console.log("[SPISC Data] ⚠️ Validation errors detected!")
 
-            // Take screenshot
-            await page.screenshot({ path: '/tmp/spisc-validation-dialog.png' })
+			// Take screenshot
+			await page.screenshot({ path: "/tmp/spisc-validation-dialog.png" })
 
-            // Try to extract validation error messages
-            try {
-                // Look for error list items or text
-                const errorMessages = await page.locator('[role="dialog"] ul li, [role="dialog"] .error-message, [role="dialog"] p').allTextContents()
-                console.log('[SPISC Data] Validation error details:')
-                errorMessages.forEach((msg, idx) => {
-                    if (msg.trim()) {
-                        console.log(`  ${idx + 1}. ${msg.trim()}`)
-                    }
-                })
-            } catch (e) {
-                console.log('[SPISC Data] Could not extract specific error messages')
-            }
+			// Try to extract validation error messages
+			try {
+				// Look for error list items or text
+				const errorMessages = await page
+					.locator(
+						'[role="dialog"] ul li, [role="dialog"] .error-message, [role="dialog"] p',
+					)
+					.allTextContents()
+				console.log("[SPISC Data] Validation error details:")
+				errorMessages.forEach((msg, idx) => {
+					if (msg.trim()) {
+						console.log(`  ${idx + 1}. ${msg.trim()}`)
+					}
+				})
+			} catch (e) {
+				console.log("[SPISC Data] Could not extract specific error messages")
+			}
 
-            // Click OK or close button
-            await page.keyboard.press('Escape')
-            await page.waitForTimeout(1000)
-            // Return early - form not complete yet
-            console.log('[SPISC Data] Form has validation errors - returning')
-            return
-        }
-    } catch (e) {
-        console.log('[SPISC Data] Error clicking Next:', e.message)
-        // Check for validation dialog
-        const validationDialog = await page.locator('text="Validation Errors"').count()
-        if (validationDialog > 0) {
-            await page.keyboard.press('Escape')
-            await page.waitForTimeout(1000)
-        }
-        return
-    }
+			// Click OK or close button
+			await page.keyboard.press("Escape")
+			await page.waitForTimeout(1000)
+			// Return early - form not complete yet
+			console.log("[SPISC Data] Form has validation errors - returning")
+			return
+		}
+	} catch (e) {
+		console.log("[SPISC Data] Error clicking Next:", e.message)
+		// Check for validation dialog
+		const validationDialog = await page
+			.locator('text="Validation Errors"')
+			.count()
+		if (validationDialog > 0) {
+			await page.keyboard.press("Escape")
+			await page.waitForTimeout(1000)
+		}
+		return
+	}
 
-    // Step 2: Upload Documents (if on upload step)
-    const fileInputCount = await page.locator('input[type="file"]').count()
-    if (fileInputCount > 0) {
-        console.log('[SPISC Data] Found upload step, uploading documents')
-        await uploadSPISCDocuments(page, testImagePath)
+	// Step 2: Upload Documents (if on upload step)
+	const fileInputCount = await page.locator('input[type="file"]').count()
+	if (fileInputCount > 0) {
+		console.log("[SPISC Data] Found upload step, uploading documents")
+		await uploadSPISCDocuments(page, testImagePath)
 
-        // Click Next
-        await page.click('button:has-text("Next")')
-        await page.waitForTimeout(2000)
-    }
+		// Click Next
+		await page.click('button:has-text("Next")')
+		await page.waitForTimeout(2000)
+	}
 
-    // Step 2: Fill Household Information (if successfully moved past Step 1)
-    const householdFields = await page.locator('input[type="number"]').count()
-    if (householdFields > 0) {
-        console.log('[SPISC Data] On Household Information step')
-        await fillHouseholdInformation(page)
+	// Step 2: Fill Household Information (if successfully moved past Step 1)
+	const householdFields = await page.locator('input[type="number"]').count()
+	if (householdFields > 0) {
+		console.log("[SPISC Data] On Household Information step")
+		await fillHouseholdInformation(page)
 
-        // Click Next to proceed to Step 3
-        try {
-            await page.click('button:has-text("Next")')
-            await page.waitForTimeout(2000)
-            console.log('[SPISC Data] Moved to Step 3')
-        } catch (e) {
-            console.log('[SPISC Data] Could not proceed to Step 3:', e.message)
-            return
-        }
-    }
+		// Click Next to proceed to Step 3
+		try {
+			await page.click('button:has-text("Next")')
+			await page.waitForTimeout(2000)
+			console.log("[SPISC Data] Moved to Step 3")
+		} catch (e) {
+			console.log("[SPISC Data] Could not proceed to Step 3:", e.message)
+			return
+		}
+	}
 
-    // Continue through remaining steps (3, 4, 5)
-    let maxClicks = 10
-    let clicks = 0
+	// Continue through remaining steps (3, 4, 5)
+	const maxClicks = 10
+	let clicks = 0
 
-    while (clicks < maxClicks) {
-        // Check if we're on Review/Submit step
-        const submitButton = await page.locator('button:has-text("Submit"), button:has-text("Submit Application")').count()
-        if (submitButton > 0) {
-            console.log('[SPISC Data] Reached submit step')
-            break
-        }
+	while (clicks < maxClicks) {
+		// Check if we're on Review/Submit step
+		const submitButton = await page
+			.locator(
+				'button:has-text("Submit"), button:has-text("Submit Application")',
+			)
+			.count()
+		if (submitButton > 0) {
+			console.log("[SPISC Data] Reached submit step")
+			break
+		}
 
-        // Check if Next button exists
-        const nextButton = await page.locator('button:has-text("Next")').count()
-        if (nextButton === 0) {
-            console.log('[SPISC Data] No more Next buttons, form complete')
-            break
-        }
+		// Check if Next button exists
+		const nextButton = await page.locator('button:has-text("Next")').count()
+		if (nextButton === 0) {
+			console.log("[SPISC Data] No more Next buttons, form complete")
+			break
+		}
 
-        // Check what step we're on
-        const hasFileUploads = await page.locator('input[type="file"]').count()
-        const hasCheckboxes = await page.locator('input[type="checkbox"]').count()
+		// Check what step we're on
+		const hasFileUploads = await page.locator('input[type="file"]').count()
+		const hasCheckboxes = await page.locator('input[type="checkbox"]').count()
 
-        // Step 4: Supporting Documents (file uploads, no checkboxes)
-        if (hasFileUploads > 0 && hasCheckboxes === 0) {
-            console.log(`[SPISC Data] On document upload step, found ${hasFileUploads} file input(s)`)
-            await uploadSPISCDocuments(page, testImagePath)
-        }
+		// Step 4: Supporting Documents (file uploads, no checkboxes)
+		if (hasFileUploads > 0 && hasCheckboxes === 0) {
+			console.log(
+				`[SPISC Data] On document upload step, found ${hasFileUploads} file input(s)`,
+			)
+			await uploadSPISCDocuments(page, testImagePath)
+		}
 
-        // Step 5: Declaration (checkboxes + signature)
-        if (hasCheckboxes > 0) {
-            console.log('[SPISC Data] On declaration step with checkboxes')
-            await fillDeclaration(page, testImagePath)
-        }
+		// Step 5: Declaration (checkboxes + signature)
+		if (hasCheckboxes > 0) {
+			console.log("[SPISC Data] On declaration step with checkboxes")
+			await fillDeclaration(page, testImagePath)
+		}
 
-        // Click Next
-        console.log('[SPISC Data] Clicking Next')
-        try {
-            // Close any validation dialogs first
-            const dialogCount = await page.locator('[role="dialog"]').count()
-            if (dialogCount > 0) {
-                console.log('[SPISC Data] Closing validation dialog')
-                await page.keyboard.press('Escape')
-                await page.waitForTimeout(500)
-            }
+		// Click Next
+		console.log("[SPISC Data] Clicking Next")
+		try {
+			// Close any validation dialogs first
+			const dialogCount = await page.locator('[role="dialog"]').count()
+			if (dialogCount > 0) {
+				console.log("[SPISC Data] Closing validation dialog")
+				await page.keyboard.press("Escape")
+				await page.waitForTimeout(500)
+			}
 
-            await page.click('button:has-text("Next")', { timeout: 5000 })
-            await page.waitForTimeout(2000)
-            clicks++
-        } catch (e) {
-            console.log('[SPISC Data] Error clicking Next:', e.message)
-            // Check for validation errors
-            const validationDialog = await page.locator('text="Validation Errors"').count()
-            if (validationDialog > 0) {
-                const errorMessages = await page.locator('[role="dialog"] ul li, [role="dialog"] p').allTextContents()
-                console.log('[SPISC Data] Validation errors:')
-                errorMessages.forEach(msg => msg.trim() && console.log(`  - ${msg.trim()}`))
-                await page.keyboard.press('Escape')
-                await page.waitForTimeout(1000)
-            }
-            break
-        }
-    }
+			await page.click('button:has-text("Next")', { timeout: 5000 })
+			await page.waitForTimeout(2000)
+			clicks++
+		} catch (e) {
+			console.log("[SPISC Data] Error clicking Next:", e.message)
+			// Check for validation errors
+			const validationDialog = await page
+				.locator('text="Validation Errors"')
+				.count()
+			if (validationDialog > 0) {
+				const errorMessages = await page
+					.locator('[role="dialog"] ul li, [role="dialog"] p')
+					.allTextContents()
+				console.log("[SPISC Data] Validation errors:")
+				errorMessages.forEach(
+					(msg) => msg.trim() && console.log(`  - ${msg.trim()}`),
+				)
+				await page.keyboard.press("Escape")
+				await page.waitForTimeout(1000)
+			}
+			break
+		}
+	}
 
-    console.log('[SPISC Data] Form filling complete')
+	console.log("[SPISC Data] Form filling complete")
 }
 
 /**
@@ -476,24 +502,28 @@ export async function fillCompleteSPISCForm(page, testImagePath) {
  * @param {Page} page - Playwright page object
  */
 export async function submitSPISCApplication(page) {
-    console.log('[SPISC Data] Submitting application')
+	console.log("[SPISC Data] Submitting application")
 
-    // Look for Submit button
-    const submitButton = page.locator('button:has-text("Submit"), button:has-text("Submit Application")').first()
-    await submitButton.click()
+	// Look for Submit button
+	const submitButton = page
+		.locator('button:has-text("Submit"), button:has-text("Submit Application")')
+		.first()
+	await submitButton.click()
 
-    console.log('[SPISC Data] Clicked Submit button')
-    await page.waitForTimeout(2000)
+	console.log("[SPISC Data] Clicked Submit button")
+	await page.waitForTimeout(2000)
 
-    // Handle any confirmation dialogs
-    const confirmButton = page.locator('button:has-text("Confirm"), button:has-text("Yes")').first()
-    const confirmExists = await confirmButton.count() > 0
+	// Handle any confirmation dialogs
+	const confirmButton = page
+		.locator('button:has-text("Confirm"), button:has-text("Yes")')
+		.first()
+	const confirmExists = (await confirmButton.count()) > 0
 
-    if (confirmExists) {
-        console.log('[SPISC Data] Confirming submission')
-        await confirmButton.click()
-        await page.waitForTimeout(2000)
-    }
+	if (confirmExists) {
+		console.log("[SPISC Data] Confirming submission")
+		await confirmButton.click()
+		await page.waitForTimeout(2000)
+	}
 
-    console.log('[SPISC Data] Submission complete')
+	console.log("[SPISC Data] Submission complete")
 }

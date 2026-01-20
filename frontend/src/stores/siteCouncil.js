@@ -113,10 +113,10 @@ export const useSiteCouncilStore = defineStore("siteCouncil", {
 				console.log("[siteCouncil] Fetching council data...")
 
 				// Get council data (Single DocType)
-				this.council = await call("lodgeick.api.get_council")
+				this.council = await call("councilsonline.api.get_council")
 
 				// Get enabled request types
-				this.requestTypes = await call("lodgeick.api.get_request_types")
+				this.requestTypes = await call("councilsonline.api.get_request_types")
 
 				this.lastFetched = now
 

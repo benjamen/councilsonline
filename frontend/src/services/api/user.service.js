@@ -73,7 +73,7 @@ export class UserService {
 	 * @returns {Promise<Object>} Registration result
 	 */
 	async register(userData) {
-		return apiClient.call("lodgeick.api.register_user", userData)
+		return apiClient.call("councilsonline.api.register_user", userData)
 	}
 
 	/**
@@ -130,7 +130,7 @@ export class UserService {
 	 * @returns {Promise<Object>} User preferences
 	 */
 	async getUserPreferences() {
-		return apiClient.call("lodgeick.api.get_user_preferences")
+		return apiClient.call("councilsonline.api.get_user_preferences")
 	}
 
 	/**
@@ -139,7 +139,7 @@ export class UserService {
 	 * @returns {Promise<void>}
 	 */
 	async updateUserPreferences(preferences) {
-		return apiClient.call("lodgeick.api.update_user_preferences", {
+		return apiClient.call("councilsonline.api.update_user_preferences", {
 			preferences,
 		})
 	}
@@ -149,7 +149,7 @@ export class UserService {
 	 * @returns {Promise<Array>} User organizations
 	 */
 	async getUserOrganizations() {
-		return apiClient.call("lodgeick.api.get_user_organizations")
+		return apiClient.call("councilsonline.api.get_user_organizations")
 	}
 }
 

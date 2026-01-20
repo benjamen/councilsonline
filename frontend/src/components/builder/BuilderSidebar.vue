@@ -113,36 +113,36 @@
 
 <script setup>
 defineProps({
-  requestType: {
-    type: Object,
-    required: true
-  },
-  availableTemplates: {
-    type: Array,
-    default: () => []
-  },
-  loading: {
-    type: Boolean,
-    default: false
-  },
-  showJsonPreview: {
-    type: Boolean,
-    default: false
-  },
-  jsonPreview: {
-    type: String,
-    default: ""
-  }
+	requestType: {
+		type: Object,
+		required: true,
+	},
+	availableTemplates: {
+		type: Array,
+		default: () => [],
+	},
+	loading: {
+		type: Boolean,
+		default: false,
+	},
+	showJsonPreview: {
+		type: Boolean,
+		default: false,
+	},
+	jsonPreview: {
+		type: String,
+		default: "",
+	},
 })
 
 defineEmits([
-  'update-name',
-  'update-category',
-  'update-description',
-  'update-collects-payment',
-  'update-make-payment',
-  'apply-template',
-  'toggle-json-preview',
-  'copy-json'
+	"update-name",
+	"update-category",
+	"update-description",
+	"update-collects-payment",
+	"update-make-payment",
+	"apply-template",
+	"toggle-json-preview",
+	"copy-json",
 ])
 </script>

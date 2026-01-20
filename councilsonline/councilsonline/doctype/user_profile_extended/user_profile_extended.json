@@ -1,0 +1,325 @@
+{
+ "actions": [],
+ "creation": "2025-12-01 08:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "user",
+  "basic_info_section",
+  "full_name",
+  "phone",
+  "column_break_basic",
+  "user_role",
+  "profile_completion_percentage",
+  "contact_section",
+  "postal_street",
+  "postal_suburb",
+  "column_break_address",
+  "postal_city",
+  "postal_postcode",
+  "communication_section",
+  "comm_email",
+  "comm_phone",
+  "comm_post",
+  "column_break_invoice",
+  "invoice_preference",
+  "business_section",
+  "company_name",
+  "business_type",
+  "company_number",
+  "column_break_business",
+  "business_phone",
+  "business_email",
+  "business_address_section",
+  "business_street",
+  "business_suburb",
+  "column_break_business_address",
+  "business_city",
+  "business_postcode",
+  "agent_preferences_section",
+  "default_communication_route",
+  "default_invoice_recipient",
+  "properties_section",
+  "properties",
+  "councils_section",
+  "councils",
+  "clients_section",
+  "clients",
+  "onboarding_section",
+  "onboarding_completed",
+  "onboarding_step",
+  "column_break_onboarding",
+  "registration_date"
+ ],
+ "fields": [
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "label": "User",
+   "options": "User",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "basic_info_section",
+   "fieldtype": "Section Break",
+   "label": "Basic Information"
+  },
+  {
+   "fieldname": "full_name",
+   "fieldtype": "Data",
+   "label": "Full Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "phone",
+   "fieldtype": "Data",
+   "label": "Phone Number",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_basic",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "user_role",
+   "fieldtype": "Select",
+   "label": "User Role",
+   "options": "Individual\\nAgent",
+   "reqd": 1,
+   "default": "Individual"
+  },
+  {
+   "fieldname": "profile_completion_percentage",
+   "fieldtype": "Percent",
+   "label": "Profile Completion",
+   "read_only": 1
+  },
+  {
+   "fieldname": "contact_section",
+   "fieldtype": "Section Break",
+   "label": "Contact Details",
+   "depends_on": "eval:doc.user_role=='Individual'"
+  },
+  {
+   "fieldname": "postal_street",
+   "fieldtype": "Data",
+   "label": "Street Address"
+  },
+  {
+   "fieldname": "postal_suburb",
+   "fieldtype": "Data",
+   "label": "Suburb"
+  },
+  {
+   "fieldname": "column_break_address",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "postal_city",
+   "fieldtype": "Data",
+   "label": "City"
+  },
+  {
+   "fieldname": "postal_postcode",
+   "fieldtype": "Data",
+   "label": "Postcode"
+  },
+  {
+   "fieldname": "communication_section",
+   "fieldtype": "Section Break",
+   "label": "Communication Preferences"
+  },
+  {
+   "fieldname": "comm_email",
+   "fieldtype": "Check",
+   "label": "Email Notifications",
+   "default": 1
+  },
+  {
+   "fieldname": "comm_phone",
+   "fieldtype": "Check",
+   "label": "Phone/SMS Notifications"
+  },
+  {
+   "fieldname": "comm_post",
+   "fieldtype": "Check",
+   "label": "Post Notifications"
+  },
+  {
+   "fieldname": "column_break_invoice",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "invoice_preference",
+   "fieldtype": "Select",
+   "label": "Invoice Delivery",
+   "options": "Email\\nPost",
+   "default": "Email"
+  },
+  {
+   "fieldname": "business_section",
+   "fieldtype": "Section Break",
+   "label": "Business Details",
+   "depends_on": "eval:doc.user_role=='Agent'"
+  },
+  {
+   "fieldname": "company_name",
+   "fieldtype": "Data",
+   "label": "Company Name",
+   "mandatory_depends_on": "eval:doc.user_role=='Agent'"
+  },
+  {
+   "fieldname": "business_type",
+   "fieldtype": "Select",
+   "label": "Business Type",
+   "options": "Sole Trader\\nLimited Company\\nPartnership\\nOther"
+  },
+  {
+   "fieldname": "company_number",
+   "fieldtype": "Data",
+   "label": "Company Number"
+  },
+  {
+   "fieldname": "column_break_business",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "business_phone",
+   "fieldtype": "Data",
+   "label": "Business Phone"
+  },
+  {
+   "fieldname": "business_email",
+   "fieldtype": "Data",
+   "label": "Business Email"
+  },
+  {
+   "fieldname": "business_address_section",
+   "fieldtype": "Section Break",
+   "label": "Business Address",
+   "depends_on": "eval:doc.user_role=='Agent'"
+  },
+  {
+   "fieldname": "business_street",
+   "fieldtype": "Data",
+   "label": "Street Address"
+  },
+  {
+   "fieldname": "business_suburb",
+   "fieldtype": "Data",
+   "label": "Suburb"
+  },
+  {
+   "fieldname": "column_break_business_address",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "business_city",
+   "fieldtype": "Data",
+   "label": "City"
+  },
+  {
+   "fieldname": "business_postcode",
+   "fieldtype": "Data",
+   "label": "Postcode"
+  },
+  {
+   "fieldname": "agent_preferences_section",
+   "fieldtype": "Section Break",
+   "label": "Agent Preferences",
+   "depends_on": "eval:doc.user_role=='Agent'"
+  },
+  {
+   "fieldname": "default_communication_route",
+   "fieldtype": "Select",
+   "label": "Default Communication Route",
+   "options": "Agent Only\\nClient Only\\nBoth Agent and Client",
+   "default": "Both Agent and Client"
+  },
+  {
+   "fieldname": "default_invoice_recipient",
+   "fieldtype": "Select",
+   "label": "Default Invoice Recipient",
+   "options": "Agent\\nClient\\nAsk Each Time",
+   "default": "Client"
+  },
+  {
+   "fieldname": "properties_section",
+   "fieldtype": "Section Break",
+   "label": "My Properties"
+  },
+  {
+   "fieldname": "properties",
+   "fieldtype": "Table",
+   "label": "Properties",
+   "options": "User Property"
+  },
+  {
+   "fieldname": "councils_section",
+   "fieldtype": "Section Break",
+   "label": "My Councils"
+  },
+  {
+   "fieldname": "councils",
+   "fieldtype": "Table",
+   "label": "Councils",
+   "options": "User Council"
+  },
+  {
+   "fieldname": "clients_section",
+   "fieldtype": "Section Break",
+   "label": "My Clients",
+   "depends_on": "eval:doc.user_role=='Agent'"
+  },
+  {
+   "fieldname": "clients",
+   "fieldtype": "Table",
+   "label": "Clients",
+   "options": "User Client"
+  },
+  {
+   "fieldname": "onboarding_section",
+   "fieldtype": "Section Break",
+   "label": "Onboarding Status",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "onboarding_completed",
+   "fieldtype": "Check",
+   "label": "Onboarding Completed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "onboarding_step",
+   "fieldtype": "Int",
+   "label": "Current Onboarding Step",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_onboarding",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "registration_date",
+   "fieldtype": "Datetime",
+   "label": "Registration Date",
+   "read_only": 1,
+   "default": "now"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-12-01 08:00:00",
+ "modified_by": "Administrator",
+ "module": "CouncilsOnline",
+ "name": "User Profile Extended",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "field:user",
+ "is_submittable": 0
+}

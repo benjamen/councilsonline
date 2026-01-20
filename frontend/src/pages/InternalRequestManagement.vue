@@ -355,13 +355,13 @@ const isAssigning = ref(false)
 
 // Fetch all requests for council staff
 const requests = createResource({
-	url: "lodgeick.lodgeick.doctype.request.request.get_all_requests_for_staff",
+	url: "councilsonline.councilsonline.doctype.request.request.get_all_requests_for_staff",
 	auto: true,
 })
 
 // Fetch staff users for assignment with roles
 const staffUsers = createResource({
-	url: "lodgeick.api.get_staff_users",
+	url: "councilsonline.api.get_staff_users",
 	auto: true,
 })
 
@@ -463,7 +463,7 @@ const confirmAssignment = async () => {
 
 	isAssigning.value = true
 	try {
-		const response = await fetch("/api/method/lodgeick.api.assign_request", {
+		const response = await fetch("/api/method/councilsonline.api.assign_request", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

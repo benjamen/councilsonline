@@ -98,18 +98,18 @@ import { Button } from "frappe-ui"
 defineProps({
 	workflowState: {
 		type: String,
-		required: true
+		required: true,
 	},
 	councilDetails: {
 		type: Object,
 		required: true,
-		default: () => ({ loading: false, data: null })
+		default: () => ({ loading: false, data: null }),
 	},
 	deleting: {
 		type: Boolean,
-		default: false
-	}
+		default: false,
+	},
 })
 
-defineEmits(['edit-draft', 'send-message', 'print-application', 'delete-draft'])
+defineEmits(["edit-draft", "send-message", "print-application", "delete-draft"])
 </script>

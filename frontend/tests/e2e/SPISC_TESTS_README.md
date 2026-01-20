@@ -2,7 +2,7 @@
 
 ## Overview
 
-Comprehensive Playwright test suite for SPISC (Social Pension for Indigenous Senior Citizens) application workflow testing in the Lodgeick council platform.
+Comprehensive Playwright test suite for SPISC (Social Pension for Indigenous Senior Citizens) application workflow testing in the CouncilsOnline council platform.
 
 ## Test Coverage
 
@@ -51,7 +51,7 @@ This test suite covers all aspects of the SPISC application lifecycle:
 ### Run All SPISC Tests
 
 ```bash
-cd /workspace/development/frappe-bench/apps/lodgeick/frontend
+cd /workspace/development/frappe-bench/apps/councilsonline/frontend
 npx playwright test tests/e2e/spisc-*.spec.js --reporter=html
 ```
 
@@ -80,7 +80,7 @@ npx playwright show-report
 ## Test Environment
 
 - **Server**: `http://localhost:8090`
-- **Start Command**: `bench --site lodgeick.localhost serve --port 8090`
+- **Start Command**: `bench --site councilsonline.localhost serve --port 8090`
 - **Council**: TAYTAY-PH
 - **Test User**: Administrator / admin123
 
@@ -244,7 +244,7 @@ createRFI(page, requestId, questions)
 
 ## Integration Points
 
-SPISC integrates with the following Lodgeick infrastructure:
+SPISC integrates with the following CouncilsOnline infrastructure:
 
 1. **Request Doctype** - Same as RC (Resource Consent) and BC (Building Consent)
 2. **Assessment Project** - Same doctype, different template
@@ -293,7 +293,7 @@ Coverage: All workflow paths, all payment methods, all validation rules, all edg
 
 For questions about SPISC testing, refer to:
 - Test Plan: `/home/frappe/.claude/plans/sharded-questing-matsumoto.md`
-- Lodgeick Documentation
+- CouncilsOnline Documentation
 - Council workflow documentation
 
 ---

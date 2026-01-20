@@ -174,7 +174,7 @@ const selectedTask = ref(null)
 
 // Fetch tasks for current user
 const tasks = createResource({
-	url: "lodgeick.lodgeick.doctype.task.task.get_my_tasks",
+	url: "councilsonline.councilsonline.doctype.task.task.get_my_tasks",
 	auto: true,
 })
 

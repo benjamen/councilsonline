@@ -13,7 +13,7 @@ export class ApplicationService {
 	 * @returns {Promise<Object>} Created application
 	 */
 	async createApplication(requestId, applicationType, applicationData) {
-		return apiClient.call("lodgeick.api.create_application", {
+		return apiClient.call("councilsonline.api.create_application", {
 			request_id: requestId,
 			application_type: applicationType,
 			application_data: applicationData,
@@ -58,7 +58,7 @@ export class ApplicationService {
 	 * @returns {Promise<Object>} Application data
 	 */
 	async getApplicationByRequest(requestId) {
-		return apiClient.call("lodgeick.api.get_application_by_request", {
+		return apiClient.call("councilsonline.api.get_application_by_request", {
 			request_id: requestId,
 		})
 	}
@@ -97,7 +97,7 @@ export class ApplicationService {
 	 * @returns {Promise<void>}
 	 */
 	async submitApplication(applicationType, applicationId) {
-		return apiClient.call("lodgeick.api.submit_application", {
+		return apiClient.call("councilsonline.api.submit_application", {
 			application_type: applicationType,
 			application_id: applicationId,
 		})
@@ -110,7 +110,7 @@ export class ApplicationService {
 	 * @returns {Promise<Array>} Status history
 	 */
 	async getApplicationStatusHistory(applicationType, applicationId) {
-		return apiClient.call("lodgeick.api.get_application_status_history", {
+		return apiClient.call("councilsonline.api.get_application_status_history", {
 			application_type: applicationType,
 			application_id: applicationId,
 		})
@@ -124,7 +124,7 @@ export class ApplicationService {
 	 * @returns {Promise<void>}
 	 */
 	async assignToOfficer(applicationType, applicationId, officerEmail) {
-		return apiClient.call("lodgeick.api.assign_application", {
+		return apiClient.call("councilsonline.api.assign_application", {
 			application_type: applicationType,
 			application_id: applicationId,
 			officer_email: officerEmail,

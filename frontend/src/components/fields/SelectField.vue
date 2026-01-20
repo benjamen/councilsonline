@@ -40,26 +40,26 @@
 </template>
 
 <script setup>
-import FieldLabel from "./FieldLabel.vue"
 import FieldError from "./FieldError.vue"
+import FieldLabel from "./FieldLabel.vue"
 
 defineProps({
-  field: {
-    type: Object,
-    required: true
-  },
-  modelValue: {
-    type: [String, Number],
-    default: ""
-  },
-  validationError: {
-    type: String,
-    default: ""
-  },
-  options: {
-    type: Array,
-    default: () => []
-  }
+	field: {
+		type: Object,
+		required: true,
+	},
+	modelValue: {
+		type: [String, Number],
+		default: "",
+	},
+	validationError: {
+		type: String,
+		default: "",
+	},
+	options: {
+		type: Array,
+		default: () => [],
+	},
 })
 
 defineEmits(["update:modelValue", "validate"])

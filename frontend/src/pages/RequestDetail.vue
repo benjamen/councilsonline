@@ -379,11 +379,11 @@ import { Button, createResource } from "frappe-ui"
 import { computed, defineAsyncComponent, ref, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import StatusBadge from "../components/StatusBadge.vue"
+import RequestActionsCard from "../components/request/RequestActionsCard.vue"
+import RequestFeesSection from "../components/request/RequestFeesSection.vue"
 import RequestHeader from "../components/request/RequestHeader.vue"
 import RequestMeetingsSection from "../components/request/RequestMeetingsSection.vue"
 import RequestTimelineCard from "../components/request/RequestTimelineCard.vue"
-import RequestActionsCard from "../components/request/RequestActionsCard.vue"
-import RequestFeesSection from "../components/request/RequestFeesSection.vue"
 // Lazy-loaded modals (load on demand to reduce bundle size)
 const SendMessageModal = defineAsyncComponent(
 	() => import("../components/modals/SendMessageModal.vue"),
@@ -420,7 +420,7 @@ const request = createResource({
 
 // Get meetings for this request
 const meetings = createResource({
-	url: "lodgeick.api.get_request_meetings",
+	url: "councilsonline.api.get_request_meetings",
 	params: {
 		request_id: route.params.id,
 	},
@@ -429,7 +429,7 @@ const meetings = createResource({
 
 // Get request type configuration
 const requestTypeConfig = createResource({
-	url: "lodgeick.api.get_request_type_config",
+	url: "councilsonline.api.get_request_type_config",
 	auto: false,
 })
 
@@ -560,7 +560,7 @@ const enrichedRequest = computed(() => {
 		// draft_full_data takes precedence for any overlapping keys
 		return {
 			...request.data,
-			...fullFormData
+			...fullFormData,
 		}
 	} catch (error) {
 		console.error("Error merging form data:", error)
@@ -851,7 +851,7 @@ const handleSubmitApplication = async () => {
 	submitting.value = true
 	try {
 		const response = await fetch(
-			"/api/method/lodgeick.lodgeick.doctype.request.request.submit_application",
+			"/api/method/councilsonline.councilsonline.doctype.request.request.submit_application",
 			{
 				method: "POST",
 				headers: {
@@ -890,7 +890,8 @@ const handleMakePayment = () => {
 
 const handleInvoiceRequested = (invoiceData) => {
 	// Show success message
-	const message = invoiceData.warning ||
+	const message =
+		invoiceData.warning ||
 		`Invoice requested successfully!\n\nInvoice #${invoiceData.invoice_number}\nAn email has been sent to ${invoiceData.email}`
 
 	alert(message)
@@ -931,7 +932,7 @@ const handleCancelMeeting = async (meeting) => {
 
 	cancellingMeeting.value = true
 	try {
-		const response = await fetch("/api/method/lodgeick.api.cancel_meeting", {
+		const response = await fetch("/api/method/councilsonline.api.cancel_meeting", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

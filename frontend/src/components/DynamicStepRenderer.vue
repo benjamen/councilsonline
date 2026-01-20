@@ -104,8 +104,8 @@ import {
 } from "@headlessui/vue"
 import { ChevronUpIcon } from "@heroicons/vue/20/solid"
 import { computed, ref, watch } from "vue"
+import { isSectionVisible } from "../utils/conditionalLogic"
 import DynamicFieldRenderer from "./DynamicFieldRenderer.vue"
-import { isSectionVisible } from '../utils/conditionalLogic'
 
 const props = defineProps({
 	stepConfig: {

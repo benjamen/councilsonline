@@ -12,7 +12,7 @@ export class RequestService {
 	 * @returns {Promise<Object>} Response with request_id
 	 */
 	async createDraft(data, currentStep) {
-		return apiClient.call("lodgeick.api.create_draft_request", {
+		return apiClient.call("councilsonline.api.create_draft_request", {
 			data,
 			current_step: currentStep,
 		})
@@ -41,7 +41,7 @@ export class RequestService {
 	 */
 	getRequestTypeConfig(requestTypeCode) {
 		return apiClient.createResource({
-			url: "lodgeick.api.get_request_type_config",
+			url: "councilsonline.api.get_request_type_config",
 			params: { request_type_code: requestTypeCode },
 			auto: true,
 			// Cache config data per request type for performance
@@ -56,10 +56,10 @@ export class RequestService {
 	 */
 	clearRequestTypeConfigCache() {
 		// Clear all request-type-config cache entries
-		const cacheKeys = Object.keys(localStorage).filter(key =>
-			key.startsWith('request-type-config')
+		const cacheKeys = Object.keys(localStorage).filter((key) =>
+			key.startsWith("request-type-config"),
 		)
-		cacheKeys.forEach(key => localStorage.removeItem(key))
+		cacheKeys.forEach((key) => localStorage.removeItem(key))
 	}
 
 	/**
@@ -82,7 +82,7 @@ export class RequestService {
 	 * @returns {Promise<void>}
 	 */
 	async submitRequest(requestId) {
-		return apiClient.call("lodgeick.api.submit_request", {
+		return apiClient.call("councilsonline.api.submit_request", {
 			request_id: requestId,
 		})
 	}
@@ -93,7 +93,7 @@ export class RequestService {
 	 */
 	getUserRequests() {
 		return apiClient.createResource({
-			url: "lodgeick.api.get_user_requests",
+			url: "councilsonline.api.get_user_requests",
 			auto: true,
 			cache: ["user-requests"],
 		})
@@ -142,7 +142,7 @@ export class RequestService {
 	 * @returns {Promise<Object>} Request with application data
 	 */
 	async getRequestWithApplication(requestId) {
-		return apiClient.call("lodgeick.api.get_request_with_application", {
+		return apiClient.call("councilsonline.api.get_request_with_application", {
 			request_id: requestId,
 		})
 	}
@@ -155,7 +155,7 @@ export class RequestService {
 	 * @returns {Promise<Object>} Validation result { valid: boolean, errors: [] }
 	 */
 	async validateStep(requestId, stepNumber, stepData) {
-		return apiClient.call("lodgeick.api.validate_request_step", {
+		return apiClient.call("councilsonline.api.validate_request_step", {
 			request_id: requestId,
 			step_number: stepNumber,
 			step_data: stepData,

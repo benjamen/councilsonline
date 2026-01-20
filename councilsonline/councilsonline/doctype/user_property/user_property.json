@@ -1,0 +1,81 @@
+{
+ "actions": [],
+ "creation": "2025-12-01 08:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "property_name",
+  "street",
+  "suburb",
+  "city",
+  "postcode",
+  "legal_description",
+  "ownership_status",
+  "is_default"
+ ],
+ "fields": [
+  {
+   "fieldname": "property_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Property Name",
+   "reqd": 1,
+   "description": "A friendly name for this property (e.g., 'Home', 'Investment Property', 'Beach House')"
+  },
+  {
+   "fieldname": "street",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Street",
+   "reqd": 1
+  },
+  {
+   "fieldname": "suburb",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Suburb"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "City"
+  },
+  {
+   "fieldname": "postcode",
+   "fieldtype": "Data",
+   "label": "Postcode"
+  },
+  {
+   "fieldname": "legal_description",
+   "fieldtype": "Data",
+   "label": "Legal Description"
+  },
+  {
+   "fieldname": "ownership_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Ownership Status",
+   "options": "Sole Owner\\nJoint Owner\\nTrustee\\nOther"
+  },
+  {
+   "fieldname": "is_default",
+   "fieldtype": "Check",
+   "label": "Is Default Property"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-12-03 10:00:00",
+ "modified_by": "Administrator",
+ "module": "CouncilsOnline",
+ "name": "User Property",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 0,
+ "istable": 1,
+ "editable_grid": 1
+}

@@ -38,31 +38,31 @@
 </template>
 
 <script setup>
-import FieldLabel from "./FieldLabel.vue"
 import FieldError from "./FieldError.vue"
+import FieldLabel from "./FieldLabel.vue"
 
 defineProps({
-  field: {
-    type: Object,
-    required: true
-  },
-  modelValue: {
-    type: Number,
-    default: 0
-  },
-  validationError: {
-    type: String,
-    default: ""
-  },
-  placeholder: {
-    type: String,
-    default: ""
-  },
-  variant: {
-    type: String,
-    default: "int", // "int", "float", or "currency"
-    validator: (value) => ["int", "float", "currency"].includes(value)
-  }
+	field: {
+		type: Object,
+		required: true,
+	},
+	modelValue: {
+		type: Number,
+		default: 0,
+	},
+	validationError: {
+		type: String,
+		default: "",
+	},
+	placeholder: {
+		type: String,
+		default: "",
+	},
+	variant: {
+		type: String,
+		default: "int", // "int", "float", or "currency"
+		validator: (value) => ["int", "float", "currency"].includes(value),
+	},
 })
 
 defineEmits(["update:modelValue", "validate"])

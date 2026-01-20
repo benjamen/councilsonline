@@ -242,117 +242,117 @@ import { computed, reactive, ref } from "vue"
 import InfoBox from "../shared/InfoBox.vue"
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  }
+	modelValue: {
+		type: Object,
+		required: true,
+	},
 })
 
 const emit = defineEmits(["update:modelValue"])
 
 const localData = computed({
-  get: () => props.modelValue,
-  set: (value) => emit("update:modelValue", value)
+	get: () => props.modelValue,
+	set: (value) => emit("update:modelValue", value),
 })
 
 const showModal = ref(false)
 const editingIndex = ref(null)
 const form = reactive({
-  organisation_name: "",
-  contact_name: "",
-  email: "",
-  phone: "",
-  address: "",
-  rd_number: "",
-  suburb: "",
-  city: "",
-  postcode: ""
+	organisation_name: "",
+	contact_name: "",
+	email: "",
+	phone: "",
+	address: "",
+	rd_number: "",
+	suburb: "",
+	city: "",
+	postcode: "",
 })
 
 const updatePBARequired = (value) => {
-  const updated = { ...props.modelValue, pba_approval_required: value }
-  emit("update:modelValue", updated)
+	const updated = { ...props.modelValue, pba_approval_required: value }
+	emit("update:modelValue", updated)
 }
 
 const updateField = (field, value) => {
-  const updated = { ...props.modelValue, [field]: value }
-  emit("update:modelValue", updated)
+	const updated = { ...props.modelValue, [field]: value }
+	emit("update:modelValue", updated)
 }
 
 const resetForm = () => {
-  Object.assign(form, {
-    organisation_name: "",
-    contact_name: "",
-    email: "",
-    phone: "",
-    address: "",
-    rd_number: "",
-    suburb: "",
-    city: "",
-    postcode: ""
-  })
+	Object.assign(form, {
+		organisation_name: "",
+		contact_name: "",
+		email: "",
+		phone: "",
+		address: "",
+		rd_number: "",
+		suburb: "",
+		city: "",
+		postcode: "",
+	})
 }
 
 const openModal = () => {
-  editingIndex.value = null
-  resetForm()
-  showModal.value = true
+	editingIndex.value = null
+	resetForm()
+	showModal.value = true
 }
 
 const editContact = (index) => {
-  editingIndex.value = index
-  Object.assign(form, localData.value.pba_contacts[index])
-  showModal.value = true
+	editingIndex.value = index
+	Object.assign(form, localData.value.pba_contacts[index])
+	showModal.value = true
 }
 
 const removeContact = (index) => {
-  if (confirm("Remove this PBA contact?")) {
-    const updated = { ...props.modelValue }
-    updated.pba_contacts.splice(index, 1)
-    emit("update:modelValue", updated)
-  }
+	if (confirm("Remove this PBA contact?")) {
+		const updated = { ...props.modelValue }
+		updated.pba_contacts.splice(index, 1)
+		emit("update:modelValue", updated)
+	}
 }
 
 const saveContact = () => {
-  if (!form.contact_name) return
+	if (!form.contact_name) return
 
-  const updated = { ...props.modelValue }
-  if (!updated.pba_contacts) updated.pba_contacts = []
+	const updated = { ...props.modelValue }
+	if (!updated.pba_contacts) updated.pba_contacts = []
 
-  const contactData = { ...form }
+	const contactData = { ...form }
 
-  if (editingIndex.value !== null) {
-    updated.pba_contacts[editingIndex.value] = contactData
-  } else {
-    updated.pba_contacts.push(contactData)
-  }
+	if (editingIndex.value !== null) {
+		updated.pba_contacts[editingIndex.value] = contactData
+	} else {
+		updated.pba_contacts.push(contactData)
+	}
 
-  emit("update:modelValue", updated)
-  closeModal()
+	emit("update:modelValue", updated)
+	closeModal()
 }
 
 const closeModal = () => {
-  showModal.value = false
-  editingIndex.value = null
-  resetForm()
+	showModal.value = false
+	editingIndex.value = null
+	resetForm()
 }
 
 const handleDocumentUpload = (event) => {
-  const files = Array.from(event.target.files)
-  if (files.length > 0) {
-    const updated = { ...props.modelValue }
-    if (!updated.pba_documents) updated.pba_documents = []
+	const files = Array.from(event.target.files)
+	if (files.length > 0) {
+		const updated = { ...props.modelValue }
+		if (!updated.pba_documents) updated.pba_documents = []
 
-    files.forEach((file) => {
-      const maxSize = 10 * 1024 * 1024
-      if (file.size > maxSize) {
-        alert(`File ${file.name} exceeds 10MB. Please upload a smaller file.`)
-        return
-      }
-      updated.pba_documents.push(file.name)
-    })
+		files.forEach((file) => {
+			const maxSize = 10 * 1024 * 1024
+			if (file.size > maxSize) {
+				alert(`File ${file.name} exceeds 10MB. Please upload a smaller file.`)
+				return
+			}
+			updated.pba_documents.push(file.name)
+		})
 
-    emit("update:modelValue", updated)
-  }
+		emit("update:modelValue", updated)
+	}
 }
 </script>

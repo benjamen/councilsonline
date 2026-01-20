@@ -50,7 +50,7 @@ const handleSend = async () => {
 
 	try {
 		const response = await fetch(
-			"/api/method/lodgeick.api.send_request_message",
+			"/api/method/councilsonline.api.send_request_message",
 			{
 				method: "POST",
 				headers: {

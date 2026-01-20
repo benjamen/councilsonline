@@ -69,13 +69,13 @@ const success = ref(false)
 
 // Fetch team configuration
 const teamConfig = createResource({
-	url: "lodgeick.api.scheduling.get_team_config",
+	url: "councilsonline.api.scheduling.get_team_config",
 	auto: false,
 })
 
 // Fetch available slots
 const availableSlots = createResource({
-	url: "lodgeick.api.scheduling.get_available_slots",
+	url: "councilsonline.api.scheduling.get_available_slots",
 	auto: false,
 })
 
@@ -186,7 +186,7 @@ const handleBook = async () => {
 	error.value = null
 
 	try {
-		const response = await fetch("/api/method/lodgeick.api.scheduling.book_appointment", {
+		const response = await fetch("/api/method/councilsonline.api.scheduling.book_appointment", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

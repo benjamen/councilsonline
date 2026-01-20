@@ -81,11 +81,11 @@
 
 <script setup>
 defineProps({
-  field: {
-    type: Object,
-    required: true
-  }
+	field: {
+		type: Object,
+		required: true,
+	},
 })
 
-defineEmits(['update:field', 'delete'])
+defineEmits(["update:field", "delete"])
 </script>

@@ -162,73 +162,73 @@ import { Input } from "frappe-ui"
 import { computed } from "vue"
 
 const props = defineProps({
-  agentType: {
-    type: String,
-    default: "Sole Trader"
-  },
-  firstName: {
-    type: String,
-    default: ""
-  },
-  lastName: {
-    type: String,
-    default: ""
-  },
-  email: {
-    type: String,
-    default: ""
-  },
-  phone: {
-    type: String,
-    default: ""
-  },
-  password: {
-    type: String,
-    default: ""
-  },
-  confirmPassword: {
-    type: String,
-    default: ""
-  },
-  emailError: {
-    type: String,
-    default: ""
-  },
-  phoneError: {
-    type: String,
-    default: ""
-  },
-  passwordError: {
-    type: String,
-    default: ""
-  },
-  confirmPasswordError: {
-    type: String,
-    default: ""
-  },
-  passwordStrength: {
-    type: String,
-    default: ""
-  }
+	agentType: {
+		type: String,
+		default: "Sole Trader",
+	},
+	firstName: {
+		type: String,
+		default: "",
+	},
+	lastName: {
+		type: String,
+		default: "",
+	},
+	email: {
+		type: String,
+		default: "",
+	},
+	phone: {
+		type: String,
+		default: "",
+	},
+	password: {
+		type: String,
+		default: "",
+	},
+	confirmPassword: {
+		type: String,
+		default: "",
+	},
+	emailError: {
+		type: String,
+		default: "",
+	},
+	phoneError: {
+		type: String,
+		default: "",
+	},
+	passwordError: {
+		type: String,
+		default: "",
+	},
+	confirmPasswordError: {
+		type: String,
+		default: "",
+	},
+	passwordStrength: {
+		type: String,
+		default: "",
+	},
 })
 
 defineEmits([
-  'update:agentType',
-  'update:firstName',
-  'update:lastName',
-  'update:email',
-  'update:phone',
-  'update:password',
-  'update:confirmPassword',
-  'validate-email',
-  'validate-phone',
-  'validate-password',
-  'validate-password-match'
+	"update:agentType",
+	"update:firstName",
+	"update:lastName",
+	"update:email",
+	"update:phone",
+	"update:password",
+	"update:confirmPassword",
+	"validate-email",
+	"validate-phone",
+	"validate-password",
+	"validate-password-match",
 ])
 
 const passwordStrengthClass = computed(() => {
-  if (props.passwordStrength === "strong") return "text-green-600"
-  if (props.passwordStrength === "medium") return "text-yellow-600"
-  return "text-red-600"
+	if (props.passwordStrength === "strong") return "text-green-600"
+	if (props.passwordStrength === "medium") return "text-yellow-600"
+	return "text-red-600"
 })
 </script>

@@ -1,6 +1,6 @@
-# Lodgeick Composables
+# CouncilsOnline Composables
 
-Reusable Vue 3 composition functions for common form patterns in the Lodgeick application.
+Reusable Vue 3 composition functions for common form patterns in the CouncilsOnline application.
 
 ## Overview
 

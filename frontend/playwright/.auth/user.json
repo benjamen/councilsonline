@@ -1,0 +1,85 @@
+{
+  "cookies": [
+    {
+      "name": "user_image",
+      "value": "",
+      "domain": "localhost",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "sid",
+      "value": "1f370a07b67796f8a4ee4555e0f1982151d9776fab8b76cce214a65c",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1769378989.183493,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "system_user",
+      "value": "yes",
+      "domain": "localhost",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "full_name",
+      "value": "Councils%20Online",
+      "domain": "localhost",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "user_id",
+      "value": "Administrator",
+      "domain": "localhost",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "http://localhost:8090",
+      "localStorage": [
+        {
+          "name": "_version_number",
+          "value": "1768549151.0225513"
+        },
+        {
+          "name": "_last_load",
+          "value": "Mon Jan 19 2026 09:09:47 GMT+1300 (New Zealand Daylight Time)"
+        },
+        {
+          "name": "current_page",
+          "value": "Easy Council"
+        },
+        {
+          "name": "metadata_version",
+          "value": "7f84b6c098f5050b1a6819dacd213c94b01307bb3da552e23e9c20b1"
+        },
+        {
+          "name": "is_current_page_public",
+          "value": "true"
+        },
+        {
+          "name": "page_info",
+          "value": "{\"backups\":{\"modified\":\"2015-09-24 01:26:06.225378\",\"title\":\"Download Backups\"},\"dashboard-view\":{\"modified\":\"2020-12-16 12:29:08.610352\",\"title\":\"Dashboard\"},\"insights\":{\"modified\":\"2022-08-23 18:00:46.933155\",\"title\":\"Insights\"},\"leaderboard\":{\"modified\":\"2019-09-27 17:44:51.909947\",\"title\":\"Leaderboard\"},\"permission-manager\":{\"modified\":\"2013-07-11 14:43:43\",\"title\":\"Role Permissions Manager\"},\"print\":{\"modified\":\"2020-10-09 17:23:15.163030\",\"title\":null},\"print-format-builder\":{\"modified\":\"2017-05-03 05:59:33.702308\",\"title\":\"Print Format Builder\"},\"print-format-builder-beta\":{\"modified\":\"2021-07-10 12:22:16.138485\",\"title\":null},\"setup-wizard\":{\"modified\":\"2017-04-12 18:45:00.774654\",\"title\":\"Setup Wizard\"},\"test-dashboard\":{\"modified\":\"2025-12-14 00:00:00\",\"title\":\"Test Dashboard\"},\"user-profile\":{\"modified\":\"2020-03-02 15:17:13.041650\",\"title\":\"User Profile\"},\"workflow-builder\":{\"modified\":\"2023-05-01 13:02:17.223595\",\"title\":\"Workflow Builder\"}}"
+        }
+      ]
+    }
+  ]
+}

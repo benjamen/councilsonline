@@ -55,7 +55,7 @@ export class CouncilService {
 	 */
 	getCouncilRequestTypes(councilCode) {
 		return apiClient.createResource({
-			url: "lodgeick.api.get_council_request_types",
+			url: "councilsonline.api.get_council_request_types",
 			params: { council_code: councilCode },
 			auto: true,
 			cache: ["council-request-types", councilCode],
@@ -68,7 +68,7 @@ export class CouncilService {
 	 * @returns {Promise<Object>} Council configuration
 	 */
 	async getCouncilConfig(councilCode) {
-		return apiClient.call("lodgeick.api.get_council_config", {
+		return apiClient.call("councilsonline.api.get_council_config", {
 			council_code: councilCode,
 		})
 	}

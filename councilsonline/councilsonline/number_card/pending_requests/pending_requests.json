@@ -1,0 +1,15 @@
+{
+ "doctype": "Number Card",
+ "name": "Pending Requests",
+ "label": "Pending Requests",
+ "document_type": "Request",
+ "function": "Count",
+ "filters_json": "[[\"Request\",\"workflow_state\",\"in\",[\"Submitted\",\"Acknowledged\",\"Processing\",\"RFI Issued\",\"Pending Decision\"],false]]",
+ "is_public": 1,
+ "is_standard": 1,
+ "module": "CouncilsOnline",
+ "show_percentage_stats": 1,
+ "stats_time_interval": "Daily",
+ "type": "Document Type",
+ "color": "#F6AD55"
+}

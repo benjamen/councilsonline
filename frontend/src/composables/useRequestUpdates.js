@@ -1,5 +1,5 @@
-import { ref, onMounted, onUnmounted } from 'vue'
-import { useSocket } from '../socket'
+import { onMounted, onUnmounted, ref } from "vue"
+import { useSocket } from "../socket"
 
 /**
  * Composable for listening to real-time request updates
@@ -15,7 +15,7 @@ export function useRequestUpdates(requestId, callbacks = {}) {
 
 	// Event handlers
 	const handleStatusChange = (message) => {
-		console.log('[Request Updates] Status changed:', message)
+		console.log("[Request Updates] Status changed:", message)
 		lastUpdate.value = message
 		updates.value.unshift(message)
 
@@ -26,15 +26,18 @@ export function useRequestUpdates(requestId, callbacks = {}) {
 
 		// Show notification
 		if (window.frappe && window.frappe.show_alert) {
-			window.frappe.show_alert({
-				message: `Request status updated to: ${message.data.new_status}`,
-				indicator: 'blue'
-			}, 5)
+			window.frappe.show_alert(
+				{
+					message: `Request status updated to: ${message.data.new_status}`,
+					indicator: "blue",
+				},
+				5,
+			)
 		}
 	}
 
 	const handleWorkflowStateChange = (message) => {
-		console.log('[Request Updates] Workflow state changed:', message)
+		console.log("[Request Updates] Workflow state changed:", message)
 		lastUpdate.value = message
 		updates.value.unshift(message)
 
@@ -45,15 +48,18 @@ export function useRequestUpdates(requestId, callbacks = {}) {
 
 		// Show notification
 		if (window.frappe && window.frappe.show_alert) {
-			window.frappe.show_alert({
-				message: `Workflow updated to: ${message.data.new_state}`,
-				indicator: 'green'
-			}, 5)
+			window.frappe.show_alert(
+				{
+					message: `Workflow updated to: ${message.data.new_state}`,
+					indicator: "green",
+				},
+				5,
+			)
 		}
 	}
 
 	const handleGenericUpdate = (message) => {
-		console.log('[Request Updates] Generic update:', message)
+		console.log("[Request Updates] Generic update:", message)
 		lastUpdate.value = message
 		updates.value.unshift(message)
 
@@ -66,7 +72,9 @@ export function useRequestUpdates(requestId, callbacks = {}) {
 	// Subscribe to request-specific updates
 	const subscribe = () => {
 		if (!socket || !requestId) {
-			console.warn('[Request Updates] Socket not available or no request ID provided')
+			console.warn(
+				"[Request Updates] Socket not available or no request ID provided",
+			)
 			return
 		}
 
@@ -74,13 +82,13 @@ export function useRequestUpdates(requestId, callbacks = {}) {
 			isConnected.value = socket.connected
 
 			// Listen for connection status
-			socket.on('connect', () => {
-				console.log('[Request Updates] Socket connected')
+			socket.on("connect", () => {
+				console.log("[Request Updates] Socket connected")
 				isConnected.value = true
 			})
 
-			socket.on('disconnect', () => {
-				console.log('[Request Updates] Socket disconnected')
+			socket.on("disconnect", () => {
+				console.log("[Request Updates] Socket disconnected")
 				isConnected.value = false
 			})
 
@@ -88,10 +96,10 @@ export function useRequestUpdates(requestId, callbacks = {}) {
 			const requestChannel = `request_update:${requestId}`
 			socket.on(requestChannel, (message) => {
 				switch (message.event_type) {
-					case 'status_changed':
+					case "status_changed":
 						handleStatusChange(message)
 						break
-					case 'workflow_state_changed':
+					case "workflow_state_changed":
 						handleWorkflowStateChange(message)
 						break
 					default:
@@ -100,16 +108,18 @@ export function useRequestUpdates(requestId, callbacks = {}) {
 			})
 
 			// Also listen to personal channel for all request updates
-			socket.on('request_update', (message) => {
+			socket.on("request_update", (message) => {
 				// Only process if it's for this request
 				if (message.request === requestId) {
 					handleGenericUpdate(message)
 				}
 			})
 
-			console.log(`[Request Updates] Subscribed to updates for request: ${requestId}`)
+			console.log(
+				`[Request Updates] Subscribed to updates for request: ${requestId}`,
+			)
 		} catch (error) {
-			console.error('[Request Updates] Error subscribing:', error)
+			console.error("[Request Updates] Error subscribing:", error)
 		}
 	}
 
@@ -120,13 +130,15 @@ export function useRequestUpdates(requestId, callbacks = {}) {
 		try {
 			const requestChannel = `request_update:${requestId}`
 			socket.off(requestChannel)
-			socket.off('request_update')
-			socket.off('connect')
-			socket.off('disconnect')
+			socket.off("request_update")
+			socket.off("connect")
+			socket.off("disconnect")
 
-			console.log(`[Request Updates] Unsubscribed from updates for request: ${requestId}`)
+			console.log(
+				`[Request Updates] Unsubscribed from updates for request: ${requestId}`,
+			)
 		} catch (error) {
-			console.error('[Request Updates] Error unsubscribing:', error)
+			console.error("[Request Updates] Error unsubscribing:", error)
 		}
 	}
 
@@ -146,6 +158,6 @@ export function useRequestUpdates(requestId, callbacks = {}) {
 		updates,
 		isConnected,
 		subscribe,
-		unsubscribe
+		unsubscribe,
 	}
 }

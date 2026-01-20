@@ -1,0 +1,34 @@
+# Copyright (c) 2025, CouncilsOnline and contributors
+# For license information, please see license.txt
+
+"""
+CouncilsOnline API
+
+This module has been refactored for better maintainability.
+All API functions are now organized into domain-specific modules under councilsonline/api/:
+
+- auth.py: Authentication & user management (10 functions)
+- addresses.py: Address search & validation (5 functions)
+- requests.py: Request lifecycle management (16 functions)
+- meetings.py: Meeting booking & scheduling (10 functions)
+- councils.py: Council configuration & settings (9 functions)
+- companies.py: Company account management (9 functions)
+- assessments.py: Assessment templates & project management (13 functions)
+- payments.py: Payments, invoices & payouts (6 functions)
+- social_services.py: KYC, household records & eligibility (15 functions)
+
+For backward compatibility, all functions are re-exported here.
+"""
+
+# Re-export all functions from submodules for backward compatibility
+# This allows existing code to continue using: from councilsonline.api import function_name
+
+from councilsonline.api.auth import *  # noqa
+from councilsonline.api.addresses import *  # noqa
+from councilsonline.api.requests import *  # noqa
+from councilsonline.api.meetings import *  # noqa
+from councilsonline.api.councils import *  # noqa
+from councilsonline.api.companies import *  # noqa
+from councilsonline.api.assessments import *  # noqa
+from councilsonline.api.payments import *  # noqa
+from councilsonline.api.social_services import *  # noqa

@@ -13,7 +13,7 @@ export class RFQService {
 	 */
 	createRFQ(requestId, rfqMessage = null) {
 		return apiClient.createResource({
-			url: "lodgeick.lodgeick.doctype.rfq_agent_details.rfq_agent_details.create_rfq_for_request",
+			url: "councilsonline.councilsonline.doctype.rfq_agent_details.rfq_agent_details.create_rfq_for_request",
 			method: "POST",
 			params: {
 				request_id: requestId,
@@ -31,7 +31,7 @@ export class RFQService {
 	 */
 	sendRFQToAgent(rfqId, agentId) {
 		return apiClient.createResource({
-			url: "lodgeick.lodgeick.doctype.rfq_agent_details.rfq_agent_details.send_rfq_to_agent",
+			url: "councilsonline.councilsonline.doctype.rfq_agent_details.rfq_agent_details.send_rfq_to_agent",
 			method: "POST",
 			params: {
 				rfq_id: rfqId,
@@ -50,7 +50,7 @@ export class RFQService {
 	 */
 	engageAgent(rfqId, quoteAmount = null, quoteDetails = null) {
 		return apiClient.createResource({
-			url: "lodgeick.lodgeick.doctype.rfq_agent_details.rfq_agent_details.engage_agent",
+			url: "councilsonline.councilsonline.doctype.rfq_agent_details.rfq_agent_details.engage_agent",
 			method: "POST",
 			params: {
 				rfq_id: rfqId,
@@ -67,7 +67,7 @@ export class RFQService {
 	 */
 	getAvailableAgents() {
 		return apiClient.createResource({
-			url: "lodgeick.lodgeick.doctype.rfq_agent_details.rfq_agent_details.get_available_agents",
+			url: "councilsonline.councilsonline.doctype.rfq_agent_details.rfq_agent_details.get_available_agents",
 			method: "GET",
 			auto: true,
 			cache: ["available-agents"],
@@ -146,7 +146,7 @@ export class RFQService {
 	 */
 	async cancelRFQ(rfqId, reason = null) {
 		return apiClient.call(
-			"lodgeick.lodgeick.doctype.rfq_agent_details.rfq_agent_details.cancel_rfq",
+			"councilsonline.councilsonline.doctype.rfq_agent_details.rfq_agent_details.cancel_rfq",
 			{
 				rfq_id: rfqId,
 				cancellation_reason: reason,
@@ -161,7 +161,7 @@ export class RFQService {
 	 */
 	async acceptQuote(rfqId) {
 		return apiClient.call(
-			"lodgeick.lodgeick.doctype.rfq_agent_details.rfq_agent_details.accept_quote",
+			"councilsonline.councilsonline.doctype.rfq_agent_details.rfq_agent_details.accept_quote",
 			{
 				rfq_id: rfqId,
 			},
@@ -176,7 +176,7 @@ export class RFQService {
 	 */
 	async rejectQuote(rfqId, reason = null) {
 		return apiClient.call(
-			"lodgeick.lodgeick.doctype.rfq_agent_details.rfq_agent_details.reject_quote",
+			"councilsonline.councilsonline.doctype.rfq_agent_details.rfq_agent_details.reject_quote",
 			{
 				rfq_id: rfqId,
 				rejection_reason: reason,

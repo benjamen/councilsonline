@@ -31,30 +31,30 @@
 </template>
 
 <script setup>
-import FieldLabel from "./FieldLabel.vue"
 import FieldError from "./FieldError.vue"
+import FieldLabel from "./FieldLabel.vue"
 
 defineProps({
-  field: {
-    type: Object,
-    required: true
-  },
-  modelValue: {
-    type: [String, Number],
-    default: ""
-  },
-  validationError: {
-    type: String,
-    default: ""
-  },
-  placeholder: {
-    type: String,
-    default: ""
-  },
-  icon: {
-    type: String,
-    default: ""
-  }
+	field: {
+		type: Object,
+		required: true,
+	},
+	modelValue: {
+		type: [String, Number],
+		default: "",
+	},
+	validationError: {
+		type: String,
+		default: "",
+	},
+	placeholder: {
+		type: String,
+		default: "",
+	},
+	icon: {
+		type: String,
+		default: "",
+	},
 })
 
 defineEmits(["update:modelValue", "validate"])

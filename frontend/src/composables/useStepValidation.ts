@@ -4,8 +4,8 @@
  */
 
 import { type Ref, ref } from "vue"
-import { validateField as utilValidateField } from "../utils/fieldValidation"
 import { evaluateCondition } from "../utils/conditionalLogic"
+import { validateField as utilValidateField } from "../utils/fieldValidation"
 
 export interface StepValidationReturn {
 	/** Object containing field names and error messages */

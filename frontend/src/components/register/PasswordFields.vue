@@ -43,38 +43,38 @@ import { Input } from "frappe-ui"
 import { computed } from "vue"
 
 const props = defineProps({
-  password: {
-    type: String,
-    default: ""
-  },
-  confirmPassword: {
-    type: String,
-    default: ""
-  },
-  passwordError: {
-    type: String,
-    default: ""
-  },
-  confirmPasswordError: {
-    type: String,
-    default: ""
-  },
-  passwordStrength: {
-    type: String,
-    default: ""
-  }
+	password: {
+		type: String,
+		default: "",
+	},
+	confirmPassword: {
+		type: String,
+		default: "",
+	},
+	passwordError: {
+		type: String,
+		default: "",
+	},
+	confirmPasswordError: {
+		type: String,
+		default: "",
+	},
+	passwordStrength: {
+		type: String,
+		default: "",
+	},
 })
 
 defineEmits([
-  'update:password',
-  'update:confirmPassword',
-  'validate-password',
-  'validate-password-match'
+	"update:password",
+	"update:confirmPassword",
+	"validate-password",
+	"validate-password-match",
 ])
 
 const passwordStrengthClass = computed(() => {
-  if (props.passwordStrength === "strong") return "text-green-600"
-  if (props.passwordStrength === "medium") return "text-yellow-600"
-  return "text-red-600"
+	if (props.passwordStrength === "strong") return "text-green-600"
+	if (props.passwordStrength === "medium") return "text-yellow-600"
+	return "text-red-600"
 })
 </script>

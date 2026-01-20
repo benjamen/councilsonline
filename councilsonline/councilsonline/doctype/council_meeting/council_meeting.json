@@ -1,0 +1,286 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:CM-{request}-{####}",
+ "creation": "2025-12-22 14:53:38.789434",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "meeting_details_section",
+  "request",
+  "meeting_type",
+  "column_break_1",
+  "requested_by",
+  "requested_date",
+  "requester_name",
+  "requester_email",
+  "section_break_2",
+  "meeting_purpose",
+  "discussion_points",
+  "scheduling_section",
+  "status",
+  "scheduled_start",
+  "scheduled_end",
+  "column_break_3",
+  "scheduled_by",
+  "scheduled_date",
+  "council_planner",
+  "location_section",
+  "meeting_format",
+  "meeting_location",
+  "meeting_room",
+  "google_meet_link",
+  "preferred_time_slots_section",
+  "preferred_time_slots",
+  "outcome_section",
+  "meeting_notes",
+  "outcome_summary",
+  "follow_up_required",
+  "follow_up_actions",
+  "calendar_integration_section",
+  "event"
+ ],
+ "fields": [
+  {
+   "fieldname": "meeting_details_section",
+   "fieldtype": "Section Break",
+   "label": "Meeting Details"
+  },
+  {
+   "fieldname": "request",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Request",
+   "options": "Request",
+   "reqd": 1
+  },
+  {
+   "default": "Pre-Application Meeting",
+   "fieldname": "meeting_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Meeting Type",
+   "options": "Pre-Application Meeting\nFollow-up Meeting\nClarification Meeting\nFinal Review Meeting",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "requested_by",
+   "fieldtype": "Link",
+   "label": "Requested By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "requested_date",
+   "fieldtype": "Datetime",
+   "label": "Requested Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "requester_name",
+   "fieldtype": "Data",
+   "label": "Requester Name"
+  },
+  {
+   "fieldname": "requester_email",
+   "fieldtype": "Data",
+   "label": "Requester Email",
+   "options": "Email"
+  },
+  {
+   "fieldname": "section_break_2",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "meeting_purpose",
+   "fieldtype": "Small Text",
+   "label": "Meeting Purpose"
+  },
+  {
+   "fieldname": "discussion_points",
+   "fieldtype": "Text Editor",
+   "label": "Discussion Points"
+  },
+  {
+   "fieldname": "scheduling_section",
+   "fieldtype": "Section Break",
+   "label": "Scheduling"
+  },
+  {
+   "default": "Requested",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Requested\nScheduled\nConfirmed\nRescheduled\nCompleted\nCancelled",
+   "reqd": 1
+  },
+  {
+   "fieldname": "scheduled_start",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Scheduled Start"
+  },
+  {
+   "fieldname": "scheduled_end",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Scheduled End"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "scheduled_by",
+   "fieldtype": "Link",
+   "label": "Scheduled By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "scheduled_date",
+   "fieldtype": "Datetime",
+   "label": "Scheduled Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "council_planner",
+   "fieldtype": "Link",
+   "label": "Council Planner",
+   "options": "User"
+  },
+  {
+   "fieldname": "location_section",
+   "fieldtype": "Section Break",
+   "label": "Location & Format"
+  },
+  {
+   "default": "In Person",
+   "fieldname": "meeting_format",
+   "fieldtype": "Select",
+   "label": "Meeting Format",
+   "options": "In Person\nVideo Call\nHybrid"
+  },
+  {
+   "fieldname": "meeting_location",
+   "fieldtype": "Data",
+   "label": "Meeting Location"
+  },
+  {
+   "fieldname": "meeting_room",
+   "fieldtype": "Data",
+   "label": "Meeting Room"
+  },
+  {
+   "fieldname": "google_meet_link",
+   "fieldtype": "Data",
+   "label": "Google Meet Link",
+   "options": "URL"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "preferred_time_slots_section",
+   "fieldtype": "Section Break",
+   "label": "Preferred Time Slots"
+  },
+  {
+   "fieldname": "preferred_time_slots",
+   "fieldtype": "Table",
+   "label": "Preferred Time Slots",
+   "options": "Meeting Preferred Time Slot"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "outcome_section",
+   "fieldtype": "Section Break",
+   "label": "Meeting Outcome"
+  },
+  {
+   "fieldname": "meeting_notes",
+   "fieldtype": "Text Editor",
+   "label": "Meeting Notes"
+  },
+  {
+   "fieldname": "outcome_summary",
+   "fieldtype": "Text Editor",
+   "label": "Outcome Summary"
+  },
+  {
+   "default": "0",
+   "fieldname": "follow_up_required",
+   "fieldtype": "Check",
+   "label": "Follow-up Required"
+  },
+  {
+   "depends_on": "eval:doc.follow_up_required==1",
+   "fieldname": "follow_up_actions",
+   "fieldtype": "Text Editor",
+   "label": "Follow-up Actions"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "calendar_integration_section",
+   "fieldtype": "Section Break",
+   "label": "Calendar Integration"
+  },
+  {
+   "fieldname": "event",
+   "fieldtype": "Link",
+   "label": "Linked Event",
+   "options": "Event",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-12-22 15:30:00.000000",
+ "modified_by": "Administrator",
+ "module": "CouncilsOnline",
+ "name": "Council Meeting",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Council Planner",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Applicant",
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

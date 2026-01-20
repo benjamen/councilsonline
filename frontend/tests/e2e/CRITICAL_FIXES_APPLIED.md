@@ -17,7 +17,7 @@ After comprehensive test execution and bug documentation (see [SPISC_BUGS_FOUND.
 ### FIX-001: Port Configuration in Entry Points Tests ✅
 
 **Bug**: BUG-001 - Port 8080 hardcoded in test file
-**File**: `/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-entry-points.spec.js`
+**File**: `/workspace/development/frappe-bench/apps/councilsonline/frontend/tests/e2e/spisc-entry-points.spec.js`
 **Impact**: 10 tests failing with ERR_CONNECTION_REFUSED
 
 **Change**:
@@ -36,7 +36,7 @@ const BASE_URL = 'http://localhost:8090'
 ### FIX-002: Port Configuration in Payment Manual Test ✅
 
 **Bug**: BUG-002 - Port 8080 hardcoded in payment test
-**File**: `/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-payment-manual-test.spec.js`
+**File**: `/workspace/development/frappe-bench/apps/councilsonline/frontend/tests/e2e/spisc-payment-manual-test.spec.js`
 **Impact**: 6 tests failing with ERR_CONNECTION_REFUSED
 
 **Change**:
@@ -55,7 +55,7 @@ const BASE_URL = 'http://localhost:8090'
 ### FIX-003: Port Configuration in Address Field Test ✅
 
 **Bug**: BUG-003 - Port 8080 hardcoded in address test
-**File**: `/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/spisc-address-field.spec.js`
+**File**: `/workspace/development/frappe-bench/apps/councilsonline/frontend/tests/e2e/spisc-address-field.spec.js`
 **Impact**: 4 skipped tests would fail when un-skipped
 
 **Change**:
@@ -76,7 +76,7 @@ const BACKEND_URL = 'http://localhost:8090'
 ### FIX-004: Workflow Actions Investigation ✅
 
 **Bug**: BUG-004 - Workflow actions not available
-**Investigation**: Created [check_workflow_setup.py](../../../lodgeick/lodgeick/fixtures/check_workflow_setup.py)
+**Investigation**: Created [check_workflow_setup.py](../../../councilsonline/councilsonline/fixtures/check_workflow_setup.py)
 **Impact**: 4 tests expecting workflow actions
 
 **Findings**:
@@ -107,7 +107,7 @@ const BACKEND_URL = 'http://localhost:8090'
 ### FIX-005: Improved SPISC Application List Detection ✅
 
 **Bug**: BUG-005 - No SPISC applications found in backend test
-**File**: `/workspace/development/frappe-bench/apps/lodgeick/frontend/tests/e2e/fixtures/spisc-helpers.js`
+**File**: `/workspace/development/frappe-bench/apps/councilsonline/frontend/tests/e2e/fixtures/spisc-helpers.js`
 **Impact**: 1 test failing - backend assessment flow
 
 **Root Cause**:
@@ -159,11 +159,11 @@ await page.waitForTimeout(3000); // Increased wait for list to load
 ### New Script: check_workflow_setup.py
 
 **Purpose**: Verify workflow configuration for SPISC requests
-**Location**: `/workspace/development/frappe-bench/apps/lodgeick/lodgeick/lodgeick/fixtures/check_workflow_setup.py`
+**Location**: `/workspace/development/frappe-bench/apps/councilsonline/councilsonline/councilsonline/fixtures/check_workflow_setup.py`
 
 **Run with**:
 ```bash
-bench --site lodgeick.localhost execute lodgeick.lodgeick.fixtures.check_workflow_setup.check_workflow
+bench --site councilsonline.localhost execute councilsonline.councilsonline.fixtures.check_workflow_setup.check_workflow
 ```
 
 **Output**:

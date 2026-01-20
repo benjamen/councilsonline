@@ -11,13 +11,13 @@
 
 <script setup>
 defineProps({
-  error: {
-    type: String,
-    default: ""
-  },
-  description: {
-    type: String,
-    default: ""
-  }
+	error: {
+		type: String,
+		default: "",
+	},
+	description: {
+		type: String,
+		default: "",
+	},
 })
 </script>

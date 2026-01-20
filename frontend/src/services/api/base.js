@@ -63,7 +63,7 @@ export class BaseAPIClient {
 
 	/**
 	 * Call Frappe method directly (for non-resource calls)
-	 * @param {string} method - Frappe method path (e.g., 'lodgeick.api.create_draft_request')
+	 * @param {string} method - Frappe method path (e.g., 'councilsonline.api.create_draft_request')
 	 * @param {Object} args - Method arguments
 	 * @returns {Promise<*>} Response data
 	 */
@@ -145,14 +145,22 @@ export class BaseAPIClient {
 					const errorData = await response.json().catch(() => ({}))
 
 					// Check if it's a file not found error (OSError) that can be retried
-					if (response.status === 500 && errorData.exc_type === "OSError" && attempt < maxRetries) {
+					if (
+						response.status === 500 &&
+						errorData.exc_type === "OSError" &&
+						attempt < maxRetries
+					) {
 						const waitTime = retryDelay * Math.pow(2, attempt) // Exponential backoff
-						console.log(`File upload failed (attempt ${attempt + 1}/${maxRetries + 1}). Retrying in ${waitTime}ms...`)
-						await new Promise(resolve => setTimeout(resolve, waitTime))
+						console.log(
+							`File upload failed (attempt ${attempt + 1}/${maxRetries + 1}). Retrying in ${waitTime}ms...`,
+						)
+						await new Promise((resolve) => setTimeout(resolve, waitTime))
 						continue // Retry
 					}
 
-					throw new Error(`Upload failed (${response.status}): ${errorData.exception || response.statusText}`)
+					throw new Error(
+						`Upload failed (${response.status}): ${errorData.exception || response.statusText}`,
+					)
 				}
 
 				const data = await response.json()
@@ -161,8 +169,10 @@ export class BaseAPIClient {
 					// Check if it's an OSError that can be retried
 					if (data.exc_type === "OSError" && attempt < maxRetries) {
 						const waitTime = retryDelay * Math.pow(2, attempt)
-						console.log(`File upload failed with OSError (attempt ${attempt + 1}/${maxRetries + 1}). Retrying in ${waitTime}ms...`)
-						await new Promise(resolve => setTimeout(resolve, waitTime))
+						console.log(
+							`File upload failed with OSError (attempt ${attempt + 1}/${maxRetries + 1}). Retrying in ${waitTime}ms...`,
+						)
+						await new Promise((resolve) => setTimeout(resolve, waitTime))
 						continue // Retry
 					}
 					throw new Error(data.exc)
@@ -170,7 +180,6 @@ export class BaseAPIClient {
 
 				// Success - return the uploaded file
 				return data.message
-
 			} catch (error) {
 				// If this is the last attempt, throw the error
 				if (attempt === maxRetries) {
@@ -180,8 +189,10 @@ export class BaseAPIClient {
 
 				// For other errors on non-final attempts, retry
 				const waitTime = retryDelay * Math.pow(2, attempt)
-				console.log(`Upload error (attempt ${attempt + 1}/${maxRetries + 1}): ${error.message}. Retrying in ${waitTime}ms...`)
-				await new Promise(resolve => setTimeout(resolve, waitTime))
+				console.log(
+					`Upload error (attempt ${attempt + 1}/${maxRetries + 1}): ${error.message}. Retrying in ${waitTime}ms...`,
+				)
+				await new Promise((resolve) => setTimeout(resolve, waitTime))
 			}
 		}
 	}

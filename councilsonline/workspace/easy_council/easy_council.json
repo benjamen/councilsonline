@@ -1,0 +1,195 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"header_1\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Easy Council</span>\",\"col\":12}},{\"id\":\"shortcuts_1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Request\",\"col\":3}},{\"id\":\"shortcuts_2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Property\",\"col\":3}},{\"id\":\"shortcuts_3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Organization\",\"col\":3}},{\"id\":\"shortcuts_4\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Request Type\",\"col\":3}},{\"id\":\"shortcuts_5\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Building Consent Application\",\"col\":3}},{\"id\":\"shortcuts_6\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Resource Consent Application\",\"col\":3}},{\"id\":\"shortcuts_7\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Request For Information\",\"col\":3}},{\"id\":\"shortcuts_8\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Communication Log\",\"col\":3}},{\"id\":\"shortcuts_9\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Payment\",\"col\":3}},{\"id\":\"shortcuts_10\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Activity Type\",\"col\":3}},{\"id\":\"shortcuts_11\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Role Rate\",\"col\":3}},{\"id\":\"shortcuts_12\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"WB Task\",\"col\":3}},{\"id\":\"shortcuts_13\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Pre-Application Meeting\",\"col\":3}},{\"id\":\"shortcuts_14\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Event\",\"col\":3}},{\"id\":\"number_card_1\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Requests\",\"col\":4}},{\"id\":\"number_card_2\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Pending Requests\",\"col\":4}},{\"id\":\"number_card_3\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Overdue Requests\",\"col\":4}},{\"id\":\"number_card_4\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Completed This Month\",\"col\":4}},{\"id\":\"number_card_5\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Requests This Week\",\"col\":4}},{\"id\":\"number_card_6\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Open Building Consents\",\"col\":4}},{\"id\":\"number_card_7\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Open Resource Consents\",\"col\":4}},{\"id\":\"number_card_8\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Properties\",\"col\":4}},{\"id\":\"number_card_9\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Active Organizations\",\"col\":4}},{\"id\":\"quick_list_1\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Open Requests\",\"col\":4}},{\"id\":\"quick_list_2\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Draft Requests\",\"col\":4}},{\"id\":\"quick_list_3\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Completed Requests\",\"col\":4}}]",
+ "creation": "2025-11-21 00:00:00.000000",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "government",
+ "idx": 0,
+ "indicator_color": "blue",
+ "is_hidden": 0,
+ "label": "Easy Council",
+ "links": [],
+ "modified": "2025-12-13 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "CouncilsOnline",
+ "name": "Easy Council",
+ "number_cards": [
+  {
+   "label": "Total Requests",
+   "number_card_name": "Total Requests"
+  },
+  {
+   "label": "Pending Requests",
+   "number_card_name": "Pending Requests"
+  },
+  {
+   "label": "Overdue Requests",
+   "number_card_name": "Overdue Requests"
+  },
+  {
+   "label": "Completed This Month",
+   "number_card_name": "Completed This Month"
+  },
+  {
+   "label": "Requests This Week",
+   "number_card_name": "Requests This Week"
+  },
+  {
+   "label": "Open Building Consents",
+   "number_card_name": "Open Building Consents"
+  },
+  {
+   "label": "Open Resource Consents",
+   "number_card_name": "Open Resource Consents"
+  },
+  {
+   "label": "Total Properties",
+   "number_card_name": "Total Properties"
+  },
+  {
+   "label": "Active Organizations",
+   "number_card_name": "Active Organizations"
+  }
+ ],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [
+  {
+   "document_type": "Request",
+   "label": "Open Requests",
+   "quick_list_filter": "[[\"Request\",\"status\",\"=\",\"Open\",false]]"
+  },
+  {
+   "document_type": "Request",
+   "label": "Draft Requests",
+   "quick_list_filter": "[[\"Request\",\"status\",\"=\",\"Draft\",false]]"
+  },
+  {
+   "document_type": "Request",
+   "label": "Completed Requests",
+   "quick_list_filter": "[[\"Request\",\"status\",\"=\",\"Completed\",false]]"
+  }
+ ],
+ "roles": [],
+ "sequence_id": 1.0,
+ "shortcuts": [
+  {
+   "color": "Blue",
+   "doc_view": "List",
+   "label": "Request",
+   "link_to": "Request",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Property",
+   "link_to": "Property",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Orange",
+   "doc_view": "List",
+   "label": "Organization",
+   "link_to": "Organization",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Request Type",
+   "link_to": "Request Type",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Red",
+   "doc_view": "List",
+   "label": "Building Consent Application",
+   "link_to": "Building Consent Application",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Cyan",
+   "doc_view": "List",
+   "label": "Resource Consent Application",
+   "link_to": "Resource Consent Application",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Yellow",
+   "doc_view": "List",
+   "label": "Request For Information",
+   "link_to": "Request For Information",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Purple",
+   "doc_view": "List",
+   "label": "Communication Log",
+   "link_to": "Communication Log",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Pink",
+   "doc_view": "List",
+   "label": "Payment",
+   "link_to": "Payment",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Activity Type",
+   "link_to": "Activity Type",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Role Rate",
+   "link_to": "Role Rate",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Blue",
+   "doc_view": "List",
+   "label": "Task",
+   "link_to": "WB Task",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Orange",
+   "doc_view": "List",
+   "label": "Council Meeting",
+   "link_to": "Council Meeting",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Cyan",
+   "doc_view": "List",
+   "label": "Event",
+   "link_to": "Event",
+   "stats_filter": "[]",
+   "type": "DocType"
+  }
+ ],
+ "title": "Easy Council"
+}

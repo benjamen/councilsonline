@@ -21,44 +21,45 @@
 import { computed } from "vue"
 
 const props = defineProps({
-  title: {
-    type: String,
-    required: true
-  },
-  variant: {
-    type: String,
-    default: "info", // "info", "warning", "success", "error"
-    validator: (value) => ["info", "warning", "success", "error"].includes(value)
-  }
+	title: {
+		type: String,
+		required: true,
+	},
+	variant: {
+		type: String,
+		default: "info", // "info", "warning", "success", "error"
+		validator: (value) =>
+			["info", "warning", "success", "error"].includes(value),
+	},
 })
 
 const variantClasses = computed(() => {
-  const variants = {
-    info: "bg-blue-50 border-blue-200",
-    warning: "bg-yellow-50 border-yellow-200",
-    success: "bg-green-50 border-green-200",
-    error: "bg-red-50 border-red-200"
-  }
-  return variants[props.variant]
+	const variants = {
+		info: "bg-blue-50 border-blue-200",
+		warning: "bg-yellow-50 border-yellow-200",
+		success: "bg-green-50 border-green-200",
+		error: "bg-red-50 border-red-200",
+	}
+	return variants[props.variant]
 })
 
 const titleClass = computed(() => {
-  const classes = {
-    info: "text-blue-900",
-    warning: "text-yellow-900",
-    success: "text-green-900",
-    error: "text-red-900"
-  }
-  return classes[props.variant]
+	const classes = {
+		info: "text-blue-900",
+		warning: "text-yellow-900",
+		success: "text-green-900",
+		error: "text-red-900",
+	}
+	return classes[props.variant]
 })
 
 const contentClass = computed(() => {
-  const classes = {
-    info: "text-blue-800",
-    warning: "text-yellow-800",
-    success: "text-green-800",
-    error: "text-red-800"
-  }
-  return classes[props.variant]
+	const classes = {
+		info: "text-blue-800",
+		warning: "text-yellow-800",
+		success: "text-green-800",
+		error: "text-red-800",
+	}
+	return classes[props.variant]
 })
 </script>

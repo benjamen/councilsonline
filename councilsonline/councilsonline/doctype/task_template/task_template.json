@@ -1,0 +1,210 @@
+{
+ "actions": [],
+ "autoname": "field:task_template_name",
+ "creation": "2025-11-22 00:00:00",
+ "doctype": "DocType",
+ "document_type": "Setup",
+ "engine": "InnoDB",
+ "field_order": [
+  "task_template_name",
+  "stage_type",
+  "task_sequence",
+  "column_break_1",
+  "is_active",
+  "is_mandatory",
+  "auto_assign",
+  "section_break_task_details",
+  "task_title",
+  "task_description",
+  "column_break_2",
+  "priority",
+  "task_type",
+  "section_break_assignment",
+  "required_role",
+  "required_team",
+  "column_break_3",
+  "estimated_hours",
+  "depends_on_task"
+ ],
+ "fields": [
+  {
+   "description": "Unique identifier for this task template (e.g., RC-VET-001: Initial Completeness Check)",
+   "fieldname": "task_template_name",
+   "fieldtype": "Data",
+   "label": "Task Template Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "description": "Which assessment stage this task belongs to (Vetting, Technical Assessment, etc.)",
+   "fieldname": "stage_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Stage Type",
+   "options": "Assessment Stage Type",
+   "reqd": 1
+  },
+  {
+   "default": "1",
+   "description": "Order of this task within the stage (1, 2, 3, etc.)",
+   "fieldname": "task_sequence",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Task Sequence",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "description": "Only active task templates will be used when creating tasks",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Is Active"
+  },
+  {
+   "default": "1",
+   "description": "Must this task be completed to progress to next stage?",
+   "fieldname": "is_mandatory",
+   "fieldtype": "Check",
+   "label": "Is Mandatory"
+  },
+  {
+   "default": "1",
+   "description": "Automatically assign this task to a user with the required role",
+   "fieldname": "auto_assign",
+   "fieldtype": "Check",
+   "label": "Auto Assign"
+  },
+  {
+   "description": "Define the task title and description that will appear in the created WB Task",
+   "fieldname": "section_break_task_details",
+   "fieldtype": "Section Break",
+   "label": "Task Details"
+  },
+  {
+   "description": "Title of the task (e.g., 'Review application completeness')",
+   "fieldname": "task_title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Task Title",
+   "reqd": 1
+  },
+  {
+   "description": "Detailed instructions for completing this task. Supports Jinja2 variables like {{doc.request_number}}",
+   "fieldname": "task_description",
+   "fieldtype": "Text Editor",
+   "label": "Task Description"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Medium",
+   "description": "Default priority for tasks created from this template",
+   "fieldname": "priority",
+   "fieldtype": "Select",
+   "label": "Priority",
+   "options": "High\nMedium\nLow"
+  },
+  {
+   "default": "Sequential",
+   "description": "Sequential: Must complete previous task first. Parallel: Can run concurrently. Milestone: Key checkpoint.",
+   "fieldname": "task_type",
+   "fieldtype": "Select",
+   "label": "Task Type",
+   "options": "Sequential\nParallel\nMilestone"
+  },
+  {
+   "description": "Define who should be assigned this task and how long it should take",
+   "fieldname": "section_break_assignment",
+   "fieldtype": "Section Break",
+   "label": "Assignment & Timing"
+  },
+  {
+   "description": "Task will be assigned to a user with this role (e.g., Planner, Manager, Planning Support)",
+   "fieldname": "required_role",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Required Role",
+   "options": "Role",
+   "reqd": 1
+  },
+  {
+   "description": "Optional: Prefer assigning to users in this team",
+   "fieldname": "required_team",
+   "fieldtype": "Select",
+   "label": "Required Team",
+   "options": "\nPlanning Team\nBuilding Team\nCompliance Team\nTechnical Team\nManagement\nAdministration"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1.0",
+   "description": "Estimated time to complete this task (used for project planning and costing)",
+   "fieldname": "estimated_hours",
+   "fieldtype": "Float",
+   "label": "Estimated Hours",
+   "precision": "2",
+   "reqd": 1
+  },
+  {
+   "description": "Optional: This task cannot start until the dependent task is completed",
+   "fieldname": "depends_on_task",
+   "fieldtype": "Link",
+   "label": "Depends On Task",
+   "options": "Task Template"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-12-16 16:19:19.637436",
+ "modified_by": "Administrator",
+ "module": "CouncilsOnline",
+ "name": "Task Template",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "CouncilsOnline Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "CouncilsOnline Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "CouncilsOnline User"
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

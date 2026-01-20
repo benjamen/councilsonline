@@ -26,7 +26,7 @@ test.describe("SPISC Pickup Scheduling", () => {
 	test("Scheduling API returns available slots", async ({ page }) => {
 		// Test the scheduling API directly
 		const response = await page.evaluate(async () => {
-			const res = await fetch("/api/method/lodgeick.api.scheduling.get_available_slots", {
+			const res = await fetch("/api/method/councilsonline.api.scheduling.get_available_slots", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -53,7 +53,7 @@ test.describe("SPISC Pickup Scheduling", () => {
 
 	test("Team config API returns correct configuration", async ({ page }) => {
 		const response = await page.evaluate(async () => {
-			const res = await fetch("/api/method/lodgeick.api.scheduling.get_team_config", {
+			const res = await fetch("/api/method/councilsonline.api.scheduling.get_team_config", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -82,7 +82,7 @@ test.describe("SPISC Pickup Scheduling", () => {
 	test("Can book an appointment slot", async ({ page }) => {
 		// First get available slots
 		const slotsResponse = await page.evaluate(async () => {
-			const res = await fetch("/api/method/lodgeick.api.scheduling.get_available_slots", {
+			const res = await fetch("/api/method/councilsonline.api.scheduling.get_available_slots", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -103,7 +103,7 @@ test.describe("SPISC Pickup Scheduling", () => {
 		const slot = slots[0]
 		const bookResponse = await page.evaluate(
 			async ({ slot }) => {
-				const res = await fetch("/api/method/lodgeick.api.scheduling.book_appointment", {
+				const res = await fetch("/api/method/councilsonline.api.scheduling.book_appointment", {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
@@ -135,7 +135,7 @@ test.describe("SPISC Pickup Scheduling", () => {
 	test("Booked slot is no longer available", async ({ page }) => {
 		// Get current available slots
 		const slotsResponse1 = await page.evaluate(async () => {
-			const res = await fetch("/api/method/lodgeick.api.scheduling.get_available_slots", {
+			const res = await fetch("/api/method/councilsonline.api.scheduling.get_available_slots", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -154,7 +154,7 @@ test.describe("SPISC Pickup Scheduling", () => {
 		const slot = slotsResponse1.message.slots[0]
 		await page.evaluate(
 			async ({ slot }) => {
-				const res = await fetch("/api/method/lodgeick.api.scheduling.book_appointment", {
+				const res = await fetch("/api/method/councilsonline.api.scheduling.book_appointment", {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
@@ -175,7 +175,7 @@ test.describe("SPISC Pickup Scheduling", () => {
 
 		// Get slots again
 		const slotsResponse2 = await page.evaluate(async () => {
-			const res = await fetch("/api/method/lodgeick.api.scheduling.get_available_slots", {
+			const res = await fetch("/api/method/councilsonline.api.scheduling.get_available_slots", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",

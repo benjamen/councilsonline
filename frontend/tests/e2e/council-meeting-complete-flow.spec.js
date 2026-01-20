@@ -8,14 +8,20 @@ test.describe("Council Meeting Complete Flow", () => {
 		await page.waitForTimeout(1000)
 
 		// Check if already logged in by looking for user menu or New Request button
-		const newRequestBtn = page.locator('button:has-text("New Request"), a:has-text("New Request"), button:has-text("New Application"), a:has-text("New Application")')
-		const isLoggedIn = await newRequestBtn.isVisible({ timeout: 2000 }).catch(() => false)
+		const newRequestBtn = page.locator(
+			'button:has-text("New Request"), a:has-text("New Request"), button:has-text("New Application"), a:has-text("New Application")',
+		)
+		const isLoggedIn = await newRequestBtn
+			.isVisible({ timeout: 2000 })
+			.catch(() => false)
 
 		if (!isLoggedIn) {
 			console.log("Not logged in, attempting to log in...")
-			const logInLink = page.locator(
-				'a:has-text("Log In"), button:has-text("Log In"), button:has-text("Sign In")',
-			).first()
+			const logInLink = page
+				.locator(
+					'a:has-text("Log In"), button:has-text("Log In"), button:has-text("Sign In")',
+				)
+				.first()
 
 			if (await logInLink.isVisible({ timeout: 2000 }).catch(() => false)) {
 				await logInLink.click()
@@ -24,21 +30,29 @@ test.describe("Council Meeting Complete Flow", () => {
 			}
 
 			// Fill login form
-			const usernameField = page.locator('input[type="email"], input[type="text"]').first()
+			const usernameField = page
+				.locator('input[type="email"], input[type="text"]')
+				.first()
 			const passwordField = page.locator('input[type="password"]').first()
 
 			await usernameField.fill("Administrator")
 			await page.waitForTimeout(300)
 			await passwordField.fill("admin123")
 			await page.waitForTimeout(300)
-			await page.locator('button:has-text("Sign In"), button[type="submit"]').first().click()
+			await page
+				.locator('button:has-text("Sign In"), button[type="submit"]')
+				.first()
+				.click()
 			await page.waitForLoadState("networkidle")
 			await page.waitForTimeout(2000)
 
 			// Verify login successful
-			await page.waitForSelector('button:has-text("New Request"), a:has-text("New Request"), button:has-text("New Application")', {
-				timeout: 10000,
-			})
+			await page.waitForSelector(
+				'button:has-text("New Request"), a:has-text("New Request"), button:has-text("New Application")',
+				{
+					timeout: 10000,
+				},
+			)
 			console.log("Login successful!")
 		} else {
 			console.log("Already logged in")
@@ -59,7 +73,9 @@ test.describe("Council Meeting Complete Flow", () => {
 		console.log("✓ New application/request clicked")
 
 		// Single-tenant: Skip council selection step (removed in v1.4)
-		console.log("\nStep 2: Selecting SPISC request type (council pre-selected)...")
+		console.log(
+			"\nStep 2: Selecting SPISC request type (council pre-selected)...",
+		)
 		const spinner = page.locator(".animate-spin")
 		if (await spinner.isVisible().catch(() => false)) {
 			await spinner.waitFor({ state: "hidden", timeout: 10000 })
@@ -143,9 +159,12 @@ test.describe("Council Meeting Complete Flow", () => {
 		const meetingTypeField = page.locator("select").first()
 		const purposeField = page.locator("textarea").first()
 		// Time slots can be either select dropdowns (when available slots loaded) or datetime-local inputs
-		const timeSlotSelects = page.locator('select:has-text("-- Select a time slot --")')
+		const timeSlotSelects = page.locator(
+			'select:has-text("-- Select a time slot --")',
+		)
 		const timeSlotInputs = page.locator('input[type="datetime-local"]')
-		const hasTimeSlotFields = (await timeSlotSelects.count()) > 0 || (await timeSlotInputs.count()) > 0
+		const hasTimeSlotFields =
+			(await timeSlotSelects.count()) > 0 || (await timeSlotInputs.count()) > 0
 
 		expect(await meetingTypeField.isVisible()).toBe(true)
 		expect(await purposeField.isVisible()).toBe(true)
@@ -162,8 +181,9 @@ test.describe("Council Meeting Complete Flow", () => {
 		if ((await timeSlotSelects.count()) > 0) {
 			// If available slots exist, select the first option from dropdown
 			const firstSelect = timeSlotSelects.first()
-			const options = await firstSelect.locator('option').allTextContents()
-			if (options.length > 1) { // Skip the "-- Select a time slot --" option
+			const options = await firstSelect.locator("option").allTextContents()
+			if (options.length > 1) {
+				// Skip the "-- Select a time slot --" option
 				await firstSelect.selectOption({ index: 1 })
 				console.log("✓ Form filled (selected available slot)")
 			}
@@ -211,7 +231,7 @@ test.describe("Council Meeting Complete Flow", () => {
 
 		// Wait for the section to appear (with longer timeout for mobile)
 		try {
-			await meetingH2.waitFor({ state: 'visible', timeout: 10000 })
+			await meetingH2.waitFor({ state: "visible", timeout: 10000 })
 			console.log("Council Meeting section visible: true")
 		} catch (e) {
 			// If not visible, scroll down (might be below fold on mobile)
@@ -219,17 +239,28 @@ test.describe("Council Meeting Complete Flow", () => {
 			await page.waitForTimeout(1000)
 
 			// Try again after scrolling
-			const sectionVisible = await meetingH2.isVisible({ timeout: 5000 }).catch(() => false)
-			console.log("Council Meeting section visible after scroll:", sectionVisible)
+			const sectionVisible = await meetingH2
+				.isVisible({ timeout: 5000 })
+				.catch(() => false)
+			console.log(
+				"Council Meeting section visible after scroll:",
+				sectionVisible,
+			)
 			expect(sectionVisible).toBe(true)
 		}
 
 		// Check if meeting already exists (shows "Edit Request" button) or not (shows "Request Council Meeting")
-		const requestMeetingBtn = page.locator('button:has-text("Request Council Meeting")')
+		const requestMeetingBtn = page.locator(
+			'button:has-text("Request Council Meeting")',
+		)
 		const editRequestBtn = page.locator('button:has-text("Edit Request")')
 
-		const hasRequestBtn = await requestMeetingBtn.isVisible({ timeout: 2000 }).catch(() => false)
-		const hasEditBtn = await editRequestBtn.isVisible({ timeout: 2000 }).catch(() => false)
+		const hasRequestBtn = await requestMeetingBtn
+			.isVisible({ timeout: 2000 })
+			.catch(() => false)
+		const hasEditBtn = await editRequestBtn
+			.isVisible({ timeout: 2000 })
+			.catch(() => false)
 
 		console.log("Request Council Meeting button visible:", hasRequestBtn)
 		console.log("Edit Request button visible (meeting exists):", hasEditBtn)
@@ -246,7 +277,9 @@ test.describe("Council Meeting Complete Flow", () => {
 
 		if (hasRequestBtn) {
 			// No existing meeting - test Request button
-			console.log("\nStep 3: No existing meeting - clicking Request Council Meeting button...")
+			console.log(
+				"\nStep 3: No existing meeting - clicking Request Council Meeting button...",
+			)
 			const consoleErrors = []
 			page.on("console", (msg) => {
 				if (msg.type() === "error") {
@@ -275,8 +308,12 @@ test.describe("Council Meeting Complete Flow", () => {
 			console.log("✓ Modal works on RequestDetail page too!\n")
 		} else {
 			// Meeting already exists - verify Edit button works
-			console.log("\nStep 3: Meeting already requested - Edit Request button is available")
-			console.log("✓ Meeting section displays correctly on RequestDetail page!\n")
+			console.log(
+				"\nStep 3: Meeting already requested - Edit Request button is available",
+			)
+			console.log(
+				"✓ Meeting section displays correctly on RequestDetail page!\n",
+			)
 		}
 	})
 })

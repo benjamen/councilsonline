@@ -256,7 +256,7 @@ async function handleSearch() {
 async function searchAddresses(query, country) {
 	try {
 		// Call unified backend API that routes to appropriate service
-		const results = await call("lodgeick.api.search_addresses_universal", {
+		const results = await call("councilsonline.api.search_addresses_universal", {
 			query: query,
 			country: country,
 		})

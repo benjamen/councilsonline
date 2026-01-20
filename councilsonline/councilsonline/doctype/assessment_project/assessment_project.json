@@ -1,0 +1,274 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:ASSESS-{request}",
+ "creation": "2025-01-21 00:00:00",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "request_details_section",
+  "request",
+  "request_type",
+  "column_break_rqst",
+  "project_owner",
+  "assessment_template",
+  "overall_status",
+  "section_break_stages",
+  "stages",
+  "section_break_clock",
+  "statutory_clock_days",
+  "started_date",
+  "column_break_clock",
+  "statutory_deadline",
+  "current_stage",
+  "section_break_exclusions",
+  "clock_exclusions",
+  "column_break_calc",
+  "total_days_excluded",
+  "working_days_elapsed",
+  "working_days_remaining",
+  "section_break_time",
+  "budgeted_hours",
+  "actual_hours",
+  "column_break_cost",
+  "estimated_cost",
+  "actual_cost",
+  "section_break_notes",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "request_details_section",
+   "fieldtype": "Section Break",
+   "label": "Request Details"
+  },
+  {
+   "fieldname": "request",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Request",
+   "options": "Request",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fetch_from": "request.request_type",
+   "fieldname": "request_type",
+   "fieldtype": "Link",
+   "label": "Request Type",
+   "options": "Request Type",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_rqst",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "project_owner",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Project Owner",
+   "options": "User"
+  },
+  {
+   "fieldname": "assessment_template",
+   "fieldtype": "Link",
+   "label": "Assessment Template",
+   "options": "Assessment Template"
+  },
+  {
+   "default": "Not Started",
+   "fieldname": "overall_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Overall Status",
+   "options": "Not Started\nIn Progress\nOn Hold\nCompleted\nCancelled",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_stages",
+   "fieldtype": "Section Break",
+   "label": "Assessment Stages"
+  },
+  {
+   "fieldname": "stages",
+   "fieldtype": "Table",
+   "label": "Stages",
+   "options": "Assessment Stage Instance"
+  },
+  {
+   "fieldname": "section_break_clock",
+   "fieldtype": "Section Break",
+   "label": "SLA / Statutory Clock"
+  },
+  {
+   "description": "Working days allowed for decision (e.g. 20 for notified RC)",
+   "fieldname": "statutory_clock_days",
+   "fieldtype": "Int",
+   "label": "SLA / Statutory Clock Days"
+  },
+  {
+   "fieldname": "started_date",
+   "fieldtype": "Datetime",
+   "label": "Started Date"
+  },
+  {
+   "fieldname": "column_break_clock",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "statutory_deadline",
+   "fieldtype": "Date",
+   "label": "SLA Deadline",
+   "read_only": 1
+  },
+  {
+   "fieldname": "current_stage",
+   "fieldtype": "Data",
+   "label": "Current Stage",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_exclusions",
+   "fieldtype": "Section Break",
+   "label": "Clock Exclusions"
+  },
+  {
+   "fieldname": "clock_exclusions",
+   "fieldtype": "Table",
+   "label": "Clock Exclusions",
+   "options": "Clock Exclusion Period"
+  },
+  {
+   "fieldname": "column_break_calc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_days_excluded",
+   "fieldtype": "Int",
+   "label": "Total Days Excluded",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "working_days_elapsed",
+   "fieldtype": "Int",
+   "label": "Working Days Elapsed",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "working_days_remaining",
+   "fieldtype": "Int",
+   "label": "Working Days Remaining",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_time",
+   "fieldtype": "Section Break",
+   "label": "Time & Cost Tracking"
+  },
+  {
+   "default": "0",
+   "fieldname": "budgeted_hours",
+   "fieldtype": "Float",
+   "label": "Budgeted Hours"
+  },
+  {
+   "default": "0",
+   "fieldname": "actual_hours",
+   "fieldtype": "Float",
+   "label": "Actual Hours",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_cost",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "estimated_cost",
+   "fieldtype": "Currency",
+   "label": "Estimated Cost"
+  },
+  {
+   "default": "0",
+   "fieldname": "actual_cost",
+   "fieldtype": "Currency",
+   "label": "Actual Cost",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_notes",
+   "fieldtype": "Section Break",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text Editor",
+   "label": "Notes"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [
+  {
+   "link_doctype": "Project Task",
+   "link_fieldname": "assessment_project"
+  },
+  {
+   "link_doctype": "Project Task",
+   "link_fieldname": "assessment_project",
+   "custom": 1,
+   "label": "Gantt Chart"
+  }
+ ],
+ "modified": "2025-12-16 16:03:25.058647",
+ "modified_by": "Administrator",
+ "module": "CouncilsOnline",
+ "name": "Assessment Project",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "CouncilsOnline Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "CouncilsOnline User",
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

@@ -341,7 +341,7 @@ async function loadCompanyAccount() {
 
 	try {
 		const response = await fetch(
-			"/api/method/lodgeick.api.get_user_company_account",
+			"/api/method/councilsonline.api.get_user_company_account",
 			{
 				method: "GET",
 				headers: {
@@ -371,7 +371,7 @@ async function loadCompanyAccount() {
 
 async function loadUsers() {
 	try {
-		const response = await fetch("/api/method/lodgeick.api.get_company_users", {
+		const response = await fetch("/api/method/councilsonline.api.get_company_users", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -400,7 +400,7 @@ async function updateCompanyProfile() {
 
 	try {
 		const response = await fetch(
-			"/api/method/lodgeick.api.update_company_account",
+			"/api/method/councilsonline.api.update_company_account",
 			{
 				method: "POST",
 				headers: {
@@ -441,7 +441,7 @@ async function sendInvitation() {
 
 	try {
 		const response = await fetch(
-			"/api/method/lodgeick.api.send_company_invitation",
+			"/api/method/councilsonline.api.send_company_invitation",
 			{
 				method: "POST",
 				headers: {
@@ -482,7 +482,7 @@ async function removeUser() {
 
 	try {
 		const response = await fetch(
-			"/api/method/lodgeick.api.remove_user_from_company",
+			"/api/method/councilsonline.api.remove_user_from_company",
 			{
 				method: "POST",
 				headers: {
@@ -515,7 +515,7 @@ async function removeUser() {
 async function updateUserRole(email, newRole) {
 	try {
 		const response = await fetch(
-			"/api/method/lodgeick.api.update_user_company_role",
+			"/api/method/councilsonline.api.update_user_company_role",
 			{
 				method: "POST",
 				headers: {

@@ -1,0 +1,260 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "field:type_name",
+ "creation": "2025-11-05 19:30:00",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "type_name",
+  "type_code",
+  "category",
+  "description",
+  "section_break_processing",
+  "processing_sla_days",
+  "workflow_template",
+  "default_assessment_template",
+  "council_meeting_available",
+  "default_response_role",
+  "section_break_fees",
+  "base_fee",
+  "fee_calculation_method",
+  "hourly_rate",
+  "collects_payment",
+  "make_payment",
+  "section_break_form",
+  "form_template",
+  "required_documents",
+  "help_text",
+  "section_break_step_configs",
+  "step_configs",
+  "section_break_step_sections",
+  "step_sections",
+  "section_break_step_fields",
+  "step_fields",
+  "section_break_notifications",
+  "notification_template",
+  "section_break_status",
+  "is_active",
+  "icon"
+ ],
+ "fields": [
+  {
+   "fieldname": "type_name",
+   "fieldtype": "Data",
+   "label": "Type Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "type_code",
+   "fieldtype": "Data",
+   "label": "Type Code",
+   "reqd": 1
+  },
+  {
+   "fieldname": "category",
+   "fieldtype": "Select",
+   "label": "Category",
+   "options": "Resource Consent\nBuilding Consent\nService Request\nLicense\nPermit\nComplaint\nInformation Request\nSocial Assistance\nOther",
+   "reqd": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "label": "Description",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_processing",
+   "fieldtype": "Section Break",
+   "label": "Processing"
+  },
+  {
+   "fieldname": "processing_sla_days",
+   "fieldtype": "Int",
+   "label": "Processing SLA (days)",
+   "reqd": 1,
+   "default": "20",
+   "description": "Target timeframe for processing this request type"
+  },
+  {
+   "fieldname": "workflow_template",
+   "fieldtype": "Link",
+   "label": "Workflow",
+   "options": "Workflow"
+  },
+  {
+   "fieldname": "default_assessment_template",
+   "fieldtype": "Link",
+   "label": "Default Assessment Template",
+   "options": "Assessment Template",
+   "description": "Auto-assigned when request is acknowledged. Determines which stages and tasks are created."
+  },
+  {
+   "fieldname": "council_meeting_available",
+   "fieldtype": "Check",
+   "label": "Council Meeting Available",
+   "default": "1",
+   "description": "Allow requesters to schedule council meetings during the application process"
+  },
+  {
+   "fieldname": "default_response_role",
+   "fieldtype": "Link",
+   "label": "Default Response Role",
+   "options": "Role",
+   "description": "Role to assign message response tasks to (e.g., Consent Planner, Consent Officer)"
+  },
+  {
+   "fieldname": "section_break_fees",
+   "fieldtype": "Section Break",
+   "label": "Fees"
+  },
+  {
+   "fieldname": "base_fee",
+   "fieldtype": "Currency",
+   "label": "Base Fee"
+  },
+  {
+   "fieldname": "fee_calculation_method",
+   "fieldtype": "Select",
+   "label": "Fee Method",
+   "options": "Fixed\nHourly\nValue-Based\nDeposit"
+  },
+  {
+   "fieldname": "hourly_rate",
+   "fieldtype": "Currency",
+   "label": "Hourly Rate"
+  },
+  {
+   "fieldname": "collects_payment",
+   "fieldtype": "Check",
+   "label": "Collects Payment from Requester",
+   "default": "0",
+   "description": "Enable if this request type requires payment collection (fees, invoices). Automatically adds payment and invoice detail steps."
+  },
+  {
+   "fieldname": "make_payment",
+   "fieldtype": "Check",
+   "label": "Make Payment to Requester",
+   "default": "0",
+   "description": "Enable if this request type involves making payments to the requester (e.g., grants, pensions, reimbursements). Automatically adds bank account detail step."
+  },
+  {
+   "fieldname": "section_break_form",
+   "fieldtype": "Section Break",
+   "label": "Form"
+  },
+  {
+   "fieldname": "form_template",
+   "fieldtype": "JSON",
+   "label": "Form Template"
+  },
+  {
+   "fieldname": "required_documents",
+   "fieldtype": "Text",
+   "label": "Required Documents"
+  },
+  {
+   "fieldname": "help_text",
+   "fieldtype": "Text Editor",
+   "label": "Help Text"
+  },
+  {
+   "fieldname": "section_break_step_configs",
+   "fieldtype": "Section Break",
+   "label": "Step Configuration",
+   "description": "Configure which steps and sections appear for this request type. Leave empty to use hardcoded step flow."
+  },
+  {
+   "fieldname": "step_configs",
+   "fieldtype": "Table",
+   "label": "Step Configurations",
+   "options": "Request Type Step Config",
+   "description": "Define the steps that requesters will complete for this request type"
+  },
+  {
+   "fieldname": "section_break_step_sections",
+   "fieldtype": "Section Break",
+   "label": "Step Sections",
+   "description": "FLATTENED: All sections at Request Type level to avoid nested child tables"
+  },
+  {
+   "fieldname": "step_sections",
+   "fieldtype": "Table",
+   "label": "Sections",
+   "options": "Request Type Step Section",
+   "description": "Sections within steps. Each section links to its parent step via parent_step_code."
+  },
+  {
+   "fieldname": "section_break_step_fields",
+   "fieldtype": "Section Break",
+   "label": "Step Fields",
+   "description": "FLATTENED: All fields at Request Type level to avoid nested child tables"
+  },
+  {
+   "fieldname": "step_fields",
+   "fieldtype": "Table",
+   "label": "Fields",
+   "options": "Request Type Step Field",
+   "description": "Fields within sections. Each field links to its parent section via parent_section_code."
+  },
+  {
+   "fieldname": "section_break_notifications",
+   "fieldtype": "Section Break",
+   "label": "Notifications"
+  },
+  {
+   "fieldname": "notification_template",
+   "fieldtype": "Link",
+   "label": "Notification Template",
+   "options": "Notification"
+  },
+  {
+   "fieldname": "section_break_status",
+   "fieldtype": "Section Break",
+   "label": "Status"
+  },
+  {
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "label": "Active",
+   "default": "1"
+  },
+  {
+   "fieldname": "icon",
+   "fieldtype": "Data",
+   "label": "Icon Name"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 0,
+ "links": [],
+ "modified": "2025-11-30 00:00:00",
+ "modified_by": "Administrator",
+ "module": "CouncilsOnline",
+ "name": "Request Type",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "type_name",
+ "track_changes": 1
+}

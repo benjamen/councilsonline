@@ -449,7 +449,7 @@ function submit() {
 	// Single-tenant: no council selection needed
 
 	// Call registration API
-	fetch("/api/method/lodgeick.api.register_user", {
+	fetch("/api/method/councilsonline.api.register_user", {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",

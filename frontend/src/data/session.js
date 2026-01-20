@@ -29,7 +29,7 @@ export const session = reactive({
 
 			// Track login event for analytics
 			try {
-				await call("lodgeick.api.track_login_event", {
+				await call("councilsonline.api.track_login_event", {
 					source: "web",
 				})
 			} catch (error) {
