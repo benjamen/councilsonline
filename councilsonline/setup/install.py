@@ -553,6 +553,42 @@ def install_assessment_templates(force=False):
 					"estimated_hours": 2
 				}
 			]
+		},
+		{
+			"template_name": "Social Pension - Standard Assessment",
+			"is_active": 1,
+			"default_budget_hours": 24,
+			"description": "<p><strong>Standard Assessment Workflow for SPISC Applications</strong></p><p>This template guides the assessment of Social Pension applications through 4 key stages:</p><ol><li><strong>Eligibility Verification</strong> - Initial screening of age, residency, and pension status</li><li><strong>Income & Poverty Assessment</strong> - Detailed financial and household verification</li><li><strong>Approval Decision</strong> - Final eligibility determination and council approval</li><li><strong>Payment Setup</strong> - Arrange pension payment method and beneficiary enrollment</li></ol>",
+			"stages": [
+				{
+					"stage_number": 1,
+					"stage_name": "Eligibility Verification",
+					"stage_type": "Vetting",
+					"required": 1,
+					"estimated_hours": 4
+				},
+				{
+					"stage_number": 2,
+					"stage_name": "Income & Poverty Assessment",
+					"stage_type": "Technical Assessment",
+					"required": 1,
+					"estimated_hours": 12
+				},
+				{
+					"stage_number": 3,
+					"stage_name": "Approval Decision",
+					"stage_type": "Decision",
+					"required": 1,
+					"estimated_hours": 6
+				},
+				{
+					"stage_number": 4,
+					"stage_name": "Payment Setup",
+					"stage_type": "Implementation",
+					"required": 1,
+					"estimated_hours": 2
+				}
+			]
 		}
 	]
 
@@ -599,6 +635,7 @@ def link_assessment_templates_to_request_types(force=False):
 		"Water Permit - Groundwater Take": "Resource Consent - Non-Notified",
 		"Building Consent - Residential New Build": "Building Consent - Standard",
 		"Building Consent - Alterations & Additions": "Building Consent - Standard",
+		"Social Pension for Indigent Senior Citizens (SPISC)": "Social Pension - Standard Assessment",
 	}
 
 	linked_count = 0
