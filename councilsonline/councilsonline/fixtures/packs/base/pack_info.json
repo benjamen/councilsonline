@@ -1,0 +1,13 @@
+{
+  "name": "base",
+  "display_name": "Base Infrastructure",
+  "description": "Core roles, workflows, and assessment stage types required by all installations",
+  "version": "1.0.0",
+  "region": "Global",
+  "auto_install": true,
+  "includes": [
+    "CouncilsOnline roles (Admin, Manager, User, Staff, Planner, Applicant)",
+    "Request workflow with all states and transitions",
+    "8 Assessment Stage Types (Vetting, Technical, Decision, etc.)"
+  ]
+}

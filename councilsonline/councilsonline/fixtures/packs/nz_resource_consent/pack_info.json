@@ -1,0 +1,26 @@
+{
+  "name": "nz_resource_consent",
+  "display_name": "New Zealand Resource Consent",
+  "description": "Request types for New Zealand councils operating under the Resource Management Act (RMA)",
+  "version": "1.0.0",
+  "region": "NZ",
+  "auto_install": false,
+  "includes": [
+    "10 Request Types (Land Use, Building, Subdivision, Discharge, Water Permits, etc.)",
+    "3 Assessment Templates (Resource Consent, Building Consent, LIM)",
+    "10 Consent Condition Templates with RMA compliance",
+    "Default consent conditions linked to request types"
+  ],
+  "request_types": [
+    "Land Use Consent - Residential",
+    "Land Use Consent - Commercial",
+    "Land Use Consent - Industrial",
+    "Subdivision Consent - Standard",
+    "Discharge Permit - Stormwater",
+    "Water Permit - Groundwater Take",
+    "Building Consent - Residential New Build",
+    "Building Consent - Alterations & Additions",
+    "Service Request - General Inquiry",
+    "License - Temporary Event"
+  ]
+}

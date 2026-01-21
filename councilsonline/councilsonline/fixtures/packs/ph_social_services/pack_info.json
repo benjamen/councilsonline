@@ -1,0 +1,21 @@
+{
+  "name": "ph_social_services",
+  "display_name": "Philippines Social Services",
+  "description": "Request types for Philippine LGUs providing social welfare services",
+  "version": "1.0.0",
+  "region": "PH",
+  "auto_install": false,
+  "includes": [
+    "SPISC (Social Pension for Indigent Senior Citizens)",
+    "Local Senior Assistance / Financial Aid",
+    "Burial / Medical Support for Seniors",
+    "SPISC Assessment Template with 4 stages",
+    "Taytay Council configuration",
+    "Demo users (taytay-admin, taytay-demo)"
+  ],
+  "request_types": [
+    "Social Pension for Indigent Senior Citizens (SPISC)",
+    "Local Senior Assistance / Financial Aid for Elderly",
+    "Burial / Medical Support for Seniors"
+  ]
+}

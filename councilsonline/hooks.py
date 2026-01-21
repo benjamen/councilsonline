@@ -103,31 +103,36 @@ website_route_rules = [
 # before_install = "councilsonline.install.before_install"
 after_install = "councilsonline.install.after_install"
 
+# Setup Wizard
+# ------------
+# Add configuration pack selection to setup wizard
+setup_wizard_requires = "councilsonline/public/js/setup_wizard.js"
+setup_wizard_stages = "councilsonline.setup.setup_wizard.get_setup_stages"
+setup_wizard_complete = "councilsonline.setup.setup_wizard.on_setup_complete"
+
 # Fixtures
 # --------
-# Load fixtures from JSON files on migrate/install
+# Load BASE fixtures on migrate/install (region-specific loaded via config packs)
 fixtures = [
 	# Core Frappe fixtures
 	{"dt": "Print Format", "filters": [["module", "=", "CouncilsOnline"]]},
 	{"dt": "Workspace", "filters": [["module", "=", "CouncilsOnline"]]},
 	{"dt": "Number Card", "filters": [["module", "=", "CouncilsOnline"]]},
 	{"dt": "Dashboard Chart", "filters": [["module", "=", "CouncilsOnline"]]},
+	# Base roles (always needed)
 	{"dt": "Role", "filters": [["name", "in", [
 		"CouncilsOnline Admin", "CouncilsOnline Manager", "CouncilsOnline User",
 		"Council Admin", "Council Manager", "Council Staff", "Council Planner",
 		"Applicant", "Requester", "Agent"
 	]]]},
+	# Base workflow (always needed)
 	{"dt": "Workflow", "filters": [["document_type", "in", ["Request", "SPISC Application", "Resource Consent Application"]]]},
-	# Users (Taytay admin)
-	"councilsonline.councilsonline.councilsonline.fixtures.users",
-	# CouncilsOnline configuration
-	"councilsonline.councilsonline.councilsonline.fixtures.request_types",
-	"councilsonline.councilsonline.councilsonline.fixtures.taytay.taytay_council",  # Single DocType Council
-	"councilsonline.councilsonline.councilsonline.fixtures.council_request_types",
+	# Assessment stage types (base infrastructure)
 	"councilsonline.councilsonline.councilsonline.fixtures.assessment_stage_types",
-	"councilsonline.councilsonline.councilsonline.fixtures.assessment_templates",
-	"councilsonline.councilsonline.councilsonline.fixtures.task_templates_spisc",
-	"councilsonline.councilsonline.councilsonline.fixtures.council_team"
+	# NOTE: Region-specific fixtures (request_types, assessment_templates, council configs)
+	# are now installed via configuration packs using:
+	#   bench --site <site> install-config-packs --pack nz_resource_consent
+	#   bench --site <site> install-config-packs --pack ph_social_services
 ]
 
 # Uninstallation
@@ -237,9 +242,9 @@ scheduler_events = {
 
 # Custom Commands
 # ---------------
-# Add custom bench commands
+# Add custom bench commands for configuration pack management
 commands = [
-	"councilsonline.councilsonline.commands.install_default_data"
+	"councilsonline.commands"  # Includes install-config-packs, list-config-packs, show-config-pack
 ]
 
 # User Data Protection

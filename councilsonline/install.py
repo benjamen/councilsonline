@@ -149,9 +149,9 @@ def setup_payments_team():
 def after_install():
 	"""
 	Called automatically after app installation.
-	Sets up default configuration data.
+	Installs BASE infrastructure only - region-specific data via config packs.
 	"""
-	frappe.log("Starting CouncilsOnline default data installation...")
+	frappe.log("Starting CouncilsOnline base installation...")
 
 	# Always setup PAYMENTS team first (no dependencies)
 	try:
@@ -162,70 +162,75 @@ def after_install():
 		frappe.log_error(f"Error creating PAYMENTS team: {str(e)}")
 
 	try:
-		install_default_data()
+		install_base_infrastructure()
 		frappe.db.commit()
-		frappe.log("✓ CouncilsOnline default data installation completed successfully")
+		frappe.log("✓ CouncilsOnline base installation completed")
+
+		# Print instructions for adding region-specific data
+		frappe.msgprint(
+			_("""<b>Base installation complete!</b><br><br>
+			To add region-specific configuration, run one of:<br>
+			<code>bench --site {site} install-config-packs --pack nz_resource_consent</code><br>
+			<code>bench --site {site} install-config-packs --pack ph_social_services</code><br><br>
+			Or use interactive mode:<br>
+			<code>bench --site {site} install-config-packs</code><br><br>
+			You can also select packs during the Setup Wizard.""").format(site=frappe.local.site),
+			title=_("Installation Complete"),
+			indicator="green"
+		)
 	except Exception as e:
 		frappe.log_error(f"Error during CouncilsOnline installation: {str(e)}")
 		frappe.db.rollback()
 		raise
 
 
-def install_default_data(force=False):
+def install_base_infrastructure(force=False):
 	"""
-	Install all default configuration data.
+	Install base infrastructure (roles, workflows, stage types).
+	Region-specific data is installed via configuration packs.
 
 	Args:
 		force (bool): If True, reinstall even if data exists
 	"""
-	from councilsonline.setup.install import (
-		install_consent_condition_templates,
-		install_request_types,
-		install_assessment_stage_types,
-		install_assessment_templates,
-		link_assessment_templates_to_request_types
-	)
-
-	frappe.log("Installing Consent Condition Templates...")
-	install_consent_condition_templates(force=force)
-
-	frappe.log("Installing Request Types...")
-	install_request_types(force=force)
-
-	frappe.log("Installing Assessment Stage Types...")
-	install_assessment_stage_types(force=force)
-
-	frappe.log("Installing Assessment Templates...")
-	install_assessment_templates(force=force)
-
-	frappe.log("Linking Assessment Templates to Request Types...")
-	link_assessment_templates_to_request_types(force=force)
-
-	# Install SPISC and Taytay Council
-	frappe.log("Installing SPISC Request Type and Taytay Council...")
-	from councilsonline.councilsonline.fixtures.taytay.import_taytay_fixtures import import_fixtures as import_taytay
-	import_taytay()
+	from councilsonline.setup.install import install_assessment_stage_types
+	from councilsonline.councilsonline.fixtures.create_roles import create_roles
+	from councilsonline.councilsonline.fixtures.create_unified_workflow import create_workflow
 
 	# Create roles
 	frappe.log("Creating CouncilsOnline roles...")
-	from councilsonline.councilsonline.fixtures.create_roles import create_roles
 	create_roles()
 
 	# Create workflow
 	frappe.log("Creating Request workflow...")
-	from councilsonline.councilsonline.fixtures.create_unified_workflow import create_workflow
 	create_workflow()
 
-	# Setup Taytay admin user
-	frappe.log("Setting up Taytay admin user...")
-	setup_taytay_admin_user()
+	# Install assessment stage types (base infrastructure)
+	frappe.log("Installing Assessment Stage Types...")
+	install_assessment_stage_types(force=force)
 
-	# Setup Taytay demo user (limited access)
-	frappe.log("Setting up Taytay demo user...")
-	setup_taytay_demo_user()
+	frappe.log("Base infrastructure installed. Use 'bench install-config-packs' for region-specific data.")
 
-	# Note: Condition template linking skipped - Request Type schema doesn't support it yet
-	# This feature may be added in a future version
+
+def install_default_data(force=False):
+	"""
+	DEPRECATED: Use configuration packs instead.
+
+	Install all default configuration data (legacy function for backward compatibility).
+	For new installations, use:
+		bench --site <site> install-config-packs --all
+
+	Args:
+		force (bool): If True, reinstall even if data exists
+	"""
+	frappe.log("WARNING: install_default_data is deprecated. Use config packs instead.")
+
+	# Install base first
+	install_base_infrastructure(force=force)
+
+	# Install all packs for backward compatibility
+	from councilsonline.setup.pack_installer import install_config_pack
+	install_config_pack("nz_resource_consent", force=force)
+	install_config_pack("ph_social_services", force=force)
 
 	frappe.msgprint(
 		_("Default configuration data has been installed successfully!"),

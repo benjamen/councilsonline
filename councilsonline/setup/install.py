@@ -456,10 +456,16 @@ def install_assessment_stage_types(force=False):
 	return installed_count
 
 
-def install_assessment_templates(force=False):
-	"""Install default assessment templates"""
+def install_assessment_templates(force=False, pack=None):
+	"""
+	Install assessment templates.
 
-	templates = [
+	Args:
+		force: If True, reinstall even if exists
+		pack: Filter by pack ('nz' for NZ templates, 'ph' for PH templates, None for all)
+	"""
+	# NZ Templates
+	nz_templates = [
 		{
 			"template_name": "Resource Consent - Non-Notified",
 			"is_active": 1,
@@ -553,7 +559,11 @@ def install_assessment_templates(force=False):
 					"estimated_hours": 2
 				}
 			]
-		},
+		}
+	]
+
+	# PH Templates
+	ph_templates = [
 		{
 			"template_name": "Social Pension - Standard Assessment",
 			"is_active": 1,
@@ -592,6 +602,15 @@ def install_assessment_templates(force=False):
 		}
 	]
 
+	# Select templates based on pack
+	if pack == "nz":
+		templates = nz_templates
+	elif pack == "ph":
+		templates = ph_templates
+	else:
+		# Install all if no pack specified
+		templates = nz_templates + ph_templates
+
 	installed_count = 0
 	for template_data in templates:
 		template_name = template_data["template_name"]
@@ -622,11 +641,16 @@ def install_assessment_templates(force=False):
 	return installed_count
 
 
-def link_assessment_templates_to_request_types(force=False):
-	"""Link assessment templates to request types as default_assessment_template"""
+def link_assessment_templates_to_request_types(force=False, pack=None):
+	"""
+	Link assessment templates to request types as default_assessment_template.
 
-	# Define which assessment template is default for which request type
-	template_links = {
+	Args:
+		force: If True, overwrite existing links
+		pack: Filter by pack ('nz' for NZ links, 'ph' for PH links, None for all)
+	"""
+	# NZ template links
+	nz_links = {
 		"Land Use Consent - Residential": "Resource Consent - Non-Notified",
 		"Land Use Consent - Commercial": "Resource Consent - Non-Notified",
 		"Land Use Consent - Industrial": "Resource Consent - Non-Notified",
@@ -635,8 +659,21 @@ def link_assessment_templates_to_request_types(force=False):
 		"Water Permit - Groundwater Take": "Resource Consent - Non-Notified",
 		"Building Consent - Residential New Build": "Building Consent - Standard",
 		"Building Consent - Alterations & Additions": "Building Consent - Standard",
+	}
+
+	# PH template links
+	ph_links = {
 		"Social Pension for Indigent Senior Citizens (SPISC)": "Social Pension - Standard Assessment",
 	}
+
+	# Select links based on pack
+	if pack == "nz":
+		template_links = nz_links
+	elif pack == "ph":
+		template_links = ph_links
+	else:
+		# Link all if no pack specified
+		template_links = {**nz_links, **ph_links}
 
 	linked_count = 0
 	for request_type_name, assessment_template_name in template_links.items():
