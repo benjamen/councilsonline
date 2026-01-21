@@ -365,9 +365,9 @@
     <PaymentModal
       v-model:show="showPaymentModal"
       :request-id="route.params.id"
-      :total-amount="resource.data?.total_fees_incl_gst || 0"
-      :fees-excl-gst="resource.data?.total_fees_excl_gst || 0"
-      :gst="resource.data?.gst_amount || 0"
+      :total-amount="request.data?.total_fees_incl_gst || 0"
+      :fees-excl-gst="request.data?.total_fees_excl_gst || 0"
+      :gst="request.data?.gst_amount || 0"
       :stripe-enabled="false"
       @invoice-requested="handleInvoiceRequested"
     />
@@ -897,7 +897,7 @@ const handleInvoiceRequested = (invoiceData) => {
 	alert(message)
 
 	// Reload request to show updated payment status
-	resource.reload()
+	request.reload()
 }
 
 const handleBookMeeting = () => {
