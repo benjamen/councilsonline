@@ -27,15 +27,15 @@
           <div class="grid md:grid-cols-2 gap-4">
             <div>
               <span class="text-sm text-gray-500">Name:</span>
-              <p class="font-medium">{{ modelValue.requester_name || 'Not provided' }}</p>
+              <p class="font-medium">{{ applicantName || 'Not provided' }}</p>
             </div>
             <div>
               <span class="text-sm text-gray-500">Email:</span>
-              <p class="font-medium">{{ modelValue.requester_email || 'Not provided' }}</p>
+              <p class="font-medium">{{ applicantEmail || 'Not provided' }}</p>
             </div>
             <div>
               <span class="text-sm text-gray-500">Phone:</span>
-              <p class="font-medium">{{ modelValue.requester_phone || 'Not provided' }}</p>
+              <p class="font-medium">{{ applicantPhone || 'Not provided' }}</p>
             </div>
             <div v-if="modelValue.applicant_company">
               <span class="text-sm text-gray-500">Company:</span>
@@ -438,6 +438,29 @@ const props = defineProps({
 		type: Object,
 		default: null,
 	},
+})
+
+// Applicant details - handle both standard and SPISC field names
+const applicantName = computed(() => {
+	return props.modelValue.requester_name ||
+	       props.modelValue.full_name ||
+	       props.modelValue.applicant_name ||
+	       null
+})
+
+const applicantEmail = computed(() => {
+	return props.modelValue.requester_email ||
+	       props.modelValue.email ||
+	       props.modelValue.applicant_email ||
+	       null
+})
+
+const applicantPhone = computed(() => {
+	return props.modelValue.requester_phone ||
+	       props.modelValue.mobile_number ||
+	       props.modelValue.phone ||
+	       props.modelValue.applicant_phone ||
+	       null
 })
 
 // Filter steps that should show on review
