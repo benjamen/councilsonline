@@ -60,9 +60,18 @@
    "is_enabled": 1,
    "is_required": 1,
    "show_on_review": 1,
-   "step_code": "declaration",
+   "step_code": "payment_method",
    "step_component": "DynamicStepRenderer",
    "step_number": 5,
+   "step_title": "Payment Method"
+  },
+  {
+   "is_enabled": 1,
+   "is_required": 1,
+   "show_on_review": 1,
+   "step_code": "declaration",
+   "step_component": "DynamicStepRenderer",
+   "step_number": 6,
    "step_title": "Declaration & Submission"
   }
  ],
@@ -277,6 +286,67 @@
    "show_on_review": 0
   },
   {
+   "field_label": "Payment Preference",
+   "field_name": "payment_preference",
+   "field_type": "Select",
+   "is_required": 1,
+   "options": "Bank Transfer\nOffice Pickup",
+   "parent_section_code": "payment_preference",
+   "show_on_review": 1
+  },
+  {
+   "field_label": "Bank Name",
+   "field_name": "bank_name",
+   "field_type": "Data",
+   "is_required": 0,
+   "parent_section_code": "bank_details",
+   "show_on_review": 1,
+   "depends_on": "eval:doc.payment_preference === 'Bank Transfer'",
+   "mandatory_depends_on": "eval:doc.payment_preference === 'Bank Transfer'"
+  },
+  {
+   "field_label": "Account Number",
+   "field_name": "bank_account_number",
+   "field_type": "Data",
+   "is_required": 0,
+   "parent_section_code": "bank_details",
+   "show_on_review": 1,
+   "depends_on": "eval:doc.payment_preference === 'Bank Transfer'",
+   "mandatory_depends_on": "eval:doc.payment_preference === 'Bank Transfer'"
+  },
+  {
+   "field_label": "Account Holder Name",
+   "field_name": "bank_account_holder",
+   "field_type": "Data",
+   "is_required": 0,
+   "parent_section_code": "bank_details",
+   "show_on_review": 1,
+   "depends_on": "eval:doc.payment_preference === 'Bank Transfer'",
+   "mandatory_depends_on": "eval:doc.payment_preference === 'Bank Transfer'"
+  },
+  {
+   "field_label": "Pickup Location",
+   "field_name": "pickup_location",
+   "field_type": "Select",
+   "is_required": 0,
+   "options": "Municipal Social Welfare Office\nBarangay Hall",
+   "parent_section_code": "pickup_details",
+   "show_on_review": 1,
+   "depends_on": "eval:doc.payment_preference === 'Office Pickup'",
+   "mandatory_depends_on": "eval:doc.payment_preference === 'Office Pickup'"
+  },
+  {
+   "field_label": "Preferred Time Slot",
+   "field_name": "preferred_time_slot",
+   "field_type": "Select",
+   "is_required": 0,
+   "options": "Morning (8AM-12PM)\nAfternoon (1PM-5PM)",
+   "parent_section_code": "pickup_details",
+   "show_on_review": 1,
+   "depends_on": "eval:doc.payment_preference === 'Office Pickup'",
+   "mandatory_depends_on": "eval:doc.payment_preference === 'Office Pickup'"
+  },
+  {
    "field_label": "I declare that all information provided in this application is true and correct",
    "field_name": "declaration_truth",
    "field_type": "Check",
@@ -392,6 +462,38 @@
    "section_type": "Section",
    "sequence": 2,
    "show_on_review": 0
+  },
+  {
+   "is_enabled": 1,
+   "is_required": 1,
+   "parent_step_code": "payment_method",
+   "section_code": "payment_preference",
+   "section_title": "How would you like to receive your pension?",
+   "section_type": "Section",
+   "sequence": 1,
+   "show_on_review": 1
+  },
+  {
+   "is_enabled": 1,
+   "is_required": 0,
+   "parent_step_code": "payment_method",
+   "section_code": "bank_details",
+   "section_title": "Bank Account Details",
+   "section_type": "Section",
+   "sequence": 2,
+   "show_on_review": 1,
+   "depends_on": "eval:doc.payment_preference === 'Bank Transfer'"
+  },
+  {
+   "is_enabled": 1,
+   "is_required": 0,
+   "parent_step_code": "payment_method",
+   "section_code": "pickup_details",
+   "section_title": "Office Pickup Details",
+   "section_type": "Section",
+   "sequence": 3,
+   "show_on_review": 1,
+   "depends_on": "eval:doc.payment_preference === 'Office Pickup'"
   },
   {
    "is_enabled": 1,
