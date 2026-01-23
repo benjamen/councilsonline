@@ -731,14 +731,16 @@ def create_draft_request(data=None, current_step=None, total_steps=None):
 
         # Log incoming request for debugging
         frappe.logger().info(f"create_draft_request called - data type: {type(data)}, current_step: {current_step}")
-        frappe.logger().info(f"create_draft_request - data value: {data}")
-        frappe.logger().info(f"create_draft_request - frappe.form_dict: {frappe.form_dict}")
+
+        # Handle case where request_type is passed directly instead of in data dict
+        if not data and frappe.form_dict.get("request_type"):
+            data = {"request_type": frappe.form_dict.get("request_type")}
+            frappe.logger().info(f"create_draft_request - extracted request_type from form_dict: {data}")
 
         # Validate required data parameter
         if not data:
-            # Log the full request to understand what's being sent
             frappe.log_error(
-                f"Empty data received. Form dict: {frappe.form_dict}",
+                f"Empty data received",
                 "create_draft_request - Empty Data"
             )
             frappe.throw("Request data is required. Please ensure all form fields are filled and try again.")
@@ -1349,6 +1351,7 @@ def get_request_type_config(request_type_code=None):
                                 "sequence": section.sequence if hasattr(section, 'sequence') else 1,
                                 "is_enabled": section.is_enabled if hasattr(section, 'is_enabled') else 1,
                                 "is_required": section.is_required if hasattr(section, 'is_required') else 1,
+                                "depends_on": section.depends_on if hasattr(section, 'depends_on') else None,
                                 "fields": []
                             }
 

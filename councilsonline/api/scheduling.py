@@ -345,6 +345,13 @@ def book_appointment(team_code, scheduled_start, scheduled_end, appointment_type
 		})
 
 		appointment.insert(ignore_permissions=True)
+
+		# Auto-confirm if team has auto_confirm_appointments enabled
+		if team.auto_confirm_appointments:
+			appointment.status = "Confirmed"
+			appointment.confirmed_at = now_datetime()
+			appointment.save(ignore_permissions=True)
+
 		frappe.db.commit()
 
 		return {
@@ -355,7 +362,8 @@ def book_appointment(team_code, scheduled_start, scheduled_end, appointment_type
 			"scheduled_end": appointment.scheduled_end,
 			"location": appointment.location,
 			"status": appointment.status,
-			"message": _("Appointment booked successfully for {0}").format(
+			"message": _("Appointment {0} for {1}").format(
+				"confirmed" if team.auto_confirm_appointments else "booked successfully",
 				start_dt.strftime("%A, %B %d at %I:%M %p")
 			)
 		}
