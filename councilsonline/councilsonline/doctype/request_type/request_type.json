@@ -16,6 +16,7 @@
   "workflow_template",
   "default_assessment_template",
   "council_meeting_available",
+  "auto_confirm_meetings",
   "default_response_role",
   "section_break_fees",
   "base_fee",
@@ -98,6 +99,14 @@
    "label": "Council Meeting Available",
    "default": "1",
    "description": "Allow requesters to schedule council meetings during the application process"
+  },
+  {
+   "fieldname": "auto_confirm_meetings",
+   "fieldtype": "Check",
+   "label": "Auto-Confirm Meetings",
+   "default": "0",
+   "depends_on": "council_meeting_available",
+   "description": "Automatically confirm meetings using the first preferred time slot (skip planner approval)"
   },
   {
    "fieldname": "default_response_role",

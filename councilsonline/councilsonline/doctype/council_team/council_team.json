@@ -16,6 +16,7 @@
   "team_phone",
   "scheduling_section",
   "enable_scheduling",
+  "auto_confirm_appointments",
   "default_appointment_duration",
   "available_appointment_durations",
   "appointment_buffer_time",
@@ -88,6 +89,14 @@
    "fieldname": "enable_scheduling",
    "fieldtype": "Check",
    "label": "Enable Appointment Scheduling"
+  },
+  {
+   "default": "0",
+   "depends_on": "enable_scheduling",
+   "description": "When enabled, appointments are automatically confirmed without manual approval",
+   "fieldname": "auto_confirm_appointments",
+   "fieldtype": "Check",
+   "label": "Auto-Confirm Appointments"
   },
   {
    "default": "30",
