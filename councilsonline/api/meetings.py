@@ -101,18 +101,40 @@ def book_council_meeting(request_id=None, request_type_code=None, meeting_type="
 
         meeting_doc.insert(ignore_permissions=True)
 
+        # Check if auto-confirm is enabled for this request type
+        auto_confirmed = False
+        request_type_doc = None
+
+        # Get request type from request doc or from parameter
+        if request_doc and request_doc.request_type:
+            request_type_doc = frappe.get_doc("Request Type", request_doc.request_type)
+        elif request_type_code:
+            request_type_doc = frappe.get_doc("Request Type", {"type_code": request_type_code})
+
+        if request_type_doc and request_type_doc.auto_confirm_meetings and preferred_time_slots:
+            # Auto-confirm using the first preferred time slot
+            first_slot = preferred_time_slots[0]
+            if first_slot.get("preferred_start") and first_slot.get("preferred_end"):
+                meeting_doc.scheduled_start = first_slot.get("preferred_start")
+                meeting_doc.scheduled_end = first_slot.get("preferred_end")
+                meeting_doc.status = "Confirmed"
+                meeting_doc.confirmed_at = now_datetime()
+                meeting_doc.save(ignore_permissions=True)
+                auto_confirmed = True
+
         # Add a comment to the request about the meeting booking (if request exists)
         if request_doc:
-            request_doc.add_comment(
-                "Comment",
-                f"{meeting_type} requested. Meeting record {meeting_doc.name} created. A council planner will contact you within 2 business days to schedule."
-            )
+            if auto_confirmed:
+                comment_msg = f"{meeting_type} auto-confirmed. Meeting record {meeting_doc.name} created and scheduled for {meeting_doc.scheduled_start}."
+            else:
+                comment_msg = f"{meeting_type} requested. Meeting record {meeting_doc.name} created. A council planner will contact you within 2 business days to schedule."
+            request_doc.add_comment("Comment", comment_msg)
 
-        # Create a notification task for council team
-        try:
-            # Get council planner role assignee
-            council_user = "Administrator"
-            if council_name:
+        # Create a notification task for council team (skip if auto-confirmed)
+        if not auto_confirmed:
+            try:
+                # Get council planner role assignee
+                council_user = "Administrator"
                 # Try to find a Consent Planner for this council
                 users_with_role = frappe.get_all(
                     "Has Role",
@@ -130,44 +152,53 @@ def book_council_meeting(request_id=None, request_type_code=None, meeting_type="
                         council_user = user
                         break
 
-            task_doc = frappe.get_doc({
-                "doctype": "Project Task",
-                "title": f"Schedule {meeting_type} - {request_doc.request_number if request_doc else 'Pre-Application'}",
-                "description": f"""
-                    <p><strong>Meeting Request:</strong> {meeting_doc.name}</p>
-                    {f'<p><strong>Request Number:</strong> {request_doc.request_number}</p>' if request_doc else ''}
-                    {f'<p><strong>Request Type:</strong> {request_doc.request_type}</p>' if request_doc else f'<p><strong>Request Type:</strong> {request_type_code}</p>' if request_type_code else ''}
-                    <p><strong>Requester:</strong> {frappe.session.user}</p>
-                    <p><strong>Purpose:</strong> {meeting_purpose or 'N/A'}</p>
-                    {f'<p><strong>Property:</strong> {request_doc.property_address}</p>' if request_doc and request_doc.property_address else ''}
-                    <br>
-                    <p><strong>Preferred Time Slots:</strong></p>
-                    <ul>
-                    {"".join([f'<li>Option {slot.get("preference_order")}: {slot.get("preferred_start")} to {slot.get("preferred_end")}</li>' for slot in preferred_time_slots if slot.get("preferred_start")])}
-                    </ul>
-                    <br>
-                    <p>Please schedule this meeting with the applicant within 2 business days.</p>
-                """,
-                "status": "Open",
-                "priority": "High",
-                "task_type": "Manual",
-                "due_date": frappe.utils.add_days(frappe.utils.today(), 2),
-                "assigned_by": frappe.session.user,
-                "assigned_to": council_user,
-                "request": request_id if (request_id and request_id != "draft") else None
-            })
-            task_doc.insert(ignore_permissions=True)
-        except Exception as task_error:
-            frappe.log_error(f"Error creating task for meeting: {str(task_error)}")
+                task_doc = frappe.get_doc({
+                    "doctype": "Project Task",
+                    "title": f"Schedule {meeting_type} - {request_doc.request_number if request_doc else 'Pre-Application'}",
+                    "description": f"""
+                        <p><strong>Meeting Request:</strong> {meeting_doc.name}</p>
+                        {f'<p><strong>Request Number:</strong> {request_doc.request_number}</p>' if request_doc else ''}
+                        {f'<p><strong>Request Type:</strong> {request_doc.request_type}</p>' if request_doc else f'<p><strong>Request Type:</strong> {request_type_code}</p>' if request_type_code else ''}
+                        <p><strong>Requester:</strong> {frappe.session.user}</p>
+                        <p><strong>Purpose:</strong> {meeting_purpose or 'N/A'}</p>
+                        {f'<p><strong>Property:</strong> {request_doc.property_address}</p>' if request_doc and request_doc.property_address else ''}
+                        <br>
+                        <p><strong>Preferred Time Slots:</strong></p>
+                        <ul>
+                        {"".join([f'<li>Option {slot.get("preference_order")}: {slot.get("preferred_start")} to {slot.get("preferred_end")}</li>' for slot in preferred_time_slots if slot.get("preferred_start")])}
+                        </ul>
+                        <br>
+                        <p>Please schedule this meeting with the applicant within 2 business days.</p>
+                    """,
+                    "status": "Open",
+                    "priority": "High",
+                    "task_type": "Manual",
+                    "due_date": frappe.utils.add_days(frappe.utils.today(), 2),
+                    "assigned_by": frappe.session.user,
+                    "assigned_to": council_user,
+                    "request": request_id if (request_id and request_id != "draft") else None
+                })
+                task_doc.insert(ignore_permissions=True)
+            except Exception as task_error:
+                frappe.log_error(f"Error creating task for meeting: {str(task_error)}")
 
         frappe.db.commit()
+
+        # Return appropriate message based on auto-confirm status
+        if auto_confirmed:
+            scheduled_dt = get_datetime(meeting_doc.scheduled_start) if meeting_doc.scheduled_start else None
+            message = f"{meeting_type} confirmed for {scheduled_dt.strftime('%A, %B %d at %I:%M %p') if scheduled_dt else 'your selected time'}."
+        else:
+            message = f"{meeting_type} request created successfully. A council planner will contact you within 2 business days."
 
         return {
             "success": True,
             "meeting_id": meeting_doc.name,
             "meeting_type": meeting_type,
-            "status": "Requested",
-            "message": f"{meeting_type} request created successfully. A council planner will contact you within 2 business days."
+            "status": meeting_doc.status,
+            "scheduled_start": meeting_doc.scheduled_start if auto_confirmed else None,
+            "scheduled_end": meeting_doc.scheduled_end if auto_confirmed else None,
+            "message": message
         }
 
     except Exception as e:
