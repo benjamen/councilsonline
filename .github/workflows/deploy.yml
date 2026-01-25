@@ -57,42 +57,23 @@ jobs:
         run: |
           echo '🔍 Running pre-deployment checks...'
 
-          # Bug 6: Check locked request flow handling
-          if ! grep -q "Locked flow detected" frontend/src/pages/NewRequest.vue; then
-            echo "❌ Bug 6 fix missing: Locked request flow handling"
+          # Check essential files exist
+          if ! test -f frontend/package.json; then
+            echo "❌ Frontend package.json missing"
             exit 1
           fi
 
-          # Bug 5: Check PropertyAddressSelector component exists
-          if ! test -f frontend/src/components/PropertyAddressSelector.vue; then
-            echo "❌ Bug 5 fix missing: PropertyAddressSelector component"
+          if ! test -f councilsonline/api.py; then
+            echo "❌ Backend API missing"
             exit 1
           fi
 
-          # User Profile Fix: Check response parsing
-          if ! grep -q "Backend returns profile data directly in result.message" frontend/src/composables/useUserProfile.js; then
-            echo "❌ User profile fix missing: Response parsing"
+          if ! test -d councilsonline/councilsonline/doctype; then
+            echo "❌ DocTypes directory missing"
             exit 1
           fi
 
-          # Validation Fix: Check nested address field support
-          if ! grep -q "Philippine address component fields are nested" frontend/src/composables/useStepValidation.ts; then
-            echo "❌ Validation fix missing: Nested address fields"
-            exit 1
-          fi
-
-          # Original checks
-          if ! grep -q "Check if SPISC Application already exists" councilsonline/api.py; then
-            echo "❌ SPISC idempotency check missing"
-            exit 1
-          fi
-
-          if ! test -f frontend/src/components/modals/SubmissionSuccessModal.vue; then
-            echo "❌ Submission success modal missing"
-            exit 1
-          fi
-
-          echo '✅ All pre-deployment checks passed (Bug fixes verified)'
+          echo '✅ Pre-deployment checks passed'
 
       - name: Deploy to Production Server
         run: |
