@@ -10,7 +10,7 @@ env:
   SERVER_HOST: 77.37.87.141
   SERVER_USER: frappe-user
   BENCH_PATH: /home/frappe-user/frappe-bench
-  SITE_NAME: councilsonline.com
+  SITE_NAME: taytay.councilsonline.com
   APP_NAME: councilsonline
 
 jobs:
@@ -27,15 +27,22 @@ jobs:
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
 
-          # Add SSH key
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          # Add SSH key - use printf to preserve newlines correctly
+          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
+
+          # Verify key format
+          echo "Key file details:"
+          head -1 ~/.ssh/deploy_key
+          tail -1 ~/.ssh/deploy_key
+          wc -l ~/.ssh/deploy_key
 
           # Configure SSH to use the key
           cat >> ~/.ssh/config <<EOF
           Host ${{ env.SERVER_HOST }}
             IdentityFile ~/.ssh/deploy_key
             StrictHostKeyChecking no
+            UserKnownHostsFile=/dev/null
           EOF
           chmod 600 ~/.ssh/config
 
