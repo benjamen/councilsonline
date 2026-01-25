@@ -27,8 +27,8 @@ jobs:
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
 
-          # Add SSH key - use printf to preserve newlines correctly
-          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          # Decode base64 SSH key
+          echo "${{ secrets.SSH_PRIVATE_KEY_B64 }}" | base64 -d > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
 
           # Verify key format
