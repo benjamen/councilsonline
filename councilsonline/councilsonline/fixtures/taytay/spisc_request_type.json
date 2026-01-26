@@ -278,14 +278,6 @@
    "show_on_review": 0
   },
   {
-   "field_label": "Certificate of Indigency",
-   "field_name": "indigency_certificate",
-   "field_type": "Attach",
-   "is_required": 0,
-   "parent_section_code": "optional_documents",
-   "show_on_review": 0
-  },
-  {
    "field_label": "Payment Preference",
    "field_name": "payment_preference",
    "field_type": "Select",
