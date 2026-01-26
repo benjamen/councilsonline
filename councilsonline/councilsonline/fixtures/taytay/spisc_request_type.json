@@ -151,7 +151,8 @@
    "field_type": "Data",
    "is_required": 1,
    "parent_section_code": "address",
-   "show_on_review": 1
+   "show_on_review": 1,
+   "read_only": 1
   },
   {
    "default_value": "Rizal",
@@ -160,7 +161,8 @@
    "field_type": "Data",
    "is_required": 1,
    "parent_section_code": "address",
-   "show_on_review": 1
+   "show_on_review": 1,
+   "read_only": 1
   },
   {
    "field_label": "Number of Household Members",

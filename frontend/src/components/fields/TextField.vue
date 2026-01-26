@@ -15,10 +15,14 @@
         @input="$emit('update:modelValue', $event.target.value)"
         @blur="$emit('validate')"
         :required="field.is_required"
-        class="block w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+        :disabled="field.read_only"
+        :readonly="field.read_only"
+        class="block w-full px-4 py-3 text-base border border-gray-300 rounded-lg transition-all"
         :class="{
-          'border-blue-500 ring-2 ring-blue-100': modelValue && !validationError,
-          'border-red-500 ring-2 ring-red-100': validationError
+          'border-blue-500 ring-2 ring-blue-100': modelValue && !validationError && !field.read_only,
+          'border-red-500 ring-2 ring-red-100': validationError,
+          'bg-gray-100 text-gray-600 cursor-not-allowed': field.read_only,
+          'focus:ring-2 focus:ring-blue-500 focus:border-blue-500': !field.read_only
         }"
         :placeholder="placeholder"
       />
