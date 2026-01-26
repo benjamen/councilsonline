@@ -27,13 +27,18 @@ def import_fixtures():
     print("IMPORTING TAYTAY FIXTURES")
     print("="*80 + "\n")
 
-    # Import SPISC Request Type FIRST (Council references it)
-    print("Step 1: Importing SPISC Request Type with step configuration...")
+    # Import Philippines Holiday List FIRST (needed for statutory clock calculations)
+    print("Step 1: Importing Philippines Holiday List...")
+    holiday_file = fixture_dir / "ph_holiday_list.json"
+    import_holiday_list_fixture(holiday_file)
+
+    # Import SPISC Request Type (Council references it)
+    print("\nStep 2: Importing SPISC Request Type with step configuration...")
     spisc_file = fixture_dir / "spisc_request_type.json"
     import_request_type_fixture(spisc_file)
 
     # Import Council AFTER Request Types exist
-    print("\nStep 2: Importing Taytay Council...")
+    print("\nStep 3: Importing Taytay Council...")
     council_file = fixture_dir / "taytay_council.json"
     import_council_fixture(council_file)
 
@@ -47,6 +52,45 @@ def import_fixtures():
     print("2. Verify request type: http://127.0.0.1:8090/app/request-type/Social Pension for Indigent Senior Citizens (SPISC)")
     print("3. Test form: http://127.0.0.1:8090/frontend")
     print()
+
+
+def import_holiday_list_fixture(file_path):
+    """Import Holiday List fixture with holidays child table"""
+
+    if not os.path.exists(file_path):
+        print(f"  ❌ File not found: {file_path}")
+        return
+
+    with open(file_path, 'r') as f:
+        data = json.load(f)
+
+    doc_name = data.get('name')
+    doctype = 'Holiday List'
+
+    # Check if document already exists
+    if frappe.db.exists(doctype, doc_name):
+        print(f"  ⚠️  {doctype} '{doc_name}' already exists - updating...")
+        doc = frappe.get_doc(doctype, doc_name)
+
+        # Update basic fields
+        for key, value in data.items():
+            if key not in ['doctype', 'name', 'creation', 'modified', 'modified_by', 'owner', 'holidays']:
+                doc.set(key, value)
+
+        # Update holidays child table
+        doc.holidays = []
+        for holiday_data in data.get('holidays', []):
+            doc.append('holidays', holiday_data)
+
+        doc.save()
+        print(f"  ✅ Updated {doctype}: {doc_name}")
+        print(f"     - {len(data.get('holidays', []))} holidays")
+    else:
+        print(f"  📝 Creating {doctype}: {doc_name}...")
+        doc = frappe.get_doc(data)
+        doc.insert()
+        print(f"  ✅ Created {doctype}: {doc_name}")
+        print(f"     - {len(data.get('holidays', []))} holidays")
 
 
 def import_json_fixture(file_path, doctype):
