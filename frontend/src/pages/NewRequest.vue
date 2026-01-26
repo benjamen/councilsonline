@@ -57,7 +57,13 @@
                 <div v-else-if="store.currentStep >= totalSteps - 1">
                     <ReviewStep
                         v-model="store.formData"
-                        :request-type-config="store.requestTypeConfig"
+                        :council-name="store.formData.council || 'Council'"
+                        :request-type-name="store.formData.request_type || 'Application'"
+                        :application-fee="formatApplicationFee(store.requestTypeConfig?.base_fee)"
+                        :is-resource-consent="isResourceConsent"
+                        :step-configs="store.requestTypeConfig?.steps || []"
+                        :uses-configurable-steps="usesConfigurableSteps"
+                        :request-type-details="store.requestTypeConfig"
                     />
                 </div>
 
@@ -175,7 +181,7 @@
 
 <script setup>
 import { Button } from "frappe-ui"
-import { defineAsyncComponent, onMounted } from "vue"
+import { computed, defineAsyncComponent, onMounted } from "vue"
 import { useRouter } from "vue-router"
 
 // Composables - all logic extracted for maintainability
@@ -272,6 +278,23 @@ const {
 // Setup route guard and age calculation (validation comes from field config)
 setupRouteGuard()
 setupAgeValidation()
+
+// Check if current request type is Resource Consent
+const isResourceConsent = computed(() => {
+	const requestType = store.formData.request_type || ""
+	return requestType.toLowerCase().includes("resource consent")
+})
+
+// Format application fee for display
+const formatApplicationFee = (fee) => {
+	if (!fee && fee !== 0) return "Free"
+	if (fee === 0) return "Free"
+	// Check if it's Philippines (PHP) or NZ (NZD)
+	const isPH = store.formData.council?.includes("TAYTAY") || store.formData.council?.includes("PH")
+	const currency = isPH ? "PHP" : "NZD"
+	const symbol = isPH ? "₱" : "$"
+	return `${symbol}${Number(fee).toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`
+}
 
 // Initialize on mount
 onMounted(() => {
