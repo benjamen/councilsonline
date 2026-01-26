@@ -120,6 +120,10 @@ jobs:
             echo '🗄️ Migrating database...'
             bench --site ${{ env.SITE_NAME }} migrate
 
+            # Import Taytay council fixtures (idempotent - safe to run on every deploy)
+            echo '📦 Importing Taytay council fixtures...'
+            bench --site ${{ env.SITE_NAME }} execute councilsonline.councilsonline.fixtures.taytay.import_taytay_fixtures.import_fixtures || echo 'Fixtures import skipped or already applied'
+
             # Clear cache aggressively
             echo '🧹 Clearing all caches...'
             bench --site ${{ env.SITE_NAME }} clear-cache
