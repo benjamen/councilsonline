@@ -148,6 +148,27 @@ export function validateField(value, validation, formData = {}) {
 			break
 
 		default:
+			// Age validation: min_age:60 format
+			if (validationType.startsWith("min_age:")) {
+				const minAge = parseInt(validationType.split(":")[1], 10)
+				if (value && !isNaN(minAge)) {
+					const today = new Date()
+					const born = new Date(value)
+					let age = today.getFullYear() - born.getFullYear()
+					const m = today.getMonth() - born.getMonth()
+					if (m < 0 || (m === 0 && today.getDate() < born.getDate())) {
+						age--
+					}
+					if (age < minAge) {
+						return {
+							valid: false,
+							message: `Applicant must be ${minAge} years or older`,
+						}
+					}
+				}
+				break
+			}
+
 			// Custom validation expression (starts with eval:)
 			if (validation.startsWith("eval:")) {
 				if (!evaluateCustomValidation(validation, value, formData)) {
@@ -233,7 +254,10 @@ export function validateStep(stepConfig, formData) {
  * Phone validation:
  *   validation: "phone"
  *
- * Age requirement:
+ * Minimum age from birth date (e.g., SPISC requires 60+):
+ *   validation: "min_age:60"
+ *
+ * Custom age requirement:
  *   validation: "eval:value >= 18"
  *
  * Password confirmation:

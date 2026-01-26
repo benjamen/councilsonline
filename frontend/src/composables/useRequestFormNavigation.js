@@ -48,10 +48,6 @@ export function useRequestFormNavigation(options = {}) {
 			return
 		}
 
-		// Check for existing validation errors (e.g., age validation for SPISC)
-		// These are set by watchers and should block navigation
-		const existingErrors = { ...validationErrors.value }
-
 		// Validate current step for dynamic steps
 		if (
 			store.currentStep >= 1 &&
@@ -61,10 +57,7 @@ export function useRequestFormNavigation(options = {}) {
 			const stepConfig = getCurrentStepConfig()
 			const isValid = await validateStep(stepConfig, store.formData)
 
-			// Merge back existing errors that validateStep may have cleared
-			Object.assign(validationErrors.value, existingErrors)
-
-			if (!isValid || Object.keys(existingErrors).length > 0) {
+			if (!isValid) {
 				console.error("[Navigation] Validation failed:", validationErrors.value)
 				onValidationError(validationErrors.value)
 				return // Block navigation

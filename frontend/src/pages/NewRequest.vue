@@ -269,9 +269,9 @@ const {
 	setupAgeValidation,
 } = useRequestLifecycle()
 
-// Setup route guard and age validation
+// Setup route guard and age calculation (validation comes from field config)
 setupRouteGuard()
-setupAgeValidation(validationErrors)
+setupAgeValidation()
 
 // Initialize on mount
 onMounted(() => {

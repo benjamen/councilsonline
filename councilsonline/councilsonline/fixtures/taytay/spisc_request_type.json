@@ -91,7 +91,8 @@
    "is_required": 1,
    "parent_section_code": "basic_details",
    "review_label": "Age / Date of Birth",
-   "show_on_review": 1
+   "show_on_review": 1,
+   "validation": "min_age:60"
   },
   {
    "field_label": "Sex",

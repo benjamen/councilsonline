@@ -147,14 +147,15 @@ export function useRequestLifecycle(options = {}) {
 	}
 
 	/**
-	 * Setup age validation watcher for SPISC applications
-	 * @param {Object} validationErrors - Reactive validation errors object
+	 * Setup age calculation watcher for applications with birth_date field
+	 * Auto-calculates age from birth_date for display purposes
+	 * Note: Age validation is now configured in Request Type field config (validation: "min_age:60")
 	 */
-	function setupAgeValidation(validationErrors) {
+	function setupAgeValidation() {
 		watch(
 			() => store.formData.birth_date,
 			(newDate) => {
-				if (newDate && store.formData.request_type?.includes("SPISC")) {
+				if (newDate) {
 					const today = new Date()
 					const born = new Date(newDate)
 					let age = today.getFullYear() - born.getFullYear()
@@ -162,15 +163,7 @@ export function useRequestLifecycle(options = {}) {
 					if (m < 0 || (m === 0 && today.getDate() < born.getDate())) {
 						age--
 					}
-
 					store.updateField("age", age)
-
-					if (age < 60) {
-						validationErrors.value["birth_date"] =
-							"Applicant must be 60 years or older for SPISC"
-					} else {
-						delete validationErrors.value["birth_date"]
-					}
 				}
 			},
 		)
