@@ -417,8 +417,12 @@ def is_public_holiday(date, holiday_list=None):
 
         # Get holiday list name
         if not holiday_list:
-            # Try to get default holiday list from CouncilsOnline settings or use NZ default
-            holiday_list = frappe.db.get_single_value("System Settings", "default_holiday_list")
+            # First try to find Philippines holiday list (for Taytay council)
+            holiday_list = frappe.db.get_value(
+                "Holiday List",
+                {"country": "Philippines"},
+                "name"
+            )
 
             if not holiday_list:
                 # Look for NZ public holidays list
