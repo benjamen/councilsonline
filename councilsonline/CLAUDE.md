@@ -25,4 +25,17 @@
 |----|------|---|-------|------|
 | #568 | 8:40 AM | 🔵 | CouncilsOnline Installation Script with Taytay Council Setup | ~597 |
 | #565 | " | 🔵 | CouncilsOnline App Hooks Configuration Revealed | ~322 |
+
+### Jan 22, 2026
+
+| ID | Time | T | Title | Read |
+|----|------|---|-------|------|
+| #677 | 9:20 AM | ⚖️ | Configurable Installation System with Regional Configuration Packs | ~503 |
+
+### Jan 26, 2026
+
+| ID | Time | T | Title | Read |
+|----|------|---|-------|------|
+| #878 | 4:18 PM | 🔵 | CouncilsOnline Installation and Bootstrap Infrastructure | ~555 |
+| #877 | " | 🔵 | CouncilsOnline Installation Hooks Configuration | ~338 |
 </claude-mem-context>

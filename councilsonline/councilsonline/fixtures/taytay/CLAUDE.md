@@ -9,4 +9,20 @@
 |----|------|---|-------|------|
 | #513 | 1:07 PM | ✅ | Reduced TayTay Council Enabled Request Types | ~359 |
 | #510 | " | 🔵 | SPISC Request Type Configuration Schema | ~524 |
+
+### Jan 23, 2026
+
+| ID | Time | T | Title | Read |
+|----|------|---|-------|------|
+| #839 | 8:29 PM | ✅ | Replaced Manual Pickup Fields with PickupScheduleField Component | ~410 |
+| #775 | 3:34 PM | 🔵 | SPISC Payment Method Configuration with Conditional Sections | ~431 |
+| #748 | 9:02 AM | ✅ | SPISC Payment Method Step - Replaced Manual Pickup Fields with Booking Component | ~380 |
+
+### Jan 26, 2026
+
+| ID | Time | T | Title | Read |
+|----|------|---|-------|------|
+| #894 | 4:27 PM | 🔵 | Duplicate Certificate of Indigency Fields in SPISC Request Configuration | ~529 |
+| #889 | " | 🔵 | SPISC Request Type Configuration with Pickup Scheduling Integration | ~652 |
+| #883 | 4:26 PM | 🔵 | Taytay Fixtures Import Script for Council and SPISC Configuration | ~518 |
 </claude-mem-context>

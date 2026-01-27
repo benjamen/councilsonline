@@ -11,4 +11,11 @@
 | #539 | " | 🔵 | CouncilsOnline Council Configuration API | ~439 |
 | #502 | 8:47 AM | 🔴 | Fixed Request API to Fetch Computed User Fields | ~489 |
 | #501 | " | 🔵 | Request Management API with User Filtering and Summary Data | ~541 |
+| #499 | " | 🔵 | API Code References requester_name as Virtual Property | ~501 |
+
+### Jan 21, 2026
+
+| ID | Time | T | Title | Read |
+|----|------|---|-------|------|
+| #595 | 8:56 AM | 🔵 | Request Type Config API Endpoint Located but Not Responding | ~378 |
 </claude-mem-context>

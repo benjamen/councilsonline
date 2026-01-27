@@ -7,6 +7,6 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
-| #781 | 3:35 PM | 🔵 | Section depends_on Bug Identified in API Response | ~419 |
-| #748 | 9:02 AM | ✅ | SPISC Payment Method Step - Replaced Manual Pickup Fields with Booking Component | ~380 |
+| #779 | 3:35 PM | 🔵 | Conditional Logic Engine for Dynamic Forms | ~458 |
+| #750 | 9:02 AM | 🔴 | Section depends_on Missing from API Response Causing Visibility Issues | ~430 |
 </claude-mem-context>

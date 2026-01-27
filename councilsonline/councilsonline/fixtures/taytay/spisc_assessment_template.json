@@ -1,0 +1,42 @@
+{
+  "doctype": "Assessment Template",
+  "template_name": "Social Pension - Standard Assessment",
+  "request_type": "Social Pension for Indigent Senior Citizens (SPISC)",
+  "is_active": 1,
+  "default_budget_hours": 24,
+  "description": "<p><strong>Standard Assessment Workflow for SPISC Applications</strong></p><p>This template guides the assessment of Social Pension applications through 4 key stages:</p><ol><li><strong>Eligibility Verification</strong> - Initial screening of age, residency, and pension status</li><li><strong>Income & Poverty Assessment</strong> - Detailed financial and household verification</li><li><strong>Approval Decision</strong> - Final eligibility determination and council approval</li><li><strong>Payment Setup</strong> - Arrange pension payment method and beneficiary enrollment</li></ol><p>Total estimated time: 24 hours over 30-day processing period</p>",
+  "stages": [
+    {
+      "doctype": "Assessment Template Stage",
+      "stage_number": 1,
+      "stage_name": "Eligibility Verification",
+      "stage_type": "Vetting",
+      "required": 1,
+      "estimated_hours": 4
+    },
+    {
+      "doctype": "Assessment Template Stage",
+      "stage_number": 2,
+      "stage_name": "Income & Poverty Assessment",
+      "stage_type": "Technical Assessment",
+      "required": 1,
+      "estimated_hours": 12
+    },
+    {
+      "doctype": "Assessment Template Stage",
+      "stage_number": 3,
+      "stage_name": "Approval Decision",
+      "stage_type": "Decision",
+      "required": 1,
+      "estimated_hours": 6
+    },
+    {
+      "doctype": "Assessment Template Stage",
+      "stage_number": 4,
+      "stage_name": "Payment Setup",
+      "stage_type": "Implementation",
+      "required": 1,
+      "estimated_hours": 2
+    }
+  ]
+}
