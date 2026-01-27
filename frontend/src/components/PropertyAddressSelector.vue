@@ -94,6 +94,7 @@
 
 <script setup>
 import { computed, onMounted, ref, watch } from "vue"
+import { call } from "frappe-ui"
 import { useUserProfile } from "../composables/useUserProfile"
 import PhilippinesAddressInput from "./PhilippinesAddressInput.vue"
 
@@ -112,7 +113,7 @@ const props = defineProps({
 	},
 })
 
-const emit = defineEmits(["update:modelValue"])
+const emit = defineEmits(["update:modelValue", "property-saved"])
 
 const { userProfile, loadUserProfile, getAllProperties, defaultProperty } =
 	useUserProfile()
@@ -184,8 +185,24 @@ function onPropertySelected() {
 
 function onAddressChange(newAddress) {
 	localAddress.value = newAddress
-	emit("update:modelValue", newAddress)
+	// Include save_to_profile flag in emitted data for parent to handle on submit
+	const addressWithFlag = {
+		...newAddress,
+		_save_to_profile: saveToProfile.value,
+	}
+	emit("update:modelValue", addressWithFlag)
 }
+
+// Watch saveToProfile changes to update the flag in emitted data
+watch(saveToProfile, (newValue) => {
+	if (localAddress.value && Object.keys(localAddress.value).length > 0) {
+		const addressWithFlag = {
+			...localAddress.value,
+			_save_to_profile: newValue,
+		}
+		emit("update:modelValue", addressWithFlag)
+	}
+})
 
 function editProperty() {
 	// Switch to manual mode with current property data
@@ -202,6 +219,56 @@ function deleteProperty() {
 		emit("update:modelValue", {})
 	}
 }
+
+// Save property to user profile
+const isSavingProperty = ref(false)
+
+async function savePropertyToProfile() {
+	if (!saveToProfile.value) return { success: false, reason: "not_requested" }
+
+	// Only save if we have address data and not selecting existing property
+	if (selectedPropertyId.value && selectedPropertyId.value !== "__new__") {
+		return { success: false, reason: "existing_property" }
+	}
+
+	const address = localAddress.value
+	if (!address || !address.address_line) {
+		return { success: false, reason: "no_address" }
+	}
+
+	isSavingProperty.value = true
+
+	try {
+		const result = await call("councilsonline.api.auth.add_user_property", {
+			street: address.address_line,
+			barangay: address.barangay,
+			municipality: address.municipality,
+			province: address.province,
+			zip_code: address.zip_code,
+			is_default: userProperties.value.length === 0, // Default if first property
+		})
+
+		if (result.success) {
+			// Reload user profile to get updated properties
+			await loadUserProfile()
+			emit("property-saved", result.property)
+		}
+
+		return result
+	} catch (error) {
+		console.error("Failed to save property:", error)
+		return { success: false, reason: "api_error", error: error.message }
+	} finally {
+		isSavingProperty.value = false
+	}
+}
+
+// Expose methods and state for parent components
+defineExpose({
+	saveToProfile,
+	savePropertyToProfile,
+	isSavingProperty,
+})
 
 // Initialize
 onMounted(async () => {

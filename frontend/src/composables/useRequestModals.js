@@ -1,5 +1,6 @@
 import { ref } from "vue"
 import { useRouter } from "vue-router"
+import { call } from "frappe-ui"
 import { useRequestStore } from "../stores/requestStore"
 
 /**
@@ -82,8 +83,52 @@ export function useRequestModals() {
 			const result = await store.submitRequest()
 			submissionResult.value = result
 			showSubmissionSuccessModal.value = true
+
+			// After successful submission, save any addresses marked for profile saving
+			await saveAddressesToProfile()
 		} catch (error) {
 			console.error("Failed to submit request:", error)
+		}
+	}
+
+	/**
+	 * Save addresses to user profile if marked for saving
+	 * Looks for address fields with _save_to_profile flag
+	 */
+	async function saveAddressesToProfile() {
+		const formData = store.formData
+		if (!formData) return
+
+		// Check common address field names that might have _save_to_profile flag
+		const addressFields = [
+			"residential_address",
+			"address",
+			"property_address",
+			"applicant_address",
+		]
+
+		for (const fieldName of addressFields) {
+			const addressData = formData[fieldName]
+			if (
+				addressData &&
+				typeof addressData === "object" &&
+				addressData._save_to_profile
+			) {
+				try {
+					await call("councilsonline.api.auth.add_user_property", {
+						street: addressData.address_line,
+						barangay: addressData.barangay,
+						municipality: addressData.municipality,
+						province: addressData.province,
+						zip_code: addressData.zip_code,
+						is_default: false,
+					})
+					console.log(`Property saved to profile from field: ${fieldName}`)
+				} catch (error) {
+					// Don't fail submission if property save fails
+					console.error(`Failed to save property from ${fieldName}:`, error)
+				}
+			}
 		}
 	}
 

@@ -638,6 +638,114 @@ def get_user_organization(user=None):
 
 
 @frappe.whitelist()
+def add_user_property(
+    street=None,
+    barangay=None,
+    municipality=None,
+    province=None,
+    zip_code=None,
+    property_name=None,
+    is_default=False
+):
+    """
+    Add a property to the user's profile
+
+    Args:
+        street: Street address (address_line)
+        barangay: Barangay (stored as suburb)
+        municipality: Municipality/City
+        province: Province (stored in legal_description)
+        zip_code: ZIP/Postal code
+        property_name: Friendly name for the property (auto-generated if not provided)
+        is_default: Whether this should be the default property
+
+    Returns:
+        dict: Success status and property data
+    """
+    user = frappe.session.user
+
+    if user == "Guest":
+        frappe.throw(_("You must be logged in to save a property"))
+
+    if not street:
+        frappe.throw(_("Street address is required"))
+
+    # Get or create User Profile Extended
+    if not frappe.db.exists("User Profile Extended", user):
+        # Create profile if it doesn't exist
+        profile = frappe.get_doc({
+            "doctype": "User Profile Extended",
+            "user": user,
+            "full_name": frappe.db.get_value("User", user, "full_name") or user,
+            "phone": frappe.db.get_value("User", user, "phone") or "",
+            "user_role": "Individual"
+        })
+        profile.flags.ignore_permissions = True
+        profile.insert()
+    else:
+        profile = frappe.get_doc("User Profile Extended", user)
+
+    # Generate property name if not provided
+    if not property_name:
+        # Use street and barangay/municipality for name
+        name_parts = [street]
+        if barangay:
+            name_parts.append(f"Brgy. {barangay}")
+        if municipality:
+            name_parts.append(municipality)
+        property_name = ", ".join(name_parts[:2])  # Keep it concise
+
+    # Check for duplicate properties
+    for prop in profile.properties or []:
+        if prop.street == street and prop.city == municipality:
+            return {
+                "success": True,
+                "message": _("Property already exists in your profile"),
+                "property": {
+                    "name": prop.name,
+                    "property_name": prop.property_name,
+                    "street": prop.street
+                }
+            }
+
+    # If setting as default, unset other defaults
+    if is_default:
+        for prop in profile.properties or []:
+            prop.is_default = 0
+
+    # Add property to child table
+    profile.append("properties", {
+        "property_name": property_name,
+        "street": street,
+        "suburb": barangay or "",  # Store barangay as suburb
+        "city": municipality or "",
+        "postcode": zip_code or "",
+        "legal_description": f"Province: {province}" if province else "",
+        "ownership_status": "Sole Owner",
+        "is_default": 1 if is_default else 0
+    })
+
+    profile.save(ignore_permissions=True)
+    frappe.db.commit()
+
+    # Return the newly added property
+    new_property = profile.properties[-1]
+
+    return {
+        "success": True,
+        "message": _("Property saved to your profile"),
+        "property": {
+            "name": new_property.name,
+            "property_name": new_property.property_name,
+            "street": new_property.street,
+            "suburb": new_property.suburb,
+            "city": new_property.city,
+            "postcode": new_property.postcode
+        }
+    }
+
+
+@frappe.whitelist()
 def update_user_organization(organization_name=None, contact_email=None, contact_phone=None,
                             address=None, city=None, postal_code=None, website=None, description=None):
     """
