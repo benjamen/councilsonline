@@ -37,8 +37,13 @@ def import_fixtures():
     spisc_file = fixture_dir / "spisc_request_type.json"
     import_request_type_fixture(spisc_file)
 
+    # Import SPISC Assessment Template (needed for auto-creating assessment projects)
+    print("\nStep 3: Importing SPISC Assessment Template...")
+    template_file = fixture_dir / "spisc_assessment_template.json"
+    import_assessment_template_fixture(template_file)
+
     # Import Council AFTER Request Types exist
-    print("\nStep 3: Importing Taytay Council...")
+    print("\nStep 4: Importing Taytay Council...")
     council_file = fixture_dir / "taytay_council.json"
     import_council_fixture(council_file)
 
@@ -129,6 +134,45 @@ def import_json_fixture(file_path, doctype):
             doc = frappe.get_doc(doc_data)
             doc.insert()
             print(f"  ✅ Created {doctype}: {doc_name}")
+
+
+def import_assessment_template_fixture(file_path):
+    """Import Assessment Template with stages child table"""
+
+    if not os.path.exists(file_path):
+        print(f"  ❌ File not found: {file_path}")
+        return
+
+    with open(file_path, 'r') as f:
+        data = json.load(f)
+
+    template_name = data.get('template_name')
+    doctype = 'Assessment Template'
+
+    # Check if document already exists
+    if frappe.db.exists(doctype, template_name):
+        print(f"  ⚠️  {doctype} '{template_name}' already exists - updating...")
+        doc = frappe.get_doc(doctype, template_name)
+
+        # Update basic fields
+        for key, value in data.items():
+            if key not in ['doctype', 'name', 'template_name', 'creation', 'modified', 'modified_by', 'owner', 'stages']:
+                doc.set(key, value)
+
+        # Update stages child table
+        doc.stages = []
+        for stage_data in data.get('stages', []):
+            doc.append('stages', stage_data)
+
+        doc.save()
+        print(f"  ✅ Updated {doctype}: {template_name}")
+        print(f"     - {len(data.get('stages', []))} stages")
+    else:
+        print(f"  📝 Creating {doctype}: {template_name}...")
+        doc = frappe.get_doc(data)
+        doc.insert()
+        print(f"  ✅ Created {doctype}: {template_name}")
+        print(f"     - {len(data.get('stages', []))} stages")
 
 
 def import_request_type_fixture(file_path):
