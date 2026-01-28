@@ -1337,6 +1337,7 @@ def get_request_type_config(request_type_code=None):
                     "step_component": step_config.step_component if hasattr(step_config, 'step_component') else "DynamicStepRenderer",
                     "is_enabled": step_config.is_enabled if hasattr(step_config, 'is_enabled') else 1,
                     "is_required": step_config.is_required if hasattr(step_config, 'is_required') else 1,
+                    "show_on_review": step_config.show_on_review if hasattr(step_config, 'show_on_review') else 1,
                     "sections": []
                 }
 
@@ -1352,6 +1353,7 @@ def get_request_type_config(request_type_code=None):
                                 "is_enabled": section.is_enabled if hasattr(section, 'is_enabled') else 1,
                                 "is_required": section.is_required if hasattr(section, 'is_required') else 1,
                                 "depends_on": section.depends_on if hasattr(section, 'depends_on') else None,
+                                "show_on_review": section.show_on_review if hasattr(section, 'show_on_review') else 1,
                                 "fields": []
                             }
 
@@ -1369,7 +1371,10 @@ def get_request_type_config(request_type_code=None):
                                             "default_value": field.default_value if hasattr(field, 'default_value') else None,
                                             "depends_on": field.depends_on if hasattr(field, 'depends_on') else None,
                                             "show_on_review": field.show_on_review if hasattr(field, 'show_on_review') else 1,
+                                            "review_label": field.review_label if hasattr(field, 'review_label') else None,
                                             "parent_section_code": field.parent_section_code if hasattr(field, 'parent_section_code') else None,
+                                            "validation": field.validation if hasattr(field, 'validation') else None,
+                                            "read_only": field.read_only if hasattr(field, 'read_only') else 0,
                                         })
 
                             step_data["sections"].append(section_data)

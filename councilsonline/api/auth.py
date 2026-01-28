@@ -49,6 +49,61 @@ def validate_nz_phone_number(phone):
     return False, "Invalid NZ phone number. Mobile numbers start with 02, landlines with 03-09."
 
 
+def validate_ph_phone_number(phone):
+    """
+    Validate Philippines phone number format
+    Accepts: mobile (09xx), landline (02-088), with or without spaces/hyphens
+    """
+    if not phone:
+        return False, "Phone number is required"
+
+    # Remove spaces, hyphens, parentheses
+    cleaned = re.sub(r'[\s\-()]', '', phone)
+
+    # Remove international prefix if present
+    if cleaned.startswith('+63'):
+        cleaned = '0' + cleaned[3:]
+    elif cleaned.startswith('63'):
+        cleaned = '0' + cleaned[2:]
+
+    # Check if only digits
+    if not cleaned.isdigit():
+        return False, "Phone number should contain only numbers"
+
+    # Mobile validation (09xx) - 11 digits total
+    if re.match(r'^09[0-9]{9}$', cleaned):
+        return True, ""
+
+    # Landline validation (02 for Metro Manila, 032-088 for provinces)
+    # Landlines are typically 7-8 digits after area code
+    if re.match(r'^0(2|3[2-9]|4[0-9]|5[0-9]|6[0-9]|7[0-9]|8[0-8])[0-9]{7,8}$', cleaned):
+        return True, ""
+
+    # Invalid format
+    if len(cleaned) < 10:
+        return False, "Phone number is too short. PH mobile numbers are 11 digits (09xxxxxxxxx)."
+    if len(cleaned) > 12:
+        return False, "Phone number is too long."
+
+    return False, "Invalid PH phone number. Mobile numbers start with 09, landlines with area code (02, 032, etc.)."
+
+
+def validate_phone_number(phone, region="NZ"):
+    """
+    Validate phone number based on region
+
+    Args:
+        phone: Phone number to validate
+        region: Country code ("NZ" for New Zealand, "PH" for Philippines)
+
+    Returns:
+        tuple: (is_valid: bool, error_message: str)
+    """
+    if region == "PH":
+        return validate_ph_phone_number(phone)
+    return validate_nz_phone_number(phone)
+
+
 @frappe.whitelist(allow_guest=True)
 @rate_limit(calls=3, period=300)  # 3 registrations per 5 minutes to prevent spam accounts
 def register_user(
@@ -196,6 +251,105 @@ def register_user(
     except Exception as e:
         frappe.db.rollback()
         frappe.log_error(f"User Registration Error: {str(e)}")
+        frappe.throw(_("Registration failed. Please try again or contact support."))
+
+
+@frappe.whitelist(allow_guest=True)
+@rate_limit(calls=3, period=300)
+def register_user_ph(
+    email,
+    first_name,
+    last_name,
+    phone,
+    password,
+    barangay=None,
+    municipality=None,
+    province=None
+):
+    """
+    Register a new user for Philippines services (SPISC, etc.)
+
+    Args:
+        email: User's email address
+        first_name: First name
+        last_name: Last name
+        phone: Phone number (PH format: 09xxxxxxxxx)
+        password: Password
+        barangay: Barangay
+        municipality: Municipality/City
+        province: Province
+
+    Returns:
+        dict: Success message and user info
+    """
+    # Validate required fields
+    if not email or not first_name or not last_name or not password or not phone:
+        frappe.throw(_("Email, first name, last name, phone, and password are required"))
+
+    # Validate PH phone number
+    phone_valid, phone_error = validate_ph_phone_number(phone)
+    if not phone_valid:
+        frappe.throw(_(phone_error))
+
+    # Check if user already exists
+    if frappe.db.exists("User", email):
+        frappe.throw(_("User with this email already exists"))
+
+    try:
+        # Create user
+        user = frappe.get_doc({
+            "doctype": "User",
+            "email": email,
+            "first_name": first_name,
+            "last_name": last_name,
+            "phone": phone,
+            "enabled": 1,
+            "send_welcome_email": 1,
+            "new_password": password,
+            "user_type": "Website User"
+        })
+
+        # Add Applicant role
+        user.append("roles", {"role": "Applicant"})
+
+        # Save user
+        user.flags.ignore_permissions = True
+        user.insert()
+
+        # Create User Profile Extended
+        try:
+            profile = frappe.get_doc({
+                "doctype": "User Profile Extended",
+                "user": email,
+                "full_name": f"{first_name} {last_name}",
+                "phone": phone,
+                "user_role": "Individual",
+            })
+
+            # Add PH address details
+            if barangay:
+                profile.postal_suburb = barangay
+            if municipality:
+                profile.postal_city = municipality
+            if province:
+                profile.postal_province = province
+
+            profile.flags.ignore_permissions = True
+            profile.insert()
+        except Exception as e:
+            frappe.log_error(f"Error creating user profile: {str(e)}")
+
+        frappe.db.commit()
+
+        return {
+            "success": True,
+            "message": _("Account created successfully. You can now log in."),
+            "user": email
+        }
+
+    except Exception as e:
+        frappe.db.rollback()
+        frappe.log_error(f"PH User Registration Error: {str(e)}")
         frappe.throw(_("Registration failed. Please try again or contact support."))
 
 

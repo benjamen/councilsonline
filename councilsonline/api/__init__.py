@@ -9,7 +9,10 @@ Re-exports all API functions from submodules for backward compatibility
 # Authentication & User Management
 from councilsonline.api.auth import (
 	validate_nz_phone_number,
+	validate_ph_phone_number,
+	validate_phone_number,
 	register_user,
+	register_user_ph,
 	register_agent,
 	track_login_event,
 	get_login_analytics,
@@ -17,7 +20,8 @@ from councilsonline.api.auth import (
 	update_user_profile,
 	change_password,
 	get_user_organization,
-	update_user_organization
+	update_user_organization,
+	add_user_property
 )
 
 # Address Search
@@ -137,10 +141,11 @@ from councilsonline.api.social_services import (
 
 __all__ = [
 	# Auth
-	'validate_nz_phone_number', 'register_user', 'register_agent',
+	'validate_nz_phone_number', 'validate_ph_phone_number', 'validate_phone_number',
+	'register_user', 'register_user_ph', 'register_agent',
 	'track_login_event', 'get_login_analytics', 'get_user_profile',
 	'update_user_profile', 'change_password', 'get_user_organization',
-	'update_user_organization',
+	'update_user_organization', 'add_user_property',
 	# Addresses
 	'search_property_address', 'search_property_addresses', 'search_addresses_universal',
 	'search_australia_addresses', 'search_philippines_addresses',

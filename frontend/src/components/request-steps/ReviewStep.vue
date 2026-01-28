@@ -18,6 +18,69 @@
         </div>
       </div>
 
+      <!-- SPISC Eligibility Summary (show for SPISC applications) -->
+      <div v-if="isSPISCApplication" class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg overflow-hidden">
+        <div class="bg-green-100 px-4 sm:px-6 py-3 border-b border-green-200">
+          <h3 class="font-semibold text-green-900 text-sm sm:text-base flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+            Eligibility Summary
+          </h3>
+        </div>
+        <div class="p-4 sm:p-6">
+          <div class="grid md:grid-cols-3 gap-4">
+            <div class="flex items-center gap-3">
+              <div :class="ageEligible ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'" class="p-2 rounded-full">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">Age</p>
+                <p class="font-semibold" :class="ageEligible ? 'text-green-700' : 'text-red-700'">
+                  {{ calculatedAge !== null ? `${calculatedAge} years old` : 'Not provided' }}
+                </p>
+                <p v-if="ageEligible" class="text-xs text-green-600">Meets 60+ requirement</p>
+                <p v-else-if="calculatedAge !== null" class="text-xs text-red-600">Must be 60 or older</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div :class="incomeEligible ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600'" class="p-2 rounded-full">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">Monthly Income</p>
+                <p class="font-semibold" :class="incomeEligible ? 'text-green-700' : 'text-yellow-700'">
+                  {{ formatCurrency(modelValue.monthly_income) }}
+                </p>
+                <p v-if="incomeEligible" class="text-xs text-green-600">Below poverty threshold</p>
+                <p v-else class="text-xs text-yellow-600">May affect eligibility</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div :class="overallEligible ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600'" class="p-2 rounded-full">
+                <svg v-if="overallEligible" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">Preliminary Status</p>
+                <p class="font-semibold" :class="overallEligible ? 'text-green-700' : 'text-yellow-700'">
+                  {{ overallEligible ? 'Likely Eligible' : 'Needs Review' }}
+                </p>
+                <p class="text-xs text-gray-500">Final assessment by council</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Applicant Details -->
       <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
         <div class="bg-gray-50 px-4 sm:px-6 py-3 border-b border-gray-200">
@@ -82,40 +145,125 @@
         </div>
       </div>
 
-      <!-- Dynamic Review Sections (for configured request types) -->
-      <template v-if="usesConfigurableSteps && reviewSections.length > 0">
+      <!-- Dynamic Review Sections (for configured request types) - ALL STEPS -->
+      <template v-if="usesConfigurableSteps && allStepsWithData.length > 0">
         <div
-          v-for="step in reviewSections"
+          v-for="step in allStepsWithData"
           :key="step.step_code"
           class="bg-white border border-gray-200 rounded-lg overflow-hidden"
         >
-          <div class="bg-gray-50 px-4 sm:px-6 py-3 border-b border-gray-200">
+          <div class="bg-gray-50 px-4 sm:px-6 py-3 border-b border-gray-200 flex items-center justify-between">
             <h3 class="font-semibold text-gray-900 text-sm sm:text-base">{{ step.step_title }}</h3>
+            <span v-if="getStepCompleteness(step)" class="text-xs text-green-600 flex items-center gap-1">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              Complete
+            </span>
           </div>
           <div class="p-4 sm:p-6 space-y-4">
-            <div
-              v-for="section in step.sections.filter(s => s.show_on_review)"
-              :key="section.section_code"
-            >
-              <h4 v-if="section.section_title" class="text-sm font-medium text-gray-700 mb-2">
-                {{ section.section_title }}
-              </h4>
-              <div class="grid md:grid-cols-2 gap-4">
-                <div
-                  v-for="field in section.fields.filter(f => f.show_on_review)"
-                  :key="field.field_name"
-                >
-                  <span class="text-sm text-gray-500">{{ field.review_label || field.field_label }}:</span>
-                  <p class="font-medium">{{ formatFieldValue(field, modelValue[field.field_name]) }}</p>
+            <template v-for="section in step.sections" :key="section.section_code">
+              <!-- Only show section if it has visible fields with values or show_on_review -->
+              <div v-if="shouldShowSection(section)" class="space-y-3">
+                <h4 v-if="section.section_title" class="text-sm font-medium text-gray-700 border-b border-gray-100 pb-1">
+                  {{ section.section_title }}
+                </h4>
+                <div class="grid md:grid-cols-2 gap-4">
+                  <template v-for="field in section.fields" :key="field.field_name">
+                    <div v-if="shouldShowField(field)" :class="isLongField(field) ? 'md:col-span-2' : ''">
+                      <span class="text-sm text-gray-500">{{ field.review_label || field.field_label }}:</span>
+                      <div class="font-medium">
+                        <!-- Attachment fields -->
+                        <template v-if="field.field_type === 'Attach' || field.field_type === 'Attach Image'">
+                          <div v-if="getFieldValue(field.field_name)" class="flex items-center gap-2 text-green-600">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>File uploaded</span>
+                            <a v-if="getAttachmentUrl(field.field_name)" :href="getAttachmentUrl(field.field_name)" target="_blank" class="text-blue-600 hover:underline text-sm">(View)</a>
+                          </div>
+                          <span v-else class="text-gray-400">Not uploaded</span>
+                        </template>
+                        <!-- Checkbox fields -->
+                        <template v-else-if="field.field_type === 'Check'">
+                          <span :class="modelValue[field.field_name] ? 'text-green-600' : 'text-gray-400'">
+                            {{ modelValue[field.field_name] ? 'Yes' : 'No' }}
+                          </span>
+                        </template>
+                        <!-- Date fields -->
+                        <template v-else-if="field.field_type === 'Date'">
+                          <span>{{ formatDate(modelValue[field.field_name]) }}</span>
+                          <span v-if="field.field_name === 'birth_date' && calculatedAge !== null" class="text-gray-500 text-sm ml-2">
+                            ({{ calculatedAge }} years old)
+                          </span>
+                        </template>
+                        <!-- Currency fields -->
+                        <template v-else-if="field.field_type === 'Currency'">
+                          {{ formatCurrency(modelValue[field.field_name]) }}
+                        </template>
+                        <!-- Pickup Schedule -->
+                        <template v-else-if="field.field_type === 'Pickup Schedule'">
+                          <span v-if="modelValue[field.field_name]">
+                            {{ formatPickupSchedule(modelValue[field.field_name]) }}
+                          </span>
+                          <span v-else class="text-gray-400">Not scheduled</span>
+                        </template>
+                        <!-- Default -->
+                        <template v-else>
+                          {{ formatFieldValue(field, modelValue[field.field_name]) }}
+                        </template>
+                      </div>
+                    </div>
+                  </template>
                 </div>
               </div>
-            </div>
-            <p v-if="!hasReviewContent(step)" class="text-gray-500 text-sm">
-              No information to display for review
+            </template>
+            <p v-if="!hasAnyContent(step)" class="text-gray-500 text-sm">
+              No information entered for this step
             </p>
           </div>
         </div>
       </template>
+
+      <!-- Uploaded Documents Summary -->
+      <div v-if="uploadedDocuments.length > 0" class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+        <div class="bg-gray-50 px-4 sm:px-6 py-3 border-b border-gray-200">
+          <h3 class="font-semibold text-gray-900 text-sm sm:text-base flex items-center gap-2">
+            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Uploaded Documents ({{ uploadedDocuments.length }})
+          </h3>
+        </div>
+        <div class="p-4 sm:p-6">
+          <div class="grid md:grid-cols-2 gap-3">
+            <div v-for="doc in uploadedDocuments" :key="doc.field_name" class="flex items-center gap-3 p-2 bg-gray-50 rounded">
+              <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-gray-900 truncate">{{ doc.label }}</p>
+                <a v-if="doc.url" :href="doc.url" target="_blank" class="text-xs text-blue-600 hover:underline">View file</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Missing Documents Warning -->
+      <div v-if="missingRequiredDocuments.length > 0" class="bg-orange-50 border border-orange-200 rounded-lg p-4">
+        <div class="flex items-start gap-2 sm:gap-3">
+          <svg class="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <div>
+            <h5 class="font-semibold text-orange-900 text-xs sm:text-sm">Missing Required Documents</h5>
+            <ul class="mt-1 text-orange-800 text-xs sm:text-sm list-disc list-inside">
+              <li v-for="doc in missingRequiredDocuments" :key="doc.field_name">{{ doc.label }}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
 
       <!-- Resource Consent Specific Details -->
       <template v-if="isResourceConsent">
@@ -194,36 +342,24 @@
                 v-if="modelValue.hazard_flooding"
                 class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium inline-flex items-center gap-1"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707" />
-                </svg>
                 Flood Hazard
               </span>
               <span
                 v-if="modelValue.hazard_earthquake"
                 class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium inline-flex items-center gap-1"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
                 Earthquake/Fault Line
               </span>
               <span
                 v-if="modelValue.hazard_landslip"
                 class="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm font-medium inline-flex items-center gap-1"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
                 Landslip/Slope Instability
               </span>
               <span
                 v-if="modelValue.hazard_coastal"
                 class="px-3 py-1 bg-cyan-100 text-cyan-800 rounded-full text-sm font-medium inline-flex items-center gap-1"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5" />
-                </svg>
                 Coastal Hazard
               </span>
             </div>
@@ -377,7 +513,8 @@
             <ul class="mt-2 text-xs sm:text-sm text-yellow-800 space-y-1 list-disc list-inside">
               <li>Review all information carefully for accuracy and completeness</li>
               <li>Ensure all required fields are completed</li>
-              <li>For Resource Consent applications, verify all statutory declarations are confirmed</li>
+              <li v-if="isResourceConsent">For Resource Consent applications, verify all statutory declarations are confirmed</li>
+              <li v-if="isSPISCApplication">Ensure all required documents are uploaded</li>
               <li>Once submitted, you cannot edit the application (you may need to withdraw and resubmit)</li>
             </ul>
           </div>
@@ -395,6 +532,10 @@
             <p class="text-red-800 text-xs sm:text-sm mt-1">
               Please complete all required sections before submitting. Use the Previous button to go back and fill in missing information.
             </p>
+            <ul v-if="missingFields.length > 0" class="mt-2 text-red-700 text-xs list-disc list-inside">
+              <li v-for="field in missingFields.slice(0, 5)" :key="field">{{ field }}</li>
+              <li v-if="missingFields.length > 5">...and {{ missingFields.length - 5 }} more</li>
+            </ul>
           </div>
         </div>
       </div>
@@ -440,6 +581,12 @@ const props = defineProps({
 	},
 })
 
+// Check if this is a SPISC application
+const isSPISCApplication = computed(() => {
+	const requestType = props.requestTypeName?.toLowerCase() || ""
+	return requestType.includes("spisc") || requestType.includes("social pension")
+})
+
 // Applicant details - handle both standard and SPISC field names
 const applicantName = computed(() => {
 	return props.modelValue.requester_name ||
@@ -463,13 +610,50 @@ const applicantPhone = computed(() => {
 	       null
 })
 
-// Filter steps that should show on review
-const reviewSections = computed(() => {
+// Calculate age from birth_date
+const calculatedAge = computed(() => {
+	const birthDate = props.modelValue.birth_date
+	if (!birthDate) return null
+
+	const today = new Date()
+	const birth = new Date(birthDate)
+	let age = today.getFullYear() - birth.getFullYear()
+	const monthDiff = today.getMonth() - birth.getMonth()
+
+	if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+		age--
+	}
+
+	return age
+})
+
+// SPISC eligibility checks
+const ageEligible = computed(() => {
+	return calculatedAge.value !== null && calculatedAge.value >= 60
+})
+
+const incomeEligible = computed(() => {
+	const income = props.modelValue.monthly_income
+	if (income === undefined || income === null) return true // Don't show as ineligible if not filled
+	return Number(income) < 10000 // PHP 10,000 poverty threshold
+})
+
+const overallEligible = computed(() => {
+	return ageEligible.value && incomeEligible.value
+})
+
+// Get all steps with their data for review (not filtered by show_on_review)
+const allStepsWithData = computed(() => {
 	if (!props.usesConfigurableSteps || !props.stepConfigs) {
 		return []
 	}
-
-	return props.stepConfigs.filter((step) => step.show_on_review)
+	// Return all steps that have show_on_review=true at step level OR have any data
+	return props.stepConfigs.filter((step) => {
+		// Always show steps marked for review
+		if (step.show_on_review) return true
+		// Also show if step has any entered data
+		return hasAnyContent(step)
+	})
 })
 
 // Check if property details should be displayed
@@ -483,15 +667,93 @@ const hasPropertyDetails = computed(() => {
 	return !!(props.modelValue.property || props.modelValue.property_address)
 })
 
-// Check if a step has any content to show on review
-const hasReviewContent = (step) => {
+// Get field value, handling various formats
+const getFieldValue = (fieldName) => {
+	const value = props.modelValue[fieldName]
+	if (value === undefined || value === null || value === "") return null
+
+	// Handle file upload arrays
+	if (Array.isArray(value) && value.length > 0) {
+		if (value[0]?.file_url) return value[0].file_url
+	}
+
+	return value
+}
+
+// Get attachment URL for viewing
+const getAttachmentUrl = (fieldName) => {
+	const value = props.modelValue[fieldName]
+	if (!value) return null
+
+	// Handle file upload arrays
+	if (Array.isArray(value) && value.length > 0) {
+		return value[0]?.file_url || value[0]
+	}
+
+	// Handle string URL
+	if (typeof value === "string" && value.startsWith("/")) {
+		return value
+	}
+
+	return null
+}
+
+// Determine if a section should be shown
+const shouldShowSection = (section) => {
+	// Check depends_on condition
+	if (section.depends_on) {
+		const condition = section.depends_on.replace("eval:", "").replace(/doc\./g, "props.modelValue.")
+		try {
+			// eslint-disable-next-line no-eval
+			if (!eval(condition)) return false
+		} catch (e) {
+			// If eval fails, show the section
+		}
+	}
+
+	// Show if marked for review or has any data
+	if (section.show_on_review) return true
+
+	// Check if any field has data
+	for (const field of section.fields || []) {
+		if (getFieldValue(field.field_name)) return true
+	}
+
+	return false
+}
+
+// Determine if a field should be shown
+const shouldShowField = (field) => {
+	// Check depends_on condition
+	if (field.depends_on) {
+		const condition = field.depends_on.replace("eval:", "").replace(/doc\./g, "props.modelValue.")
+		try {
+			// eslint-disable-next-line no-eval
+			if (!eval(condition)) return false
+		} catch (e) {
+			// If eval fails, show the field
+		}
+	}
+
+	// Show if marked for review or has data
+	return field.show_on_review || getFieldValue(field.field_name) !== null
+}
+
+// Check if field should span full width
+const isLongField = (field) => {
+	return field.field_type === "Text Editor" ||
+	       field.field_type === "Small Text" ||
+	       field.field_type === "Long Text" ||
+	       (field.field_type === "Data" && (field.field_label || "").length > 50)
+}
+
+// Check if a step has any content
+const hasAnyContent = (step) => {
 	if (!step.sections) return false
 
 	for (const section of step.sections) {
-		if (!section.show_on_review) continue
-
-		for (const field of section.fields) {
-			if (field.show_on_review && props.modelValue[field.field_name]) {
+		for (const field of section.fields || []) {
+			if (getFieldValue(field.field_name) !== null) {
 				return true
 			}
 		}
@@ -499,6 +761,103 @@ const hasReviewContent = (step) => {
 
 	return false
 }
+
+// Check step completeness
+const getStepCompleteness = (step) => {
+	if (!step.sections) return false
+
+	for (const section of step.sections) {
+		for (const field of section.fields || []) {
+			if (field.is_required && !getFieldValue(field.field_name)) {
+				return false
+			}
+		}
+	}
+
+	return true
+}
+
+// Get list of uploaded documents
+const uploadedDocuments = computed(() => {
+	const docs = []
+
+	for (const step of props.stepConfigs || []) {
+		for (const section of step.sections || []) {
+			for (const field of section.fields || []) {
+				if ((field.field_type === "Attach" || field.field_type === "Attach Image") && getFieldValue(field.field_name)) {
+					docs.push({
+						field_name: field.field_name,
+						label: field.field_label,
+						url: getAttachmentUrl(field.field_name),
+					})
+				}
+			}
+		}
+	}
+
+	return docs
+})
+
+// Get list of missing required documents
+const missingRequiredDocuments = computed(() => {
+	const missing = []
+
+	for (const step of props.stepConfigs || []) {
+		for (const section of step.sections || []) {
+			for (const field of section.fields || []) {
+				if ((field.field_type === "Attach" || field.field_type === "Attach Image") && field.is_required && !getFieldValue(field.field_name)) {
+					missing.push({
+						field_name: field.field_name,
+						label: field.field_label,
+					})
+				}
+			}
+		}
+	}
+
+	return missing
+})
+
+// Get list of missing required fields
+const missingFields = computed(() => {
+	const missing = []
+
+	for (const step of props.stepConfigs || []) {
+		for (const section of step.sections || []) {
+			// Check depends_on for section
+			if (section.depends_on) {
+				const condition = section.depends_on.replace("eval:", "").replace(/doc\./g, "props.modelValue.")
+				try {
+					// eslint-disable-next-line no-eval
+					if (!eval(condition)) continue
+				} catch (e) {
+					// If eval fails, check the section
+				}
+			}
+
+			for (const field of section.fields || []) {
+				if (!field.is_required) continue
+
+				// Check depends_on for field
+				if (field.depends_on) {
+					const condition = field.depends_on.replace("eval:", "").replace(/doc\./g, "props.modelValue.")
+					try {
+						// eslint-disable-next-line no-eval
+						if (!eval(condition)) continue
+					} catch (e) {
+						// If eval fails, check the field
+					}
+				}
+
+				if (!getFieldValue(field.field_name)) {
+					missing.push(field.field_label)
+				}
+			}
+		}
+	}
+
+	return missing
+})
 
 // Format field value for display
 const formatFieldValue = (field, value) => {
@@ -512,20 +871,11 @@ const formatFieldValue = (field, value) => {
 	}
 
 	if (field.field_type === "Date" && value) {
-		// Format date nicely
-		try {
-			return new Date(value).toLocaleDateString("en-NZ", {
-				year: "numeric",
-				month: "long",
-				day: "numeric",
-			})
-		} catch (e) {
-			return value
-		}
+		return formatDate(value)
 	}
 
 	if (field.field_type === "Currency" && value) {
-		return `₱${Number(value).toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+		return formatCurrency(value)
 	}
 
 	if (field.field_type === "Select") {
@@ -533,9 +883,42 @@ const formatFieldValue = (field, value) => {
 	}
 
 	if (field.field_type === "Attach" || field.field_type === "Attach Image") {
-		return value ? "✓ File attached" : "Not provided"
+		return value ? "File attached" : "Not provided"
 	}
 
+	if (field.field_type === "Int") {
+		return String(value)
+	}
+
+	return value
+}
+
+// Format date for display
+const formatDate = (dateStr) => {
+	if (!dateStr) return "Not provided"
+	try {
+		return new Date(dateStr).toLocaleDateString("en-PH", {
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+		})
+	} catch (e) {
+		return dateStr
+	}
+}
+
+// Format currency for display
+const formatCurrency = (value) => {
+	if (value === undefined || value === null || value === "") return "Not provided"
+	return `PHP ${Number(value).toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+}
+
+// Format pickup schedule for display
+const formatPickupSchedule = (value) => {
+	if (!value) return "Not scheduled"
+	if (typeof value === "object") {
+		return `${value.date || "Date TBD"} at ${value.time || "Time TBD"}`
+	}
 	return value
 }
 
@@ -615,7 +998,7 @@ const truncate = (text, maxLength) => {
 const formatSignatureDate = (dateStr) => {
 	if (!dateStr) return ""
 	try {
-		return new Date(dateStr).toLocaleDateString("en-NZ", {
+		return new Date(dateStr).toLocaleDateString("en-PH", {
 			year: "numeric",
 			month: "long",
 			day: "numeric",
@@ -626,14 +1009,18 @@ const formatSignatureDate = (dateStr) => {
 }
 
 const isComplete = computed(() => {
-	// Basic required fields
+	// For SPISC, check dynamic fields
+	if (isSPISCApplication.value) {
+		// Check if any required fields are missing
+		return missingFields.value.length === 0 && missingRequiredDocuments.value.length === 0
+	}
+
+	// Basic required fields for other types
 	const hasBasicInfo = !!(
 		props.modelValue.council &&
 		props.modelValue.request_type &&
-		props.modelValue.requester_name &&
-		props.modelValue.requester_email &&
-		props.modelValue.property_address &&
-		props.modelValue.delivery_preference
+		(props.modelValue.requester_name || props.modelValue.full_name) &&
+		(props.modelValue.requester_email || props.modelValue.email)
 	)
 
 	// If RC, check additional requirements
