@@ -106,7 +106,172 @@
                 ></textarea>
               </div>
 
-              <div class="flex justify-end space-x-4">
+              <!-- Personal Details (Philippines) -->
+              <div class="border-t border-gray-200 pt-6 mt-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Personal Details</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
+                    <Input v-model="profileForm.birth_date" type="date" />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Sex</label>
+                    <select
+                      v-model="profileForm.sex"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="">Select...</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Civil Status</label>
+                    <select
+                      v-model="profileForm.civil_status"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="">Select...</option>
+                      <option value="Single">Single</option>
+                      <option value="Married">Married</option>
+                      <option value="Widowed">Widowed</option>
+                      <option value="Separated">Separated</option>
+                      <option value="Divorced">Divorced</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Address -->
+              <div class="border-t border-gray-200 pt-6 mt-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Address</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Street Address</label>
+                    <Input v-model="profileForm.postal_street" type="text" placeholder="House/Unit No., Street Name" />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Barangay</label>
+                    <Input v-model="profileForm.postal_suburb" type="text" />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Municipality/City</label>
+                    <Input v-model="profileForm.postal_city" type="text" />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Province</label>
+                    <Input v-model="profileForm.postal_province" type="text" />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Postal Code</label>
+                    <Input v-model="profileForm.postal_postcode" type="text" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Identity Documents -->
+              <div class="border-t border-gray-200 pt-6 mt-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Identity Documents</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">PhilSys ID (National ID)</label>
+                    <Input v-model="profileForm.philsys_id" type="text" placeholder="XXXX-XXXX-XXXX-XXXX" />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">SSS/GSIS Number</label>
+                    <Input v-model="profileForm.sss_number" type="text" />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">OSCA ID (Senior Citizen)</label>
+                    <Input v-model="profileForm.osca_id" type="text" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Economic Status -->
+              <div class="border-t border-gray-200 pt-6 mt-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Economic Status</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Monthly Income (PHP)</label>
+                    <Input v-model="profileForm.monthly_income" type="number" placeholder="0.00" />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Source of Income</label>
+                    <select
+                      v-model="profileForm.income_source"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="">Select...</option>
+                      <option value="No income">No income</option>
+                      <option value="Family support">Family support</option>
+                      <option value="Pension">Pension</option>
+                      <option value="Small business">Small business</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Household Size</label>
+                    <Input v-model="profileForm.household_size" type="number" min="1" />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Living Arrangement</label>
+                    <select
+                      v-model="profileForm.living_arrangement"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="">Select...</option>
+                      <option value="Living alone">Living alone</option>
+                      <option value="Living with spouse">Living with spouse</option>
+                      <option value="Living with children">Living with children</option>
+                      <option value="Living with relatives">Living with relatives</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                  <div class="md:col-span-2">
+                    <label class="flex items-center space-x-3">
+                      <input
+                        type="checkbox"
+                        v-model="profileForm.is_4ps_beneficiary"
+                        class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                      <span class="text-sm font-medium text-gray-700">4Ps Beneficiary (Pantawid Pamilyang Pilipino Program)</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Payment Preferences -->
+              <div class="border-t border-gray-200 pt-6 mt-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Payment Preferences</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Preferred Payment Method</label>
+                    <select
+                      v-model="profileForm.preferred_payment_method"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="">Select...</option>
+                      <option value="Bank Transfer">Bank Transfer</option>
+                      <option value="Office Pickup">Office Pickup</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Bank Name</label>
+                    <Input v-model="profileForm.bank_name" type="text" :disabled="profileForm.preferred_payment_method !== 'Bank Transfer'" />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Bank Account Number</label>
+                    <Input v-model="profileForm.bank_account_number" type="text" :disabled="profileForm.preferred_payment_method !== 'Bank Transfer'" />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Account Holder Name</label>
+                    <Input v-model="profileForm.bank_account_holder" type="text" :disabled="profileForm.preferred_payment_method !== 'Bank Transfer'" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200 mt-6">
                 <Button @click="resetProfileForm" variant="outline" theme="gray">
                   Cancel
                 </Button>
@@ -268,6 +433,31 @@ const profileForm = ref({
 	bio: "",
 	location: "",
 	default_council: "",
+	// Personal Details (Philippines)
+	birth_date: "",
+	sex: "",
+	civil_status: "",
+	// Address
+	postal_street: "",
+	postal_suburb: "",
+	postal_city: "",
+	postal_province: "",
+	postal_postcode: "",
+	// Identity Documents
+	philsys_id: "",
+	sss_number: "",
+	osca_id: "",
+	// Economic Status
+	monthly_income: "",
+	income_source: "",
+	household_size: "",
+	living_arrangement: "",
+	is_4ps_beneficiary: false,
+	// Payment Preferences
+	preferred_payment_method: "",
+	bank_name: "",
+	bank_account_number: "",
+	bank_account_holder: "",
 })
 
 const orgForm = ref({
@@ -311,6 +501,31 @@ const loadProfile = async () => {
 			bio: data.bio || "",
 			location: data.location || "",
 			default_council: data.default_council || "",
+			// Personal Details (Philippines)
+			birth_date: data.birth_date || "",
+			sex: data.sex || "",
+			civil_status: data.civil_status || "",
+			// Address
+			postal_street: data.postal_street || "",
+			postal_suburb: data.postal_suburb || "",
+			postal_city: data.postal_city || "",
+			postal_province: data.postal_province || "",
+			postal_postcode: data.postal_postcode || "",
+			// Identity Documents
+			philsys_id: data.philsys_id || "",
+			sss_number: data.sss_number || "",
+			osca_id: data.osca_id || "",
+			// Economic Status
+			monthly_income: data.monthly_income || "",
+			income_source: data.income_source || "",
+			household_size: data.household_size || "",
+			living_arrangement: data.living_arrangement || "",
+			is_4ps_beneficiary: data.is_4ps_beneficiary || false,
+			// Payment Preferences
+			preferred_payment_method: data.preferred_payment_method || "",
+			bank_name: data.bank_name || "",
+			bank_account_number: data.bank_account_number || "",
+			bank_account_holder: data.bank_account_holder || "",
 		}
 
 		if (data.organization_data) {
@@ -335,11 +550,42 @@ const loadProfile = async () => {
 const updateProfile = async () => {
 	saving.value = true
 	try {
-		const result = await call(
-			"councilsonline.api.update_user_profile",
-			profileForm.value,
-		)
+		// Update basic user fields
+		const result = await call("councilsonline.api.update_user_profile", {
+			first_name: profileForm.value.first_name,
+			last_name: profileForm.value.last_name,
+			mobile_no: profileForm.value.mobile_no,
+			phone: profileForm.value.phone,
+			bio: profileForm.value.bio,
+			location: profileForm.value.location,
+			default_council: profileForm.value.default_council,
+		})
 		profile.value = result.user
+
+		// Update extended profile fields
+		await call("councilsonline.api.auth.save_personal_info_to_profile", {
+			birth_date: profileForm.value.birth_date || null,
+			sex: profileForm.value.sex || null,
+			civil_status: profileForm.value.civil_status || null,
+			mobile_number: profileForm.value.mobile_no || null,
+			address_line: profileForm.value.postal_street || null,
+			barangay: profileForm.value.postal_suburb || null,
+			municipality: profileForm.value.postal_city || null,
+			province: profileForm.value.postal_province || null,
+			philsys_id: profileForm.value.philsys_id || null,
+			sss_number: profileForm.value.sss_number || null,
+			osca_id: profileForm.value.osca_id || null,
+			monthly_income: profileForm.value.monthly_income || null,
+			income_source: profileForm.value.income_source || null,
+			household_size: profileForm.value.household_size || null,
+			living_arrangement: profileForm.value.living_arrangement || null,
+			is_4ps_beneficiary: profileForm.value.is_4ps_beneficiary ? "1" : "0",
+			payment_preference: profileForm.value.preferred_payment_method || null,
+			bank_name: profileForm.value.bank_name || null,
+			bank_account_number: profileForm.value.bank_account_number || null,
+			bank_account_holder: profileForm.value.bank_account_holder || null,
+		})
+
 		alert("Profile updated successfully")
 	} catch (error) {
 		console.error("Error updating profile:", error)
@@ -421,6 +667,31 @@ const resetProfileForm = () => {
 		bio: profile.value.bio || "",
 		location: profile.value.location || "",
 		default_council: profile.value.default_council || "",
+		// Personal Details (Philippines)
+		birth_date: profile.value.birth_date || "",
+		sex: profile.value.sex || "",
+		civil_status: profile.value.civil_status || "",
+		// Address
+		postal_street: profile.value.postal_street || "",
+		postal_suburb: profile.value.postal_suburb || "",
+		postal_city: profile.value.postal_city || "",
+		postal_province: profile.value.postal_province || "",
+		postal_postcode: profile.value.postal_postcode || "",
+		// Identity Documents
+		philsys_id: profile.value.philsys_id || "",
+		sss_number: profile.value.sss_number || "",
+		osca_id: profile.value.osca_id || "",
+		// Economic Status
+		monthly_income: profile.value.monthly_income || "",
+		income_source: profile.value.income_source || "",
+		household_size: profile.value.household_size || "",
+		living_arrangement: profile.value.living_arrangement || "",
+		is_4ps_beneficiary: profile.value.is_4ps_beneficiary || false,
+		// Payment Preferences
+		preferred_payment_method: profile.value.preferred_payment_method || "",
+		bank_name: profile.value.bank_name || "",
+		bank_account_number: profile.value.bank_account_number || "",
+		bank_account_holder: profile.value.bank_account_holder || "",
 	}
 }
 
