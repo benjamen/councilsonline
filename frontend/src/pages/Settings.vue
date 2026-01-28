@@ -744,7 +744,7 @@ const goBack = () => {
 const checkExtendedProfileEnabled = async () => {
 	try {
 		// Check if SPISC request type is enabled for the user's council
-		const result = await call("councilsonline.api.requests.get_request_types")
+		const result = await call("councilsonline.api.get_request_types")
 		if (result && Array.isArray(result)) {
 			showExtendedProfile.value = result.some(
 				(rt) => rt.type_name && rt.type_name.includes("SPISC")
