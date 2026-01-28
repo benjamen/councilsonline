@@ -597,7 +597,45 @@ def get_login_analytics(council_code=None, from_date=None, to_date=None):
 # USER PROFILE & SETTINGS API ENDPOINTS
 # ============================================================================
 
-@frappe.whitelist(allow_guest=True)
+def _get_councils_with_names(councils):
+    """
+    Batch fetch council names to avoid N+1 queries.
+
+    Args:
+        councils: List of User Council child table entries
+
+    Returns:
+        list: Council data with names fetched in single query
+    """
+    if not councils:
+        return []
+
+    # Collect all council IDs
+    council_ids = [c.council for c in councils if c.council]
+
+    # Batch fetch council names in single query
+    council_names = {}
+    if council_ids:
+        results = frappe.get_all(
+            "Council",
+            filters={"name": ["in", council_ids]},
+            fields=["name", "council_name"]
+        )
+        council_names = {r.name: r.council_name for r in results}
+
+    # Build response with names
+    return [
+        {
+            "name": c.name,
+            "council_id": c.council,
+            "council_name": council_names.get(c.council),
+            "is_default": c.is_default
+        }
+        for c in councils
+    ]
+
+
+@frappe.whitelist()
 def get_user_profile(user=None):
     """
     Get user profile information including custom fields, organization data, and extended profile
@@ -608,8 +646,14 @@ def get_user_profile(user=None):
     Returns:
         dict: User profile data including extended profile fields
     """
+    current_user = frappe.session.user
+
+    # Only allow users to access their own profile (security fix)
+    if user and user != current_user and current_user != "Administrator":
+        frappe.throw(_("You can only access your own profile"), frappe.PermissionError)
+
     if not user:
-        user = frappe.session.user
+        user = current_user
 
     # Get user document with custom fields
     user_doc = frappe.get_doc("User", user)
@@ -739,15 +783,7 @@ def get_user_profile(user=None):
                 }
                 for p in (profile.properties or [])
             ],
-            "councils": [
-                {
-                    "name": c.name,
-                    "council_id": c.council,
-                    "council_name": frappe.db.get_value("Council", c.council, "council_name") if c.council else None,
-                    "is_default": c.is_default
-                }
-                for c in (profile.councils or [])
-            ],
+            "councils": _get_councils_with_names(profile.councils),
             "clients": [
                 {
                     "name": cl.name,
@@ -1069,6 +1105,48 @@ def save_personal_info_to_profile(
     if user == "Guest":
         frappe.throw(_("You must be logged in to save profile information"))
 
+    # Input validation for select fields (must match DocType options)
+    valid_sex = ["", "Male", "Female"]
+    valid_civil_status = ["", "Single", "Married", "Widowed", "Separated", "Divorced"]
+    valid_income_source = ["", "No income", "Family support", "Pension", "Small business", "Other"]
+    valid_living_arrangement = ["", "Living alone", "Living with spouse", "Living with children", "Living with relatives", "Other"]
+    valid_payment_preference = ["", "Bank Transfer", "Office Pickup"]
+
+    if sex and sex not in valid_sex:
+        frappe.throw(_("Invalid value for sex"))
+    if civil_status and civil_status not in valid_civil_status:
+        frappe.throw(_("Invalid value for civil status"))
+    if income_source and income_source not in valid_income_source:
+        frappe.throw(_("Invalid value for income source"))
+    if living_arrangement and living_arrangement not in valid_living_arrangement:
+        frappe.throw(_("Invalid value for living arrangement"))
+    if payment_preference and payment_preference not in valid_payment_preference:
+        frappe.throw(_("Invalid value for payment preference"))
+
+    # Validate phone number if provided (PH format)
+    if mobile_number:
+        phone_valid, phone_error = validate_ph_phone_number(mobile_number)
+        if not phone_valid:
+            frappe.throw(_(phone_error))
+
+    # Validate household_size is a positive integer
+    if household_size is not None:
+        try:
+            household_size = int(household_size)
+            if household_size < 0 or household_size > 50:
+                frappe.throw(_("Household size must be between 0 and 50"))
+        except (ValueError, TypeError):
+            frappe.throw(_("Invalid household size"))
+
+    # Validate monthly_income is a positive number
+    if monthly_income is not None:
+        try:
+            monthly_income = float(monthly_income)
+            if monthly_income < 0:
+                frappe.throw(_("Monthly income cannot be negative"))
+        except (ValueError, TypeError):
+            frappe.throw(_("Invalid monthly income value"))
+
     # Get or create User Profile Extended
     if not frappe.db.exists("User Profile Extended", user):
         user_doc = frappe.get_doc("User", user)
@@ -1097,10 +1175,12 @@ def save_personal_info_to_profile(
         profile.civil_status = civil_status
         saved_fields.append("civil_status")
 
-    # Contact - update phone if provided
+    # Contact - update phone if provided (sync to both Profile and User doc)
     if mobile_number and mobile_number != profile.phone:
         profile.phone = mobile_number
         saved_fields.append("phone")
+        # Also sync to User document for consistency
+        frappe.db.set_value("User", user, "phone", mobile_number, update_modified=False)
 
     # Address (postal address fields)
     if address_line:
