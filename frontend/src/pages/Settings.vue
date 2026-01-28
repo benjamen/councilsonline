@@ -274,11 +274,19 @@
               </div>
               </template>
 
+              <div v-if="profileError" class="p-3 bg-red-50 border border-red-200 rounded-lg mt-6">
+                <p class="text-sm text-red-600">{{ profileError }}</p>
+              </div>
+
+              <div v-if="profileSuccess" class="p-3 bg-green-50 border border-green-200 rounded-lg mt-6">
+                <p class="text-sm text-green-600">{{ profileSuccess }}</p>
+              </div>
+
               <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200 mt-6">
-                <Button @click="resetProfileForm" variant="outline" theme="gray">
+                <Button @click="resetProfileForm" variant="outline" theme="gray" :disabled="saving">
                   Cancel
                 </Button>
-                <Button type="submit" variant="solid" theme="blue" :loading="saving">
+                <Button type="submit" variant="solid" theme="blue" :loading="saving" :disabled="saving">
                   Save Changes
                 </Button>
               </div>
@@ -426,6 +434,8 @@ const saving = ref(false)
 const changingPassword = ref(false)
 const passwordError = ref("")
 const passwordSuccess = ref("")
+const profileError = ref("")
+const profileSuccess = ref("")
 const showExtendedProfile = ref(false)
 
 // Forms
@@ -552,6 +562,13 @@ const loadProfile = async () => {
 }
 
 const updateProfile = async () => {
+	// Prevent double-click
+	if (saving.value) return
+
+	// Clear previous messages
+	profileError.value = ""
+	profileSuccess.value = ""
+
 	saving.value = true
 	try {
 		// Update basic user fields
@@ -566,50 +583,37 @@ const updateProfile = async () => {
 		})
 		profile.value = result.user
 
-		// Update extended profile fields
-		await call("councilsonline.api.auth.save_personal_info_to_profile", {
-			birth_date: profileForm.value.birth_date || null,
-			sex: profileForm.value.sex || null,
-			civil_status: profileForm.value.civil_status || null,
-			mobile_number: profileForm.value.mobile_no || null,
-			address_line: profileForm.value.postal_street || null,
-			barangay: profileForm.value.postal_suburb || null,
-			municipality: profileForm.value.postal_city || null,
-			province: profileForm.value.postal_province || null,
-			philsys_id: profileForm.value.philsys_id || null,
-			sss_number: profileForm.value.sss_number || null,
-			osca_id: profileForm.value.osca_id || null,
-			monthly_income: profileForm.value.monthly_income || null,
-			income_source: profileForm.value.income_source || null,
-			household_size: profileForm.value.household_size || null,
-			living_arrangement: profileForm.value.living_arrangement || null,
-			is_4ps_beneficiary: profileForm.value.is_4ps_beneficiary ? "1" : "0",
-			payment_preference: profileForm.value.preferred_payment_method || null,
-			bank_name: profileForm.value.bank_name || null,
-			bank_account_number: profileForm.value.bank_account_number || null,
-			bank_account_holder: profileForm.value.bank_account_holder || null,
-		})
+		// Update extended profile fields (only if SPISC is enabled)
+		if (showExtendedProfile.value) {
+			await call("councilsonline.api.auth.save_personal_info_to_profile", {
+				birth_date: profileForm.value.birth_date || null,
+				sex: profileForm.value.sex || null,
+				civil_status: profileForm.value.civil_status || null,
+				mobile_number: profileForm.value.mobile_no || null,
+				address_line: profileForm.value.postal_street || null,
+				barangay: profileForm.value.postal_suburb || null,
+				municipality: profileForm.value.postal_city || null,
+				province: profileForm.value.postal_province || null,
+				postal_postcode: profileForm.value.postal_postcode || null,
+				philsys_id: profileForm.value.philsys_id || null,
+				sss_number: profileForm.value.sss_number || null,
+				osca_id: profileForm.value.osca_id || null,
+				monthly_income: profileForm.value.monthly_income || null,
+				income_source: profileForm.value.income_source || null,
+				household_size: profileForm.value.household_size || null,
+				living_arrangement: profileForm.value.living_arrangement || null,
+				is_4ps_beneficiary: profileForm.value.is_4ps_beneficiary ? "1" : "0",
+				payment_preference: profileForm.value.preferred_payment_method || null,
+				bank_name: profileForm.value.bank_name || null,
+				bank_account_number: profileForm.value.bank_account_number || null,
+				bank_account_holder: profileForm.value.bank_account_holder || null,
+			})
+		}
 
-		alert("Profile updated successfully")
+		profileSuccess.value = "Profile updated successfully"
 	} catch (error) {
 		console.error("Error updating profile:", error)
-		alert("Failed to update profile")
-	} finally {
-		saving.value = false
-	}
-}
-
-const updateCouncil = async () => {
-	saving.value = true
-	try {
-		const result = await call("councilsonline.api.update_user_profile", {
-			default_council: profileForm.value.default_council,
-		})
-		profile.value = result.user
-		alert("Council preference updated successfully")
-	} catch (error) {
-		console.error("Error updating council:", error)
-		alert("Failed to update council preference")
+		profileError.value = error.message || "Failed to update profile"
 	} finally {
 		saving.value = false
 	}
@@ -697,10 +701,6 @@ const resetProfileForm = () => {
 		bank_account_number: profile.value.bank_account_number || "",
 		bank_account_holder: profile.value.bank_account_holder || "",
 	}
-}
-
-const resetCouncilForm = () => {
-	profileForm.value.default_council = profile.value.default_council || ""
 }
 
 const resetOrgForm = () => {

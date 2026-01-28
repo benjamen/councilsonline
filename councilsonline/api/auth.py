@@ -1018,6 +1018,7 @@ def save_personal_info_to_profile(
     barangay=None,
     municipality=None,
     province=None,
+    postal_postcode=None,
     # Identity Documents
     philsys_id=None,
     sss_number=None,
@@ -1114,6 +1115,9 @@ def save_personal_info_to_profile(
     if province:
         profile.postal_province = province
         saved_fields.append("postal_province")
+    if postal_postcode:
+        profile.postal_postcode = postal_postcode
+        saved_fields.append("postal_postcode")
 
     # Identity Documents
     if philsys_id:
