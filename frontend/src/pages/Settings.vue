@@ -106,6 +106,8 @@
                 ></textarea>
               </div>
 
+              <!-- Extended Profile Fields (Philippines - shown when SPISC is enabled) -->
+              <template v-if="showExtendedProfile">
               <!-- Personal Details (Philippines) -->
               <div class="border-t border-gray-200 pt-6 mt-6">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Personal Details</h3>
@@ -270,6 +272,7 @@
                   </div>
                 </div>
               </div>
+              </template>
 
               <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200 mt-6">
                 <Button @click="resetProfileForm" variant="outline" theme="gray">
@@ -423,6 +426,7 @@ const saving = ref(false)
 const changingPassword = ref(false)
 const passwordError = ref("")
 const passwordSuccess = ref("")
+const showExtendedProfile = ref(false)
 
 // Forms
 const profileForm = ref({
@@ -737,7 +741,22 @@ const goBack = () => {
 	router.back()
 }
 
-onMounted(() => {
-	loadProfile()
+const checkExtendedProfileEnabled = async () => {
+	try {
+		// Check if SPISC request type is enabled for the user's council
+		const result = await call("councilsonline.api.requests.get_request_types")
+		if (result && Array.isArray(result)) {
+			showExtendedProfile.value = result.some(
+				(rt) => rt.type_name && rt.type_name.includes("SPISC")
+			)
+		}
+	} catch (error) {
+		console.error("Error checking extended profile:", error)
+		showExtendedProfile.value = false
+	}
+}
+
+onMounted(async () => {
+	await Promise.all([loadProfile(), checkExtendedProfileEnabled()])
 })
 </script>
