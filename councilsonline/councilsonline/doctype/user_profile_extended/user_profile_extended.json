@@ -109,7 +109,7 @@
    "fieldname": "user_role",
    "fieldtype": "Select",
    "label": "User Role",
-   "options": "Individual\\nAgent",
+   "options": "\nIndividual\nAgent",
    "reqd": 1,
    "default": "Individual"
   },
@@ -303,7 +303,7 @@
    "fieldname": "invoice_preference",
    "fieldtype": "Select",
    "label": "Invoice Delivery",
-   "options": "Email\\nPost",
+   "options": "\nEmail\nPost",
    "default": "Email"
   },
   {
@@ -322,7 +322,7 @@
    "fieldname": "business_type",
    "fieldtype": "Select",
    "label": "Business Type",
-   "options": "Sole Trader\\nLimited Company\\nPartnership\\nOther"
+   "options": "\nSole Trader\nLimited Company\nPartnership\nOther"
   },
   {
    "fieldname": "company_number",
@@ -383,14 +383,14 @@
    "fieldname": "default_communication_route",
    "fieldtype": "Select",
    "label": "Default Communication Route",
-   "options": "Agent Only\\nClient Only\\nBoth Agent and Client",
+   "options": "\nAgent Only\nClient Only\nBoth Agent and Client",
    "default": "Both Agent and Client"
   },
   {
    "fieldname": "default_invoice_recipient",
    "fieldtype": "Select",
    "label": "Default Invoice Recipient",
-   "options": "Agent\\nClient\\nAsk Each Time",
+   "options": "\nAgent\nClient\nAsk Each Time",
    "default": "Client"
   },
   {
