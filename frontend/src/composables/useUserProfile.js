@@ -9,11 +9,16 @@ const userProfile = ref(null)
 const loading = ref(false)
 const error = ref(null)
 
+// Retry configuration
+const MAX_RETRIES = 3
+const RETRY_DELAY = 1000
+
 export function useUserProfile() {
 	/**
-	 * Fetch user profile from backend
+	 * Fetch user profile from backend with retry logic
+	 * @param {number} retryCount - Current retry attempt (internal use)
 	 */
-	const loadUserProfile = async () => {
+	const loadUserProfile = async (retryCount = 0) => {
 		loading.value = true
 		error.value = null
 
@@ -36,18 +41,45 @@ export function useUserProfile() {
 				},
 			)
 
+			// Handle HTTP errors
+			if (!response.ok) {
+				if (response.status === 401) {
+					error.value = "Session expired. Please log in again."
+					return null
+				} else if (response.status === 403) {
+					error.value = "You don't have permission to access your profile."
+					return null
+				} else if (response.status >= 500 && retryCount < MAX_RETRIES) {
+					// Retry on server errors
+					await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY))
+					return loadUserProfile(retryCount + 1)
+				}
+				throw new Error(`Server error: ${response.status}`)
+			}
+
 			const result = await response.json()
 
 			// Backend returns profile data directly in result.message
-			// No need to check for success flag
 			if (result.message) {
 				userProfile.value = result.message
 				return userProfile.value
+			} else if (result.exc) {
+				// Backend threw an error
+				throw new Error("Profile loading error")
 			} else {
 				throw new Error("Failed to load profile")
 			}
 		} catch (err) {
-			error.value = err.message
+			// Network error - retry
+			if (
+				(err.name === "TypeError" || err.message.includes("network")) &&
+				retryCount < MAX_RETRIES
+			) {
+				await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY))
+				return loadUserProfile(retryCount + 1)
+			}
+
+			error.value = err.message || "Unknown error loading profile"
 			console.error("Error loading user profile:", err)
 			return null
 		} finally {
@@ -315,45 +347,69 @@ export function useUserProfile() {
 	})
 
 	/**
-	 * Get profile completion percentage
+	 * Get profile completion percentage with weighted scoring
 	 */
 	const profileCompletionPercentage = computed(() => {
 		if (!userProfile.value) return 0
 
 		const profile = userProfile.value
-		let completed = 0
-		let total = 0
+		let completedPoints = 0
+		let totalPoints = 0
 
-		// Basic fields (weight: 30%)
-		const basicFields = ["full_name", "phone", "user_role"]
-		basicFields.forEach((field) => {
-			total++
-			if (profile[field]) completed++
-		})
-
-		// Contact preferences (weight: 10%)
-		total++
-		if (profile.comm_email || profile.comm_phone || profile.comm_post)
-			completed++
-
-		// Properties (weight: 30%)
-		total++
-		if (profile.properties && profile.properties.length > 0) completed++
-
-		// Councils (weight: 20%)
-		total++
-		if (profile.councils && profile.councils.length > 0) completed++
-
-		// Role-specific (weight: 10%)
-		if (profile.user_role === "Agent") {
-			total++
-			if (profile.company_name) completed++
-		} else {
-			total++
-			if (profile.postal_street) completed++
+		// Helper to check if field has meaningful value
+		const hasValue = (val) => {
+			if (val === null || val === undefined || val === "") return false
+			if (Array.isArray(val)) return val.length > 0
+			return true
 		}
 
-		return Math.round((completed / total) * 100)
+		// REQUIRED FIELDS (50 points total)
+		const basicFields = [
+			{ name: "full_name", weight: 20 },
+			{ name: "phone", weight: 15 },
+			{ name: "user_role", weight: 15 },
+		]
+		basicFields.forEach(({ name, weight }) => {
+			totalPoints += weight
+			if (hasValue(profile[name])) completedPoints += weight
+		})
+
+		// CONTACT PREFERENCES (10 points)
+		totalPoints += 10
+		if (
+			hasValue(profile.comm_email) ||
+			hasValue(profile.comm_phone) ||
+			hasValue(profile.comm_post)
+		) {
+			completedPoints += 10
+		}
+
+		// PROPERTIES (20 points) - at least one with valid address
+		totalPoints += 20
+		if (Array.isArray(profile.properties) && profile.properties.length > 0) {
+			const validProps = profile.properties.filter(
+				(p) => hasValue(p.street) || hasValue(p.city),
+			)
+			if (validProps.length > 0) completedPoints += 20
+		}
+
+		// COUNCILS (10 points) - with default set
+		totalPoints += 10
+		if (Array.isArray(profile.councils) && profile.councils.length > 0) {
+			completedPoints += 10
+		}
+
+		// ROLE-SPECIFIC (10 points)
+		totalPoints += 10
+		if (profile.user_role === "Agent") {
+			if (hasValue(profile.company_name)) completedPoints += 10
+		} else {
+			if (hasValue(profile.postal_street) && hasValue(profile.postal_city)) {
+				completedPoints += 10
+			}
+		}
+
+		return Math.round((completedPoints / totalPoints) * 100)
 	})
 
 	return {

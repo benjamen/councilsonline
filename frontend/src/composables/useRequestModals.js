@@ -2,6 +2,11 @@ import { ref } from "vue"
 import { useRouter } from "vue-router"
 import { call } from "frappe-ui"
 import { useRequestStore } from "../stores/requestStore"
+import {
+	extractPersonalInfo,
+	validateAndExtractAddress,
+	ADDRESS_FIELD_CONFIGS,
+} from "../utils/fieldMappers"
 
 /**
  * Composable for managing request form modals
@@ -97,99 +102,93 @@ export function useRequestModals() {
 	/**
 	 * Save personal information to user profile after submission
 	 * Auto-saves all personal details, identity docs, economic status, and payment preferences
+	 * @returns {Object} Result with success status and saved fields count
 	 */
 	async function savePersonalInfoToProfile() {
 		const formData = store.formData
-		if (!formData) return
+		if (!formData) return { success: false, fields_count: 0 }
 
-		// Collect personal info fields from formData
-		const personalInfo = {}
-
-		// Personal Details
-		if (formData.birth_date) personalInfo.birth_date = formData.birth_date
-		if (formData.sex) personalInfo.sex = formData.sex
-		if (formData.civil_status) personalInfo.civil_status = formData.civil_status
-
-		// Contact
-		if (formData.mobile_number) personalInfo.mobile_number = formData.mobile_number
-
-		// Address
-		if (formData.address_line) personalInfo.address_line = formData.address_line
-		if (formData.barangay) personalInfo.barangay = formData.barangay
-		if (formData.municipality) personalInfo.municipality = formData.municipality
-		if (formData.province) personalInfo.province = formData.province
-
-		// Identity Documents
-		if (formData.philsys_id) personalInfo.philsys_id = formData.philsys_id
-		if (formData.sss_number) personalInfo.sss_number = formData.sss_number
-		if (formData.osca_id) personalInfo.osca_id = formData.osca_id
-
-		// Economic Status
-		if (formData.monthly_income !== undefined) personalInfo.monthly_income = formData.monthly_income
-		if (formData.income_source) personalInfo.income_source = formData.income_source
-		if (formData.household_size !== undefined) personalInfo.household_size = formData.household_size
-		if (formData.living_arrangement) personalInfo.living_arrangement = formData.living_arrangement
-		if (formData.is_4ps_beneficiary !== undefined) personalInfo.is_4ps_beneficiary = formData.is_4ps_beneficiary
-
-		// Payment Preferences
-		if (formData.payment_preference) personalInfo.payment_preference = formData.payment_preference
-		if (formData.bank_name) personalInfo.bank_name = formData.bank_name
-		if (formData.bank_account_number) personalInfo.bank_account_number = formData.bank_account_number
-		if (formData.bank_account_holder) personalInfo.bank_account_holder = formData.bank_account_holder
+		// Use utility function to extract personal info fields
+		const personalInfo = extractPersonalInfo(formData)
 
 		// Only save if we have data
-		if (Object.keys(personalInfo).length > 0) {
-			try {
-				const result = await call("councilsonline.api.auth.save_personal_info_to_profile", personalInfo)
-				if (result && result.fields_count > 0) {
-					console.log(`Saved ${result.fields_count} fields to user profile`)
-				}
-			} catch (error) {
-				// Don't fail submission if profile save fails
-				console.error("Failed to save personal info to profile:", error)
+		if (Object.keys(personalInfo).length === 0) {
+			return { success: true, fields_count: 0 }
+		}
+
+		try {
+			const result = await call(
+				"councilsonline.api.auth.save_personal_info_to_profile",
+				personalInfo,
+			)
+			if (result && result.fields_count > 0) {
+				console.log(`Saved ${result.fields_count} fields to user profile`)
 			}
+			return { success: true, fields_count: result?.fields_count || 0 }
+		} catch (error) {
+			// Don't fail submission if profile save fails
+			console.error("Failed to save personal info to profile:", error)
+			return { success: false, error: error.message }
 		}
 	}
 
 	/**
 	 * Save addresses to user profile if marked for saving
 	 * Looks for address fields with _save_to_profile flag
+	 * @returns {Object} Result with saved and failed addresses
 	 */
 	async function saveAddressesToProfile() {
 		const formData = store.formData
-		if (!formData) return
+		if (!formData) return { savedAddresses: [], failedAddresses: [] }
 
-		// Check common address field names that might have _save_to_profile flag
-		const addressFields = [
-			"residential_address",
-			"address",
-			"property_address",
-			"applicant_address",
-		]
+		const savedAddresses = []
+		const failedAddresses = []
 
-		for (const fieldName of addressFields) {
+		// Check each configured address field
+		for (const [fieldName, config] of Object.entries(ADDRESS_FIELD_CONFIGS)) {
 			const addressData = formData[fieldName]
-			if (
-				addressData &&
-				typeof addressData === "object" &&
-				addressData._save_to_profile
-			) {
-				try {
-					await call("councilsonline.api.auth.add_user_property", {
-						street: addressData.address_line,
-						barangay: addressData.barangay,
-						municipality: addressData.municipality,
-						province: addressData.province,
-						zip_code: addressData.zip_code,
-						is_default: false,
-					})
-					console.log(`Property saved to profile from field: ${fieldName}`)
-				} catch (error) {
-					// Don't fail submission if property save fails
-					console.error(`Failed to save property from ${fieldName}:`, error)
-				}
+
+			// Skip if no data or not marked for profile saving
+			if (!addressData || typeof addressData !== "object") continue
+			if (!addressData._save_to_profile) continue
+
+			// Validate and extract address data
+			const validation = validateAndExtractAddress(addressData, config)
+
+			if (!validation.valid) {
+				failedAddresses.push({
+					field: fieldName,
+					reason: validation.error,
+				})
+				console.warn(
+					`Skipping address from ${fieldName}: ${validation.error}`,
+				)
+				continue
+			}
+
+			try {
+				await call("councilsonline.api.auth.add_user_property", {
+					...validation.data,
+					is_default: false,
+				})
+				savedAddresses.push(fieldName)
+				console.log(`Property saved to profile from field: ${fieldName}`)
+			} catch (error) {
+				failedAddresses.push({
+					field: fieldName,
+					reason: error.message || "Unknown error",
+				})
+				// Don't fail submission if property save fails
+				console.error(`Failed to save property from ${fieldName}:`, error)
 			}
 		}
+
+		// Log summary
+		if (failedAddresses.length > 0) {
+			console.warn("Some addresses failed to save:", failedAddresses)
+		}
+
+		return { savedAddresses, failedAddresses }
 	}
 
 	/**

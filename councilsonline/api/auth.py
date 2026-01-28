@@ -636,6 +636,7 @@ def _get_councils_with_names(councils):
 
 
 @frappe.whitelist()
+@rate_limit(calls=30, period=60)  # 30 calls per minute to prevent enumeration
 def get_user_profile(user=None):
     """
     Get user profile information including custom fields, organization data, and extended profile
@@ -806,6 +807,7 @@ def get_user_profile(user=None):
 
 
 @frappe.whitelist()
+@rate_limit(calls=10, period=60)  # 10 updates per minute
 def update_user_profile(first_name=None, last_name=None, mobile_no=None, phone=None,
                        bio=None, location=None, default_council=None, user_image=None):
     """
@@ -863,13 +865,14 @@ def update_user_profile(first_name=None, last_name=None, mobile_no=None, phone=N
 
 
 @frappe.whitelist()
+@rate_limit(calls=5, period=300)  # 5 attempts per 5 minutes to prevent brute-force
 def change_password(old_password, new_password):
     """
-    Change user password
+    Change user password with brute-force protection
 
     Args:
         old_password: Current password
-        new_password: New password
+        new_password: New password (min 8 characters)
 
     Returns:
         dict: Success status
@@ -878,19 +881,31 @@ def change_password(old_password, new_password):
 
     user = frappe.session.user
 
+    # Validate new password strength
+    if not new_password or len(new_password) < 8:
+        frappe.throw(_("New password must be at least 8 characters"))
+
     # Verify old password
     try:
         check_password(user, old_password)
-    except Exception:
-        frappe.throw("Current password is incorrect")
+    except frappe.AuthenticationError:
+        frappe.log_error(f"Failed password change attempt for user: {user}", "Password Change Failed")
+        frappe.throw(_("Current password is incorrect"))
+    except Exception as e:
+        frappe.log_error(f"Unexpected error in change_password for {user}: {str(e)}", "Password Change Error")
+        frappe.throw(_("An error occurred while changing password"))
 
     # Update to new password
-    update_password(user, new_password)
-    frappe.db.commit()
+    try:
+        update_password(user, new_password)
+        frappe.db.commit()
+    except Exception as e:
+        frappe.log_error(f"Failed to update password for {user}: {str(e)}", "Password Update Error")
+        frappe.throw(_("Failed to update password. Please try again."))
 
     return {
         "success": True,
-        "message": "Password changed successfully"
+        "message": _("Password changed successfully")
     }
 
 
@@ -1231,15 +1246,34 @@ def save_personal_info_to_profile(
     if payment_preference:
         profile.preferred_payment_method = payment_preference
         saved_fields.append("preferred_payment_method")
-    if bank_name:
-        profile.bank_name = bank_name
-        saved_fields.append("bank_name")
-    if bank_account_number:
-        profile.bank_account_number = bank_account_number
-        saved_fields.append("bank_account_number")
-    if bank_account_holder:
-        profile.bank_account_holder = bank_account_holder
-        saved_fields.append("bank_account_holder")
+
+    # Bank details validation - if any bank field is provided, validate completeness
+    bank_fields_provided = [bank_name, bank_account_number, bank_account_holder]
+    has_any_bank_field = any(bank_fields_provided)
+    has_all_bank_fields = all(bank_fields_provided)
+
+    if has_any_bank_field:
+        if payment_preference == "Bank Transfer" and not has_all_bank_fields:
+            frappe.throw(_("Bank name, account number, and account holder are all required for bank transfer"))
+
+        # Validate bank account number format (digits only, reasonable length)
+        if bank_account_number:
+            cleaned_account = re.sub(r'[\s\-]', '', str(bank_account_number))
+            if not cleaned_account.isdigit():
+                frappe.throw(_("Bank account number must contain only digits"))
+            if len(cleaned_account) < 8 or len(cleaned_account) > 20:
+                frappe.throw(_("Bank account number must be between 8 and 20 digits"))
+
+        # Save validated bank details
+        if bank_name:
+            profile.bank_name = bank_name
+            saved_fields.append("bank_name")
+        if bank_account_number:
+            profile.bank_account_number = bank_account_number
+            saved_fields.append("bank_account_number")
+        if bank_account_holder:
+            profile.bank_account_holder = bank_account_holder
+            saved_fields.append("bank_account_holder")
 
     # Save profile
     if saved_fields:
