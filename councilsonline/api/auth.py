@@ -600,13 +600,13 @@ def get_login_analytics(council_code=None, from_date=None, to_date=None):
 @frappe.whitelist(allow_guest=True)
 def get_user_profile(user=None):
     """
-    Get user profile information including custom fields and organization data
+    Get user profile information including custom fields, organization data, and extended profile
 
     Args:
         user: User email (optional, defaults to current user)
 
     Returns:
-        dict: User profile data
+        dict: User profile data including extended profile fields
     """
     if not user:
         user = frappe.session.user
@@ -640,7 +640,9 @@ def get_user_profile(user=None):
             "primary_color": council.primary_color
         }
 
-    return {
+    # Build base response from User document
+    response = {
+        "user": user,
         "email": user_doc.email,
         "first_name": user_doc.first_name,
         "last_name": user_doc.last_name,
@@ -661,6 +663,110 @@ def get_user_profile(user=None):
         "creation": user_doc.creation,
         "modified": user_doc.modified
     }
+
+    # Get extended profile data if exists
+    if frappe.db.exists("User Profile Extended", user):
+        profile = frappe.get_doc("User Profile Extended", user)
+
+        # Merge extended profile data
+        response.update({
+            # Basic profile
+            "full_name": profile.full_name or response["full_name"],
+            "phone": profile.phone or response["phone"],
+            "user_role": profile.user_role,
+
+            # Personal Details (Philippines)
+            "birth_date": profile.birth_date,
+            "sex": profile.sex,
+            "civil_status": profile.civil_status,
+
+            # Contact Details
+            "postal_street": profile.postal_street,
+            "postal_suburb": profile.postal_suburb,
+            "postal_city": profile.postal_city,
+            "postal_postcode": profile.postal_postcode,
+            "postal_province": getattr(profile, 'postal_province', None),
+
+            # Identity Documents
+            "philsys_id": getattr(profile, 'philsys_id', None),
+            "sss_number": getattr(profile, 'sss_number', None),
+            "osca_id": getattr(profile, 'osca_id', None),
+
+            # Economic Status
+            "monthly_income": getattr(profile, 'monthly_income', None),
+            "income_source": getattr(profile, 'income_source', None),
+            "household_size": getattr(profile, 'household_size', None),
+            "living_arrangement": getattr(profile, 'living_arrangement', None),
+            "is_4ps_beneficiary": getattr(profile, 'is_4ps_beneficiary', None),
+
+            # Payment Preferences
+            "preferred_payment_method": getattr(profile, 'preferred_payment_method', None),
+            "bank_name": getattr(profile, 'bank_name', None),
+            "bank_account_number": getattr(profile, 'bank_account_number', None),
+            "bank_account_holder": getattr(profile, 'bank_account_holder', None),
+
+            # Communication Preferences
+            "comm_email": profile.comm_email,
+            "comm_phone": profile.comm_phone,
+            "comm_post": profile.comm_post,
+            "invoice_preference": profile.invoice_preference,
+
+            # Business Details (for Agents)
+            "company_name": profile.company_name,
+            "business_type": profile.business_type,
+            "company_number": profile.company_number,
+            "business_phone": profile.business_phone,
+            "business_email": profile.business_email,
+            "business_street": profile.business_street,
+            "business_suburb": profile.business_suburb,
+            "business_city": profile.business_city,
+            "business_postcode": profile.business_postcode,
+            "default_communication_route": profile.default_communication_route,
+            "default_invoice_recipient": profile.default_invoice_recipient,
+
+            # Properties, Councils, Clients (child tables)
+            "properties": [
+                {
+                    "name": p.name,
+                    "property_name": p.property_name,
+                    "street": p.street,
+                    "suburb": p.suburb,
+                    "city": p.city,
+                    "postcode": p.postcode,
+                    "legal_description": p.legal_description,
+                    "ownership_status": p.ownership_status,
+                    "is_default": p.is_default
+                }
+                for p in (profile.properties or [])
+            ],
+            "councils": [
+                {
+                    "name": c.name,
+                    "council_id": c.council,
+                    "council_name": frappe.db.get_value("Council", c.council, "council_name") if c.council else None,
+                    "is_default": c.is_default
+                }
+                for c in (profile.councils or [])
+            ],
+            "clients": [
+                {
+                    "name": cl.name,
+                    "client_name": cl.client_name,
+                    "client_email": cl.client_email,
+                    "client_phone": cl.client_phone,
+                    "is_default": cl.is_default
+                }
+                for cl in (profile.clients or [])
+            ],
+
+            # Onboarding
+            "onboarding_completed": profile.onboarding_completed,
+            "onboarding_step": profile.onboarding_step,
+            "registration_date": profile.registration_date,
+            "profile_completion_percentage": profile.profile_completion_percentage
+        })
+
+    return response
 
 
 @frappe.whitelist()
@@ -896,6 +1002,171 @@ def add_user_property(
             "city": new_property.city,
             "postcode": new_property.postcode
         }
+    }
+
+
+@frappe.whitelist()
+def save_personal_info_to_profile(
+    # Personal Details
+    birth_date=None,
+    sex=None,
+    civil_status=None,
+    # Contact
+    mobile_number=None,
+    # Address
+    address_line=None,
+    barangay=None,
+    municipality=None,
+    province=None,
+    # Identity Documents
+    philsys_id=None,
+    sss_number=None,
+    osca_id=None,
+    # Economic Status
+    monthly_income=None,
+    income_source=None,
+    household_size=None,
+    living_arrangement=None,
+    is_4ps_beneficiary=None,
+    # Payment Preferences
+    payment_preference=None,
+    bank_name=None,
+    bank_account_number=None,
+    bank_account_holder=None
+):
+    """
+    Save personal information from application form to user profile.
+    Called automatically after request submission.
+
+    Args:
+        birth_date: Date of birth (YYYY-MM-DD)
+        sex: Male/Female
+        civil_status: Single/Married/Widowed/Separated
+        mobile_number: Phone number
+        address_line: Street address
+        barangay: Barangay
+        municipality: Municipality/City
+        province: Province
+        philsys_id: PhilSys/National ID
+        sss_number: SSS/GSIS Number
+        osca_id: OSCA Senior Citizen ID
+        monthly_income: Monthly income amount
+        income_source: Source of income
+        household_size: Number of household members
+        living_arrangement: Living arrangement
+        is_4ps_beneficiary: Whether 4Ps beneficiary (0/1)
+        payment_preference: Bank Transfer or Office Pickup
+        bank_name: Bank name
+        bank_account_number: Bank account number
+        bank_account_holder: Account holder name
+
+    Returns:
+        dict: Success status and saved fields
+    """
+    user = frappe.session.user
+
+    if user == "Guest":
+        frappe.throw(_("You must be logged in to save profile information"))
+
+    # Get or create User Profile Extended
+    if not frappe.db.exists("User Profile Extended", user):
+        user_doc = frappe.get_doc("User", user)
+        profile = frappe.get_doc({
+            "doctype": "User Profile Extended",
+            "user": user,
+            "full_name": user_doc.full_name or f"{user_doc.first_name} {user_doc.last_name}",
+            "phone": user_doc.phone or mobile_number or "",
+            "user_role": "Individual"
+        })
+        profile.flags.ignore_permissions = True
+        profile.insert()
+    else:
+        profile = frappe.get_doc("User Profile Extended", user)
+
+    saved_fields = []
+
+    # Personal Details
+    if birth_date:
+        profile.birth_date = birth_date
+        saved_fields.append("birth_date")
+    if sex:
+        profile.sex = sex
+        saved_fields.append("sex")
+    if civil_status:
+        profile.civil_status = civil_status
+        saved_fields.append("civil_status")
+
+    # Contact - update phone if provided
+    if mobile_number and mobile_number != profile.phone:
+        profile.phone = mobile_number
+        saved_fields.append("phone")
+
+    # Address (postal address fields)
+    if address_line:
+        profile.postal_street = address_line
+        saved_fields.append("postal_street")
+    if barangay:
+        profile.postal_suburb = barangay
+        saved_fields.append("postal_suburb")
+    if municipality:
+        profile.postal_city = municipality
+        saved_fields.append("postal_city")
+    if province:
+        profile.postal_province = province
+        saved_fields.append("postal_province")
+
+    # Identity Documents
+    if philsys_id:
+        profile.philsys_id = philsys_id
+        saved_fields.append("philsys_id")
+    if sss_number:
+        profile.sss_number = sss_number
+        saved_fields.append("sss_number")
+    if osca_id:
+        profile.osca_id = osca_id
+        saved_fields.append("osca_id")
+
+    # Economic Status
+    if monthly_income is not None:
+        profile.monthly_income = monthly_income
+        saved_fields.append("monthly_income")
+    if income_source:
+        profile.income_source = income_source
+        saved_fields.append("income_source")
+    if household_size is not None:
+        profile.household_size = household_size
+        saved_fields.append("household_size")
+    if living_arrangement:
+        profile.living_arrangement = living_arrangement
+        saved_fields.append("living_arrangement")
+    if is_4ps_beneficiary is not None:
+        profile.is_4ps_beneficiary = 1 if is_4ps_beneficiary else 0
+        saved_fields.append("is_4ps_beneficiary")
+
+    # Payment Preferences
+    if payment_preference:
+        profile.preferred_payment_method = payment_preference
+        saved_fields.append("preferred_payment_method")
+    if bank_name:
+        profile.bank_name = bank_name
+        saved_fields.append("bank_name")
+    if bank_account_number:
+        profile.bank_account_number = bank_account_number
+        saved_fields.append("bank_account_number")
+    if bank_account_holder:
+        profile.bank_account_holder = bank_account_holder
+        saved_fields.append("bank_account_holder")
+
+    # Save profile
+    if saved_fields:
+        profile.save(ignore_permissions=True)
+        frappe.db.commit()
+
+    return {
+        "success": True,
+        "message": _("Personal information saved to profile"),
+        "saved_fields": saved_fields,
+        "fields_count": len(saved_fields)
     }
 
 

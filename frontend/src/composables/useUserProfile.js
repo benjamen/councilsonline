@@ -159,6 +159,80 @@ export function useUserProfile() {
 			autoFillData.invoice_delivery_method = profile.invoice_preference
 		}
 
+		// ===== PHILIPPINES PERSONAL INFORMATION (SPISC) =====
+
+		// Personal Details (Philippines)
+		if (profile.birth_date) {
+			autoFillData.birth_date = profile.birth_date
+		}
+		if (profile.sex) {
+			autoFillData.sex = profile.sex
+		}
+		if (profile.civil_status) {
+			autoFillData.civil_status = profile.civil_status
+		}
+
+		// Mobile number (use phone)
+		if (profile.phone) {
+			autoFillData.mobile_number = profile.phone
+		}
+
+		// PH Address fields
+		if (profile.postal_street) {
+			autoFillData.address_line = profile.postal_street
+		}
+		if (profile.postal_suburb) {
+			autoFillData.barangay = profile.postal_suburb
+		}
+		if (profile.postal_city) {
+			autoFillData.municipality = profile.postal_city
+		}
+		if (profile.postal_province) {
+			autoFillData.province = profile.postal_province
+		}
+
+		// Identity Documents
+		if (profile.philsys_id) {
+			autoFillData.philsys_id = profile.philsys_id
+		}
+		if (profile.sss_number) {
+			autoFillData.sss_number = profile.sss_number
+		}
+		if (profile.osca_id) {
+			autoFillData.osca_id = profile.osca_id
+		}
+
+		// Economic Status
+		if (profile.monthly_income !== undefined && profile.monthly_income !== null) {
+			autoFillData.monthly_income = profile.monthly_income
+		}
+		if (profile.income_source) {
+			autoFillData.income_source = profile.income_source
+		}
+		if (profile.household_size !== undefined && profile.household_size !== null) {
+			autoFillData.household_size = profile.household_size
+		}
+		if (profile.living_arrangement) {
+			autoFillData.living_arrangement = profile.living_arrangement
+		}
+		if (profile.is_4ps_beneficiary !== undefined) {
+			autoFillData.is_4ps_beneficiary = profile.is_4ps_beneficiary
+		}
+
+		// Payment Preferences
+		if (profile.preferred_payment_method) {
+			autoFillData.payment_preference = profile.preferred_payment_method
+		}
+		if (profile.bank_name) {
+			autoFillData.bank_name = profile.bank_name
+		}
+		if (profile.bank_account_number) {
+			autoFillData.bank_account_number = profile.bank_account_number
+		}
+		if (profile.bank_account_holder) {
+			autoFillData.bank_account_holder = profile.bank_account_holder
+		}
+
 		return autoFillData
 	}
 

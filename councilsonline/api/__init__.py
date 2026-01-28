@@ -21,7 +21,8 @@ from councilsonline.api.auth import (
 	change_password,
 	get_user_organization,
 	update_user_organization,
-	add_user_property
+	add_user_property,
+	save_personal_info_to_profile
 )
 
 # Address Search
@@ -145,7 +146,7 @@ __all__ = [
 	'register_user', 'register_user_ph', 'register_agent',
 	'track_login_event', 'get_login_analytics', 'get_user_profile',
 	'update_user_profile', 'change_password', 'get_user_organization',
-	'update_user_organization', 'add_user_property',
+	'update_user_organization', 'add_user_property', 'save_personal_info_to_profile',
 	# Addresses
 	'search_property_address', 'search_property_addresses', 'search_addresses_universal',
 	'search_australia_addresses', 'search_philippines_addresses',
