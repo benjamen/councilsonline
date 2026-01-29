@@ -47,12 +47,17 @@
 
             <Dropdown :options="userMenuOptions">
               <template v-slot="{ open }">
-                <button class="flex items-center space-x-2 text-gray-700 hover:text-gray-900">
+                <button
+                  class="flex items-center space-x-2 text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg p-1"
+                  aria-haspopup="true"
+                  :aria-expanded="open"
+                  aria-label="User menu"
+                >
                   <div class="w-8 h-8 bg-brand-light rounded-full flex items-center justify-center">
-                    <span class="text-sm font-medium text-brand">{{ userInitials }}</span>
+                    <span class="text-sm font-medium text-brand" aria-hidden="true">{{ userInitials }}</span>
                   </div>
                   <span class="text-sm font-medium">{{ userName }}</span>
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
@@ -135,9 +140,10 @@
         </div>
 
         <!-- Loading State -->
-        <div v-if="requests.loading" class="p-12 text-center">
-          <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-brand"></div>
-          <p class="mt-4 text-gray-500">Loading applications...</p>
+        <div v-if="requests.loading" class="p-12 text-center" role="status" aria-live="polite">
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-brand" aria-hidden="true"></div>
+          <p class="mt-4 text-gray-600">Loading applications...</p>
+          <span class="sr-only">Loading your applications, please wait</span>
         </div>
 
         <!-- Empty State -->
@@ -154,17 +160,37 @@
           </Button>
         </div>
 
-        <!-- Requests Table -->
-        <div v-else class="overflow-x-auto">
-          <table class="w-full">
+        <!-- Mobile Card View -->
+        <div v-else class="md:hidden divide-y divide-gray-200">
+          <div
+            v-for="request in filteredRequests"
+            :key="request.name"
+            class="p-4 hover:bg-gray-50 cursor-pointer"
+            @click="viewRequest(request.name)"
+          >
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-sm font-medium text-brand">{{ request.request_number }}</span>
+              <span class="text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded">{{ request.workflow_state || 'N/A' }}</span>
+            </div>
+            <p class="text-sm text-gray-900 mb-2 line-clamp-2">{{ request.request_type }}</p>
+            <div class="flex justify-between items-center text-xs text-gray-600">
+              <span>{{ formatDate(request.creation) }}</span>
+              <span>{{ request.working_days_elapsed || 0 }} days</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Desktop Table View -->
+        <div v-else class="hidden md:block overflow-x-auto">
+          <table class="w-full" role="table" aria-label="Your requests">
             <thead class="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Request #</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">State</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Days Elapsed</th>
-                <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Request #</th>
+                <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Type</th>
+                <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">State</th>
+                <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Submitted</th>
+                <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap">Days Elapsed</th>
+                <th scope="col" class="px-4 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
@@ -181,16 +207,25 @@
                   <div class="text-sm text-gray-900">{{ request.workflow_state || 'N/A' }}</div>
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap">
-                  <div class="text-sm text-gray-500">{{ formatDate(request.creation) }}</div>
+                  <div class="text-sm text-gray-600">{{ formatDate(request.creation) }}</div>
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap text-center">
                   <div class="text-sm font-medium text-gray-900">{{ request.working_days_elapsed || 0 }} days</div>
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
-                  <button @click.stop="viewRequest(request.name)" class="text-brand hover:text-brand-hover mr-3">
+                  <button
+                    @click.stop="viewRequest(request.name)"
+                    class="text-brand hover:text-brand-hover mr-3 focus:outline-none focus:underline"
+                    aria-label="View request details"
+                  >
                     View
                   </button>
-                  <button v-if="request.status === 'Draft'" @click.stop="editRequest(request.name)" class="text-gray-600 hover:text-gray-900">
+                  <button
+                    v-if="request.status === 'Draft'"
+                    @click.stop="editRequest(request.name)"
+                    class="text-gray-600 hover:text-gray-900 focus:outline-none focus:underline"
+                    aria-label="Edit draft request"
+                  >
                     Edit
                   </button>
                 </td>
@@ -326,20 +361,12 @@ const editRequest = (requestId) => {
 }
 
 // Navigation
-const goToInternal = () => {
-	router.push({ name: "InternalRequestManagement" })
-}
-
 const goToSettings = () => {
 	router.push({ name: "Settings" })
 }
 
-// User menu
+// User menu options
 const userMenuOptions = [
-	{
-		label: "Staff Portal",
-		onClick: goToInternal,
-	},
 	{
 		label: "Settings",
 		onClick: goToSettings,
