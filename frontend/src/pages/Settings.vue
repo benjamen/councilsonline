@@ -29,28 +29,60 @@
         <!-- Sidebar Navigation -->
         <div class="lg:col-span-1">
           <nav class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-            <button
-              v-for="tab in tabs"
-              :key="tab.key"
-              @click="currentTab = tab.key"
-              class="w-full text-left px-4 py-3 rounded-lg transition-colors mb-2"
-              :class="currentTab === tab.key ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-700 hover:bg-gray-50'"
-            >
-              <div class="flex items-center space-x-3">
-                <component :is="tab.icon" class="w-5 h-5" />
-                <span>{{ tab.label }}</span>
-              </div>
-            </button>
+            <template v-if="profileLoading">
+              <SkeletonLoader v-for="n in 3" :key="n" type="nav-tab" class="mb-2" />
+            </template>
+            <template v-else>
+              <button
+                v-for="tab in tabs"
+                :key="tab.key"
+                @click="currentTab = tab.key"
+                class="w-full text-left px-4 py-3 rounded-lg transition-colors mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                :class="currentTab === tab.key ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-700 hover:bg-gray-50'"
+                :aria-current="currentTab === tab.key ? 'page' : undefined"
+              >
+                <div class="flex items-center space-x-3">
+                  <component :is="tab.icon" class="w-5 h-5" />
+                  <span>{{ tab.label }}</span>
+                </div>
+              </button>
+            </template>
           </nav>
         </div>
 
         <!-- Content Area -->
         <div class="lg:col-span-3">
-          <!-- Loading State -->
-          <div v-if="profileLoading" class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center" role="status" aria-live="polite">
-            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" aria-hidden="true"></div>
-            <p class="mt-4 text-gray-600">Loading settings...</p>
+          <!-- Loading State with Skeleton -->
+          <div v-if="profileLoading" class="bg-white rounded-lg shadow-sm border border-gray-200 p-8" role="status" aria-live="polite">
             <span class="sr-only">Loading settings, please wait</span>
+            <!-- Profile Header Skeleton -->
+            <SkeletonLoader type="profile-header" class="mb-8" />
+
+            <!-- Form Fields Skeleton -->
+            <div class="space-y-6">
+              <!-- Name Fields -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <SkeletonLoader type="form-field" />
+                <SkeletonLoader type="form-field" />
+              </div>
+              <!-- Contact Fields -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <SkeletonLoader type="form-field" />
+                <SkeletonLoader type="form-field" />
+              </div>
+              <!-- Location -->
+              <SkeletonLoader type="form-field" />
+              <!-- Bio (taller) -->
+              <div class="space-y-2 animate-pulse">
+                <div class="h-4 bg-gray-200 rounded w-24"></div>
+                <div class="h-24 bg-gray-200 rounded"></div>
+              </div>
+              <!-- Buttons -->
+              <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200 mt-6">
+                <div class="h-10 bg-gray-200 rounded w-24 animate-pulse"></div>
+                <div class="h-10 bg-gray-200 rounded w-32 animate-pulse"></div>
+              </div>
+            </div>
           </div>
 
           <!-- Profile Tab -->
@@ -421,6 +453,7 @@
 import { Button, Input, call } from "frappe-ui"
 import { computed, onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
+import SkeletonLoader from "../components/SkeletonLoader.vue"
 
 const router = useRouter()
 

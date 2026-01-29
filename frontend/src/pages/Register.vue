@@ -32,7 +32,7 @@
           <button
             type="button"
             @click="$router.push({ name: 'CompanyRegistration' })"
-            class="p-6 border-2 border-gray-200 hover:border-brand hover:bg-brand-light rounded-lg transition text-left"
+            class="p-6 border-2 border-gray-200 hover:border-brand hover:bg-brand-light rounded-lg transition text-left focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
           >
             <div class="text-center">
               <svg class="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -146,7 +146,7 @@
         <div class="space-y-3">
           <button
             type="button"
-            class="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition"
+            class="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
           >
             <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -163,7 +163,7 @@
       <div class="text-center mt-6">
         <p class="text-sm text-gray-600">
           Already have an account?
-          <router-link :to="{ name: 'Login' }" class="font-medium text-brand hover:text-brand-hover">
+          <router-link :to="{ name: 'Login' }" class="font-medium text-brand hover:text-brand-hover focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 rounded">
             Sign in
           </router-link>
         </p>

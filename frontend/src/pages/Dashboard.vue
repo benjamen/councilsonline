@@ -20,7 +20,7 @@
           </div>
 
           <div class="flex items-center space-x-4">
-            <!-- Taytay Council Link -->
+            <!-- Taytay Council Link (Desktop) -->
             <a
               href="https://taytay.gov.ph"
               target="_blank"
@@ -36,7 +36,8 @@
               </svg>
             </a>
 
-            <Button @click="goToNewRequest" variant="solid" theme="blue">
+            <!-- New Request Button (Desktop) -->
+            <Button @click="goToNewRequest" variant="solid" theme="blue" class="hidden md:flex">
               <template #prefix>
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -45,7 +46,8 @@
               New Request
             </Button>
 
-            <Dropdown :options="userMenuOptions">
+            <!-- User Menu (Desktop) -->
+            <Dropdown :options="userMenuOptions" class="hidden md:block">
               <template v-slot="{ open }">
                 <button
                   class="flex items-center space-x-2 text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg p-1"
@@ -63,10 +65,117 @@
                 </button>
               </template>
             </Dropdown>
+
+            <!-- Mobile Menu Button -->
+            <button
+              @click="mobileMenuOpen = !mobileMenuOpen"
+              class="md:hidden p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              :aria-expanded="mobileMenuOpen"
+              aria-label="Toggle mobile menu"
+            >
+              <svg v-if="!mobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+              <svg v-else class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
     </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div
+      v-if="mobileMenuOpen"
+      class="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+      @click="mobileMenuOpen = false"
+      aria-hidden="true"
+    ></div>
+
+    <!-- Mobile Menu Panel -->
+    <div
+      :class="[
+        'fixed top-0 right-0 h-full w-72 bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out md:hidden',
+        mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+      ]"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Mobile navigation menu"
+    >
+      <!-- Mobile Menu Header -->
+      <div class="flex items-center justify-between p-4 border-b border-gray-200">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-brand-light rounded-full flex items-center justify-center">
+            <span class="text-sm font-bold text-brand">{{ userInitials }}</span>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-gray-900">{{ userName }}</p>
+            <p class="text-xs text-gray-500">{{ session.user }}</p>
+          </div>
+        </div>
+        <button
+          @click="mobileMenuOpen = false"
+          class="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          aria-label="Close menu"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Mobile Menu Items -->
+      <nav class="p-4 space-y-2">
+        <button
+          @click="goToNewRequest(); mobileMenuOpen = false"
+          class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg bg-brand text-white hover:bg-brand-hover transition-colors"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          <span class="font-medium">New Request</span>
+        </button>
+
+        <button
+          @click="goToSettings(); mobileMenuOpen = false"
+          class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <span>Settings</span>
+        </button>
+
+        <a
+          href="https://taytay.gov.ph"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+          </svg>
+          <span>Taytay Council</span>
+          <svg class="w-4 h-4 text-gray-400 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
+
+        <div class="border-t border-gray-200 my-4"></div>
+
+        <button
+          @click="handleSignOut"
+          class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          <span>Sign Out</span>
+        </button>
+      </nav>
+    </div>
 
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -78,30 +187,35 @@
 
       <!-- Stats Cards -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <StatCard
-          title="Total Requests"
-          :value="stats.total"
-          icon="file-text"
-          color="blue"
-        />
-        <StatCard
-          title="Under Review"
-          :value="stats.underReview"
-          icon="clock"
-          color="yellow"
-        />
-        <StatCard
-          title="Approved"
-          :value="stats.approved"
-          icon="check-circle"
-          color="green"
-        />
-        <StatCard
-          title="Info Requested"
-          :value="stats.rfiPending"
-          icon="alert-circle"
-          color="orange"
-        />
+        <template v-if="requests.loading">
+          <SkeletonLoader v-for="n in 4" :key="n" type="stat-card" />
+        </template>
+        <template v-else>
+          <StatCard
+            title="Total Requests"
+            :value="stats.total"
+            icon="file-text"
+            color="blue"
+          />
+          <StatCard
+            title="Under Review"
+            :value="stats.underReview"
+            icon="clock"
+            color="yellow"
+          />
+          <StatCard
+            title="Approved"
+            :value="stats.approved"
+            icon="check-circle"
+            color="green"
+          />
+          <StatCard
+            title="Info Requested"
+            :value="stats.rfiPending"
+            icon="alert-circle"
+            color="orange"
+          />
+        </template>
       </div>
 
       <!-- Filters and Search -->
@@ -139,11 +253,27 @@
           <h3 class="text-lg font-semibold text-gray-900">Your Requests</h3>
         </div>
 
-        <!-- Loading State -->
-        <div v-if="requests.loading" class="p-12 text-center" role="status" aria-live="polite">
-          <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-brand" aria-hidden="true"></div>
-          <p class="mt-4 text-gray-600">Loading applications...</p>
+        <!-- Loading State with Skeleton -->
+        <div v-if="requests.loading" role="status" aria-live="polite">
           <span class="sr-only">Loading your applications, please wait</span>
+          <!-- Mobile Skeleton -->
+          <div class="md:hidden">
+            <SkeletonLoader v-for="n in 5" :key="n" type="mobile-card" />
+          </div>
+          <!-- Desktop Skeleton -->
+          <div class="hidden md:block">
+            <div class="bg-gray-50 border-b border-gray-200 px-4 py-3">
+              <div class="grid grid-cols-6 gap-4">
+                <div class="h-4 bg-gray-200 rounded w-20 animate-pulse"></div>
+                <div class="h-4 bg-gray-200 rounded w-16 animate-pulse"></div>
+                <div class="h-4 bg-gray-200 rounded w-14 animate-pulse"></div>
+                <div class="h-4 bg-gray-200 rounded w-20 animate-pulse"></div>
+                <div class="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
+                <div class="h-4 bg-gray-200 rounded w-16 ml-auto animate-pulse"></div>
+              </div>
+            </div>
+            <SkeletonLoader v-for="n in 5" :key="n" type="table-row" />
+          </div>
         </div>
 
         <!-- Empty State -->
@@ -244,6 +374,7 @@ import { computed, ref } from "vue"
 import { useRouter } from "vue-router"
 import StatCard from "../components/StatCard.vue"
 import StatusBadge from "../components/StatusBadge.vue"
+import SkeletonLoader from "../components/SkeletonLoader.vue"
 import { session } from "../data/session"
 import { requestService } from "../services"
 import { useTheme } from "@/composables/useTheme"
@@ -268,6 +399,9 @@ const userInitials = computed(() => {
 	}
 	return name.substring(0, 2).toUpperCase()
 })
+
+// Mobile menu state
+const mobileMenuOpen = ref(false)
 
 // Filters
 const searchQuery = ref("")
@@ -363,6 +497,12 @@ const editRequest = (requestId) => {
 // Navigation
 const goToSettings = () => {
 	router.push({ name: "Settings" })
+}
+
+// Handle sign out
+const handleSignOut = () => {
+	mobileMenuOpen.value = false
+	session.logout.submit()
 }
 
 // User menu options

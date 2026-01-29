@@ -35,9 +35,17 @@
 
           <!-- Password Input -->
           <div>
-            <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
-              Password
-            </label>
+            <div class="flex items-center justify-between mb-2">
+              <label for="password" class="block text-sm font-medium text-gray-700">
+                Password
+              </label>
+              <router-link
+                :to="{ name: 'ForgotPassword' }"
+                class="text-sm text-brand hover:text-brand-hover font-medium focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 rounded"
+              >
+                Forgot password?
+              </router-link>
+            </div>
             <Input
               id="password"
               name="password"
@@ -93,7 +101,7 @@
       <div class="text-center mt-6">
         <p class="text-sm text-gray-600">
           Don't have an account?
-          <router-link :to="{ name: 'Register' }" class="font-medium text-brand hover:text-brand-hover">
+          <router-link :to="{ name: 'Register' }" class="font-medium text-brand hover:text-brand-hover focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 rounded">
             Create one now
           </router-link>
         </p>
@@ -101,7 +109,7 @@
 
       <!-- Back to Home -->
       <div class="text-center mt-4">
-        <router-link to="/" class="text-sm text-gray-500 hover:text-gray-700 inline-flex items-center">
+        <router-link to="/" class="text-sm text-gray-500 hover:text-gray-700 inline-flex items-center focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 rounded px-1">
           <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>

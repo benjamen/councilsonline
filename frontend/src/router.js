@@ -75,6 +75,12 @@ const routes = [
 		meta: { public: true },
 	},
 	{
+		name: "ForgotPassword",
+		path: "/account/forgot-password",
+		component: () => import("@/pages/ForgotPassword.vue"),
+		meta: { public: true },
+	},
+	{
 		name: "Register",
 		path: "/account/register",
 		component: () => import("@/pages/Register.vue"),
